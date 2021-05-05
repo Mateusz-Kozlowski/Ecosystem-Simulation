@@ -3,6 +3,9 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#include <fstream>
+#include <stack>
+#include <unordered_map>
 
 // SFML:
 #include "SFML\Graphics.hpp"

@@ -10,6 +10,21 @@
     <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MainMenuState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraphicsSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ecosystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -27,12 +42,33 @@
     <Filter Include="SFML">
       <UniqueIdentifier>{f3797065-c832-41aa-9d51-e96a714ea6d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="States">
+      <UniqueIdentifier>{72388021-8b8a-409f-b985-05c69ec26d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{8df1c60e-71ef-4988-89cf-dcd01e9f7a2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h">
       <Filter>Precompiled Files</Filter>
     </ClInclude>
     <ClInclude Include="src\App.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MainMenuState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GraphicsSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ecosystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
