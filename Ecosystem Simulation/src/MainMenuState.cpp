@@ -87,8 +87,8 @@ void MainMenuState::initButtons()
 	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
 	this->buttons["SIMULATE"] = new gui::Button(
-		gui::p2pX(41.f, vm), gui::p2pY(20.f, vm),
-		gui::p2pX(18.f, vm), gui::p2pY(8.f, vm),
+		gui::p2pX(38.f, vm), gui::p2pY(19.f, vm),
+		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
 		this->font, "SIMULATE", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
@@ -96,30 +96,40 @@ void MainMenuState::initButtons()
 		gui::p2pY(0.5f, vm), 0
 	);
 
-	this->buttons["SAVE"] = new gui::Button(
-		gui::p2pX(41.f, vm), gui::p2pY(33.f, vm),
-		gui::p2pX(18.f, vm), gui::p2pY(8.f, vm),
-		this->font, "SAVE", gui::calcCharSize(vm, 32),
+	this->buttons["NEW ECOSYSTEM"] = new gui::Button(
+		gui::p2pX(38.f, vm), gui::p2pY(31.f, vm),
+		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		this->font, "NEW ECOSYSTEM", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, vm), 1
 	);
 
-	this->buttons["LOAD"] = new gui::Button(
-		gui::p2pX(41.f, vm), gui::p2pY(46.f, vm),
-		gui::p2pX(18.f, vm), gui::p2pY(8.f, vm),
-		this->font, "LOAD", gui::calcCharSize(vm, 32),
+	this->buttons["EDIT"] = new gui::Button(
+		gui::p2pX(38.f, vm), gui::p2pY(43.f, vm),
+		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		this->font, "EDIT", gui::calcCharSize(vm, 32),
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, vm), 1
+	);
+
+	this->buttons["SAVE"] = new gui::Button(
+		gui::p2pX(38.f, vm), gui::p2pY(55.f, vm),
+		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		this->font, "SAVE", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, vm), 3
 	);
 
-	this->buttons["EDIT"] = new gui::Button(
-		gui::p2pX(41.f, vm), gui::p2pY(59.f, vm),
-		gui::p2pX(18.f, vm), gui::p2pY(8.f, vm),
-		this->font, "EDIT", gui::calcCharSize(vm, 32),
+	this->buttons["LOAD"] = new gui::Button(
+		gui::p2pX(38.f, vm), gui::p2pY(67.f, vm),
+		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		this->font, "LOAD", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -127,8 +137,8 @@ void MainMenuState::initButtons()
 	);
 
 	this->buttons["EXIT"] = new gui::Button(
-		gui::p2pX(41.f, vm), gui::p2pY(72.f, vm),
-		gui::p2pX(18.f, vm), gui::p2pY(8.f, vm),
+		gui::p2pX(38.f, vm), gui::p2pY(79.f, vm),
+		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
 		this->font, "EXIT", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
@@ -161,7 +171,24 @@ void MainMenuState::updateButtons()
 {
 	for (auto& it : this->buttons) it.second->update(this->mousePosWindow);
 
-	if (this->buttons["EXIT"]->isClicked())
+	if (this->buttons["SIMULATE"]->isClicked() && this->stateData->ecosystem)
+		this->stateData->states->push(new SimulationState(this->stateData));
+
+	/*
+	else if (this->buttons["SAVE"]->isClicked() && this->stateData->ecosystem)
+		this->stateData->ecosystem->saveToFile();
+	
+	else if (this->buttons["LOAD"]->isClicked())
+		this->stateData->ecosystem->loadFromFile();
+
+	else if (this->buttons["EDIT"]->isClicked())
+		this->stateData->states->push(new EditorState(this->stateData));
+
+	else if (this->buttons["EXIT"]->isClicked())
+		this->endState();
+	*/
+
+	else if (this->buttons["EXIT"]->isClicked())
 		this->endState();
 }
 
@@ -169,7 +196,7 @@ void MainMenuState::updateEcosystemText()
 {
 	if (!this->stateData->ecosystem) this->ecosystemText.setString("No ecosystem has been selected");
 
-	else this->ecosystemText.setString("CURRENT ECOSYSTEM: " + this->stateData->ecosystem->path);
+	else this->ecosystemText.setString("Current ecosystem name: " + this->stateData->ecosystem->name);
 }
 
 void MainMenuState::renderButtons(sf::RenderTarget& target)

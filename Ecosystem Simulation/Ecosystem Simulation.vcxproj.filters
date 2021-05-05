@@ -25,6 +25,30 @@
     <ClCompile Include="src\Ecosystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Crappy Neural Nets\HiddenLayer.cpp">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crappy Neural Nets\InputLayer.cpp">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crappy Neural Nets\Matrix.cpp">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crappy Neural Nets\NeuralNet.cpp">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crappy Neural Nets\Neuron.cpp">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crappy Neural Nets\OutputLayer.cpp">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crappy Neural Nets\RandomNumbersGenerator.cpp">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimulationState.cpp">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -48,6 +72,9 @@
     <Filter Include="GUI">
       <UniqueIdentifier>{8df1c60e-71ef-4988-89cf-dcd01e9f7a2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Crappy Neural Nets">
+      <UniqueIdentifier>{740901c6-bbff-4dfd-841c-76192cbb722c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h">
@@ -70,6 +97,33 @@
     </ClInclude>
     <ClInclude Include="src\Ecosystem.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crappy Neural Nets\Config.h">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crappy Neural Nets\HiddenLayer.h">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crappy Neural Nets\InputLayer.h">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crappy Neural Nets\Matrix.h">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crappy Neural Nets\NeuralNet.h">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crappy Neural Nets\Neuron.h">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crappy Neural Nets\OutputLayer.h">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crappy Neural Nets\RandomNumbersGenerator.h">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimulationState.h">
+      <Filter>Crappy Neural Nets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
