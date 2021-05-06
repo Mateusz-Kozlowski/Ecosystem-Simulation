@@ -27,7 +27,9 @@ private:
 
 	MiniMap* miniMap;
 
-	PauseMenu* pmenu;
+	PauseMenu* pauseMenu;
+
+	bool paused;
 
 	// initialization:
 	void initKeybinds();
@@ -41,12 +43,6 @@ private:
 	
 	// other private methods:
 	void updateInput();
-	void updateEcosystem();
 	void updateView();
-	void updatePauseMenu();
-	void updateMiniMap();
-
-	void renderEcosystem(sf::RenderTarget& target);
-	void renderMiniMap(sf::RenderTarget& target);
-	void renderPauseMenu(sf::RenderTarget& target);
+	void updatePauseMenuButtons();
 };

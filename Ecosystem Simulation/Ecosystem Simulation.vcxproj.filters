@@ -22,9 +22,6 @@
     <ClCompile Include="src\GraphicsSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ecosystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Crappy Neural Nets\HiddenLayer.cpp">
       <Filter>Crappy Neural Nets</Filter>
     </ClCompile>
@@ -47,7 +44,10 @@
       <Filter>Crappy Neural Nets</Filter>
     </ClCompile>
     <ClCompile Include="src\SimulationState.cpp">
-      <Filter>Crappy Neural Nets</Filter>
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ecosystem.cpp">
+      <Filter>Ecosystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +75,9 @@
     <Filter Include="Crappy Neural Nets">
       <UniqueIdentifier>{740901c6-bbff-4dfd-841c-76192cbb722c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ecosystem">
+      <UniqueIdentifier>{5e38ab68-3f37-4336-8db8-35876a97bf71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h">
@@ -93,9 +96,6 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\GraphicsSettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ecosystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Crappy Neural Nets\Config.h">
@@ -123,7 +123,10 @@
       <Filter>Crappy Neural Nets</Filter>
     </ClInclude>
     <ClInclude Include="src\SimulationState.h">
-      <Filter>Crappy Neural Nets</Filter>
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ecosystem.h">
+      <Filter>Ecosystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
