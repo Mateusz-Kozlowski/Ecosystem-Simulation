@@ -10,6 +10,8 @@ App::App()
 	this->initKeys();
 	this->initStateData();
 	this->initStates();
+
+	this->stateData.ecosystem = new Ecosystem();
 }
 
 App::~App()

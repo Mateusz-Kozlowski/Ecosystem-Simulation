@@ -167,6 +167,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\MiniMap.cpp" />
+    <ClCompile Include="src\PauseMenu.cpp" />
     <ClCompile Include="src\Crappy Neural Nets\HiddenLayer.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../stdafx.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../stdafx.h</PrecompiledHeaderFile>
@@ -225,6 +227,8 @@
     <ClCompile Include="src\State.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\MiniMap.h" />
+    <ClInclude Include="src\PauseMenu.h" />
     <ClInclude Include="src\Crappy Neural Nets\Config.h" />
     <ClInclude Include="src\Crappy Neural Nets\HiddenLayer.h" />
     <ClInclude Include="src\Crappy Neural Nets\InputLayer.h" />
@@ -243,6 +247,10 @@
     <ClInclude Include="src\State.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config\graphics.ini" />
+    <None Include="config\main_menu_keybinds.ini" />
+    <None Include="config\simulation_keybinds.ini" />
+    <None Include="config\supported_keys.ini" />
     <None Include="openal32.dll" />
     <None Include="sfml-audio-2.dll" />
     <None Include="sfml-audio-d-2.dll" />
@@ -254,6 +262,9 @@
     <None Include="sfml-system-d-2.dll" />
     <None Include="sfml-window-2.dll" />
     <None Include="sfml-window-d-2.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\Retroica.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

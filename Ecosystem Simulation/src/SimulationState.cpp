@@ -53,16 +53,47 @@ void SimulationState::render(sf::RenderTarget* target)
 
 	this->renderTexture.setView(this->view);
 
+	/*
+	std::cout << this->renderTexture.getViewport(this->view).left << ' ' << this->renderTexture.getViewport(this->view).top << '\n';
+	std::cout << this->renderTexture.getViewport(this->view).width << ' ' << this->renderTexture.getViewport(this->view).height << '\n';
+	*/
+
+	sf::RectangleShape temp(sf::Vector2f(3840.f, 2160.f));
+	//sf::RectangleShape temp(sf::Vector2f(1920.f, 1080.f));
+
+	temp.setOrigin(0, 0);
+
+	temp.setPosition(sf::Vector2f(0, 0));
+
+	temp.setFillColor(sf::Color(200, 200, 100));
+
+	this->renderTexture.draw(temp);
+
 	this->stateData->ecosystem->render(this->renderTexture);
 
 	// render GUI:
+	// this->miniMap->render(this->renderTexture);
+	// minimap kinda works:
+	sf::View miniMapView(this->renderTexture.getDefaultView());
+
+	miniMapView.setViewport(sf::FloatRect(0.75f, 0.75f, 0.25f, 0.25f));
+
+	miniMapView.setSize(3840, 2160);
+
+	this->renderTexture.setView(miniMapView);
+
+	this->renderTexture.draw(temp);
+
+	this->stateData->ecosystem->render(this->renderTexture);
+
+	// pause menu:
 	this->renderTexture.setView(this->renderTexture.getDefaultView());
 
 	if (this->paused) this->pauseMenu->render(this->renderTexture);
-	
+
 	// final render:
 	this->renderTexture.display();
-	
+
 	target->draw(this->renderSprite);
 }
 
@@ -137,26 +168,62 @@ void SimulationState::initDeferredRender()
 
 void SimulationState::initMiniMap()
 {
-	//this->miniMap = new MiniMap();
+	this->miniMap = new MiniMap(sf::Vector2u(3840U, 2160U), sf::Vector2u(0.25f, 0.25f), sf::Vector2u(0.75f, 0.75f));
 }
 
 void SimulationState::initPauseMenu()
 {
-	//this->pauseMenu = new PauseMenu();
+	const sf::VideoMode& videoMode = this->stateData->gfxSettings->resolution;
+
+	this->pauseMenu = new PauseMenu(this->stateData->gfxSettings->resolution, this->font);
+
+	this->pauseMenu->addText(gui::p2pY(10.f, videoMode), gui::calcCharSize(videoMode, 32), "PAUSED", sf::Color::White);
+
+	this->pauseMenu->addButton(
+		"CONTINUE", gui::p2pY(74.f, videoMode), gui::p2pX(14.f, videoMode), gui::p2pY(6.f, videoMode),
+		gui::calcCharSize(videoMode, 32), "CONTINUE",
+		sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0),
+		sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0),
+		sf::Color(200, 200, 200, 255), sf::Color(255, 255, 255, 255), sf::Color(100, 100, 100, 100)
+	);
+
+	this->pauseMenu->addButton(
+		"QUIT", gui::p2pY(84.f, videoMode), gui::p2pX(14.f, videoMode), gui::p2pY(6.f, videoMode),
+		gui::calcCharSize(videoMode, 32), "QUIT",
+		sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0),
+		sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0),
+		sf::Color(200, 200, 200, 255), sf::Color(255, 255, 255, 255), sf::Color(100, 100, 100, 100)
+	);
 }
 
 // other private methods:
 void SimulationState::updateInput()
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("CLOSE")))) this->paused = !this->paused;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("CLOSE")))) this->paused = true;
 }
 
 void SimulationState::updateView()
 {
+	if (this->mousePosWindow.x < 100 && this->view.getCenter().x > 0) this->view.move(-24.f, 0.f);
+	
+	if (this->mousePosWindow.x > 1820 && this->view.getCenter().x < 3840) this->view.move(24.f, 0.f);
+	
+	if (this->mousePosWindow.y < 100 && this->view.getCenter().y > 0) this->view.move(0.f, -24.f);
+	
+	if (this->mousePosWindow.y > 980 && this->view.getCenter().y < 2160) this->view.move(0.f, 24.f);
+	
+	// zoom:
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) this->view.zoom(0.9);
+	
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) this->view.zoom(1.1);
+
+
+	/*
 	this->view.setCenter(
 		std::floor((static_cast<float>(this->mousePosWindow.x) - static_cast<float>(this->stateData->gfxSettings->resolution.width / 2U)) / 10.f),
 		std::floor((static_cast<float>(this->mousePosWindow.y) - static_cast<float>(this->stateData->gfxSettings->resolution.height / 2U)) / 10.f)
 	);
+	*/
 
 	/*
 	if (this->tileMap->getMaxSizeF().x >= this->view.getSize().x)
@@ -190,5 +257,5 @@ void SimulationState::updateView()
 
 void SimulationState::updatePauseMenuButtons()
 {
-	if (this->pauseMenu->isButtonPressed("QUIT")) this->endState();
+	if (this->pauseMenu->isButtonClicked("QUIT")) this->endState();
 }
