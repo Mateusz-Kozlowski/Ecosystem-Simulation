@@ -16,6 +16,7 @@ public:
 		this->supportedKeys = nullptr;
 		this->states = nullptr;
 		this->ecosystem = nullptr;
+		this->events = nullptr;
 	}
 
 	GraphicsSettings* gfxSettings;
@@ -23,6 +24,7 @@ public:
 	std::unordered_map<std::string, int>* supportedKeys;
 	std::stack<State*>* states;
 	Ecosystem* ecosystem;
+	std::vector<sf::Event>* events;
 };
 
 class State

@@ -1,41 +1,44 @@
 #pragma once
 
-#include "Gui.h"
+#include "Button.h"
 
-class PauseMenu
+namespace gui
 {
-private:
-	sf::VideoMode videoMode;
-	sf::Font font;
+	class PauseMenu
+	{
+	public:
+		PauseMenu(const sf::VideoMode& vm, const sf::Font& font);
+		~PauseMenu();
 
-	sf::RectangleShape background;
-	sf::RectangleShape container;
+		std::unordered_map<std::string, gui::Button*>& getButtons();
 
-	sf::Text title;
+		bool isButtonClicked(std::string key);
 
-	std::unordered_map<std::string, gui::Button*> buttons;
+		void addButton(
+			std::string key,
+			float posY,
+			float width, float height,
+			int charSize, std::string text,
+			sf::Color idleColor, sf::Color hoverColor, sf::Color pressedColor,
+			sf::Color outlineIdleColor, sf::Color outlineHoverColor, sf::Color outlinePressedColor,
+			sf::Color textIdleColor, sf::Color textHoverColor, sf::Color textPressedColor,
+			float outlineThickness = 1.f, short unsigned id = 0
+		);
 
-public:
-	PauseMenu(const sf::VideoMode& vm, const sf::Font& font);
-	~PauseMenu();
+		void addText(float posY, unsigned charSize, std::string text, sf::Color textColor);
 
-	std::unordered_map<std::string, gui::Button*>& getButtons();
+		void update(const sf::Vector2i& mousePosWindow);
+		void render(sf::RenderTarget& target);
 
-	bool isButtonClicked(std::string key);
+	private:
+		sf::VideoMode videoMode;
+		sf::Font font;
 
-	void addButton(
-		std::string key,
-		float posY,
-		float width, float height,
-		int charSize, std::string text,
-		sf::Color idleColor, sf::Color hoverColor, sf::Color pressedColor,
-		sf::Color outlineIdleColor, sf::Color outlineHoverColor, sf::Color outlinePressedColor,
-		sf::Color textIdleColor, sf::Color textHoverColor, sf::Color textPressedColor,
-		float outlineThickness = 1.f, short unsigned id = 0
-	);
+		sf::RectangleShape background;
+		sf::RectangleShape container;
 
-	void addText(float posY, unsigned charSize, std::string text, sf::Color textColor);
+		sf::Text title;
 
-	void update(const sf::Vector2i& mousePosWindow);
-	void render(sf::RenderTarget& target);
-};
+		std::unordered_map<std::string, gui::Button*> buttons;
+	};
+}

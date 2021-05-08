@@ -1,7 +1,6 @@
 #pragma once
 
 #include "State.h"
-#include "MiniMap.h"
 #include "PauseMenu.h"
 
 class SimulationState : public State
@@ -25,9 +24,7 @@ private:
 	sf::RenderTexture renderTexture;
 	sf::Sprite renderSprite;
 
-	MiniMap* miniMap;
-
-	PauseMenu* pauseMenu;
+	gui::PauseMenu* pauseMenu;
 
 	bool paused;
 
@@ -38,7 +35,6 @@ private:
 	void initEcosystem();
 	void initView();
 	void initDeferredRender();
-	void initMiniMap();
 	void initPauseMenu();
 	
 	// other private methods:

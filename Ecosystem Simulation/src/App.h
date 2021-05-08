@@ -18,6 +18,7 @@ private:
 	std::unordered_map<std::string, int> supportedKeys;
 	std::stack<State*> states;
 	Ecosystem* ecosystem;
+	std::vector<sf::Event> events;
 
 	StateData stateData;
 
@@ -31,6 +32,7 @@ private:
 	void initGraphicsSettings();
 	void initWindow();
 	void initKeys();
+	void initEcosystem();
 	void initStateData();
 	void initStates();
 

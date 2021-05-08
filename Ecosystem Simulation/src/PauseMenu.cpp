@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "PauseMenu.h"
 
+using namespace gui;
+
 PauseMenu::PauseMenu(const sf::VideoMode& video_mode, const sf::Font& font)
 {
 	this->videoMode = video_mode;
@@ -33,7 +35,7 @@ PauseMenu::~PauseMenu()
 {
 	for (auto it = this->buttons.begin(); it != this->buttons.end(); ++it) delete it->second;
 
-	// for (auto it = this->speedModifiers.begin(); it != this->speedModifiers.end(); ++it) delete it->second;
+	// for (auto it = this->speedScaleSliders.begin(); it != this->speedScaleSliders.end(); ++it) delete it->second;
 }
 
 std::unordered_map<std::string, gui::Button*>& PauseMenu::getButtons()

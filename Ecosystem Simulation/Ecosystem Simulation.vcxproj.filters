@@ -5,16 +5,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
-      <Filter>Precompiled Files</Filter>
+      <Filter>precompiled files</Filter>
     </ClCompile>
     <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\State.cpp">
-      <Filter>States</Filter>
+      <Filter>states</Filter>
     </ClCompile>
     <ClCompile Include="src\MainMenuState.cpp">
-      <Filter>States</Filter>
+      <Filter>states</Filter>
     </ClCompile>
     <ClCompile Include="src\Gui.cpp">
       <Filter>GUI</Filter>
@@ -44,17 +44,28 @@
       <Filter>Crappy Neural Nets</Filter>
     </ClCompile>
     <ClCompile Include="src\SimulationState.cpp">
-      <Filter>States</Filter>
+      <Filter>states</Filter>
     </ClCompile>
     <ClCompile Include="src\Ecosystem.cpp">
-      <Filter>Ecosystem</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MiniMap.cpp">
-      <Filter>GUI</Filter>
+      <Filter>ecosystem</Filter>
     </ClCompile>
     <ClCompile Include="src\PauseMenu.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\MainMenuState.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\PauseMenu.cpp" />
+    <ClCompile Include="src\Ecosystem.cpp" />
+    <ClCompile Include="src\GraphicsSettings.cpp" />
+    <ClCompile Include="src\Gui.cpp" />
+    <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\MainMenuState.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\Button.cpp" />
+    <ClCompile Include="src\ScaleSlider.cpp" />
+    <ClCompile Include="src\InputField.cpp" />
+    <ClCompile Include="src\EcosystemCreatorState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -63,17 +74,11 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{2218bf07-da3f-4c9f-a6d5-33a2c4670944}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Precompiled Files">
-      <UniqueIdentifier>{cc131141-cfa2-41e5-8bc5-e647d1065000}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{0738937d-ac7b-46bd-a1e8-335c3f07ba8f}</UniqueIdentifier>
     </Filter>
     <Filter Include="SFML">
       <UniqueIdentifier>{f3797065-c832-41aa-9d51-e96a714ea6d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="States">
-      <UniqueIdentifier>{72388021-8b8a-409f-b985-05c69ec26d6c}</UniqueIdentifier>
     </Filter>
     <Filter Include="GUI">
       <UniqueIdentifier>{8df1c60e-71ef-4988-89cf-dcd01e9f7a2d}</UniqueIdentifier>
@@ -81,11 +86,11 @@
     <Filter Include="Crappy Neural Nets">
       <UniqueIdentifier>{740901c6-bbff-4dfd-841c-76192cbb722c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Ecosystem">
-      <UniqueIdentifier>{5e38ab68-3f37-4336-8db8-35876a97bf71}</UniqueIdentifier>
-    </Filter>
     <Filter Include="config">
       <UniqueIdentifier>{c35092b0-7f22-44b9-98e0-0b40f5814092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="states">
+      <UniqueIdentifier>{72388021-8b8a-409f-b985-05c69ec26d6c}</UniqueIdentifier>
     </Filter>
     <Filter Include="resources">
       <UniqueIdentifier>{9e2c5b4d-5a6b-4eb2-919e-0a704e8976b7}</UniqueIdentifier>
@@ -93,19 +98,25 @@
     <Filter Include="resources\fonts">
       <UniqueIdentifier>{a2b34f5f-01fd-4c7b-9292-2c361884f56d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="precompiled files">
+      <UniqueIdentifier>{cc131141-cfa2-41e5-8bc5-e647d1065000}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ecosystem">
+      <UniqueIdentifier>{5e38ab68-3f37-4336-8db8-35876a97bf71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h">
-      <Filter>Precompiled Files</Filter>
+      <Filter>precompiled files</Filter>
     </ClInclude>
     <ClInclude Include="src\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\State.h">
-      <Filter>States</Filter>
+      <Filter>states</Filter>
     </ClInclude>
     <ClInclude Include="src\MainMenuState.h">
-      <Filter>States</Filter>
+      <Filter>states</Filter>
     </ClInclude>
     <ClInclude Include="src\Gui.h">
       <Filter>GUI</Filter>
@@ -138,17 +149,21 @@
       <Filter>Crappy Neural Nets</Filter>
     </ClInclude>
     <ClInclude Include="src\SimulationState.h">
-      <Filter>States</Filter>
+      <Filter>states</Filter>
     </ClInclude>
     <ClInclude Include="src\Ecosystem.h">
-      <Filter>Ecosystem</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MiniMap.h">
-      <Filter>GUI</Filter>
+      <Filter>ecosystem</Filter>
     </ClInclude>
     <ClInclude Include="src\PauseMenu.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\Button.h" />
+    <ClInclude Include="src\ScaleSlider.h" />
+    <ClInclude Include="src\InputField.h" />
+    <ClInclude Include="src\EcosystemCreatorState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-window-d-2.dll">
@@ -193,11 +208,14 @@
     <None Include="config\supported_keys.ini">
       <Filter>config</Filter>
     </None>
-    <None Include="config\simulation_keybinds.ini" />
+    <None Include="config\simulation_keybinds.ini">
+      <Filter>config</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\Retroica.ttf">
       <Filter>resources\fonts</Filter>
     </Font>
+    <Font Include="resources\fonts\CONSOLAB.ttf" />
   </ItemGroup>
 </Project>

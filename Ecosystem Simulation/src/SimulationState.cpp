@@ -10,13 +10,11 @@ SimulationState::SimulationState(StateData* state_data) : State(state_data)
 	this->initEcosystem();
 	this->initView();
 	this->initDeferredRender();
-	this->initMiniMap();
 	this->initPauseMenu();
 }
 
 SimulationState::~SimulationState()
 {
-	delete this->miniMap;
 	delete this->pauseMenu;
 }
 
@@ -35,7 +33,6 @@ void SimulationState::update(float dt)
 	{
 		this->updateView();
 		this->stateData->ecosystem->update();
-		this->miniMap->update();
 	}
 	else
 	{
@@ -46,47 +43,16 @@ void SimulationState::update(float dt)
 
 void SimulationState::render(sf::RenderTarget* target)
 {
-	if (!target)
-		target = this->stateData->window;
+	if (!target) target = this->stateData->window;
 	
 	this->renderTexture.clear();
 
+	// draw ecosystem:
 	this->renderTexture.setView(this->view);
 
-	/*
-	std::cout << this->renderTexture.getViewport(this->view).left << ' ' << this->renderTexture.getViewport(this->view).top << '\n';
-	std::cout << this->renderTexture.getViewport(this->view).width << ' ' << this->renderTexture.getViewport(this->view).height << '\n';
-	*/
-
-	sf::RectangleShape temp(sf::Vector2f(3840.f, 2160.f));
-	//sf::RectangleShape temp(sf::Vector2f(1920.f, 1080.f));
-
-	temp.setOrigin(0, 0);
-
-	temp.setPosition(sf::Vector2f(0, 0));
-
-	temp.setFillColor(sf::Color(200, 200, 100));
-
-	this->renderTexture.draw(temp);
-
 	this->stateData->ecosystem->render(this->renderTexture);
 
-	// render GUI:
-	// this->miniMap->render(this->renderTexture);
-	// minimap kinda works:
-	sf::View miniMapView(this->renderTexture.getDefaultView());
-
-	miniMapView.setViewport(sf::FloatRect(0.75f, 0.75f, 0.25f, 0.25f));
-
-	miniMapView.setSize(3840, 2160);
-
-	this->renderTexture.setView(miniMapView);
-
-	this->renderTexture.draw(temp);
-
-	this->stateData->ecosystem->render(this->renderTexture);
-
-	// pause menu:
+	// render pause menu:
 	this->renderTexture.setView(this->renderTexture.getDefaultView());
 
 	if (this->paused) this->pauseMenu->render(this->renderTexture);
@@ -116,7 +82,6 @@ void SimulationState::initKeybinds()
 
 void SimulationState::initVariables()
 {
-	this->miniMap = nullptr;
 	this->pauseMenu = nullptr;
 	this->paused = false;
 }
@@ -135,8 +100,8 @@ void SimulationState::initView()
 {
 	this->view.setSize(
 		sf::Vector2f(
-			static_cast<float>(this->stateData->gfxSettings->resolution.width / 2U),
-			static_cast<float>(this->stateData->gfxSettings->resolution.height / 2U)
+			static_cast<float>(this->stateData->gfxSettings->resolution.width),
+			static_cast<float>(this->stateData->gfxSettings->resolution.height)
 		)
 	);
 
@@ -166,16 +131,11 @@ void SimulationState::initDeferredRender()
 	);
 }
 
-void SimulationState::initMiniMap()
-{
-	this->miniMap = new MiniMap(sf::Vector2u(3840U, 2160U), sf::Vector2u(0.25f, 0.25f), sf::Vector2u(0.75f, 0.75f));
-}
-
 void SimulationState::initPauseMenu()
 {
 	const sf::VideoMode& videoMode = this->stateData->gfxSettings->resolution;
 
-	this->pauseMenu = new PauseMenu(this->stateData->gfxSettings->resolution, this->font);
+	this->pauseMenu = new gui::PauseMenu(this->stateData->gfxSettings->resolution, this->font);
 
 	this->pauseMenu->addText(gui::p2pY(10.f, videoMode), gui::calcCharSize(videoMode, 32), "PAUSED", sf::Color::White);
 
@@ -204,55 +164,48 @@ void SimulationState::updateInput()
 
 void SimulationState::updateView()
 {
-	if (this->mousePosWindow.x < 100 && this->view.getCenter().x > 0) this->view.move(-24.f, 0.f);
-	
-	if (this->mousePosWindow.x > 1820 && this->view.getCenter().x < 3840) this->view.move(24.f, 0.f);
-	
-	if (this->mousePosWindow.y < 100 && this->view.getCenter().y > 0) this->view.move(0.f, -24.f);
-	
-	if (this->mousePosWindow.y > 980 && this->view.getCenter().y < 2160) this->view.move(0.f, 24.f);
-	
-	// zoom:
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) this->view.zoom(0.9);
-	
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) this->view.zoom(1.1);
+	// zoom view:
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) this->view.zoom(0.9f);
 
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) this->view.zoom(1.0f / 0.9f);
 
-	/*
-	this->view.setCenter(
-		std::floor((static_cast<float>(this->mousePosWindow.x) - static_cast<float>(this->stateData->gfxSettings->resolution.width / 2U)) / 10.f),
-		std::floor((static_cast<float>(this->mousePosWindow.y) - static_cast<float>(this->stateData->gfxSettings->resolution.height / 2U)) / 10.f)
+	// move view:
+	unsigned winWidth = this->stateData->gfxSettings->resolution.width;
+	unsigned winHeight = this->stateData->gfxSettings->resolution.height;
+
+	if (this->mousePosWindow.x < winWidth / 10U) 
+		this->view.move(-32.f * this->view.getSize().x / static_cast<float>(winWidth), 0.f);
+	
+	if (this->mousePosWindow.x > winWidth * 9U / 10U) 
+		this->view.move(32.f * this->view.getSize().x / static_cast<float>(winWidth), 0.f);
+	
+	if (this->mousePosWindow.y < winHeight * 10U)
+		this->view.move(0.f, -32.f * this->view.getSize().y / static_cast<float>(winHeight));
+	
+	if (this->mousePosWindow.y > winHeight * 9U / 10U)
+		this->view.move(0.f,  32.f * this->view.getSize().y / static_cast<float>(winHeight));
+
+	// correct zoom:
+	float worldWidth = static_cast<float>(this->stateData->ecosystem->getWorldSize().x);
+	float worldHeight = static_cast<float>(this->stateData->ecosystem->getWorldSize().y);
+	
+	this->view.setSize(
+		std::min(this->view.getSize().x, worldWidth), 
+		std::min(this->view.getSize().y, worldHeight)
 	);
-	*/
 
-	/*
-	if (this->tileMap->getMaxSizeF().x >= this->view.getSize().x)
-	{
-		if (this->view.getCenter().x - this->view.getSize().x / 2.f < 0.f)
-		{
-			this->view.setCenter(0.f + this->view.getSize().x / 2.f, this->view.getCenter().y);
-		}
-		else if (this->view.getCenter().x + this->view.getSize().x / 2.f > this->tileMap->getMaxSizeF().x)
-		{
-			this->view.setCenter(this->tileMap->getMaxSizeF().x - this->view.getSize().x / 2.f, this->view.getCenter().y);
-		}
-	}
-
-	if (this->tileMap->getMaxSizeF().y >= this->view.getSize().y)
-	{
-		if (this->view.getCenter().y - this->view.getSize().y / 2.f < 0.f)
-		{
-			this->view.setCenter(this->view.getCenter().x, 0.f + this->view.getSize().y / 2.f);
-		}
-		else if (this->view.getCenter().y + this->view.getSize().y / 2.f > this->tileMap->getMaxSizeF().y)
-		{
-			this->view.setCenter(this->view.getCenter().x, this->tileMap->getMaxSizeF().y - this->view.getSize().y / 2.f);
-		}
-	}
-	*/
-
-	//this->viewGridPosition.x = static_cast<int>(this->view.getCenter().x) / static_cast<int>(this->stateData->gridSize);
-	//this->viewGridPosition.y = static_cast<int>(this->view.getCenter().y) / static_cast<int>(this->stateData->gridSize);
+	// correct view moving:
+	if (this->view.getCenter().x - this->view.getSize().x / 2.f < 0.f) 
+		this->view.setCenter(this->view.getSize().x / 2.f, this->view.getCenter().y);
+	
+	if (this->view.getCenter().x + this->view.getSize().x / 2.f > worldWidth) 
+		this->view.setCenter(worldWidth - this->view.getSize().x / 2.f, this->view.getCenter().y);
+	
+	if (this->view.getCenter().y - this->view.getSize().y / 2.f < 0.f)
+		this->view.setCenter(this->view.getCenter().x, this->view.getSize().y / 2.f);
+	
+	if (this->view.getCenter().y + this->view.getSize().y / 2.f > worldHeight)
+		this->view.setCenter(this->view.getCenter().x, worldHeight - this->view.getSize().y / 2.f);
 }
 
 void SimulationState::updatePauseMenuButtons()

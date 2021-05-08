@@ -8,15 +8,15 @@ App::App()
 	this->initGraphicsSettings();
 	this->initWindow();
 	this->initKeys();
+	this->initEcosystem();
 	this->initStateData();
 	this->initStates();
-
-	this->stateData.ecosystem = new Ecosystem();
 }
 
 App::~App()
 {
 	delete this->window;
+	delete this->ecosystem;
 
 	while (!this->states.empty())
 	{
@@ -40,15 +40,13 @@ void App::run()
 void App::initVariables()
 {
 	this->window = nullptr;
-
-	this->dt = 0.f;
-
 	this->ecosystem = nullptr;
+	this->dt = 0.f;
 }
 
 void App::initGraphicsSettings()
 {
-	this->gfxSettings.loadFromFile("Config/graphics.ini");
+	this->gfxSettings.loadFromFile("config/graphics.ini");
 }
 
 void App::initWindow()
@@ -96,12 +94,19 @@ void App::initKeys()
 	ifs.close();
 }
 
+void App::initEcosystem()
+{
+	this->ecosystem = nullptr;
+}
+
 void App::initStateData()
 {
 	this->stateData.window = this->window;
 	this->stateData.gfxSettings = &this->gfxSettings;
 	this->stateData.supportedKeys = &this->supportedKeys;
 	this->stateData.states = &this->states;
+	this->stateData.ecosystem = this->ecosystem;
+	this->stateData.events = &this->events;
 }
 
 void App::initStates()
@@ -142,11 +147,14 @@ void App::update()
 
 void App::updateEvents()
 {
-	sf::Event event;
+	this->events.clear();
 
-	while (this->window->pollEvent(event))
-		if (event.type == sf::Event::Closed)
-			this->window->close();
+	while (this->window->pollEvent(this->event))
+	{
+		if (this->event.type == sf::Event::Closed) this->window->close();
+		
+		this->events.push_back(this->event);
+	}
 }
 
 void App::render()

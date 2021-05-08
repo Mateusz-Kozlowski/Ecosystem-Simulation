@@ -32,8 +32,7 @@ void MainMenuState::update(float dt)
 
 void MainMenuState::render(sf::RenderTarget* target)
 {
-	if (!target)
-		target = this->stateData->window;
+	if (!target) target = this->stateData->window;
 
 	target->draw(this->backgroundRect);
 
@@ -44,7 +43,7 @@ void MainMenuState::render(sf::RenderTarget* target)
 // initialization:
 void MainMenuState::initKeybinds()
 {
-	std::string path = "Config/main_menu_keybinds.ini";
+	std::string path = "config/main_menu_keybinds.ini";
 
 	std::ifstream ifs(path);
 
@@ -58,8 +57,6 @@ void MainMenuState::initKeybinds()
 	else throw("ERROR::MAINMENUSTATE::COULD NOT OPEN: " + path);
 
 	ifs.close();
-
-	// here should be keys blockade
 }
 
 void MainMenuState::initBackground()
@@ -80,6 +77,8 @@ void MainMenuState::initBackground()
 void MainMenuState::initFonts()
 {
 	if (!this->font.loadFromFile("resources/fonts/Retroica.ttf")) throw("ERROR::MAINMENUSTATE::COULD NOT LOAD FONT");
+	
+	if (!this->font2.loadFromFile("resources/fonts/CONSOLAB.ttf")) throw("ERROR::MAINMENUSTATE::COULD NOT LOAD FONT");
 }
 
 void MainMenuState::initButtons()
@@ -136,10 +135,10 @@ void MainMenuState::initButtons()
 		gui::p2pY(0.5f, vm), 4
 	);
 
-	this->buttons["EXIT"] = new gui::Button(
+	this->buttons["QUIT"] = new gui::Button(
 		gui::p2pX(38.f, vm), gui::p2pY(79.f, vm),
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
-		this->font, "EXIT", gui::calcCharSize(vm, 32),
+		this->font, "QUIT", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -149,7 +148,7 @@ void MainMenuState::initButtons()
 
 void MainMenuState::initEcosystemText()
 {
-	this->ecosystemText.setFont(this->font);
+	this->ecosystemText.setFont(this->font2);
 	this->ecosystemText.setString("No string has been set for this text");
 	this->ecosystemText.setPosition(50.0f, 50.0f);
 	this->ecosystemText.setCharacterSize(32U);
@@ -174,21 +173,21 @@ void MainMenuState::updateButtons()
 	if (this->buttons["SIMULATE"]->isClicked() && this->stateData->ecosystem)
 		this->stateData->states->push(new SimulationState(this->stateData));
 
+	else if (this->buttons["NEW ECOSYSTEM"]->isClicked())
+		this->stateData->states->push(new EcosystemCreatorState(this->stateData));
+
 	/*
-	else if (this->buttons["SAVE"]->isClicked() && this->stateData->ecosystem)
-		this->stateData->ecosystem->saveToFile();
-	
+	else if (this->buttons["SAVE"]->isClicked())
+		this->stateData->states->push(new EcosystemCreator(this->stateData));
+
 	else if (this->buttons["LOAD"]->isClicked())
-		this->stateData->ecosystem->loadFromFile();
+		this->stateData->states->push(new EcosystemCreator(this->stateData));
 
 	else if (this->buttons["EDIT"]->isClicked())
-		this->stateData->states->push(new EditorState(this->stateData));
-
-	else if (this->buttons["EXIT"]->isClicked())
-		this->endState();
+		this->stateData->states->push(new EcosystemCreator(this->stateData));
 	*/
 
-	else if (this->buttons["EXIT"]->isClicked())
+	else if (this->buttons["QUIT"]->isClicked()) 
 		this->endState();
 }
 
@@ -196,7 +195,7 @@ void MainMenuState::updateEcosystemText()
 {
 	if (!this->stateData->ecosystem) this->ecosystemText.setString("No ecosystem has been selected");
 
-	else this->ecosystemText.setString("Current ecosystem name: " + this->stateData->ecosystem->name);
+	else this->ecosystemText.setString("Current ecosystem name: " + this->stateData->ecosystem->getName());
 }
 
 void MainMenuState::renderButtons(sf::RenderTarget& target)
