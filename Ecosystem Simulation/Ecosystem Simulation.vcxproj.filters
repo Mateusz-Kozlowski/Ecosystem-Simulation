@@ -66,6 +66,7 @@
     <ClCompile Include="src\ScaleSlider.cpp" />
     <ClCompile Include="src\InputField.cpp" />
     <ClCompile Include="src\EcosystemCreatorState.cpp" />
+    <ClCompile Include="src\Individual.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -164,6 +165,7 @@
     <ClInclude Include="src\ScaleSlider.h" />
     <ClInclude Include="src\InputField.h" />
     <ClInclude Include="src\EcosystemCreatorState.h" />
+    <ClInclude Include="src\Individual.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-window-d-2.dll">
@@ -211,6 +213,8 @@
     <None Include="config\simulation_keybinds.ini">
       <Filter>config</Filter>
     </None>
+    <None Include="resources\template files\ecosystem initializator.ini" />
+    <None Include="ecosystems\1\ecosystem initializator.ini" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\Retroica.ttf">

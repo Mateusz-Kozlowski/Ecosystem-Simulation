@@ -167,6 +167,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Individual.cpp" />
     <ClCompile Include="src\EcosystemCreatorState.cpp" />
     <ClCompile Include="src\InputField.cpp" />
     <ClCompile Include="src\Button.cpp" />
@@ -230,6 +231,7 @@
     <ClCompile Include="src\State.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Individual.h" />
     <ClInclude Include="src\EcosystemCreatorState.h" />
     <ClInclude Include="src\InputField.h" />
     <ClInclude Include="src\Button.h" />
@@ -257,7 +259,9 @@
     <None Include="config\main_menu_keybinds.ini" />
     <None Include="config\simulation_keybinds.ini" />
     <None Include="config\supported_keys.ini" />
+    <None Include="ecosystems\1\ecosystem initializator.ini" />
     <None Include="openal32.dll" />
+    <None Include="resources\template files\ecosystem initializator.ini" />
     <None Include="sfml-audio-2.dll" />
     <None Include="sfml-audio-d-2.dll" />
     <None Include="sfml-graphics-2.dll" />

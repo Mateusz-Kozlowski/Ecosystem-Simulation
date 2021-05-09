@@ -136,7 +136,7 @@ void gui::Button::update(sf::Vector2i mousePosWindow)
 	}
 	else if (this->state == ButtonState::BTN_IDLE)
 	{
-		if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow)))
+		if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow))) 
 			this->state = ButtonState::BTN_HOVERED;
 	}
 

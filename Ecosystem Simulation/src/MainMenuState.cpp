@@ -14,6 +14,9 @@ MainMenuState::MainMenuState(StateData* state_data) : State(state_data)
 MainMenuState::~MainMenuState()
 {
 	for (auto it = this->buttons.begin(); it != this->buttons.end(); ++it) delete it->second;
+
+	// TODO: rmv later!!! 
+	delete this->stateData->ecosystem;
 }
 
 // mutators:
@@ -71,7 +74,7 @@ void MainMenuState::initBackground()
 		)
 	);
 
-	this->backgroundRect.setFillColor(sf::Color(32, 32, 32));
+	this->backgroundRect.setFillColor(sf::Color(28, 28, 28));
 }
 
 void MainMenuState::initFonts()
@@ -193,14 +196,14 @@ void MainMenuState::updateButtons()
 
 void MainMenuState::updateEcosystemText()
 {
-	if (!this->stateData->ecosystem) this->ecosystemText.setString("No ecosystem has been selected");
+	if (!this->stateData->ecosystem) this->ecosystemText.setString("Create a new ecosystem or load an existing one");
 
-	else this->ecosystemText.setString("Current ecosystem name: " + this->stateData->ecosystem->getName());
+	else this->ecosystemText.setString("Current ecosystem folder: " + this->stateData->ecosystem->getDirectoryPath());
 }
 
 void MainMenuState::renderButtons(sf::RenderTarget& target)
 {
-	for (auto& it : this->buttons) it.second->render(*this->stateData->window);
+	for (auto& it : this->buttons) it.second->render(target);
 }
 
 void MainMenuState::renderEcosystemText(sf::RenderTarget& target)

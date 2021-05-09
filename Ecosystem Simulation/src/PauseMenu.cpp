@@ -43,13 +43,13 @@ std::unordered_map<std::string, gui::Button*>& PauseMenu::getButtons()
 	return this->buttons;
 }
 
-bool PauseMenu::isButtonClicked(std::string key)
+bool PauseMenu::isButtonClicked(const std::string& key)
 {
 	return this->buttons[key]->isClicked();
 }
 
 void PauseMenu::addButton(
-	std::string key,
+	const std::string& key,
 	float posY,
 	float width, float height,
 	int charSize, std::string text,

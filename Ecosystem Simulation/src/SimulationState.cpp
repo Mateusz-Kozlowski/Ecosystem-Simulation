@@ -26,16 +26,17 @@ void SimulationState::freeze()
 
 void SimulationState::update(float dt)
 {
-	this->updateMousePositions(&this->view);
 	this->updateInput();
 
 	if (!this->paused)
 	{
 		this->updateView();
-		this->stateData->ecosystem->update();
+		this->updateMousePositions(&this->view);
+		this->stateData->ecosystem->update(dt);
 	}
 	else
 	{
+		this->updateMousePositions(&this->view);
 		this->pauseMenu->update(this->mousePosWindow);
 		this->updatePauseMenuButtons();
 	}
@@ -159,7 +160,14 @@ void SimulationState::initPauseMenu()
 // other private methods:
 void SimulationState::updateInput()
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("CLOSE")))) this->paused = true;
+	for (const auto& event : *this->stateData->events)
+	{
+		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Key(this->keybinds.at("CLOSE")))
+		{
+			this->paused = !this->paused;
+			break;
+		}
+	}	
 }
 
 void SimulationState::updateView()
@@ -170,21 +178,20 @@ void SimulationState::updateView()
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) this->view.zoom(1.0f / 0.9f);
 
 	// move view:
-	unsigned winWidth = this->stateData->gfxSettings->resolution.width;
-	unsigned winHeight = this->stateData->gfxSettings->resolution.height;
+	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
-	if (this->mousePosWindow.x < winWidth / 10U) 
-		this->view.move(-32.f * this->view.getSize().x / static_cast<float>(winWidth), 0.f);
+	if (this->mousePosWindow.x < gui::p2pX(10.f, vm)) 
+		this->view.move(-32.f * this->view.getSize().x / static_cast<float>(vm.width), 0.f);
 	
-	if (this->mousePosWindow.x > winWidth * 9U / 10U) 
-		this->view.move(32.f * this->view.getSize().x / static_cast<float>(winWidth), 0.f);
+	if (this->mousePosWindow.x > gui::p2pX(90.f, vm))
+		this->view.move( 32.f * this->view.getSize().x / static_cast<float>(vm.width), 0.f);
 	
-	if (this->mousePosWindow.y < winHeight * 10U)
-		this->view.move(0.f, -32.f * this->view.getSize().y / static_cast<float>(winHeight));
+	if (this->mousePosWindow.y < gui::p2pY(10.f, vm))
+		this->view.move(0.f, -32.f * this->view.getSize().y / static_cast<float>(vm.height));
 	
-	if (this->mousePosWindow.y > winHeight * 9U / 10U)
-		this->view.move(0.f,  32.f * this->view.getSize().y / static_cast<float>(winHeight));
-
+	if (this->mousePosWindow.y > gui::p2pY(90.f, vm))
+		this->view.move(0.f,  32.f * this->view.getSize().y / static_cast<float>(vm.height));
+	
 	// correct zoom:
 	float worldWidth = static_cast<float>(this->stateData->ecosystem->getWorldSize().x);
 	float worldHeight = static_cast<float>(this->stateData->ecosystem->getWorldSize().y);
@@ -209,6 +216,8 @@ void SimulationState::updateView()
 }
 
 void SimulationState::updatePauseMenuButtons()
-{
-	if (this->pauseMenu->isButtonClicked("QUIT")) this->endState();
+{	
+	if (this->pauseMenu->isButtonClicked("CONTINUE")) this->paused = false;
+	
+	else if (this->pauseMenu->isButtonClicked("QUIT")) this->endState();
 }

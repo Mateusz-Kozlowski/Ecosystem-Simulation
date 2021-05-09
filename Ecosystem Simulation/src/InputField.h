@@ -48,5 +48,8 @@ namespace gui
 		sf::Text text;
 
 		float stopwatch;
+
+		// private methods:
+		void updateTextAndCursorPositions();
 	};
 }

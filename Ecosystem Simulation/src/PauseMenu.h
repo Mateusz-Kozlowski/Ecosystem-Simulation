@@ -12,10 +12,10 @@ namespace gui
 
 		std::unordered_map<std::string, gui::Button*>& getButtons();
 
-		bool isButtonClicked(std::string key);
+		bool isButtonClicked(const std::string& key);
 
 		void addButton(
-			std::string key,
+			const std::string& key,
 			float posY,
 			float width, float height,
 			int charSize, std::string text,

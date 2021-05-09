@@ -18,15 +18,20 @@ public:
 	virtual void render(sf::RenderTarget* target = nullptr);
 
 private:
+	sf::RectangleShape backgroundRect;
+
 	sf::Font font;
 	
-	std::map<std::string, gui::Button*> buttons;
+	std::unordered_map<std::string, sf::Text> texts;
+	std::unordered_map<std::string, gui::Button*> buttons;
 
 	gui::InputField* inputField;
 
 	// initialization:
 	virtual void initKeybinds();
+	void initBackground();
 	void initFonts();
+	void initTexts();
 	void initButtons();
 	void initInputField();
 
