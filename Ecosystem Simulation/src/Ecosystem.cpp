@@ -29,11 +29,14 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 	if (!file.is_open()) throw("ERROR::ECOSYSTEM::CANNOT OPEN A FILE: " + folder_path + '/' + Ecosystem::configFileName);
 
+	sf::Vector2f worldSize;
 	std::string temp;
 	unsigned individualsCount = 0U, foodCount = 0U;
 
-	for (int i = 0; i < 4; i++) file >> temp >> individualsCount;
-
+	file >> temp >> worldSize.x;
+	file >> temp >> worldSize.y;
+	file >> temp >> individualsCount;
+	file >> temp >> individualsCount;
 	file >> temp >> foodCount;
 
 	file.close();
@@ -49,7 +52,14 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 	std::stringstream ss;
 	
-	for (float i = 0.f; i < foodCount; i++) ss << 192.f * i << ' ' << 108.f * i << '\n';
+	CrappyNeuralNets::RandomNumbersGenerator generator;
+
+	for (float i = 0.f; i < foodCount; i++) 
+	{
+		Food f;
+		f.setRandomPos(worldSize, generator);
+		ss << f.getPosition().x << ' ' << f.getPosition().y << '\n';
+	}
 
 	foodFile << ss.str();
 
@@ -121,7 +131,7 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 
 	if (!file1.is_open()) std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
 
-	this->food.resize(foodCount);
+	this->food.reserve(foodCount);
 
 	float x, y;
 
@@ -129,7 +139,8 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	{
 		file1 >> x;
 		file1 >> y;
-		this->food.push_back(new Food(x, y));
+		this->food.push_back(new Food());
+		this->food.back()->setPos(x, y);
 	}
 }
 
@@ -165,5 +176,5 @@ void Ecosystem::render(sf::RenderTarget& target)
 	target.draw(this->background);
 
 	for (const auto& individual : this->individuals) individual->render(target);
-	for (const auto& food : this->food) food->render(target);
+	for (auto& food : this->food) food->render(target);
 }
