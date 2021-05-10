@@ -38,7 +38,7 @@ HiddenLayer::HiddenLayer(
 // mutators:
 void HiddenLayer::setDropoutRate(const Scalar& dropout_rate)
 {
-	assert(dropout_rate > 0.0 && dropout_rate < 1.0);
+	assert(dropout_rate > 0.0 && dropout_rate <= 1.0);
 
 	this->dropoutRate = dropout_rate;
 }

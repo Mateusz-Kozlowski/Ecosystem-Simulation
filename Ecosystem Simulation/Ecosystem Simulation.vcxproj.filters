@@ -67,6 +67,8 @@
     <ClCompile Include="src\InputField.cpp" />
     <ClCompile Include="src\EcosystemCreatorState.cpp" />
     <ClCompile Include="src\Individual.cpp" />
+    <ClCompile Include="src\Food.cpp" />
+    <ClCompile Include="src\MovementComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -166,6 +168,8 @@
     <ClInclude Include="src\InputField.h" />
     <ClInclude Include="src\EcosystemCreatorState.h" />
     <ClInclude Include="src\Individual.h" />
+    <ClInclude Include="src\Food.h" />
+    <ClInclude Include="src\MovementComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-window-d-2.dll">

@@ -32,7 +32,7 @@ void NeuralNet::initInputLayer(InputLayer* input_layer)
 
 	// TODO: add info about deallocation
 
-	delete this->inputLayer;
+	if (this->inputLayer) delete this->inputLayer;
 
 	this->inputLayer = input_layer;
 
@@ -103,13 +103,13 @@ bool NeuralNet::loadFromFile(const std::string& file_path)
 	file >> layers_count;
 
 	// deallocate layers memory:
-	delete this->inputLayer;
+	//delete this->inputLayer; // initInputLayer function will deallocate memory
 
 	for (auto& hiddenLayer : this->hiddenLayers) delete hiddenLayer;
 
 	this->hiddenLayers.clear();
 
-	delete this->outputLayer;
+	//delete this->outputLayer; // initOutputLayer function will deallocate memory
 	
 	// create new architecture:
 	for (int i = 0; i < layers_count; i++)
@@ -121,6 +121,8 @@ bool NeuralNet::loadFromFile(const std::string& file_path)
 
 			file >> size;
 			file >> dropoutRate;
+
+			std::cout << "i=" << i << " so it's time to create an input layer\n";
 
 			this->initInputLayer(new InputLayer(size, dropoutRate));
 

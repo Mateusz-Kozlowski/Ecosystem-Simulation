@@ -1,18 +1,38 @@
 #include "stdafx.h"
 #include "Individual.h"
 
-// constructor:
-Individual::Individual(float x, float y)
+// public static methods:
+void Individual::setUpIndividualFolder(const std::string& folder_path)
 {
-	this->shape.setPosition(x, y);
+	std::filesystem::create_directories(folder_path);
+
+	MovementComponent movementComponent;
+
+	movementComponent.saveToFolder(folder_path);
+}
+
+// initialization:
+void Individual::loadFromFolder(const std::string& folder_path)
+{	
+	this->movementComponent.loadFromFolder(folder_path);
+
+	this->shape.setPosition(this->movementComponent.get_x(), this->movementComponent.get_y());
 	this->shape.setFillColor(sf::Color::Red);
 	this->shape.setRadius(8.f);
 	this->shape.setPointCount(16.f);
 }
 
-void Individual::update(float dt)
+// accessors:
+MovementComponent& Individual::getMovementComponent()
 {
-	this->shape.setPosition(this->shape.getPosition().x + 16.f * dt, this->shape.getPosition().y + 9.f * dt);
+	return this->movementComponent;
+}
+
+void Individual::update(float dt, const std::vector<double>& brain_inputs)
+{
+	this->movementComponent.update(dt, brain_inputs);
+
+	this->shape.setPosition(this->movementComponent.get_x(), this->movementComponent.get_y());
 }
 
 void Individual::render(sf::RenderTarget& target)

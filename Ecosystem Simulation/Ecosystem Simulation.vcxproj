@@ -167,6 +167,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\MovementComponent.cpp" />
+    <ClCompile Include="src\Food.cpp" />
     <ClCompile Include="src\Individual.cpp" />
     <ClCompile Include="src\EcosystemCreatorState.cpp" />
     <ClCompile Include="src\InputField.cpp" />
@@ -231,6 +233,8 @@
     <ClCompile Include="src\State.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\MovementComponent.h" />
+    <ClInclude Include="src\Food.h" />
     <ClInclude Include="src\Individual.h" />
     <ClInclude Include="src\EcosystemCreatorState.h" />
     <ClInclude Include="src\InputField.h" />

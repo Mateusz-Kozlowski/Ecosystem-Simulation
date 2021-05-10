@@ -110,8 +110,7 @@ void EcosystemCreatorState::initTexts()
 	
 	instructions << "1. Enter the path of the folder that will contain a new ecosystem.\n";
 	instructions << "   - The path can be relative or absolute.\n";
-	instructions << "   - The folder must already exist.\n";
-	instructions << "   - The ecosystem will be created directly in that folder,\n";
+	instructions << "   - The ecosystem will be created directly in the specified folder,\n";
 	instructions << "     so its path should contain the name of that ecosystem \n";
 	instructions << "     e.g: ecosystems/ecosystem 1\n";
 	instructions << "2. Click CREATE CONFIG FILE button, which will open File Explorer\n";
@@ -159,10 +158,10 @@ void EcosystemCreatorState::initButtons()
 		gui::p2pY(0.5f, vm), 4
 	);
 
-	this->buttons["LOAD THIS ECOSYSTEM"] = new gui::Button(
+	this->buttons["LOAD"] = new gui::Button(
 		gui::p2pX(51.f, vm), gui::p2pY(83.f, vm),
 		gui::p2pX(18.f, vm), gui::p2pY(7.f, vm),
-		this->font, "LOAD THIS ECOSYSTEM", gui::calcCharSize(vm, 32),
+		this->font, "LOAD", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -213,11 +212,15 @@ void EcosystemCreatorState::updateButtons()
 	if (this->buttons["CREATE ECOSYSTEM"]->isClicked())
 	{
 		delete this->stateData->ecosystem;
-		this->stateData->ecosystem = new Ecosystem();
-		this->stateData->ecosystem->create(this->inputField->getInput());
+		Ecosystem::setUpEcosystemFolder(this->inputField->getInput());
 	}
 
-	if (this->buttons["LOAD THIS ECOSYSTEM"]->isClicked()) this->stateData->ecosystem->loadFromFolder(this->inputField->getInput());
+	if (this->buttons["LOAD"]->isClicked())
+	{
+		delete this->stateData->ecosystem;
+		this->stateData->ecosystem = new Ecosystem();
+		this->stateData->ecosystem->loadFromFolder(this->inputField->getInput());
+	}
 	
 	if (this->buttons["QUIT"]->isClicked()) this->endState();
 }

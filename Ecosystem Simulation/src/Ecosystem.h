@@ -1,14 +1,21 @@
 #pragma once
 
-#include "Crappy Neural Nets/NeuralNet.h"
 #include "Individual.h"
+#include "Food.h"
 
 class Ecosystem
 {
-public:
+public:	
+	// public static methods:
+	static void createConfigFile(const std::string& folder_path);
+	static void setUpEcosystemFolder(const std::string& folder_path);
+	
 	// constructor/destructor:
 	Ecosystem();
 	~Ecosystem();
+
+	// initialization:
+	void loadFromFolder(const std::string& folder_path);
 
 	// accessors:
 	const sf::Vector2f& getWorldSize() const;
@@ -17,22 +24,17 @@ public:
 
 	unsigned getBorderThickness() const;
 
-	// public initialization methods:
-	void create(const std::string& folder_path);
-	void loadFromFolder(const std::string& folder_path);
-
 	// other public methods:
 	void update(float dt);
 	void render(sf::RenderTarget& target);
 
-	// static methods:
-	static void createConfigFile(const std::string& directory_path);
-
-	static std::string configFileName;
-
 private:
-	static std::string configFileTemplatePath;
+	// private static variables:
+	static std::string templateConfigFilePath;
+	static std::string configFileName;
+	static std::string foodFileName;
 
+	// other private variables:
 	std::string directoryPath;
 
 	sf::Vector2f worldSize;
@@ -43,4 +45,5 @@ private:
 	sf::RectangleShape background;
 
 	std::vector<Individual*> individuals;
+	std::vector<Food*> food;
 };

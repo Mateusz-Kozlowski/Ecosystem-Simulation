@@ -18,7 +18,7 @@ InputLayer::InputLayer(unsigned inputs_count, const Scalar& dropout_rate)
 // mutators:
 void InputLayer::setDropoutRate(const Scalar& dropout_rate)
 {
-	assert(dropout_rate > 0.0 && dropout_rate < 1.0);
+	assert(dropout_rate > 0.0 && dropout_rate <= 1.0);
 
 	this->dropoutRate = dropout_rate;
 }
