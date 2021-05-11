@@ -25,4 +25,14 @@ private:
 	// initialization:
 	void initBodyRendering(const MovementComponent& movementComponent);
 	void initBrainRendering(const MovementComponent& movementComponent);
+
+	void initBrainBackground(const MovementComponent& movementComponent);
+	void initNeuronsShapes(const MovementComponent& movementComponent);
+
+	// utilities:
+	CrappyNeuralNets::Scalar findMaxActivatedValue(const CrappyNeuralNets::NeuralNet& brain);
+	CrappyNeuralNets::Scalar findMinActivatedValue(const CrappyNeuralNets::NeuralNet& brain);
+
+	void updateNeuronsShapesPositions(const MovementComponent& movementComponent);
+	void updateNeuronsShapesColors(const const CrappyNeuralNets::NeuralNet& brain);
 };

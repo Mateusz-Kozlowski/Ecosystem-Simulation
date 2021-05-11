@@ -5,14 +5,12 @@ MovementComponent::MovementComponent()
 {
 	this->brain.initInputLayer(new CrappyNeuralNets::InputLayer(5U));
 	
-	this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(4U, "fast sigmoid"));
-	this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(3U, "tanh"));
+	this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(4U, "sigmoid"));
+	this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(3U, "sigmoid"));
 	
-	this->brain.initOutputLayer(new CrappyNeuralNets::OutputLayer(2U));
+	this->brain.initOutputLayer(new CrappyNeuralNets::OutputLayer(2U, "sigmoid"));
 
 	this->brain.compile();
-
-	std::cout << "END OF MOVEMENT CONSTRUCOTR\n";
 }
 
 // mutators:
@@ -90,7 +88,7 @@ void MovementComponent::update(float dt, const std::vector<double>& brain_inputs
 	this->a.x = brainOutput[0];
 	this->a.y = brainOutput[1];
 
-	std::cout << this->a.x << ' ' << this->a.y << '\n';
+	//std::cout << this->a.x << ' ' << this->a.y << '\n';
 
 	// update velocity:
 	this->v.x += this->a.x * dt;

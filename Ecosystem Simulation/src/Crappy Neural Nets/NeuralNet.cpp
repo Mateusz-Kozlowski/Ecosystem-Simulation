@@ -105,17 +105,7 @@ bool NeuralNet::loadFromFile(const std::string& file_path)
 	// deallocate layers memory:
 	//delete this->inputLayer; // initInputLayer function will deallocate memory
 
-	for (auto& hiddenLayer : this->hiddenLayers)
-	{
-		std::cout << "activated value and neurons count >-<\n";
-		std::cout << hiddenLayer->getNeuronsCount() << '\n';
-		std::cout << hiddenLayer->getNeurons()[0]->getActivatedValue() << '\n';
-
-		if (hiddenLayer) 
-		{
-			delete hiddenLayer;
-		}
-	}
+	for (auto& hiddenLayer : this->hiddenLayers) if (hiddenLayer) delete hiddenLayer;
 
 	this->hiddenLayers.clear();
 
@@ -131,8 +121,6 @@ bool NeuralNet::loadFromFile(const std::string& file_path)
 
 			file >> size;
 			file >> dropoutRate;
-
-			std::cout << "i=" << i << " so it's time to create an input layer\n";
 
 			this->initInputLayer(new InputLayer(size, dropoutRate));
 

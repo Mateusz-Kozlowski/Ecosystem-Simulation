@@ -177,11 +177,7 @@ void MainMenuState::updateButtons()
 		this->stateData->states->push(new SimulationState(this->stateData));
 
 	else if (this->buttons["NEW ECOSYSTEM"]->isClicked())
-	{
-		std::cout << "PUSH NEW:\n";
 		this->stateData->states->push(new EcosystemCreatorState(this->stateData));
-		std::cout << "PUSHED\n";
-	}
 
 	/*
 	else if (this->buttons["SAVE"]->isClicked())

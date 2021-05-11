@@ -15,11 +15,7 @@ void Individual::setUpIndividualFolder(const std::string& folder_path)
 Individual::Individual()
 	: brainIsRendered(true)
 {
-	std::cout << "NEW INDIVIDUAL <==> NEW MOVEMENT COMPONENT\n";
-
 	this->movementComponent = new MovementComponent();
-
-	std::cout << "v/v\n";
 
 	this->renderingComponent = new RenderingComponent(*this->movementComponent);
 }
