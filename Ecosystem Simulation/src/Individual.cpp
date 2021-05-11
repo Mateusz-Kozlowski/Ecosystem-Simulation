@@ -11,31 +11,53 @@ void Individual::setUpIndividualFolder(const std::string& folder_path)
 	movementComponent.saveToFolder(folder_path);
 }
 
+// constructor:
+Individual::Individual()
+	: brainIsRendered(true)
+{
+	std::cout << "NEW INDIVIDUAL <==> NEW MOVEMENT COMPONENT\n";
+
+	this->movementComponent = new MovementComponent();
+
+	std::cout << "v/v\n";
+
+	this->renderingComponent = new RenderingComponent(*this->movementComponent);
+}
+
+Individual::~Individual()
+{
+	delete this->movementComponent;
+	delete this->renderingComponent;
+}
+
 // initialization:
 void Individual::loadFromFolder(const std::string& folder_path)
 {	
-	this->movementComponent.loadFromFolder(folder_path);
-
-	this->shape.setPosition(this->movementComponent.get_x(), this->movementComponent.get_y());
-	this->shape.setFillColor(sf::Color::Red);
-	this->shape.setRadius(8.f);
-	this->shape.setPointCount(16.f);
+	this->movementComponent->loadFromFolder(folder_path);
 }
 
 // accessors:
 MovementComponent& Individual::getMovementComponent()
 {
-	return this->movementComponent;
+	return *this->movementComponent;
 }
 
+// other public methods:
 void Individual::update(float dt, const std::vector<double>& brain_inputs)
 {
-	this->movementComponent.update(dt, brain_inputs);
+	this->movementComponent->update(dt, brain_inputs);
 
-	this->shape.setPosition(this->movementComponent.get_x(), this->movementComponent.get_y());
+	this->renderingComponent->updateBodyRedering(*this->movementComponent);
+	
+	if (this->brainIsRendered) this->renderingComponent->updateBrainRendering(*this->movementComponent);
 }
 
-void Individual::render(sf::RenderTarget& target)
+void Individual::renderBody(sf::RenderTarget& target)
 {
-	target.draw(this->shape);
+	this->renderingComponent->renderBody(target);
+}
+
+void Individual::renderBrain(sf::RenderTarget& target)
+{
+	if (this->brainIsRendered) this->renderingComponent->renderBrain(target);
 }

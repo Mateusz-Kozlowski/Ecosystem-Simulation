@@ -11,6 +11,8 @@ MovementComponent::MovementComponent()
 	this->brain.initOutputLayer(new CrappyNeuralNets::OutputLayer(2U));
 
 	this->brain.compile();
+
+	std::cout << "END OF MOVEMENT CONSTRUCOTR\n";
 }
 
 // mutators:

@@ -43,7 +43,7 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 	// create folders for individuals:
 	for (int i = 0; i < individualsCount; i++)
-		Individual::setUpIndividualFolder(folder_path + '/' + std::to_string(i) + "individual");
+		Individual::setUpIndividualFolder(folder_path + '/' + "individual" + std::to_string(i));
 
 	// food file:
 	std::ofstream foodFile(folder_path + '/' + Ecosystem::foodFileName);
@@ -118,7 +118,7 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	for (int i = 0; i < individualsCount; i++)
 	{	
 		this->individuals.push_back(new Individual());
-		this->individuals[i]->loadFromFolder(folder_path + '/' + std::to_string(i) + "individual");
+		this->individuals[i]->loadFromFolder(folder_path + '/' + "individual" + std::to_string(i));
 
 		// TODO: rmv later!:
 		this->individuals[i]->getMovementComponent().set_x(i * 192.f);
@@ -175,6 +175,7 @@ void Ecosystem::render(sf::RenderTarget& target)
 	target.draw(this->border);
 	target.draw(this->background);
 
-	for (const auto& individual : this->individuals) individual->render(target);
-	for (auto& food : this->food) food->render(target);
+	for (const auto& individual : this->individuals) individual->renderBody(target);
+	for (const auto& food : this->food) food->render(target);
+	for (const auto& individual : this->individuals) individual->renderBrain(target);
 }

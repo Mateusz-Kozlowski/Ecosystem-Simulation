@@ -62,13 +62,30 @@
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\MainMenuState.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
-    <ClCompile Include="src\Button.cpp" />
-    <ClCompile Include="src\ScaleSlider.cpp" />
-    <ClCompile Include="src\InputField.cpp" />
-    <ClCompile Include="src\EcosystemCreatorState.cpp" />
-    <ClCompile Include="src\Individual.cpp" />
-    <ClCompile Include="src\Food.cpp" />
-    <ClCompile Include="src\MovementComponent.cpp" />
+    <ClCompile Include="src\Button.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EcosystemCreatorState.cpp">
+      <Filter>states</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Food.cpp">
+      <Filter>ecosystem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Individual.cpp">
+      <Filter>ecosystem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InputField.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MovementComponent.cpp">
+      <Filter>ecosystem\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderingComponent.cpp">
+      <Filter>ecosystem\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ScaleSlider.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -106,6 +123,15 @@
     </Filter>
     <Filter Include="ecosystem">
       <UniqueIdentifier>{5e38ab68-3f37-4336-8db8-35876a97bf71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ecosystems">
+      <UniqueIdentifier>{583b4a34-0c51-47fe-bb41-e8f154c2d68b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ecosystem\components">
+      <UniqueIdentifier>{50a56814-f21a-456a-a1ca-a211bfa880be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\template files">
+      <UniqueIdentifier>{b3b481b5-789f-408e-8ace-81b978afa1e9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -163,13 +189,30 @@
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\stdafx.h" />
-    <ClInclude Include="src\Button.h" />
-    <ClInclude Include="src\ScaleSlider.h" />
-    <ClInclude Include="src\InputField.h" />
-    <ClInclude Include="src\EcosystemCreatorState.h" />
-    <ClInclude Include="src\Individual.h" />
-    <ClInclude Include="src\Food.h" />
-    <ClInclude Include="src\MovementComponent.h" />
+    <ClInclude Include="src\Button.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EcosystemCreatorState.h">
+      <Filter>states</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Food.h">
+      <Filter>ecosystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Individual.h">
+      <Filter>ecosystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\InputField.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MovementComponent.h">
+      <Filter>ecosystem\components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderingComponent.h">
+      <Filter>ecosystem\components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ScaleSlider.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-window-d-2.dll">
@@ -217,13 +260,16 @@
     <None Include="config\simulation_keybinds.ini">
       <Filter>config</Filter>
     </None>
-    <None Include="resources\template files\ecosystem initializator.ini" />
-    <None Include="ecosystems\1\ecosystem initializator.ini" />
+    <None Include="resources\template files\ecosystem initializator.ini">
+      <Filter>resources\template files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\Retroica.ttf">
       <Filter>resources\fonts</Filter>
     </Font>
-    <Font Include="resources\fonts\CONSOLAB.ttf" />
+    <Font Include="resources\fonts\CONSOLAB.ttf">
+      <Filter>resources\fonts</Filter>
+    </Font>
   </ItemGroup>
 </Project>
