@@ -8,6 +8,9 @@ void Individual::setUpIndividualFolder(const std::string& folder_path)
 
 	MovementComponent movementComponent;
 
+	movementComponent.set_x(1920.f);
+	movementComponent.set_y(1080.f);
+
 	movementComponent.saveToFolder(folder_path);
 }
 
@@ -33,9 +36,21 @@ void Individual::loadFromFolder(const std::string& folder_path)
 }
 
 // accessors:
-MovementComponent& Individual::getMovementComponent()
+sf::Vector2f Individual::getPos() const
 {
-	return *this->movementComponent;
+	return { this->movementComponent->get_x(), this->movementComponent->get_y() };
+}
+
+sf::Vector2f Individual::getVelocity() const
+{
+	return { this->movementComponent->get_vx(), this->movementComponent->get_vy() };
+}
+
+// mutators:
+void Individual::setVelocity(const sf::Vector2f& v)
+{
+	this->movementComponent->set_vx(v.x);
+	this->movementComponent->set_vy(v.y);
 }
 
 // other public methods:
@@ -44,7 +59,7 @@ void Individual::update(float dt, const std::vector<double>& brain_inputs)
 	this->movementComponent->update(dt, brain_inputs);
 
 	this->renderingComponent->updateBodyRedering(*this->movementComponent);
-	
+
 	if (this->brainIsRendered) this->renderingComponent->updateBrainRendering(*this->movementComponent);
 }
 

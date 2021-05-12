@@ -6,7 +6,8 @@ using namespace CrappyNeuralNets;
 // constructor:
 RandomNumbersGenerator::RandomNumbersGenerator()
 {
-	srand(static_cast<unsigned>(time(nullptr)));
+	// TODO: deal with it in a some way:
+	// srand(static_cast<unsigned>(time(nullptr)));
 }
 
 // accessors:

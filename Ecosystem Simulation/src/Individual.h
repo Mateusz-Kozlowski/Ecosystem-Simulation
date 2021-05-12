@@ -14,10 +14,13 @@ public:
 
 	// initialization:
 	void loadFromFolder(const std::string& folder_path);
-	
+
 	// accessors:
-	// TODO: add const before:
-	MovementComponent& getMovementComponent();
+	sf::Vector2f getPos() const;
+	sf::Vector2f getVelocity() const;
+
+	// mutators:
+	void setVelocity(const sf::Vector2f& v);
 
 	// other public methods:
 	void update(float dt, const std::vector<double>& brain_inputs);

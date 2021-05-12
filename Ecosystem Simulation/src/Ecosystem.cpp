@@ -119,10 +119,6 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	{	
 		this->individuals.push_back(new Individual());
 		this->individuals[i]->loadFromFolder(folder_path + '/' + "individual" + std::to_string(i));
-
-		// TODO: rmv later!:
-		this->individuals[i]->getMovementComponent().set_x(i * 192.f);
-		this->individuals[i]->getMovementComponent().set_y(i * 108.f);
 	}
 
 	// food:
@@ -168,6 +164,16 @@ void Ecosystem::update(float dt)
 	for (int i = 0; i < 5; i++) brainInputs.push_back(0.0);
 
 	for (auto& individual : this->individuals) individual->update(dt, brainInputs);
+	
+	// avoid going beyond the world:
+	for (auto& individual : this->individuals)
+	{
+		if (individual->getPos().x < 0.f || individual->getPos().x > this->worldSize.x)
+			individual->setVelocity({ -individual->getVelocity().x, individual->getVelocity().y });
+		
+		if (individual->getPos().y < 0.f || individual->getPos().y > this->worldSize.y)
+			individual->setVelocity({ individual->getVelocity().x, -individual->getVelocity().y });
+	}
 }
 
 void Ecosystem::render(sf::RenderTarget& target)
