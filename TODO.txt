@@ -29,5 +29,6 @@ smart pointers!
 cloning
 Species class
 editor state?
-maybe better way of dealing with
+add a better way of dealing with random numbers generator
+way if a user clicked load button without creating a new ecosystem in creator state?
 Crappy Neural Nets!
