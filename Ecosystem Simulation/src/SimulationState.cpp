@@ -32,7 +32,7 @@ void SimulationState::update(float dt)
 	{
 		this->updateView();
 		this->updateMousePositions(&this->view);
-		this->stateData->ecosystem->update(dt);
+		this->stateData->ecosystem->update(dt, *this->stateData->events, this->mousePosView);
 	}
 	else
 	{

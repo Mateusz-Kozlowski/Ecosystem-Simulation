@@ -206,7 +206,8 @@ void EcosystemCreatorState::updateButtons()
 	{
 		Ecosystem::createConfigFile(this->inputField->getInput());
 		
-		system("explorer");
+		// TODO: add open File Explorer button!
+		//system("explorer");
 	}
 
 	if (this->buttons["CREATE ECOSYSTEM"]->isClicked())

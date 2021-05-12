@@ -1,7 +1,6 @@
-add real borders!
-by default hide brain visualizations
-add ability to open brain panel
-moving te panel so that it's never beyond the wolrd
+bouncing of the right and the bottom bands does not work
+add nn viewer class and then (probably) rmv rendering component class
+moving te panel so that it's never beyond the world
 change activation functions
 create ecosystem with more fooood
 random start positions
@@ -10,6 +9,7 @@ add hp, which is connected to the gui, and movement component (P = k * sqrt(ax^2
 add dying
 how to connect dying with std::vector of individuals? pointers of individuals? 
 	and swaping the last individual with the dying one? maybe...
+food should occur in world borders :)
 eating
 make sure that a food isn't eaten twice (or even worse)
 	(2 individuals can reach a food at the same which can cause an issue)
@@ -30,5 +30,6 @@ cloning
 Species class
 editor state?
 add a better way of dealing with random numbers generator
+add open file explorer button!
 way if a user clicked load button without creating a new ecosystem in creator state?
 Crappy Neural Nets!

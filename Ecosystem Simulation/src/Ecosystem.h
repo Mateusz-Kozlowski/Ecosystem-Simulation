@@ -25,7 +25,7 @@ public:
 	unsigned getBorderThickness() const;
 
 	// other public methods:
-	void update(float dt);
+	void update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mousePosView);
 	void render(sf::RenderTarget& target);
 
 private:

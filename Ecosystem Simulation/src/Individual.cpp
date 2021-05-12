@@ -16,11 +16,13 @@ void Individual::setUpIndividualFolder(const std::string& folder_path)
 
 // constructor:
 Individual::Individual()
-	: brainIsRendered(true)
+	: brainIsRendered(false)
 {
 	this->movementComponent = new MovementComponent();
 
 	this->renderingComponent = new RenderingComponent(*this->movementComponent);
+
+	this->radius = 8.f;
 }
 
 Individual::~Individual()
@@ -46,11 +48,26 @@ sf::Vector2f Individual::getVelocity() const
 	return { this->movementComponent->get_vx(), this->movementComponent->get_vy() };
 }
 
+float Individual::getRadius() const
+{
+	return this->radius;
+}
+
+bool Individual::isBrainRendered() const
+{
+	return this->brainIsRendered;
+}
+
 // mutators:
 void Individual::setVelocity(const sf::Vector2f& v)
 {
 	this->movementComponent->set_vx(v.x);
 	this->movementComponent->set_vy(v.y);
+}
+
+void Individual::setBrainIsRendered(bool brain_is_rendered)
+{
+	this->brainIsRendered = brain_is_rendered;
 }
 
 // other public methods:

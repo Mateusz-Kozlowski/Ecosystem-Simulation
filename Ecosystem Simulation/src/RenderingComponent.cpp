@@ -12,6 +12,7 @@ RenderingComponent::RenderingComponent(const MovementComponent& movementComponen
 void RenderingComponent::updateBodyRedering(const MovementComponent& movementComponent)
 {
 	this->bodyShape.setPosition(movementComponent.get_x(), movementComponent.get_y());
+	this->bodyShape.setFillColor(sf::Color::Red);
 }
 
 void RenderingComponent::updateBrainRendering(const MovementComponent& movementComponent)
@@ -40,6 +41,7 @@ void RenderingComponent::initBodyRendering(const MovementComponent& movementComp
 {
 	this->bodyShape.setPointCount(16);
 	this->bodyShape.setRadius(8.f);
+	this->bodyShape.setOrigin(8.f, 8.f);
 }
 
 void RenderingComponent::initBrainRendering(const MovementComponent& movementComponent)

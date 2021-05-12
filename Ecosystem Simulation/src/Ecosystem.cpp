@@ -157,7 +157,7 @@ unsigned Ecosystem::getBorderThickness() const
 }
 
 // other public methods:
-void Ecosystem::update(float dt)
+void Ecosystem::update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mousePosView)
 {
 	std::vector<double> brainInputs;
 
@@ -168,12 +168,34 @@ void Ecosystem::update(float dt)
 	// avoid going beyond the world:
 	for (auto& individual : this->individuals)
 	{
-		if (individual->getPos().x < 0.f || individual->getPos().x > this->worldSize.x)
+		if (individual->getPos().x < this->borderThickness || individual->getPos().x > this->worldSize.x - this->borderThickness)
 			individual->setVelocity({ -individual->getVelocity().x, individual->getVelocity().y });
 		
-		if (individual->getPos().y < 0.f || individual->getPos().y > this->worldSize.y)
+		if (individual->getPos().y < this->borderThickness || individual->getPos().y > this->worldSize.y - this->borderThickness)
 			individual->setVelocity({ individual->getVelocity().x, -individual->getVelocity().y });
 	}
+
+	// showing brain:
+	bool temp = false;
+
+	for (const auto& event : events)
+		if (event.type == sf::Event::MouseButtonPressed)
+		{
+			temp = true;
+			break;
+		}
+
+	if (temp)
+		for (auto& individual : this->individuals)
+		{
+			float a = individual->getPos().x - mousePosView.x;
+			float b = individual->getPos().y - mousePosView.y;
+
+			float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+			if (individual->getRadius() >= distance)
+				individual->setBrainIsRendered(!individual->isBrainRendered());
+		}
 }
 
 void Ecosystem::render(sf::RenderTarget& target)
@@ -182,6 +204,10 @@ void Ecosystem::render(sf::RenderTarget& target)
 	target.draw(this->background);
 
 	for (const auto& individual : this->individuals) individual->renderBody(target);
+	
 	for (const auto& food : this->food) food->render(target);
-	for (const auto& individual : this->individuals) individual->renderBrain(target);
+	
+	for (const auto& individual : this->individuals)
+		if (individual->isBrainRendered())
+			individual->renderBrain(target);
 }
