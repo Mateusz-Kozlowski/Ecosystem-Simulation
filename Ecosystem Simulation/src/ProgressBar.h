@@ -18,6 +18,7 @@ public:
 
 	// mutators:
 	void increaseValue(float change);
+	void setPos(const sf::Vector2f& new_pos);
 
 	// other public methods:
 	void render(sf::RenderTarget& target) const;
@@ -37,5 +38,5 @@ private:
 	// private utilities:
 	void avoidGoingBeyondRange();
 
-	void updateProgressRect();
+	void updateProgressRectSize();
 };

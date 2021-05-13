@@ -171,7 +171,7 @@
     <ClCompile Include="src\RenderingComponent.cpp" />
     <ClCompile Include="src\MovementComponent.cpp" />
     <ClCompile Include="src\Food.cpp" />
-    <ClCompile Include="src\Individual.cpp" />
+    <ClCompile Include="src\Animal.cpp" />
     <ClCompile Include="src\EcosystemCreatorState.cpp" />
     <ClCompile Include="src\InputField.cpp" />
     <ClCompile Include="src\Button.cpp" />
@@ -239,7 +239,7 @@
     <ClInclude Include="src\RenderingComponent.h" />
     <ClInclude Include="src\MovementComponent.h" />
     <ClInclude Include="src\Food.h" />
-    <ClInclude Include="src\Individual.h" />
+    <ClInclude Include="src\Animal.h" />
     <ClInclude Include="src\EcosystemCreatorState.h" />
     <ClInclude Include="src\InputField.h" />
     <ClInclude Include="src\Button.h" />

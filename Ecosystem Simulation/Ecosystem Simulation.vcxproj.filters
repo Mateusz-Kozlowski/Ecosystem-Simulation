@@ -71,7 +71,7 @@
     <ClCompile Include="src\Food.cpp">
       <Filter>ecosystem</Filter>
     </ClCompile>
-    <ClCompile Include="src\Individual.cpp">
+    <ClCompile Include="src\Animal.cpp">
       <Filter>ecosystem</Filter>
     </ClCompile>
     <ClCompile Include="src\InputField.cpp">
@@ -201,7 +201,7 @@
     <ClInclude Include="src\Food.h">
       <Filter>ecosystem</Filter>
     </ClInclude>
-    <ClInclude Include="src\Individual.h">
+    <ClInclude Include="src\Animal.h">
       <Filter>ecosystem</Filter>
     </ClInclude>
     <ClInclude Include="src\InputField.h">

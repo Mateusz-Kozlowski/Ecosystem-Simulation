@@ -84,7 +84,7 @@ void SimulationState::initKeybinds()
 void SimulationState::initVariables()
 {
 	this->pauseMenu = nullptr;
-	this->paused = false;
+	this->paused = true;
 }
 
 void SimulationState::initFonts()
@@ -99,17 +99,12 @@ void SimulationState::initEcosystem()
 
 void SimulationState::initView()
 {
-	this->view.setSize(
-		sf::Vector2f(
-			static_cast<float>(this->stateData->gfxSettings->resolution.width),
-			static_cast<float>(this->stateData->gfxSettings->resolution.height)
-		)
-	);
+	this->view.setSize(this->stateData->ecosystem->getWorldSize());
 
 	this->view.setCenter(
 		sf::Vector2f(
-			static_cast<float>(this->stateData->gfxSettings->resolution.width) / 2.f,
-			static_cast<float>(this->stateData->gfxSettings->resolution.height) / 2.f
+			this->stateData->ecosystem->getWorldSize().x / 2.f,
+			this->stateData->ecosystem->getWorldSize().y / 2.f
 		)
 	);
 }

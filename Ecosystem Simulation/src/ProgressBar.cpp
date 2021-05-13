@@ -10,7 +10,7 @@ ProgressBar::ProgressBar(
 	:	range(range), value(defaultValue)
 {
 	this->initBackground(x, y, width, height, backgroundColor);
-	this->initProgress(x, y, width, height, progressColor);
+	this->initProgress(progressColor);
 }
 
 // accessors:
@@ -26,7 +26,13 @@ void ProgressBar::increaseValue(float change)
 
 	this->avoidGoingBeyondRange();
 
-	this->updateProgressRect();
+	this->updateProgressRectSize();
+}
+
+void ProgressBar::setPos(const sf::Vector2f& new_pos)
+{
+	this->backgroundRect.setPosition(new_pos);
+	this->progressRect.setPosition(new_pos);
 }
 
 // other public methods:
@@ -48,6 +54,7 @@ void ProgressBar::initBackground(float x, float y, float width, float height, sf
 void ProgressBar::initProgress(sf::Color progressColor)
 {
 	this->progressRect.setPosition(this->backgroundRect.getPosition().x, this->backgroundRect.getPosition().y);
+	this->updateProgressRectSize(); // sets size
 	this->progressRect.setFillColor(progressColor);
 }
 
@@ -59,7 +66,7 @@ void ProgressBar::avoidGoingBeyondRange()
 	else if (this->value < this->range.x) this->value = this->range.x;
 }
 
-void ProgressBar::updateProgressRect()
+void ProgressBar::updateProgressRectSize()
 {
 	this->progressRect.setSize(
 		sf::Vector2f(

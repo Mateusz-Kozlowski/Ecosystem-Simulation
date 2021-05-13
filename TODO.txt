@@ -1,16 +1,9 @@
-rename individual with animal!!!
+fix bug with preventing from going beyond the world (not change a sign of a vector but make it correct)
+add consts to renders where it is possible (and also to other places)
 add nn viewer class and then (probably) rmv rendering component class
 moving te panel so that it's never beyond the world
 change activation functions
-create ecosystem with more fooood
 random start positions
-add hp gui
-add hp, which is connected to the gui, and movement component (P = k * sqrt(ax^2 + ay^2) * sqrt(vx^2 + vy^2))
-add dying
-how to connect dying with std::vector of individuals? pointers of individuals? 
-	and swaping the last individual with the dying one? maybe...
-food should occur in world borders :)
-eating
 make sure that a food isn't eaten twice (or even worse)
 	(2 individuals can reach a food at the same which can cause an issue)
 non 0 brain inputs:
@@ -25,6 +18,7 @@ hiding neurons and weight if there is to many ... neurons in a layers
 loading "from main menu" (loading state will be neccessairly)
 saving  "from main menu" (loading state will be neccessairly)
 check if the string of that text in the left-top corner makes sense
+change pause menu (maybe buttons like hide all brain (and show) and so on)
 smart pointers!
 cloning
 Species class

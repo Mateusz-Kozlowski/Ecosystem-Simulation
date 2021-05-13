@@ -15,10 +15,13 @@ void Food::setPos(float x, float y)
 	this->shape.setPosition(x, y);
 }
 
-void Food::setRandomPos(const sf::Vector2f& worldSize, CrappyNeuralNets::RandomNumbersGenerator& generator)
+void Food::setRandomPos(
+	const sf::Vector2f& worldSize, 
+	float bordersThickness,
+	CrappyNeuralNets::RandomNumbersGenerator& generator)
 {
-	std::pair<unsigned, unsigned> px = { 0U, worldSize.x };
-	std::pair<unsigned, unsigned> py = { 0U, worldSize.y };
+	std::pair<unsigned, unsigned> px = { bordersThickness, worldSize.x - bordersThickness };
+	std::pair<unsigned, unsigned> py = { bordersThickness, worldSize.y - bordersThickness };
 
 	float x = generator.getRandomNumber(px);
 	float y = generator.getRandomNumber(py);
@@ -32,8 +35,13 @@ const sf::Vector2f& Food::getPosition() const
 	return this->shape.getPosition();
 }
 
+float Food::getRadius() const
+{
+	return this->shape.getRadius();
+}
+
 // other public methods:
-void Food::render(sf::RenderTarget& target)
+void Food::render(sf::RenderTarget& target) const
 {
 	target.draw(this->shape);
 }

@@ -29,21 +29,22 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 	if (!file.is_open()) throw("ERROR::ECOSYSTEM::CANNOT OPEN A FILE: " + folder_path + '/' + Ecosystem::configFileName);
 
-	sf::Vector2f worldSize;
 	std::string temp;
-	unsigned individualsCount = 0U, foodCount = 0U;
+	sf::Vector2f worldSize;
+	float borderThickness;
+	unsigned animalsCount = 0U, foodCount = 0U;
 
 	file >> temp >> worldSize.x;
 	file >> temp >> worldSize.y;
-	file >> temp >> individualsCount;
-	file >> temp >> individualsCount;
+	file >> temp >> borderThickness;
+	file >> temp >> animalsCount;
 	file >> temp >> foodCount;
 
 	file.close();
 
-	// create folders for individuals:
-	for (int i = 0; i < individualsCount; i++)
-		Individual::setUpIndividualFolder(folder_path + '/' + "individual" + std::to_string(i));
+	// create folders for animals:
+	for (int i = 0; i < animalsCount; i++)
+		Animal::setUpAnimalFolder(folder_path + '/' + "animal" + std::to_string(i));
 
 	// food file:
 	std::ofstream foodFile(folder_path + '/' + Ecosystem::foodFileName);
@@ -57,7 +58,7 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 	for (float i = 0.f; i < foodCount; i++) 
 	{
 		Food f;
-		f.setRandomPos(worldSize, generator);
+		f.setRandomPos(worldSize, borderThickness, generator);
 		ss << f.getPosition().x << ' ' << f.getPosition().y << '\n';
 	}
 
@@ -75,7 +76,7 @@ Ecosystem::Ecosystem()
 
 Ecosystem::~Ecosystem()
 {
-	for (auto& individual : this->individuals) delete individual;
+	for (auto& animal : this->animals) delete animal;
 	
 	for (auto& food : this->food) delete food;
 }
@@ -91,12 +92,12 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	if (!file.is_open()) std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
 
 	std::string temp;
-	unsigned individualsCount = 0U, foodCount = 0U;
+	unsigned animalsCount = 0U, foodCount = 0U;
 
 	file >> temp >> this->worldSize.x;
 	file >> temp >> this->worldSize.y;
 	file >> temp >> this->borderThickness;
-	file >> temp >> individualsCount;
+	file >> temp >> animalsCount;
 	file >> temp >> foodCount;
 
 	file.close();
@@ -114,11 +115,11 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	);
 	this->background.setPosition(this->borderThickness, this->borderThickness);
 
-	// individuals:
-	for (int i = 0; i < individualsCount; i++)
+	// animals:
+	for (int i = 0; i < animalsCount; i++)
 	{	
-		this->individuals.push_back(new Individual());
-		this->individuals[i]->loadFromFolder(folder_path + '/' + "individual" + std::to_string(i));
+		this->animals.push_back(new Animal());
+		this->animals[i]->loadFromFolder(folder_path + '/' + "animal" + std::to_string(i));
 	}
 
 	// food:
@@ -159,21 +160,53 @@ unsigned Ecosystem::getBorderThickness() const
 // other public methods:
 void Ecosystem::update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mousePosView)
 {
-	std::vector<double> brainInputs;
+	for (const auto& animal : this->animals) animal->update(dt, getInputsForBrain(*animal));
 
-	for (int i = 0; i < 5; i++) brainInputs.push_back(0.0);
-
-	for (auto& individual : this->individuals) individual->update(dt, brainInputs);
-	
 	// avoid going beyond the world:
-	for (auto& individual : this->individuals)
+	for (auto& animal : this->animals)
 	{
-		if (individual->getPos().x < this->borderThickness || individual->getPos().x > this->worldSize.x - this->borderThickness)
-			individual->setVelocity({ -individual->getVelocity().x, individual->getVelocity().y });
+		bool crossedLeftBorder = animal->getPos().x < this->borderThickness + animal->getRadius();
+		bool crossedRightBorder = animal->getPos().x > this->worldSize.x - this->borderThickness - animal->getRadius();
+
+		if (crossedLeftBorder || crossedRightBorder)
+			animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
 		
-		if (individual->getPos().y < this->borderThickness || individual->getPos().y > this->worldSize.y - this->borderThickness)
-			individual->setVelocity({ individual->getVelocity().x, -individual->getVelocity().y });
+		bool crossedTopBorder = animal->getPos().y < this->borderThickness + animal->getRadius();
+		bool crossedBottomBorder = animal->getPos().y > this->worldSize.y - this->borderThickness - animal->getRadius();
+
+		if (crossedTopBorder || crossedBottomBorder)
+			animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
 	}
+
+	// eat food!:
+	// TODO: come up with a new way of generating random numbers:
+	CrappyNeuralNets::RandomNumbersGenerator generator;
+
+	for (int i=0; i<this->animals.size(); i++)
+	{
+		for (int j=0; j<this->food.size(); j++)
+		{
+			float a = this->animals[i]->getPos().x - this->food[j]->getPosition().x;
+			float b = this->animals[i]->getPos().y - this->food[j]->getPosition().y;
+
+			float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+			if (distance <= this->animals[i]->getRadius() + this->food[j]->getRadius())
+			{
+				this->animals[i]->setHp(1000.f);
+				this->food[j]->setRandomPos(this->worldSize, this->borderThickness, generator);
+			}
+		}
+	}
+
+	// kill animals that aren't alive (even if this sentense doesn't make sense ;)) 
+	for (int i = 0; i < this->animals.size(); i++)
+		if (!this->animals[i]->isAlive())
+		{
+			delete this->animals[i];
+			std::swap(this->animals[i], this->animals.back());
+			this->animals.pop_back();
+		}
 
 	// showing brain:
 	bool temp = false;
@@ -186,15 +219,15 @@ void Ecosystem::update(float dt, const std::vector<sf::Event>& events, const sf:
 		}
 
 	if (temp)
-		for (auto& individual : this->individuals)
+		for (auto& animal : this->animals)
 		{
-			float a = individual->getPos().x - mousePosView.x;
-			float b = individual->getPos().y - mousePosView.y;
+			float a = animal->getPos().x - mousePosView.x;
+			float b = animal->getPos().y - mousePosView.y;
 
 			float distance = sqrt(pow(a, 2) + pow(b, 2));
 
-			if (individual->getRadius() >= distance)
-				individual->setBrainIsRendered(!individual->isBrainRendered());
+			if (animal->getRadius() >= distance)
+				animal->setBrainIsRendered(!animal->isBrainRendered());
 		}
 }
 
@@ -203,11 +236,62 @@ void Ecosystem::render(sf::RenderTarget& target)
 	target.draw(this->border);
 	target.draw(this->background);
 
-	for (const auto& individual : this->individuals) individual->renderBody(target);
+	for (const auto& animal : this->animals) animal->renderBody(target);
 	
 	for (const auto& food : this->food) food->render(target);
 	
-	for (const auto& individual : this->individuals)
-		if (individual->isBrainRendered())
-			individual->renderBrain(target);
+	for (const auto& animal : this->animals)
+		if (animal->isBrainRendered())
+			animal->renderBrain(target);
+}
+
+// private methods:
+// private utilities:
+std::vector<CrappyNeuralNets::Scalar> Ecosystem::getInputsForBrain(const Animal& animal)
+{
+	std::vector<CrappyNeuralNets::Scalar> inputsForBrain;
+	
+	inputsForBrain.reserve(5);
+
+	if (animal.getVelocity().x == 0.f && animal.getVelocity().y == 0.f)
+	{
+		inputsForBrain.push_back(0.f);
+		inputsForBrain.push_back(0.f);
+	}
+	else
+	{
+		inputsForBrain.push_back(animal.getVelocity().x / (abs(animal.getVelocity().x) + abs(animal.getVelocity().y)));
+		inputsForBrain.push_back(animal.getVelocity().y / (abs(animal.getVelocity().x) + abs(animal.getVelocity().y)));
+	}
+	
+	inputsForBrain.push_back(animal.getHp() / 1000.f);
+
+	Food* theNearestFood = findTheNearestFood(animal);
+	
+	inputsForBrain.push_back(this->food.size() * (theNearestFood->getPosition().x - animal.getPos().x) / this->worldSize.x);
+	inputsForBrain.push_back(this->food.size() * (theNearestFood->getPosition().y - animal.getPos().y) / this->worldSize.y);
+
+	return inputsForBrain;
+}
+
+Food* Ecosystem::findTheNearestFood(const Animal& animal)
+{
+	Food* theNearestFood = this->food[0];
+	float theSmallestDistance = INFINITY;
+
+	for (const auto& it : this->food)
+	{
+		float a = animal.getPos().x - it->getPosition().x;
+		float b = animal.getPos().y - it->getPosition().y;
+
+		float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+		if (distance < theSmallestDistance)
+		{
+			theSmallestDistance = distance;
+			theNearestFood = it;
+		}
+	}
+	
+	return theNearestFood;
 }

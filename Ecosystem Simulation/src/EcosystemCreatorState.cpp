@@ -148,6 +148,19 @@ void EcosystemCreatorState::initButtons()
 		gui::p2pY(0.5f, vm), 4
 	);
 
+	// TODO: it will be added later:
+	/*
+	this->buttons["OPEN FILE EXPLORER"] = new gui::Button(
+		gui::p2pX(11.f, vm), gui::p2pY(83.f, vm),
+		gui::p2pX(18.f, vm), gui::p2pY(7.f, vm),
+		this->font, "CREATE CONFIG FILE", gui::calcCharSize(vm, 30),
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, vm), 4
+	);
+	*/
+
 	this->buttons["CREATE ECOSYSTEM"] = new gui::Button(
 		gui::p2pX(31.f, vm), gui::p2pY(83.f, vm),
 		gui::p2pX(18.f, vm), gui::p2pY(7.f, vm),

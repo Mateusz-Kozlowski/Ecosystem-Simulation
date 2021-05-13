@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Individual.h"
+#include "Animal.h"
 #include "Food.h"
 
 class Ecosystem
@@ -44,6 +44,11 @@ private:
 	sf::RectangleShape border;
 	sf::RectangleShape background;
 
-	std::vector<Individual*> individuals;
+	std::vector<Animal*> animals;
 	std::vector<Food*> food;
+
+	// private utilities:
+	std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal);
+
+	Food* findTheNearestFood(const Animal& animal);
 };
