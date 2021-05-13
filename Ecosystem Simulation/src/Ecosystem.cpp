@@ -101,7 +101,7 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 
 	file.close();
 
-	// borders and background:
+	// borders and backgroundRect:
 	this->border.setFillColor(sf::Color(32, 32, 32));
 	this->border.setSize(this->worldSize);
 

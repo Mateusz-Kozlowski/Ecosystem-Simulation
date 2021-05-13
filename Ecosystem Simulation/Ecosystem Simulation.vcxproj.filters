@@ -86,6 +86,9 @@
     <ClCompile Include="src\ScaleSlider.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\ProgressBar.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -211,6 +214,9 @@
       <Filter>ecosystem\components</Filter>
     </ClInclude>
     <ClInclude Include="src\ScaleSlider.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ProgressBar.h">
       <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>

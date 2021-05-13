@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Gui.h"
+
 class ProgressBar
 {
 public:

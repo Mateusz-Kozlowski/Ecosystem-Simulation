@@ -8,7 +8,7 @@ PauseMenu::PauseMenu(const sf::VideoMode& video_mode, const sf::Font& font)
 	this->videoMode = video_mode;
 	this->font = font;
 
-	//Init background
+	//Init backgroundRect
 	this->background.setSize(
 		sf::Vector2f(
 			static_cast<float>(video_mode.width),
