@@ -1,3 +1,5 @@
+keys editor
+slowing down and speeding up
 fix bug with preventing from going beyond the world (not change a sign of a vector but make it correct)
 add consts to renders where it is possible (and also to other places)
 add nn viewer class and then (probably) rmv rendering component class
@@ -22,6 +24,7 @@ change pause menu (maybe buttons like hide all brain (and show) and so on)
 smart pointers!
 cloning
 Species class
+textures (different) and hitbox component
 editor state?
 add a better way of dealing with random numbers generator
 add open file explorer button!

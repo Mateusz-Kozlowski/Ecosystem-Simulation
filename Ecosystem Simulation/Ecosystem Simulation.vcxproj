@@ -167,6 +167,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\NeuralNetPreview.cpp" />
     <ClCompile Include="src\ProgressBar.cpp" />
     <ClCompile Include="src\RenderingComponent.cpp" />
     <ClCompile Include="src\MovementComponent.cpp" />
@@ -235,6 +236,7 @@
     <ClCompile Include="src\State.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\NeuralNetPreview.h" />
     <ClInclude Include="src\ProgressBar.h" />
     <ClInclude Include="src\RenderingComponent.h" />
     <ClInclude Include="src\MovementComponent.h" />
