@@ -16,18 +16,30 @@ void Animal::setUpAnimalFolder(const std::string& folder_path)
 
 // constructor:
 Animal::Animal()
-	: brainIsRendered(false), alive(true)
+	: hpIsRendered(true), brainIsRendered(false), alive(true)
 {
+	this->body.setFillColor(sf::Color::Red);
+	this->body.setPointCount(16);
+	this->body.setRadius(8.f);
+	this->body.setOrigin(this->body.getRadius(), this->body.getRadius());
+
 	this->movementComponent = new MovementComponent();
 
-	this->renderingComponent = new RenderingComponent(*this->movementComponent);
+	this->brainPreview = new NeuralNetPreview(
+		this->movementComponent->getBrain(),
+		this->body.getPosition(),
+		sf::Vector2f(144.f, 144.f),
+		sf::Color(255, 255, 255, 128)
+	);
 
-	this->radius = 8.f;
+	//this->renderingComponent = new RenderingComponent(*this->movementComponent);
+
+	//this->radius = 8.f;
 
 	// get rid of that hardcoded stuff:
 	this->hpBar = new ProgressBar(
-		this->movementComponent->get_x() - 4.f * this->radius, this->movementComponent->get_y() - 3.f * this->radius,
-		8.f * this->radius, this->radius,
+		this->movementComponent->get_x() - 4.f * this->body.getRadius(), this->movementComponent->get_y() - 3.f * this->body.getRadius(),
+		8.f * this->body.getRadius(), this->body.getRadius(),
 		sf::Vector2f(0.f, 1000.f), 1000.f, sf::Color(128, 128, 128), sf::Color::Red
 	);
 }
@@ -35,7 +47,7 @@ Animal::Animal()
 Animal::~Animal()
 {
 	delete this->movementComponent;
-	delete this->renderingComponent;
+	delete this->brainPreview;
 	delete this->hpBar;
 }
 
@@ -58,7 +70,7 @@ sf::Vector2f Animal::getVelocity() const
 
 float Animal::getRadius() const
 {
-	return this->radius;
+	return this->body.getRadius();
 }
 
 bool Animal::isBrainRendered() const
@@ -94,29 +106,35 @@ void Animal::setHp(float new_hp)
 }
 
 // other public methods:
-void Animal::update(float dt, const std::vector<double>& brain_inputs)
+void Animal::updateBodyAndHp(float dt, const std::vector<double>& brain_inputs)
 {
 	this->movementComponent->update(dt, brain_inputs);
 
-	this->renderingComponent->updateBodyRedering(*this->movementComponent);
-
-	if (this->brainIsRendered) this->renderingComponent->updateBrainRendering(*this->movementComponent);
+	this->body.setPosition(this->movementComponent->get_x(), this->movementComponent->get_y());
 
 	this->updateHpBar(dt);
 
 	this->alive = this->hpBar->getValue() > 0.f;
 }
 
-void Animal::renderBody(sf::RenderTarget& target)
+void Animal::updateBrainPreview()
 {
-	this->renderingComponent->renderBody(target);
+	this->brainPreview->update(this->body.getPosition());
+}
 
+void Animal::renderBody(sf::RenderTarget& target) const
+{
+	target.draw(this->body);	
+}
+
+void Animal::renderHpBar(sf::RenderTarget& target) const
+{
 	this->hpBar->render(target);
 }
 
-void Animal::renderBrain(sf::RenderTarget& target)
+void Animal::renderBrain(sf::RenderTarget& target) const
 {
-	if (this->brainIsRendered) this->renderingComponent->renderBrain(target);
+	this->brainPreview->render(target);
 }
 
 // private utilities:
@@ -125,8 +143,8 @@ void Animal::updateHpBar(float dt)
 	// first update position:
 	this->hpBar->setPos(
 		sf::Vector2f(
-			this->movementComponent->get_x() - 4.f * this->radius,
-			this->movementComponent->get_y() - 3.f * this->radius
+			this->movementComponent->get_x() - 4.f * this->body.getRadius(),
+			this->movementComponent->get_y() - 3.f * this->body.getRadius()
 		)
 	);
 

@@ -10,13 +10,15 @@ NeuralNetPreview::NeuralNetPreview(
 	: brain(brain)
 {
 	this->initBackground(pos, size, background_color);
-	this->initNeurons(pos, size);
-	this->initSynapses(pos, size);
+	this->initNeurons(size);
+	this->initSynapses(size);
 }
 
 // other public methods:
 void NeuralNetPreview::update(const sf::Vector2f& new_pos)
 {
+	this->background.setPosition(new_pos);
+
 	this->updateNeurons(new_pos);
 	this->updateSynapses(new_pos);
 }
@@ -38,7 +40,7 @@ void NeuralNetPreview::initBackground(const sf::Vector2f& preview_pos, const sf:
 	this->background.setFillColor(background_color);
 }
 
-void NeuralNetPreview::initNeurons(const sf::Vector2f& preview_pos, const sf::Vector2f& size)
+void NeuralNetPreview::initNeurons(const sf::Vector2f& size)
 {
 	// calculate useful variables:
 	unsigned hiddenLayersCount = this->brain.getHiddenLayers().size();
@@ -69,26 +71,22 @@ void NeuralNetPreview::initNeurons(const sf::Vector2f& preview_pos, const sf::Ve
 		}
 }
 
-void NeuralNetPreview::initSynapses(const sf::Vector2f& preview_pos, const sf::Vector2f& size)
+void NeuralNetPreview::initSynapses(const sf::Vector2f& size)
 {
 	// calculate useful variables:
 	unsigned hiddenLayersCount = this->brain.getHiddenLayers().size();
-
-	unsigned biggestLayerSize = this->biggestLayerSize();
-
-	float diameter = size.y / (2U * biggestLayerSize + 1U);
-
-	float gapBetweenLayers = (size.x - (4 + hiddenLayersCount) * diameter) / (hiddenLayersCount + 1);
 
 	// resize:
 	this->synapses.resize(this->brain.getHiddenLayers().size() + 1U);
 
 	// resize each matrix in synapses vector:
+	// make synapses 2D structure:
 	for (int i = 0; i < hiddenLayersCount; i++)
 		this->synapses[i].resize(this->brain.getHiddenLayers()[i]->getNeuronsCount());
 
 	this->synapses.back().resize(this->brain.getOutputLayer()->getNeuronsCount());
 
+	// make synapses 3D structure:
 	for (int i = 0; i < this->brain.getHiddenLayers()[0]->getNeuronsCount(); i++)
 		this->synapses[0][i].resize(this->brain.getInputLayer()->getSize());
 
@@ -99,6 +97,13 @@ void NeuralNetPreview::initSynapses(const sf::Vector2f& preview_pos, const sf::V
 	for (int i = 0; i < this->brain.getOutputLayer()->getNeuronsCount(); i++)
 		this->synapses.back()[i].resize(this->brain.getHiddenLayers().back()->getNeuronsCount());
 
+	// each synapse consists of 2 vertices:
+	for (auto& matrix : this->synapses)
+		for (auto& vector : matrix)
+			for (auto& synapse : vector)
+				synapse.resize(2);
+
+	/*
 	// now set up each synapse rectangle size and rotation:
 	for (int i = 0; i < this->synapses.size(); i++)
 	{
@@ -124,9 +129,13 @@ void NeuralNetPreview::initSynapses(const sf::Vector2f& preview_pos, const sf::V
 			}
 		}
 	}
+	*/
 
-	// their colors won't ever change as long as animals cannot mutate during its lives:
+	// synapses are lines, which consist of only 2 vertices, and each vertex consists of only color and position
+	// positions have to be updated every frame, so they don't have to be calculated here
+	// so the only thing that remains is... color
 	this->setSynapsesColors();
+	// synapses colors won't ever change as long as animals cannot mutate during its lives
 }
 
 // private utilities:
@@ -170,7 +179,7 @@ void NeuralNetPreview::setNeuronsPositions(const sf::Vector2f& preview_pos)
 	// set up positions:
 	for (int i = 0; i < this->neurons.size(); i++)
 	{
-		float topMargin = this->background.getSize().y - (2 * this->neurons[i].size() - 1) * diameter;
+		float topMargin = (this->background.getSize().y - (2 * this->neurons[i].size() - 1) * diameter) / 2.f;
 
 		for (int j = 0; j < this->neurons[i].size(); j++)
 		{
@@ -196,16 +205,24 @@ void NeuralNetPreview::setSynapsesPositions(const sf::Vector2f& preview_pos)
 	// set positions:
 	for (int i = 0; i < this->synapses.size(); i++)
 	{
-		float topMargin = this->background.getSize().y - (2 * this->neurons[i].size() - 1) * diameter;
+		float topMargin2 = (this->background.getSize().y - (2 * this->neurons[i].size() - 1) * diameter) / 2;
 
 		for (int j = 0; j < this->synapses[i].size(); j++)
+		{
+			float topMargin1 = (this->background.getSize().y - (2 * this->neurons[j].size() - 1) * diameter) / 2;
+
 			for (int k = 0; k < this->synapses[i][j].size(); k++)
 			{
-				float x = preview_pos.x + diameter + i * (diameter + gapBetweenLayers);
-				float y = preview_pos.y + topMargin + diameter + 2 * k * diameter + diameter / 2;
+				float y1 = this->neurons[i][k].getPosition().y + diameter / 2;
+				float y2 = this->neurons[i + 1][j].getPosition().y + diameter / 2;
 
-				this->synapses[i][j][k].setPosition(x, y);
+				float x1 = preview_pos.x + 2 * diameter + i * (gapBetweenLayers + diameter);
+				float x2 = x1 + gapBetweenLayers;
+
+				this->synapses[i][j][k][0].position = sf::Vector2f(x1, y1);
+				this->synapses[i][j][k][1].position = sf::Vector2f(x2, y2);
 			}
+		}
 	}
 }
 
@@ -221,34 +238,34 @@ void NeuralNetPreview::setNeuronsColors()
 	{
 		CrappyNeuralNets::Scalar actVal = this->brain.getInputLayer()->output()[i];
 
-		if (actVal > 0.0) this->neurons[0][i].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsVal));
+		if (actVal > 0.0) this->neurons[0][i].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsVal, 255));
 
-		else this->neurons[0][i].setFillColor(sf::Color(-255 * actVal / theBiggestAbsVal, 0, 0));
+		else this->neurons[0][i].setFillColor(sf::Color(-255 * actVal / theBiggestAbsVal, 0, 0, 255));
 	}
 
 	// hidden layers:
 	for (int i = 0; i < this->brain.getHiddenLayers().size(); i++)
 	{
-		CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(i + 1);
-		CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(i + 1);
+		theBiggestActVal = this->getTheBiggestActivatedValue(i + 1);
+		theSmallestActVal = this->getTheSmallestActivatedValue(i + 1);
 
-		CrappyNeuralNets::Scalar theBiggestAbsVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
+		theBiggestAbsVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
 
 		for (int j = 0; j < this->neurons[i + 1].size(); j++)
 		{
 			CrappyNeuralNets::Scalar actVal = this->brain.getHiddenLayers()[i]->getNeurons()[j]->getActivatedValue();
 
-			if (actVal > 0.0) this->neurons[i][j].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsVal));
+			if (actVal > 0.0) this->neurons[i + 1][j].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsVal));
 
-			else this->neurons[i][j].setFillColor(sf::Color(-255 * actVal / theBiggestAbsVal, 0, 0));
+			else this->neurons[i + 1][j].setFillColor(sf::Color(-255 * actVal / theBiggestAbsVal, 0, 0));
 		}
 	}
 
 	// output layer:
-	CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(this->brain.getHiddenLayers().size() + 1);
-	CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(this->brain.getHiddenLayers().size() + 1);
+	theBiggestActVal = this->getTheBiggestActivatedValue(this->brain.getHiddenLayers().size() + 1);
+	theSmallestActVal = this->getTheSmallestActivatedValue(this->brain.getHiddenLayers().size() + 1);
 
-	CrappyNeuralNets::Scalar theBiggestAbsVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
+	theBiggestAbsVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
 
 	for (int i = 0; i < this->neurons.back().size(); i++)
 	{
@@ -273,9 +290,16 @@ void NeuralNetPreview::setSynapsesColors()
 			{
 				CrappyNeuralNets::Scalar weight = this->brain.getWeights()[i]->getValues()[j][k];
 
-				if (weight > 0.0) this->synapses[i][j][k].setFillColor(sf::Color(0, 0, 255, 255 * weight / theBiggestAbsVal));
-
-				else this->synapses[i][j][k].setFillColor(sf::Color(255, 0, 0, 255 * weight / theBiggestAbsVal));
+				if (weight > 0.0)
+				{
+					this->synapses[i][j][k][0].color = sf::Color(0, 0, 255, 255 * weight / theBiggestAbsVal);
+					this->synapses[i][j][k][1].color = sf::Color(0, 0, 255, 255 * weight / theBiggestAbsVal);
+				}
+				else
+				{
+					this->synapses[i][j][k][0].color = sf::Color(255, 0, 0, 255 * weight / theBiggestAbsVal);
+					this->synapses[i][j][k][1].color = sf::Color(255, 0, 0, 255 * weight / theBiggestAbsVal);
+				}
 			}
 }
 
@@ -365,5 +389,5 @@ void NeuralNetPreview::renderSynapses(sf::RenderTarget& target) const
 	for (const auto& matrix : synapses)
 		for (const auto& vector : matrix)
 			for (const auto& synapse : vector)
-				target.draw(synapse);
+				target.draw(&synapse[0], synapse.size(), sf::Lines);
 }

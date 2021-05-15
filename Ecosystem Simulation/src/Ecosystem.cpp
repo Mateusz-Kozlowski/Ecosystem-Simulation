@@ -160,7 +160,7 @@ unsigned Ecosystem::getBorderThickness() const
 // other public methods:
 void Ecosystem::update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mousePosView)
 {
-	for (const auto& animal : this->animals) animal->update(dt, getInputsForBrain(*animal));
+	for (const auto& animal : this->animals) animal->updateBodyAndHp(dt, getInputsForBrain(*animal));
 
 	// avoid going beyond the world:
 	for (auto& animal : this->animals)
@@ -226,9 +226,12 @@ void Ecosystem::update(float dt, const std::vector<sf::Event>& events, const sf:
 
 			float distance = sqrt(pow(a, 2) + pow(b, 2));
 
-			if (animal->getRadius() >= distance)
-				animal->setBrainIsRendered(!animal->isBrainRendered());
+			if (animal->getRadius() >= distance) animal->setBrainIsRendered(!animal->isBrainRendered());
 		}
+
+	for (auto& animal : this->animals)
+		if (animal->isBrainRendered())
+			animal->updateBrainPreview();
 }
 
 void Ecosystem::render(sf::RenderTarget& target)
@@ -236,9 +239,11 @@ void Ecosystem::render(sf::RenderTarget& target)
 	target.draw(this->border);
 	target.draw(this->background);
 
+	for (const auto& food : this->food) food->render(target);
+
 	for (const auto& animal : this->animals) animal->renderBody(target);
 	
-	for (const auto& food : this->food) food->render(target);
+	for (const auto& animal : this->animals) animal->renderHpBar(target);
 	
 	for (const auto& animal : this->animals)
 		if (animal->isBrainRendered())

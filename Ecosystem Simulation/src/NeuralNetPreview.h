@@ -24,12 +24,13 @@ private:
 
 	std::vector<std::vector<sf::CircleShape>> neurons;
 
-	std::vector<std::vector<std::vector<sf::RectangleShape>>> synapses;
+	std::vector<std::vector<std::vector<std::vector<sf::Vertex>>>> synapses;
+	//std::vector<std::vector<std::vector<sf::RectangleShape>>> synapses;
 
 	// initialization:
 	void initBackground(const sf::Vector2f& preview_pos, const sf::Vector2f& size, const sf::Color& background_color);
-	void initNeurons(const sf::Vector2f& preview_pos, const sf::Vector2f& size);
-	void initSynapses(const sf::Vector2f& preview_pos, const sf::Vector2f& size);
+	void initNeurons(const sf::Vector2f& size);
+	void initSynapses(const sf::Vector2f& size);
 
 	// private utilities:
 	unsigned biggestLayerSize() const;

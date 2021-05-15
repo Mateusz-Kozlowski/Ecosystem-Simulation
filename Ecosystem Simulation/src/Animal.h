@@ -1,7 +1,8 @@
 #pragma once
 
-#include "RenderingComponent.h"
 #include "ProgressBar.h"
+#include "NeuralNetPreview.h"
+#include "MovementComponent.h"
 
 class Animal
 {
@@ -35,21 +36,27 @@ public:
 	void setHp(float new_hp);
 
 	// other public methods:
-	void update(float dt, const std::vector<double>& brain_inputs);
-	void renderBody(sf::RenderTarget& target);
-	void renderBrain(sf::RenderTarget& target);
+	void updateBodyAndHp(float dt, const std::vector<double>& brain_inputs);
+	void updateBrainPreview();
+
+	void renderBody(sf::RenderTarget& target) const ;
+	void renderHpBar(sf::RenderTarget& target) const;
+	void renderBrain(sf::RenderTarget& target) const;
 
 private:
+	bool alive;
+	
+	sf::CircleShape body;
+
 	MovementComponent* movementComponent;
 	
-	RenderingComponent* renderingComponent;
-	float radius; // TODO: "un-hard-code" radius
-	
-	bool brainIsRendered;
-
 	ProgressBar* hpBar;
 
-	bool alive;
+	bool hpIsRendered;
+
+	NeuralNetPreview* brainPreview;
+
+	bool brainIsRendered;
 
 	// private utilities:
 	void updateHpBar(float dt);
