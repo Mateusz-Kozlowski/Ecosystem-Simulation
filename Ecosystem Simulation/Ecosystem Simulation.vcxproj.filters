@@ -80,9 +80,6 @@
     <ClCompile Include="src\MovementComponent.cpp">
       <Filter>ecosystem\components</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderingComponent.cpp">
-      <Filter>ecosystem\components</Filter>
-    </ClCompile>
     <ClCompile Include="src\ScaleSlider.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -211,9 +208,6 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\MovementComponent.h">
-      <Filter>ecosystem\components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\RenderingComponent.h">
       <Filter>ecosystem\components</Filter>
     </ClInclude>
     <ClInclude Include="src\ScaleSlider.h">

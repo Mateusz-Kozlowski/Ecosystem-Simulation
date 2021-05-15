@@ -16,7 +16,7 @@ void Animal::setUpAnimalFolder(const std::string& folder_path)
 
 // constructor:
 Animal::Animal()
-	: hpIsRendered(true), brainIsRendered(false), alive(true)
+	: hpIsRendered(true), brainIsRendered(true), alive(true)
 {
 	this->body.setFillColor(sf::Color::Red);
 	this->body.setPointCount(16);
@@ -40,7 +40,7 @@ Animal::Animal()
 	this->hpBar = new ProgressBar(
 		this->movementComponent->get_x() - 4.f * this->body.getRadius(), this->movementComponent->get_y() - 3.f * this->body.getRadius(),
 		8.f * this->body.getRadius(), this->body.getRadius(),
-		sf::Vector2f(0.f, 1000.f), 1000.f, sf::Color(128, 128, 128), sf::Color::Red
+		sf::Vector2f(0.f, 100000.f), 100000.f, sf::Color(128, 128, 128), sf::Color::Red
 	);
 }
 
@@ -158,9 +158,10 @@ void Animal::updateHpBar(float dt)
 	// calculate energy delta (where does it come from is explaneid at the bottom of the function)
 	float dE = a * v * dt;
 
-	//this->hpBar->increaseValue(-dE);
+	this->hpBar->increaseValue(-dE);
 
-	this->hpBar->increaseValue(-0.05f);
+	// sometimes (for debug purposes) we want to decrease energy every frame by a constant:
+	//this->hpBar->increaseValue(-0.05f);
 
 	/*
 	dE <==> energy delta [J]

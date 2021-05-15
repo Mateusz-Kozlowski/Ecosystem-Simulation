@@ -1,39 +1,35 @@
-keys editor
-slowing down and speeding up a simulation
-fix bug with preventing from going beyond the world (not change a sign of a vector but make it correct)
-add consts to renders where it is possible (and also to other places)
-add nn viewer class and then (probably) rmv rendering component class
-viewer and hp bar classes should be members of animal objects, but animal should have multiple rendering functions
-	(instead of one big render function like in almost all other classes in the project)
-moving te panel so that it's never beyond the world
-change activation functions
-random start positions
-make sure that a food isn't eaten twice (or even worse)
-	(2 individuals can reach a food at the same which can cause an issue)
-non 0 brain inputs:
-	vx (can be negative)
-	vy (can be negative)
-	x distance to the nearest food (can be negative)
-	y distance to the nearest food (can be negative)
-	hp
-center neurons "in vertical way"
-weights in visualization (alfa-color style, ykwim)
-hiding neurons and weight if there is to many ... neurons in a layers
-loading "from main menu" (loading state will be neccessairly)
-saving  "from main menu" (loading state will be neccessairly)
-check if the string of that text in the left-top corner makes sense
-change pause menu (maybe buttons like hide all brains/hp bars (and show) and so on)
+The smaller number the greater priority (the sooner that thing will be implemented)
+
+1 God hand <==> interventions like replacing using mouse and so on...
+1 add consts to renders where it is possible (and also to other places)
+1 what with hp rendering? Does it have bool like nn preview? Do ecosystem control check that bool? I don't think so...
+1 better "eating algorithm" (with complexity better than the current one (O(f*a)))
+1 loading "from main menu" (loading state will be neccessairly)
+1 check if the string of that text in the left-top corner makes sense
+1 change pause menu (maybe buttons like hide all brains/hp bars (and show) and so on)
 	show/hide all simply goes to all animals and sets its bool's to true/false =>
 	=> action of showing/hiding is irreversible (u cannot EASLY go to the previous state, 
 	where e.g half of hp bars were shown, you can only return that state manually)
-smart pointers!
-cloning
-Species class
-textures (different) and hitbox component
-editor state?
-add a better way of dealing with random numbers generator
-add open file explorer button! (if it will be needed)
-way if a user clicked load button without creating a new ecosystem in creator state?
-God hand - interventions like replacing using mouse and so on...
-sexual reproduction
-Crappy Neural Nets!
+
+2 slowing down and speeding up a simulation
+2 fix bug with preventing from going beyond the world (not change a sign of a vector but make it correct)
+2 NEAT REAL TIME
+2 new energy system
+2 rebuild the program structure at ecosystem and animala level (rewrite Ecosystem && Animal class)
+2 saving  "from main menu" (loading state will be neccessairly)
+2 smart pointers!
+2 cloning
+2 add a better way of dealing with random numbers generator
+
+3 keys editor
+3? moving te panel so that it's never beyond the world
+3 nn viewer as a side panel? Who knows...
+3 ? random start positions
+3 hiding neurons and weight if there is to many ... neurons in a layers
+3 Species class
+3 textures (different) and hitbox component
+3? editor state
+3 add open file explorer button! (if it will be needed)
+3? async or sth if a user clicked load button without creating a new ecosystem in creator state?
+3 sexual reproduction
+3 Crappy Neural Nets!

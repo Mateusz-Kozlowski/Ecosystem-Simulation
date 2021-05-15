@@ -258,23 +258,15 @@ std::vector<CrappyNeuralNets::Scalar> Ecosystem::getInputsForBrain(const Animal&
 	
 	inputsForBrain.reserve(5);
 
-	if (animal.getVelocity().x == 0.f && animal.getVelocity().y == 0.f)
-	{
-		inputsForBrain.push_back(0.f);
-		inputsForBrain.push_back(0.f);
-	}
-	else
-	{
-		inputsForBrain.push_back(animal.getVelocity().x / (abs(animal.getVelocity().x) + abs(animal.getVelocity().y)));
-		inputsForBrain.push_back(animal.getVelocity().y / (abs(animal.getVelocity().x) + abs(animal.getVelocity().y)));
-	}
+	inputsForBrain.push_back(animal.getVelocity().x);
+	inputsForBrain.push_back(animal.getVelocity().y);
 	
 	inputsForBrain.push_back(animal.getHp() / 1000.f);
 
 	Food* theNearestFood = findTheNearestFood(animal);
 	
-	inputsForBrain.push_back(this->food.size() * (theNearestFood->getPosition().x - animal.getPos().x) / this->worldSize.x);
-	inputsForBrain.push_back(this->food.size() * (theNearestFood->getPosition().y - animal.getPos().y) / this->worldSize.y);
+	inputsForBrain.push_back(theNearestFood->getPosition().x - animal.getPos().x);
+	inputsForBrain.push_back(theNearestFood->getPosition().y - animal.getPos().y);
 
 	return inputsForBrain;
 }
