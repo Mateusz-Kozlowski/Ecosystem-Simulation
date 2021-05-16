@@ -49,7 +49,7 @@
     <ClCompile Include="src\Ecosystem.cpp">
       <Filter>ecosystem</Filter>
     </ClCompile>
-    <ClCompile Include="src\PauseMenu.cpp">
+    <ClCompile Include="src\SideMenu.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\stdafx.cpp" />
@@ -87,6 +87,9 @@
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\NeuralNetPreview.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextureButton.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -186,7 +189,7 @@
     <ClInclude Include="src\Ecosystem.h">
       <Filter>ecosystem</Filter>
     </ClInclude>
-    <ClInclude Include="src\PauseMenu.h">
+    <ClInclude Include="src\SideMenu.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\stdafx.h" />
@@ -217,6 +220,9 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\NeuralNetPreview.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TextureButton.h">
       <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>

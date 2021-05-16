@@ -57,7 +57,7 @@ protected:
 	sf::Vector2f mousePosView;
 
 	// protected methods:
-	void updateMousePositions(sf::View* view = nullptr);
+	void updateMousePositions(const sf::View* view = nullptr);
 	
 	virtual void initKeybinds() = 0;
 	virtual void updateInput() = 0;

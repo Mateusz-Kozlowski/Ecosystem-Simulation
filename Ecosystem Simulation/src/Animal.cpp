@@ -29,7 +29,7 @@ Animal::Animal()
 		this->movementComponent->getBrain(),
 		this->body.getPosition(),
 		sf::Vector2f(144.f, 144.f),
-		sf::Color(255, 255, 255, 128)
+		sf::Color(128, 128, 128, 128)
 	);
 
 	//this->renderingComponent = new RenderingComponent(*this->movementComponent);

@@ -2,7 +2,8 @@
 #include "SimulationState.h"
 
 // constructor/destructor:
-SimulationState::SimulationState(StateData* state_data) : State(state_data)
+SimulationState::SimulationState(StateData* state_data) 
+	: State(state_data)
 {
 	this->initKeybinds();
 	this->initVariables();
@@ -10,12 +11,12 @@ SimulationState::SimulationState(StateData* state_data) : State(state_data)
 	this->initEcosystem();
 	this->initView();
 	this->initDeferredRender();
-	this->initPauseMenu();
+	this->initSideMenu();
 }
 
 SimulationState::~SimulationState()
 {
-	delete this->pauseMenu;
+	delete this->sideMenu;
 }
 
 // mutators:
@@ -28,18 +29,14 @@ void SimulationState::update(float dt)
 {
 	this->updateInput();
 
-	if (!this->paused)
-	{
-		this->updateView();
-		this->updateMousePositions(&this->view);
-		this->stateData->ecosystem->update(dt, *this->stateData->events, this->mousePosView);
-	}
-	else
-	{
-		this->updateMousePositions(&this->view);
-		this->pauseMenu->update(this->mousePosWindow);
-		this->updatePauseMenuButtons();
-	}
+	this->updateView();
+
+	this->updateMousePositions(&this->view);
+	
+	if (!this->paused) this->stateData->ecosystem->update(dt, *this->stateData->events, this->mousePosView);
+
+	this->sideMenu->update(this->mousePosWindow, *this->stateData->events);
+	this->getUpdateFromSideMenuGui();
 }
 
 void SimulationState::render(sf::RenderTarget* target)
@@ -53,10 +50,10 @@ void SimulationState::render(sf::RenderTarget* target)
 
 	this->stateData->ecosystem->render(this->renderTexture);
 
-	// render pause menu:
+	// render simulation menu:
 	this->renderTexture.setView(this->renderTexture.getDefaultView());
 
-	if (this->paused) this->pauseMenu->render(this->renderTexture);
+	if (this->sideMenuIsRendered) this->sideMenu->render(this->renderTexture);
 
 	// final render:
 	this->renderTexture.display();
@@ -83,8 +80,10 @@ void SimulationState::initKeybinds()
 
 void SimulationState::initVariables()
 {
-	this->pauseMenu = nullptr;
+	this->sideMenu = nullptr;
+	this->sideMenuIsRendered = false;
 	this->paused = true;
+	this->previousMousePosWindow = sf::Vector2i(0, 0);
 }
 
 void SimulationState::initFonts()
@@ -127,28 +126,34 @@ void SimulationState::initDeferredRender()
 	);
 }
 
-void SimulationState::initPauseMenu()
+void SimulationState::initSideMenu()
 {
-	const sf::VideoMode& videoMode = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode resolution = this->stateData->gfxSettings->resolution;
 
-	this->pauseMenu = new gui::PauseMenu(this->stateData->gfxSettings->resolution, this->font);
-
-	this->pauseMenu->addText(gui::p2pY(10.f, videoMode), gui::calcCharSize(videoMode, 32), "PAUSED", sf::Color::White);
-
-	this->pauseMenu->addButton(
-		"CONTINUE", gui::p2pY(74.f, videoMode), gui::p2pX(14.f, videoMode), gui::p2pY(6.f, videoMode),
-		gui::calcCharSize(videoMode, 32), "CONTINUE",
-		sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0),
-		sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0),
-		sf::Color(200, 200, 200, 255), sf::Color(255, 255, 255, 255), sf::Color(100, 100, 100, 100)
+	this->sideMenu = new gui::SideMenu(
+		this->font,
+		sf::Vector2f(0.f, 0.f),
+		sf::Vector2f(gui::p2pX(20, resolution), gui::p2pY(100, resolution)),
+		sf::Color(64, 64, 64, 200)
 	);
 
-	this->pauseMenu->addButton(
-		"QUIT", gui::p2pY(84.f, videoMode), gui::p2pX(14.f, videoMode), gui::p2pY(6.f, videoMode),
-		gui::calcCharSize(videoMode, 32), "QUIT",
-		sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0),
-		sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0),
-		sf::Color(200, 200, 200, 255), sf::Color(255, 255, 255, 255), sf::Color(100, 100, 100, 100)
+	this->sideMenu->addTextureButton(
+		"PAUSE",
+		{ {"PLAY", "resources/textures/GUI/SideMenu/play.png"}, {"STOP", "resources/textures/GUI/SideMenu/stop.png"} },
+		"STOP",
+		gui::p2pX(4.f, resolution), gui::p2pY(4.f, resolution),
+		gui::p2pX(100.f * 64.f / 1920.f, resolution), gui::p2pY(100.f * 64.f / 1080.f, resolution)
+	);
+
+	this->sideMenu->addButton(
+		"QUIT",
+		sf::Vector2f(gui::p2pX(4.f, resolution), gui::p2pY(75.f, resolution)),
+		gui::p2pX(12.f, resolution), gui::p2pY(4.f, resolution),
+		gui::calcCharSize(resolution, 32U),
+		"QUIT",
+		sf::Color::Transparent, sf::Color::Transparent, sf::Color::Transparent,
+		sf::Color::Transparent, sf::Color::Transparent, sf::Color::Transparent,
+		sf::Color::White, sf::Color(128, 128, 128), sf::Color(32, 32, 32)
 	);
 }
 
@@ -157,10 +162,18 @@ void SimulationState::updateInput()
 {
 	for (const auto& event : *this->stateData->events)
 	{
-		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Key(this->keybinds.at("CLOSE")))
+		if (event.type == sf::Event::KeyReleased)
 		{
-			this->paused = !this->paused;
-			break;
+			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("CLOSE")))
+			{
+				this->sideMenuIsRendered = !this->sideMenuIsRendered;
+				break;
+			}
+			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("PAUSE")))
+			{
+				this->paused = !this->paused;
+				break;
+			}
 		}
 	}	
 }
@@ -175,17 +188,16 @@ void SimulationState::updateView()
 	// move view:
 	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
-	if (this->mousePosWindow.x < gui::p2pX(10.f, vm)) 
-		this->view.move(-32.f * this->view.getSize().x / static_cast<float>(vm.width), 0.f);
-	
-	if (this->mousePosWindow.x > gui::p2pX(90.f, vm))
-		this->view.move( 32.f * this->view.getSize().x / static_cast<float>(vm.width), 0.f);
-	
-	if (this->mousePosWindow.y < gui::p2pY(10.f, vm))
-		this->view.move(0.f, -32.f * this->view.getSize().y / static_cast<float>(vm.height));
-	
-	if (this->mousePosWindow.y > gui::p2pY(90.f, vm))
-		this->view.move(0.f,  32.f * this->view.getSize().y / static_cast<float>(vm.height));
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		int offsetX = this->previousMousePosWindow.x - this->mousePosWindow.x;
+		int offsetY = this->previousMousePosWindow.y - this->mousePosWindow.y;
+
+		this->view.move(
+			offsetX * this->view.getSize().x / this->stateData->gfxSettings->resolution.width,
+			offsetY * this->view.getSize().y / this->stateData->gfxSettings->resolution.height
+		);
+	}
 	
 	// correct zoom:
 	float worldWidth = static_cast<float>(this->stateData->ecosystem->getWorldSize().x);
@@ -210,9 +222,38 @@ void SimulationState::updateView()
 		this->view.setCenter(this->view.getCenter().x, worldHeight - this->view.getSize().y / 2.f);
 }
 
-void SimulationState::updatePauseMenuButtons()
+void SimulationState::updateMousePositions(const sf::View* view)
+{
+	this->mousePosScreen = sf::Mouse::getPosition();
+	this->previousMousePosWindow = this->mousePosWindow;
+	this->mousePosWindow = sf::Mouse::getPosition(*this->stateData->window);
+
+	if (view)
+	{
+		sf::View temp = this->stateData->window->getView();
+
+		this->stateData->window->setView(*view);
+
+		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
+
+		this->stateData->window->setView(temp);
+	}
+	else
+		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
+}
+
+void SimulationState::getUpdateFromSideMenuGui()
 {	
-	if (this->pauseMenu->isButtonClicked("CONTINUE")) this->paused = false;
-	
-	else if (this->pauseMenu->isButtonClicked("QUIT")) this->endState();
+	if (this->sideMenu->getTextureButtons().at("PAUSE")->hasBeenClicked())
+	{
+		this->paused = !this->paused;
+
+		const std::string& currentTextureKey = this->sideMenu->getTextureButtons().at("PAUSE")->getCurrentTextureKey();
+
+		if (currentTextureKey == "PLAY") this->sideMenu->setTextureOfTextureButton("PAUSE", "STOP");
+
+		else this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
+	}
+
+	if (this->sideMenu->getButtons().at("QUIT")->isClicked()) this->endState();
 }

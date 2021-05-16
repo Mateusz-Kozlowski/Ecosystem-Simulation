@@ -175,7 +175,7 @@
     <ClCompile Include="src\EcosystemCreatorState.cpp" />
     <ClCompile Include="src\InputField.cpp" />
     <ClCompile Include="src\Button.cpp" />
-    <ClCompile Include="src\PauseMenu.cpp" />
+    <ClCompile Include="src\SideMenu.cpp" />
     <ClCompile Include="src\Crappy Neural Nets\HiddenLayer.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../stdafx.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../stdafx.h</PrecompiledHeaderFile>
@@ -233,6 +233,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\State.cpp" />
+    <ClCompile Include="src\TextureButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\NeuralNetPreview.h" />
@@ -243,7 +244,7 @@
     <ClInclude Include="src\EcosystemCreatorState.h" />
     <ClInclude Include="src\InputField.h" />
     <ClInclude Include="src\Button.h" />
-    <ClInclude Include="src\PauseMenu.h" />
+    <ClInclude Include="src\SideMenu.h" />
     <ClInclude Include="src\Crappy Neural Nets\Config.h" />
     <ClInclude Include="src\Crappy Neural Nets\HiddenLayer.h" />
     <ClInclude Include="src\Crappy Neural Nets\InputLayer.h" />
@@ -261,6 +262,7 @@
     <ClInclude Include="src\App.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\State.h" />
+    <ClInclude Include="src\TextureButton.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config\graphics.ini" />

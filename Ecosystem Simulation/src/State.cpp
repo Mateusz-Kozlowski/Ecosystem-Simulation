@@ -30,15 +30,21 @@ void State::freeze()
 }
 
 // protected methods:
-void State::updateMousePositions(sf::View* view)
+void State::updateMousePositions(const sf::View* view)
 {
 	this->mousePosScreen = sf::Mouse::getPosition();
 	this->mousePosWindow = sf::Mouse::getPosition(*this->stateData->window);
 
 	if (view)
+	{
+		sf::View temp = this->stateData->window->getView();
+
 		this->stateData->window->setView(*view);
 
-	this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
+		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
 
-	this->stateData->window->setView(this->stateData->window->getDefaultView());
+		this->stateData->window->setView(temp);
+	}
+	else
+		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
 }

@@ -1,5 +1,6 @@
 The smaller number the greater priority (the sooner that thing will be implemented)
 
+1 <random> library? Check it out!
 1 God hand <==> interventions like replacing using mouse and so on...
 1 add consts to renders where it is possible (and also to other places)
 1 what with hp rendering? Does it have bool like nn preview? Do ecosystem control check that bool? I don't think so...
@@ -11,6 +12,9 @@ The smaller number the greater priority (the sooner that thing will be implement
 	=> action of showing/hiding is irreversible (u cannot EASLY go to the previous state, 
 	where e.g half of hp bars were shown, you can only return that state manually)
 
+2 animal tracking
+2 brains preview in side panel/menu and next to the animals
+2 Shortcuts/about state
 2 slowing down and speeding up a simulation
 2 fix bug with preventing from going beyond the world (not change a sign of a vector but make it correct)
 2 NEAT REAL TIME
@@ -21,6 +25,8 @@ The smaller number the greater priority (the sooner that thing will be implement
 2 cloning
 2 add a better way of dealing with random numbers generator
 
+3 events to gui elements
+3 define states freezing
 3 keys editor
 3? moving te panel so that it's never beyond the world
 3 nn viewer as a side panel? Who knows...
