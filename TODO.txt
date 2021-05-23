@@ -1,16 +1,25 @@
 The smaller number the greater priority (the sooner that thing will be implemented)
 
-1 <random> library? Check it out!
-1 God hand <==> interventions like replacing using mouse and so on...
-1 add consts to renders where it is possible (and also to other places)
-1 what with hp rendering? Does it have bool like nn preview? Do ecosystem control check that bool? I don't think so...
+1 rmv debug button
+
+1 select and track an animal
+1 in side menu add switcher that allows to hide/show a brain
+1 God hand <==> interventions:
+	- killing animals
+	- cloning animals (with or without mutations)
+	- replacing animals
+	- stopping animals
+	- replacing food
+
 1 better "eating algorithm" (with complexity better than the current one (O(f*a)))
+
 1 loading "from main menu" (loading state will be neccessairly)
+
 1 check if the string of that text in the left-top corner makes sense
-1 change pause menu (maybe buttons like hide all brains/hp bars (and show) and so on)
-	show/hide all simply goes to all animals and sets its bool's to true/false =>
-	=> action of showing/hiding is irreversible (u cannot EASLY go to the previous state, 
-	where e.g half of hp bars were shown, you can only return that state manually)
+
+1 add consts to renders where it is possible (and also to other places)
+
+1 what with hp rendering? Does it have bool like nn preview? Do ecosystem control check that bool? I don't think so...
 
 2 use sf::Vector2<T> instead of 2 floats
 2 animal tracking
@@ -41,3 +50,4 @@ The smaller number the greater priority (the sooner that thing will be implement
 3? async or sth if a user clicked load button without creating a new ecosystem in creator state?
 3 sexual reproduction
 3 Crappy Neural Nets!
+3 <random> library? Check it out!

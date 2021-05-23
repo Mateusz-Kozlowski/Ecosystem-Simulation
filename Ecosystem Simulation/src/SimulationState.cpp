@@ -192,19 +192,6 @@ void SimulationState::initSideMenu()
 	);
 
 	this->sideMenu->addButton(
-		"DEBUG BUTTON",
-		sf::Vector2f(gui::p2pX(5.f, resolution), gui::p2pY(75.f, resolution)),
-		gui::p2pX(14.f, resolution), gui::p2pY(6.f, resolution),
-		gui::calcCharSize(resolution, 28U),
-		this->fonts["CONSOLAB"],
-		"DEBUG BUTTON",
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution)
-	);
-
-	this->sideMenu->addButton(
 		"QUIT",
 		sf::Vector2f(gui::p2pX(5.f, resolution), gui::p2pY(87.f, resolution)),
 		gui::p2pX(14.f, resolution), gui::p2pY(6.f, resolution),
@@ -360,13 +347,6 @@ void SimulationState::getUpdateFromSideMenuTexturesButtons()
 
 void SimulationState::getUpdateFromSideMenuButtons()
 {
-	if (this->sideMenu->getButtons().at("DEBUG BUTTON")->isClicked())
-	{
-		this->stateData->ecosystem->printAnimalsPositions();
-		std::cout << "CURRENT VALUE OF SPEED SCALE SLIDER: ";
-		std::cout << this->sideMenu->getScaleSliders().at("SPEED")->getCurrentValue() << '\n';
-	}
-
 	if (this->sideMenu->getButtons().at("QUIT")->isClicked())
 		this->endState();
 }

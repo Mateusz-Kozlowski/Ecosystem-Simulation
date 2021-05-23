@@ -199,7 +199,7 @@ void EcosystemCreatorState::initInputField()
 	this->inputField = new gui::InputField(
 		gui::p2pX(35.f, vm), gui::p2pY(71.f, vm),
 		gui::p2pX(30.f, vm), gui::p2pY(5.f, vm),
-		this->font, "ecosystems/1", gui::p2pY(3.f, vm),
+		this->font, "ecosystems/2", gui::p2pY(3.f, vm),
 		sf::Color(100, 100, 100), sf::Color(255, 255, 255), sf::Color(75, 75, 75),
 		gui::p2pX(0.2f, vm)
 	);
