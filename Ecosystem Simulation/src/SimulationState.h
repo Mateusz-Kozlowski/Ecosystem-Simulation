@@ -46,4 +46,8 @@ private:
 	void updateView();
 	virtual void updateMousePositions(const sf::View* view = nullptr);
 	void getUpdateFromSideMenuGui();
+
+	// private utilities:
+	void getUpdateFromSideMenuTexturesButtons();
+	void getUpdateFromSideMenuButtons();
 };

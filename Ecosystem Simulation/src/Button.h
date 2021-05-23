@@ -9,6 +9,7 @@ namespace gui
 	class Button
 	{
 	public:
+		// constructor:
 		Button(
 			float posX, float posY,
 			float width, float height,
@@ -19,30 +20,47 @@ namespace gui
 			float outlineThickness = 1.f, int id = 0
 		);
 
+		// accessors:
 		bool isClicked() const;
 
 		const std::string& getText() const;
+
 		int getId() const;
+		
 		ButtonState getState() const;
 
+		const sf::Vector2f& getPosition() const;
+
+		// mutators:
 		void setText(const std::string& text);
+
 		void setId(int id);
+		
 		void setClickBlockade(bool blockade);
+		
 		void setIdle();
+		
 		void setHovered();
 
+		void setPosition(const sf::Vector2f& new_pos);
+
+		// other public methods:
 		void update(sf::Vector2i mousePosWindow);
 		void render(sf::RenderTarget& target);
 
 	private:
 		bool clickBlockade;
+
 		bool clicked;
+		
 		ButtonState state;
+		
 		unsigned short id;
 
 		sf::RectangleShape rect;
 
 		std::shared_ptr<sf::Font> font;
+		
 		sf::Text text;
 
 		sf::Color idleColor, hoverColor, pressedColor;

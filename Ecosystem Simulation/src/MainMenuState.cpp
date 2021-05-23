@@ -74,7 +74,7 @@ void MainMenuState::initBackground()
 		)
 	);
 
-	this->backgroundRect.setFillColor(sf::Color(28, 28, 28));
+	this->backgroundRect.setFillColor(sf::Color(32, 32, 32));
 }
 
 void MainMenuState::initFonts()
@@ -93,9 +93,9 @@ void MainMenuState::initButtons()
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
 		this->font, "SIMULATE", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm), 0
+		gui::p2pY(0.5f, vm)
 	);
 
 	this->buttons["NEW ECOSYSTEM"] = new gui::Button(
@@ -103,9 +103,9 @@ void MainMenuState::initButtons()
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
 		this->font, "NEW ECOSYSTEM", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm), 1
+		gui::p2pY(0.5f, vm)
 	);
 
 	this->buttons["EDIT"] = new gui::Button(
@@ -113,9 +113,9 @@ void MainMenuState::initButtons()
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
 		this->font, "EDIT", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm), 1
+		gui::p2pY(0.5f, vm)
 	);
 
 	this->buttons["SAVE"] = new gui::Button(
@@ -123,9 +123,9 @@ void MainMenuState::initButtons()
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
 		this->font, "SAVE", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm), 3
+		gui::p2pY(0.5f, vm)
 	);
 
 	this->buttons["LOAD"] = new gui::Button(
@@ -133,9 +133,9 @@ void MainMenuState::initButtons()
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
 		this->font, "LOAD", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm), 4
+		gui::p2pY(0.5f, vm)
 	);
 
 	this->buttons["QUIT"] = new gui::Button(
@@ -143,9 +143,9 @@ void MainMenuState::initButtons()
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
 		this->font, "QUIT", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm), 4
+		gui::p2pY(0.5f, vm)
 	);
 }
 

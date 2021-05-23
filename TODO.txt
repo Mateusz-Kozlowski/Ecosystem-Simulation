@@ -12,6 +12,7 @@ The smaller number the greater priority (the sooner that thing will be implement
 	=> action of showing/hiding is irreversible (u cannot EASLY go to the previous state, 
 	where e.g half of hp bars were shown, you can only return that state manually)
 
+2 use sf::Vector2<T> instead of 2 floats
 2 animal tracking
 2 brains preview in side panel/menu and next to the animals
 2 Shortcuts/about state
@@ -24,6 +25,7 @@ The smaller number the greater priority (the sooner that thing will be implement
 2 smart pointers!
 2 cloning
 2 add a better way of dealing with random numbers generator
+2 set text function in Button class change string of sf::Text member, but doesn't "recenter" it, should this happen?
 
 3 events to gui elements
 3 define states freezing

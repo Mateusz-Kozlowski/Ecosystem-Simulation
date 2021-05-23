@@ -14,7 +14,7 @@ public:
 	);
 
 	// accessors:
-	float getValue() const;
+	float getCurrentValue() const;
 
 	// mutators:
 	void increaseValue(float change);

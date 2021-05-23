@@ -16,7 +16,7 @@ void Animal::setUpAnimalFolder(const std::string& folder_path)
 
 // constructor:
 Animal::Animal()
-	: hpIsRendered(true), brainIsRendered(true), alive(true)
+	: hpIsRendered(false), brainIsRendered(true), alive(true), maxHp(10e10)
 {
 	this->body.setFillColor(sf::Color::Red);
 	this->body.setPointCount(16);
@@ -40,7 +40,7 @@ Animal::Animal()
 	this->hpBar = new ProgressBar(
 		this->movementComponent->get_x() - 4.f * this->body.getRadius(), this->movementComponent->get_y() - 3.f * this->body.getRadius(),
 		8.f * this->body.getRadius(), this->body.getRadius(),
-		sf::Vector2f(0.f, 100000.f), 100000.f, sf::Color(128, 128, 128), sf::Color::Red
+		sf::Vector2f(0.f, this->maxHp), this->maxHp, sf::Color(128, 128, 128), sf::Color::Red
 	);
 }
 
@@ -83,12 +83,23 @@ bool Animal::isAlive() const
 	return this->alive;
 }
 
+float Animal::getMaxHp() const
+{
+	return this->maxHp;
+}
+
 float Animal::getHp() const
 {
-	return this->hpBar->getValue();
+	return this->hpBar->getCurrentValue();
 }
 
 // mutators:
+void Animal::setPos(const sf::Vector2f& new_pos)
+{
+	this->movementComponent->set_x(new_pos.x);
+	this->movementComponent->set_y(new_pos.y);
+}
+
 void Animal::setVelocity(const sf::Vector2f& v)
 {
 	this->movementComponent->set_vx(v.x);
@@ -102,7 +113,7 @@ void Animal::setBrainIsRendered(bool brain_is_rendered)
 
 void Animal::setHp(float new_hp)
 {
-	this->hpBar->increaseValue(new_hp - this->hpBar->getValue());
+	this->hpBar->increaseValue(new_hp - this->hpBar->getCurrentValue());
 }
 
 // other public methods:
@@ -112,9 +123,9 @@ void Animal::updateBodyAndHp(float dt, const std::vector<double>& brain_inputs)
 
 	this->body.setPosition(this->movementComponent->get_x(), this->movementComponent->get_y());
 
-	this->updateHpBar(dt);
+	this->updateHp(dt);
 
-	this->alive = this->hpBar->getValue() > 0.f;
+	this->alive = this->hpBar->getCurrentValue() > 0.f;
 }
 
 void Animal::updateBrainPreview()
@@ -137,8 +148,32 @@ void Animal::renderBrain(sf::RenderTarget& target) const
 	this->brainPreview->render(target);
 }
 
+bool Animal::isMouseClickedOnIt(const sf::Vector2f& mouse_pos_view) const
+{
+	if (!sf::Mouse::isButtonPressed)
+	{
+		return false;
+	}
+	
+	if (mouse_pos_view.x > this->movementComponent->get_x() - this->getRadius())
+	{
+		if (mouse_pos_view.x < this->movementComponent->get_x() + this->getRadius())
+		{
+			if (mouse_pos_view.y > this->movementComponent->get_y() + this->getRadius())
+			{
+				if (mouse_pos_view.y < this->movementComponent->get_y() + this->getRadius())
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
 // private utilities:
-void Animal::updateHpBar(float dt)
+void Animal::updateHp(float dt)
 {
 	// first update position:
 	this->hpBar->setPos(
@@ -156,7 +191,8 @@ void Animal::updateHpBar(float dt)
 	float v = sqrt(pow(this->movementComponent->get_vx(), 2) + pow(this->movementComponent->get_vy(), 2));
 	
 	// calculate energy delta (where does it come from is explaneid at the bottom of the function)
-	float dE = a * v * dt;
+	//float dE = a * v * dt;
+	float dE = v * dt;
 
 	this->hpBar->increaseValue(-dE);
 

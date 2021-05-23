@@ -24,8 +24,10 @@ public:
 
 	unsigned getBorderThickness() const;
 
+	void printAnimalsPositions() const;
+
 	// other public methods:
-	void update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mousePosView);
+	void update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view, bool paused);
 	void render(sf::RenderTarget& target);
 
 private:
@@ -48,7 +50,7 @@ private:
 	std::vector<Food*> food;
 
 	// private utilities:
-	std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal);
+	std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;
 
-	Food* findTheNearestFood(const Animal& animal);
+	Food* findTheNearestFood(const Animal& animal) const;
 };

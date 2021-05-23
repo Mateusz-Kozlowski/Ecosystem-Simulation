@@ -21,8 +21,12 @@ namespace gui
 
 		const std::string& getCurrentTextureKey() const;
 
+		const sf::Vector2f& getPosition() const;
+
 		// mutators:
 		void setTexture(const std::string& key);
+
+		void setPosition(const sf::Vector2f& new_pos);
 
 		// other public methods:
 		void update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events);

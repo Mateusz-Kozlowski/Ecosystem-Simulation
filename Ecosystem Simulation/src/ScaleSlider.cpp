@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "ScaleSlider.h"
 
+// constructor:
 gui::ScaleSlider::ScaleSlider(
 	float posX, float posY,
-	float textureScale,
-	float maxValue, bool maxOnLeft,
+	float textures_scale,
+	const std::pair<float, float>& range,
+	float default_value,
 	const std::string& axis_idle_path, const std::string& handle_idle_path,
 	const std::string& axis_hover_path, const std::string& handle_hover_path,
 	const std::string& axis_pressed_path, const std::string& handle_pressed_path)
@@ -39,11 +41,9 @@ gui::ScaleSlider::ScaleSlider(
 
 		temp.setTexture(it.second);
 
-		temp.scale(
-			sf::Vector2f(
-				textureScale,
-				textureScale
-			)
+		temp.setScale(
+			textures_scale,
+			textures_scale
 		);
 
 		temp.setPosition(
@@ -61,11 +61,9 @@ gui::ScaleSlider::ScaleSlider(
 
 		temp.setTexture(it.second);
 
-		temp.scale(
-			sf::Vector2f(
-				textureScale,
-				textureScale
-			)
+		temp.setScale(
+			textures_scale,
+			textures_scale
 		);
 
 		temp.scale(
@@ -89,48 +87,36 @@ gui::ScaleSlider::ScaleSlider(
 
 	this->state = "IDLE";
 
-	this->maxOnLeft = maxOnLeft;
+	this->range = range;
 	this->minimizeToZero = false;
-	this->maxValue = maxValue;
-	this->value = maxValue / 2.f;
+	this->value = default_value;
 }
 
-float gui::ScaleSlider::getValue() const
+// accessors:
+float gui::ScaleSlider::getCurrentValue() const
 {
 	return this->value;
 }
 
-float gui::ScaleSlider::getMaxValue() const
+const sf::Vector2f& gui::ScaleSlider::getPosition() const
 {
-	return this->maxValue;
+	return this->axes.at(this->state).getPosition();
 }
 
+// mutators:
 void gui::ScaleSlider::setValue(float value)
 {
 	this->value = value;
 
 	float left = this->axes["IDLE"].getGlobalBounds().left;
 
-	if (this->maxOnLeft)
-	{
-		for (auto& it : this->handles)
-			it.second.setPosition(
-				sf::Vector2f(
-					left + (1.f - value / this->maxValue) * this->axes["IDLE"].getGlobalBounds().width - this->handles["IDLE"].getGlobalBounds().width / 2.f,
-					it.second.getPosition().y
-				)
-			);
-	}
-	else
-	{
-		for (auto& it : this->handles)
-			it.second.setPosition(
-				sf::Vector2f(
-					left + (value / this->maxValue) * this->axes["IDLE"].getGlobalBounds().width - this->handles["IDLE"].getGlobalBounds().width / 2.f,
-					it.second.getPosition().y
-				)
-			);
-	}
+	for (auto& it : this->handles)
+		it.second.setPosition(
+			sf::Vector2f(
+				left + (value / this->range.second) * this->axes["IDLE"].getGlobalBounds().width - this->handles["IDLE"].getGlobalBounds().width / 2.f,
+				it.second.getPosition().y
+			)
+		);
 }
 
 void gui::ScaleSlider::setMinimizeToZero(bool minimizeToZero)
@@ -138,6 +124,15 @@ void gui::ScaleSlider::setMinimizeToZero(bool minimizeToZero)
 	this->minimizeToZero = minimizeToZero;
 }
 
+void gui::ScaleSlider::setPosition(const sf::Vector2f& new_pos)
+{
+	for (auto& axis : this->axes) axis.second.setPosition(new_pos);
+	
+	// set handle position taking current scale slider value into account:
+	this->setValue(this->value);
+}
+
+// other public methods:
 void gui::ScaleSlider::update(sf::Vector2i mousePosWindow)
 {
 	if (this->state == "IDLE")
@@ -209,13 +204,10 @@ void gui::ScaleSlider::update(sf::Vector2i mousePosWindow)
 	float left = this->axes["IDLE"].getGlobalBounds().left;
 	float right = left + this->axes["IDLE"].getGlobalBounds().width;
 
-	if (this->maxOnLeft)
-		this->value = this->maxValue * (right - x) / (right - left);
-	else
-		this->value = this->maxValue * (x - left) / (right - left);
+	this->value = this->range.second * (x - left) / (right - left);
 
 	// setting very small values equal to 0:
-	if (this->minimizeToZero && this->value < 0.1f * this->maxValue)
+	if (this->minimizeToZero && this->value < 0.1f * this->range.second)
 		this->setValue(0.f);
 }
 

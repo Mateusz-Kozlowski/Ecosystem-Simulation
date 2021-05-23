@@ -5,8 +5,8 @@ MovementComponent::MovementComponent()
 {
 	this->brain.initInputLayer(new CrappyNeuralNets::InputLayer(5U));
 			   
-	this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(4U, "fast sigmoid"));
-	this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(3U, "relu"));
+	//this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(4U, "fast sigmoid"));
+	//this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(3U, "relu"));
 			   
 	this->brain.initOutputLayer(new CrappyNeuralNets::OutputLayer(2U));
 			   
@@ -88,12 +88,10 @@ void MovementComponent::update(float dt, const std::vector<double>& brain_inputs
 	this->a.x = brainOutput[0];
 	this->a.y = brainOutput[1];
 
-	//std::cout << this->a.x << ' ' << this->a.y << '\n';
-
 	// update velocity:
 	this->v.x += this->a.x * dt;
 	this->v.y += this->a.y * dt;
-	
+
 	// update positions:
 	this->pos.x += this->v.x * dt;
 	this->pos.y += this->v.y * dt;

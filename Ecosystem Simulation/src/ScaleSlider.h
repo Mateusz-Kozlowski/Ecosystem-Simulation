@@ -7,21 +7,30 @@ namespace gui
 	class ScaleSlider
 	{
 	public:
+		// constructor:
 		ScaleSlider(
 			float posX, float posY,
-			float textureScale,
-			float maxValue, bool maxOnLeft,
+			float textures_scale,
+			const std::pair<float, float>& range,
+			float default_value,
 			const std::string& axis_idle_path, const std::string& handle_idle_path,
 			const std::string& axis_hover_path, const std::string& handle_hover_path,
 			const std::string& axis_pressed_path, const std::string& handle_pressed_path
 		);
 
-		float getValue() const;
-		float getMaxValue() const;
+		// accessors:
+		float getCurrentValue() const;
 
+		const sf::Vector2f& getPosition() const;
+
+		// mutators:
 		void setValue(float value);
+		
 		void setMinimizeToZero(bool minimizeToZero);
 
+		void setPosition(const sf::Vector2f& new_pos);
+
+		// other public methods:
 		void update(sf::Vector2i mousePosWindow);
 		void render(sf::RenderTarget& target);
 
@@ -34,10 +43,8 @@ namespace gui
 
 		std::string state;
 
-		bool maxOnLeft;
+		std::pair<float, float> range;
 		bool minimizeToZero;
-
-		float maxValue;
 		float value;
 	};
 }

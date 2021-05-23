@@ -3,6 +3,7 @@
 
 using namespace gui;
 
+// constructor:
 gui::Button::Button(
 	float posX, float posY,
 	float width, float height,
@@ -52,6 +53,7 @@ gui::Button::Button(
 	this->textPressedColor = textPressedColor;
 }
 
+// accessors:
 bool gui::Button::isClicked() const
 {
 	return this->clicked;
@@ -72,6 +74,12 @@ ButtonState gui::Button::getState() const
 	return this->state;
 }
 
+const sf::Vector2f& gui::Button::getPosition() const
+{
+	return this->rect.getPosition();
+}
+
+// mutators:
 void gui::Button::setText(const std::string& text)
 {
 	this->text.setString(text);
@@ -103,6 +111,19 @@ void gui::Button::setHovered()
 	this->text.setFillColor(this->textHoverColor);
 }
 
+void gui::Button::setPosition(const sf::Vector2f& new_pos)
+{
+	this->rect.setPosition(new_pos);
+
+	this->text.setPosition(
+		sf::Vector2f(
+			this->rect.getPosition().x + this->rect.getSize().x / 2,
+			this->rect.getPosition().y + this->rect.getSize().y / 2
+		)
+	);
+}
+
+// other public methods:
 void gui::Button::update(sf::Vector2i mousePosWindow)
 {
 	this->clicked = false;

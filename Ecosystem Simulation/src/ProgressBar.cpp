@@ -14,7 +14,7 @@ ProgressBar::ProgressBar(
 }
 
 // accessors:
-float ProgressBar::getValue() const
+float ProgressBar::getCurrentValue() const
 {
 	return this->value;
 }

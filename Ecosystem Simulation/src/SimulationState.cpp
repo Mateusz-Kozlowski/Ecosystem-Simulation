@@ -33,7 +33,8 @@ void SimulationState::update(float dt)
 
 	this->updateMousePositions(&this->view);
 	
-	if (!this->paused) this->stateData->ecosystem->update(dt, *this->stateData->events, this->mousePosView);
+	if (!this->paused)
+		this->stateData->ecosystem->update(dt, *this->stateData->events, this->mousePosView, this->paused);
 
 	this->sideMenu->update(this->mousePosWindow, *this->stateData->events);
 	this->getUpdateFromSideMenuGui();
@@ -133,27 +134,59 @@ void SimulationState::initSideMenu()
 	this->sideMenu = new gui::SideMenu(
 		this->font,
 		sf::Vector2f(0.f, 0.f),
-		sf::Vector2f(gui::p2pX(20, resolution), gui::p2pY(100, resolution)),
-		sf::Color(64, 64, 64, 200)
+		sf::Vector2f(gui::p2pX(24, resolution), gui::p2pY(100, resolution)),
+		sf::Color(48, 48, 48)
 	);
 
 	this->sideMenu->addTextureButton(
 		"PAUSE",
 		{ {"PLAY", "resources/textures/GUI/SideMenu/play.png"}, {"STOP", "resources/textures/GUI/SideMenu/stop.png"} },
-		"STOP",
-		gui::p2pX(4.f, resolution), gui::p2pY(4.f, resolution),
+		"PLAY",
+		gui::p2pX(10.33f, resolution), gui::p2pY(4.f, resolution),
+		gui::p2pX(100.f * 64.f / 1920.f, resolution), gui::p2pY(100.f * 64.f / 1080.f, resolution)
+	);
+
+	this->sideMenu->addScaleSlider(
+		"SPEED",
+		gui::p2pX(12.f, resolution), gui::p2pY(16.f, resolution),
+		256.f / 1840.f,
+		{ 0.0f, 1.0f },
+		1.0f,
+		"resources/textures/GUI/SideMenu/axis idle.png", "resources/textures/GUI/SideMenu/handle idle.png",
+		"resources/textures/GUI/SideMenu/axis hovered.png", "resources/textures/GUI/SideMenu/handle hovered.png",
+		"resources/textures/GUI/SideMenu/axis pressed.png", "resources/textures/GUI/SideMenu/handle pressed.png"
+	);
+
+	this->sideMenu->addTextureButton(
+		"ARROW",
+		{ {"LEFT", "resources/textures/GUI/SideMenu/left arrow.png"}, {"RIGHT", "resources/textures/GUI/SideMenu/right arrow.png"} },
+		"RIGHT",
+		gui::p2pX(10.33f, resolution), gui::p2pY(28.f, resolution),
 		gui::p2pX(100.f * 64.f / 1920.f, resolution), gui::p2pY(100.f * 64.f / 1080.f, resolution)
 	);
 
 	this->sideMenu->addButton(
+		"DEBUG BUTTON",
+		sf::Vector2f(gui::p2pX(5.f, resolution), gui::p2pY(75.f, resolution)),
+		gui::p2pX(14.f, resolution), gui::p2pY(5.f, resolution),
+		gui::calcCharSize(resolution, 24U),
+		"DEBUG BUTTON",
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution)
+	);
+
+	this->sideMenu->addButton(
 		"QUIT",
-		sf::Vector2f(gui::p2pX(4.f, resolution), gui::p2pY(75.f, resolution)),
-		gui::p2pX(12.f, resolution), gui::p2pY(4.f, resolution),
-		gui::calcCharSize(resolution, 32U),
+		sf::Vector2f(gui::p2pX(5.f, resolution), gui::p2pY(85.f, resolution)),
+		gui::p2pX(14.f, resolution), gui::p2pY(5.f, resolution),
+		gui::calcCharSize(resolution, 24U),
 		"QUIT",
-		sf::Color::Transparent, sf::Color::Transparent, sf::Color::Transparent,
-		sf::Color::Transparent, sf::Color::Transparent, sf::Color::Transparent,
-		sf::Color::White, sf::Color(128, 128, 128), sf::Color(32, 32, 32)
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution)
 	);
 }
 
@@ -172,6 +205,12 @@ void SimulationState::updateInput()
 			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("PAUSE")))
 			{
 				this->paused = !this->paused;
+				
+				if (this->paused)
+					this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
+				else
+					this->sideMenu->setTextureOfTextureButton("PAUSE", "STOP");
+
 				break;
 			}
 		}
@@ -244,6 +283,13 @@ void SimulationState::updateMousePositions(const sf::View* view)
 
 void SimulationState::getUpdateFromSideMenuGui()
 {	
+	this->getUpdateFromSideMenuButtons();
+	this->getUpdateFromSideMenuTexturesButtons();
+}
+
+// private utilities:
+void SimulationState::getUpdateFromSideMenuTexturesButtons()
+{
 	if (this->sideMenu->getTextureButtons().at("PAUSE")->hasBeenClicked())
 	{
 		this->paused = !this->paused;
@@ -255,5 +301,44 @@ void SimulationState::getUpdateFromSideMenuGui()
 		else this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
 	}
 
-	if (this->sideMenu->getButtons().at("QUIT")->isClicked()) this->endState();
+	if (this->sideMenu->getTextureButtons().at("ARROW")->hasBeenClicked())
+	{
+		const std::string& currentTextureKey = this->sideMenu->getTextureButtons().at("ARROW")->getCurrentTextureKey();
+
+		if (currentTextureKey == "RIGHT")
+		{
+			this->sideMenu->setPosition(
+				sf::Vector2f(
+					this->stateData->gfxSettings->resolution.width - this->sideMenu->getSize().x,
+					0.f
+				)
+			);
+
+			this->sideMenu->setTextureOfTextureButton("ARROW", "LEFT");
+		}
+		else
+		{
+			this->sideMenu->setPosition(
+				sf::Vector2f(
+					0.f,
+					0.f
+				)
+			);
+
+			this->sideMenu->setTextureOfTextureButton("ARROW", "RIGHT");
+		}
+	}
+}
+
+void SimulationState::getUpdateFromSideMenuButtons()
+{
+	if (this->sideMenu->getButtons().at("DEBUG BUTTON")->isClicked())
+	{
+		this->stateData->ecosystem->printAnimalsPositions();
+		std::cout << "CURRENT VALUE OF SPEED SCALE SLIDER: ";
+		std::cout << this->sideMenu->getScaleSliders().at("SPEED")->getCurrentValue() << '\n';
+	}
+
+	if (this->sideMenu->getButtons().at("QUIT")->isClicked())
+		this->endState();
 }

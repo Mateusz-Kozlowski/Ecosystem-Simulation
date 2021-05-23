@@ -26,16 +26,22 @@ const std::string& gui::TextureButton::getCurrentTextureKey() const
 	return this->currentTextureKey;
 }
 
+const sf::Vector2f& gui::TextureButton::getPosition() const
+{
+	return this->sprite.getPosition();
+}
+
 // mutators:
 void TextureButton::setTexture(const std::string& key)
 {
 	this->sprite.setTexture(this->textures[key]);
 
-	this->sprite.scale(
-		2.f, 2.f
-	);
-
 	this->currentTextureKey = key;
+}
+
+void gui::TextureButton::setPosition(const sf::Vector2f& new_pos)
+{
+	this->sprite.setPosition(new_pos);
 }
 
 // other public methods:

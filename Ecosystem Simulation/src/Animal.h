@@ -26,9 +26,13 @@ public:
 	
 	bool isAlive() const;
 
+	float getMaxHp() const;
+
 	float getHp() const;
 
 	// mutators:
+	void setPos(const sf::Vector2f& new_pos);
+
 	void setVelocity(const sf::Vector2f& v);
 
 	void setBrainIsRendered(bool brain_is_rendered);
@@ -43,6 +47,8 @@ public:
 	void renderHpBar(sf::RenderTarget& target) const;
 	void renderBrain(sf::RenderTarget& target) const;
 
+	bool isMouseClickedOnIt(const sf::Vector2f& mouse_pos_view) const;
+
 private:
 	bool alive;
 	
@@ -50,6 +56,8 @@ private:
 
 	MovementComponent* movementComponent;
 	
+	float maxHp;
+
 	ProgressBar* hpBar;
 
 	bool hpIsRendered;
@@ -59,5 +67,5 @@ private:
 	bool brainIsRendered;
 
 	// private utilities:
-	void updateHpBar(float dt);
+	void updateHp(float dt);
 };

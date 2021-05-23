@@ -74,7 +74,7 @@ void NeuralNetPreview::initNeurons(const sf::Vector2f& size)
 void NeuralNetPreview::initSynapses(const sf::Vector2f& size)
 {
 	// calculate useful variables:
-	unsigned hiddenLayersCount = this->brain.getHiddenLayers().size();
+	int hiddenLayersCount = this->brain.getHiddenLayers().size();
 
 	// resize:
 	this->synapses.resize(this->brain.getHiddenLayers().size() + 1U);
@@ -87,15 +87,23 @@ void NeuralNetPreview::initSynapses(const sf::Vector2f& size)
 	this->synapses.back().resize(this->brain.getOutputLayer()->getNeuronsCount());
 
 	// make synapses 3D structure:
-	for (int i = 0; i < this->brain.getHiddenLayers()[0]->getNeuronsCount(); i++)
-		this->synapses[0][i].resize(this->brain.getInputLayer()->getSize());
+	if (hiddenLayersCount > 0)
+	{
+		for (int i = 0; i < this->brain.getHiddenLayers()[0]->getNeuronsCount(); i++)
+			this->synapses[0][i].resize(this->brain.getInputLayer()->getSize());
 
-	for (int i = 0; i < hiddenLayersCount - 1; i++)
-		for (int j = 0; j < this->brain.getHiddenLayers()[i + 1]->getNeuronsCount(); j++)
-			this->synapses[i + 1][j].resize(this->brain.getHiddenLayers()[i]->getNeuronsCount());
+		for (int i = 0; i < hiddenLayersCount - 1; i++)
+			for (int j = 0; j < this->brain.getHiddenLayers()[i + 1]->getNeuronsCount(); j++)
+				this->synapses[i + 1][j].resize(this->brain.getHiddenLayers()[i]->getNeuronsCount());
 
-	for (int i = 0; i < this->brain.getOutputLayer()->getNeuronsCount(); i++)
-		this->synapses.back()[i].resize(this->brain.getHiddenLayers().back()->getNeuronsCount());
+		for (int i = 0; i < this->brain.getOutputLayer()->getNeuronsCount(); i++)
+			this->synapses.back()[i].resize(this->brain.getHiddenLayers().back()->getNeuronsCount());
+	}
+	else
+	{
+		for (int i = 0; i < this->brain.getOutputLayer()->getNeuronsCount(); i++)
+			this->synapses.back()[i].resize(this->brain.getInputLayer()->output().size());
+	}
 
 	// each synapse consists of 2 vertices:
 	for (auto& matrix : this->synapses)
