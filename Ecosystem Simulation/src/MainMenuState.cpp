@@ -14,9 +14,6 @@ MainMenuState::MainMenuState(StateData* state_data) : State(state_data)
 MainMenuState::~MainMenuState()
 {
 	for (auto it = this->buttons.begin(); it != this->buttons.end(); ++it) delete it->second;
-
-	// TODO: rmv later!!! 
-	delete this->stateData->ecosystem;
 }
 
 // mutators:
@@ -79,9 +76,11 @@ void MainMenuState::initBackground()
 
 void MainMenuState::initFonts()
 {
-	if (!this->font.loadFromFile("resources/fonts/Retroica.ttf")) throw("ERROR::MAINMENUSTATE::COULD NOT LOAD FONT");
+	if (!this->fonts["Retroica"].loadFromFile("resources/fonts/Retroica.ttf"))
+		throw("ERROR::MAINMENUSTATE::COULD NOT LOAD A FONT");
 	
-	if (!this->font2.loadFromFile("resources/fonts/CONSOLAB.ttf")) throw("ERROR::MAINMENUSTATE::COULD NOT LOAD FONT");
+	if (!this->fonts["CONSOLAB"].loadFromFile("resources/fonts/CONSOLAB.ttf"))
+		throw("ERROR::MAINMENUSTATE::COULD NOT LOAD A FONT");
 }
 
 void MainMenuState::initButtons()
@@ -91,7 +90,7 @@ void MainMenuState::initButtons()
 	this->buttons["SIMULATE"] = new gui::Button(
 		gui::p2pX(38.f, vm), gui::p2pY(19.f, vm),
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
-		this->font, "SIMULATE", gui::calcCharSize(vm, 32),
+		this->fonts["Retroica"], "SIMULATE", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -101,7 +100,7 @@ void MainMenuState::initButtons()
 	this->buttons["NEW ECOSYSTEM"] = new gui::Button(
 		gui::p2pX(38.f, vm), gui::p2pY(31.f, vm),
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
-		this->font, "NEW ECOSYSTEM", gui::calcCharSize(vm, 32),
+		this->fonts["Retroica"], "NEW ECOSYSTEM", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -111,7 +110,7 @@ void MainMenuState::initButtons()
 	this->buttons["EDIT"] = new gui::Button(
 		gui::p2pX(38.f, vm), gui::p2pY(43.f, vm),
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
-		this->font, "EDIT", gui::calcCharSize(vm, 32),
+		this->fonts["Retroica"], "EDIT", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -121,7 +120,7 @@ void MainMenuState::initButtons()
 	this->buttons["SAVE"] = new gui::Button(
 		gui::p2pX(38.f, vm), gui::p2pY(55.f, vm),
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
-		this->font, "SAVE", gui::calcCharSize(vm, 32),
+		this->fonts["Retroica"], "SAVE", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -131,7 +130,7 @@ void MainMenuState::initButtons()
 	this->buttons["LOAD"] = new gui::Button(
 		gui::p2pX(38.f, vm), gui::p2pY(67.f, vm),
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
-		this->font, "LOAD", gui::calcCharSize(vm, 32),
+		this->fonts["Retroica"], "LOAD", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -141,7 +140,7 @@ void MainMenuState::initButtons()
 	this->buttons["QUIT"] = new gui::Button(
 		gui::p2pX(38.f, vm), gui::p2pY(79.f, vm),
 		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
-		this->font, "QUIT", gui::calcCharSize(vm, 32),
+		this->fonts["Retroica"], "QUIT", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -151,7 +150,7 @@ void MainMenuState::initButtons()
 
 void MainMenuState::initEcosystemText()
 {
-	this->ecosystemText.setFont(this->font2);
+	this->ecosystemText.setFont(this->fonts["CONSOLAB"]);
 	this->ecosystemText.setString("No string has been set for this text");
 	this->ecosystemText.setPosition(50.0f, 50.0f);
 	this->ecosystemText.setCharacterSize(32U);

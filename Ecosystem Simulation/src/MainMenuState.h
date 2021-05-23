@@ -19,9 +19,11 @@ public:
 
 private:
 	sf::RectangleShape backgroundRect;
-	sf::Font font;
-	sf::Font font2;
-	std::map<std::string, gui::Button*> buttons;
+	
+	std::unordered_map<std::string, sf::Font> fonts;
+
+	std::unordered_map<std::string, gui::Button*> buttons;
+
 	sf::Text ecosystemText;
 
 	// initialization:
