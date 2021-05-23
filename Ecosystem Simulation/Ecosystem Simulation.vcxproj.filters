@@ -55,7 +55,6 @@
     <ClCompile Include="src\stdafx.cpp" />
     <ClCompile Include="src\MainMenuState.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
-    <ClCompile Include="src\PauseMenu.cpp" />
     <ClCompile Include="src\Ecosystem.cpp" />
     <ClCompile Include="src\GraphicsSettings.cpp" />
     <ClCompile Include="src\Gui.cpp" />
@@ -138,6 +137,18 @@
     </Filter>
     <Filter Include="resources\template files">
       <UniqueIdentifier>{b3b481b5-789f-408e-8ace-81b978afa1e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures">
+      <UniqueIdentifier>{28cee658-e54a-4a75-8385-a01aa9ec2dd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI">
+      <UniqueIdentifier>{b3414b4e-7877-410c-8a9e-a9450690d422}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\SideMenu">
+      <UniqueIdentifier>{0bc09d31-f876-4dcb-bcd3-17e686315332}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\SideMenu\xcf">
+      <UniqueIdentifier>{345bb53c-3c5d-41c7-9b9f-8d06ab417306}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +286,12 @@
     <None Include="resources\template files\ecosystem initializator.ini">
       <Filter>resources\template files</Filter>
     </None>
+    <None Include="resources\textures\GUI\SideMenu\xcf\arrow.xcf">
+      <Filter>resources\textures\GUI\SideMenu\xcf</Filter>
+    </None>
+    <None Include="config\ecosystem_creator_keybinds.ini">
+      <Filter>config</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\Retroica.ttf">
@@ -283,5 +300,37 @@
     <Font Include="resources\fonts\CONSOLAB.ttf">
       <Filter>resources\fonts</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\textures\GUI\SideMenu\axis hovered.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\SideMenu\axis idle.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\SideMenu\axis pressed.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\SideMenu\handle hovered.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\SideMenu\handle idle.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\SideMenu\handle pressed.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\SideMenu\left arrow.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\SideMenu\play.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\SideMenu\right arrow.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\SideMenu\stop.png">
+      <Filter>resources\textures\GUI\SideMenu</Filter>
+    </Image>
   </ItemGroup>
 </Project>

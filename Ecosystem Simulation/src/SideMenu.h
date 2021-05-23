@@ -11,7 +11,6 @@ namespace gui
 	public:
 		// constructor/destructor:
 		SideMenu(
-			sf::Font& font, 
 			const sf::Vector2f& pos, 
 			const sf::Vector2f& size,
 			const sf::Color& background_color
@@ -50,11 +49,11 @@ namespace gui
 			const std::string& key,
 			const sf::Vector2f& pos,
 			float width, float height,
-			int charSize, std::string text,
-			sf::Color idleColor, sf::Color hoverColor, sf::Color pressedColor,
-			sf::Color outlineIdleColor, sf::Color outlineHoverColor, sf::Color outlinePressedColor,
-			sf::Color textIdleColor, sf::Color textHoverColor, sf::Color textPressedColor,
-			float outlineThickness = 1.f, short unsigned id = 0
+			int char_size, const sf::Font& font, const std::string& text,
+			sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
+			sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
+			sf::Color text_idle_color, sf::Color text_hover_color, sf::Color text_pressed_color,
+			float outline_thickness = 1.f, short unsigned id = 0
 		);
 
 		void addScaleSlider(
@@ -68,20 +67,26 @@ namespace gui
 			const std::string& axis_pressed_path, const std::string& handle_pressed_path
 		);
 
-		//void addText(float posY, unsigned charSize, std::string text, sf::Color textColor);
+		void addCenteredText(
+			float pos_y,
+			unsigned char_size,
+			const sf::Font& font,
+			const std::string& text,
+			sf::Color color
+		);
 
 		// other public methods:
-		void update(const sf::Vector2i& mousePosWindow, const std::vector<sf::Event>& events);
+		void update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events);
 		void render(sf::RenderTarget& target);
 
 	private:
-		sf::Font& font;
-
 		sf::RectangleShape background;
 
 		std::unordered_map<std::string, gui::TextureButton*> textureButtons;
 		std::unordered_map<std::string, gui::Button*> buttons;
 		std::unordered_map<std::string, gui::ScaleSlider*> scaleSliders;
+
+		std::vector<sf::Text> texts;
 
 		// initialization:
 		void initBackground(const sf::Vector2f& pos, const sf::Vector2f& size, const sf::Color& color);

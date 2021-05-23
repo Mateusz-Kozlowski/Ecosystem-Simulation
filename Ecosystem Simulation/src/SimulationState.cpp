@@ -89,7 +89,11 @@ void SimulationState::initVariables()
 
 void SimulationState::initFonts()
 {
-	if (!this->font.loadFromFile("resources/fonts/Retroica.ttf")) throw("ERROR::SIMULATIONSTATE::COULD NOT LOAD FONT");
+	if (!this->fonts["Retroica"].loadFromFile("resources/fonts/Retroica.ttf"))
+		throw("ERROR::SIMULATIONSTATE::COULD NOT LOAD A FONT");
+
+	if (!this->fonts["CONSOLAB"].loadFromFile("resources/fonts/CONSOLAB.ttf"))
+		throw("ERROR::SIMULATIONSTATE::COULD NOT LOAD A FONT");
 }
 
 void SimulationState::initEcosystem()
@@ -131,24 +135,39 @@ void SimulationState::initSideMenu()
 {
 	const sf::VideoMode resolution = this->stateData->gfxSettings->resolution;
 
+	// create new SideMenu:
 	this->sideMenu = new gui::SideMenu(
-		this->font,
 		sf::Vector2f(0.f, 0.f),
 		sf::Vector2f(gui::p2pX(24, resolution), gui::p2pY(100, resolution)),
 		sf::Color(48, 48, 48)
 	);
 
+	// add widgets:
+	this->sideMenu->addCenteredText(
+		gui::p2pY(4.f, resolution),
+		gui::calcCharSize(resolution, 28.f),
+		this->fonts["CONSOLAB"],
+		"PLAY/STOP:",
+		sf::Color(225, 225, 225)
+	);
 	this->sideMenu->addTextureButton(
 		"PAUSE",
 		{ {"PLAY", "resources/textures/GUI/SideMenu/play.png"}, {"STOP", "resources/textures/GUI/SideMenu/stop.png"} },
 		"PLAY",
-		gui::p2pX(10.33f, resolution), gui::p2pY(4.f, resolution),
+		gui::p2pX(10.33f, resolution), gui::p2pY(9.5f, resolution),
 		gui::p2pX(100.f * 64.f / 1920.f, resolution), gui::p2pY(100.f * 64.f / 1080.f, resolution)
 	);
 
+	this->sideMenu->addCenteredText(
+		gui::p2pY(20.f, resolution),
+		gui::calcCharSize(resolution, 30.f),
+		this->fonts["CONSOLAB"],
+		"SPEED:",
+		sf::Color(225, 225, 225)
+	);
 	this->sideMenu->addScaleSlider(
 		"SPEED",
-		gui::p2pX(12.f, resolution), gui::p2pY(16.f, resolution),
+		gui::p2pX(12.f, resolution), gui::p2pY(27.f, resolution),
 		256.f / 1840.f,
 		{ 0.0f, 1.0f },
 		1.0f,
@@ -157,19 +176,27 @@ void SimulationState::initSideMenu()
 		"resources/textures/GUI/SideMenu/axis pressed.png", "resources/textures/GUI/SideMenu/handle pressed.png"
 	);
 
+	this->sideMenu->addCenteredText(
+		gui::p2pY(37.f, resolution),
+		gui::calcCharSize(resolution, 27.f),
+		this->fonts["CONSOLAB"],
+		"MOVE THIS PANEL:",
+		sf::Color(225, 225, 225)
+	);
 	this->sideMenu->addTextureButton(
 		"ARROW",
 		{ {"LEFT", "resources/textures/GUI/SideMenu/left arrow.png"}, {"RIGHT", "resources/textures/GUI/SideMenu/right arrow.png"} },
 		"RIGHT",
-		gui::p2pX(10.33f, resolution), gui::p2pY(28.f, resolution),
+		gui::p2pX(10.33f, resolution), gui::p2pY(42.f, resolution),
 		gui::p2pX(100.f * 64.f / 1920.f, resolution), gui::p2pY(100.f * 64.f / 1080.f, resolution)
 	);
 
 	this->sideMenu->addButton(
 		"DEBUG BUTTON",
 		sf::Vector2f(gui::p2pX(5.f, resolution), gui::p2pY(75.f, resolution)),
-		gui::p2pX(14.f, resolution), gui::p2pY(5.f, resolution),
-		gui::calcCharSize(resolution, 24U),
+		gui::p2pX(14.f, resolution), gui::p2pY(6.f, resolution),
+		gui::calcCharSize(resolution, 28U),
+		this->fonts["CONSOLAB"],
 		"DEBUG BUTTON",
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
@@ -179,9 +206,10 @@ void SimulationState::initSideMenu()
 
 	this->sideMenu->addButton(
 		"QUIT",
-		sf::Vector2f(gui::p2pX(5.f, resolution), gui::p2pY(85.f, resolution)),
-		gui::p2pX(14.f, resolution), gui::p2pY(5.f, resolution),
-		gui::calcCharSize(resolution, 24U),
+		sf::Vector2f(gui::p2pX(5.f, resolution), gui::p2pY(87.f, resolution)),
+		gui::p2pX(14.f, resolution), gui::p2pY(6.f, resolution),
+		gui::calcCharSize(resolution, 28U),
+		this->fonts["CONSOLAB"],
 		"QUIT",
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),

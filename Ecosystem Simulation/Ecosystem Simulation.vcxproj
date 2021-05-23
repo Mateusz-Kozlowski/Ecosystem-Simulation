@@ -265,12 +265,14 @@
     <ClInclude Include="src\TextureButton.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config\ecosystem_creator_keybinds.ini" />
     <None Include="config\graphics.ini" />
     <None Include="config\main_menu_keybinds.ini" />
     <None Include="config\simulation_keybinds.ini" />
     <None Include="config\supported_keys.ini" />
     <None Include="openal32.dll" />
     <None Include="resources\template files\ecosystem initializator.ini" />
+    <None Include="resources\textures\GUI\SideMenu\xcf\arrow.xcf" />
     <None Include="sfml-audio-2.dll" />
     <None Include="sfml-audio-d-2.dll" />
     <None Include="sfml-graphics-2.dll" />
@@ -285,6 +287,18 @@
   <ItemGroup>
     <Font Include="resources\fonts\CONSOLAB.ttf" />
     <Font Include="resources\fonts\Retroica.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\textures\GUI\SideMenu\axis hovered.png" />
+    <Image Include="resources\textures\GUI\SideMenu\axis idle.png" />
+    <Image Include="resources\textures\GUI\SideMenu\axis pressed.png" />
+    <Image Include="resources\textures\GUI\SideMenu\handle hovered.png" />
+    <Image Include="resources\textures\GUI\SideMenu\handle idle.png" />
+    <Image Include="resources\textures\GUI\SideMenu\handle pressed.png" />
+    <Image Include="resources\textures\GUI\SideMenu\left arrow.png" />
+    <Image Include="resources\textures\GUI\SideMenu\play.png" />
+    <Image Include="resources\textures\GUI\SideMenu\right arrow.png" />
+    <Image Include="resources\textures\GUI\SideMenu\stop.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

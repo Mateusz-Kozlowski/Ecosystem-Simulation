@@ -1,5 +1,6 @@
 The smaller number the greater priority (the sooner that thing will be implemented)
 
+1 map of fonts in main menu and in side menu
 1 <random> library? Check it out!
 1 God hand <==> interventions like replacing using mouse and so on...
 1 add consts to renders where it is possible (and also to other places)

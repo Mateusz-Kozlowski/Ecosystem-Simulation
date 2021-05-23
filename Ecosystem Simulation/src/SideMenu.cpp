@@ -5,11 +5,9 @@ using namespace gui;
 
 // constructor/destructor:
 SideMenu::SideMenu(
-	sf::Font& font, 
 	const sf::Vector2f& pos, 
 	const sf::Vector2f& size,
 	const sf::Color& background_color)
-	: font(font)
 {
 	this->initBackground(pos, size, background_color);
 }
@@ -51,30 +49,6 @@ bool SideMenu::hasTextureButtonBeenClicked(const std::string& key)
 	return this->textureButtons[key]->hasBeenClicked();
 }
 
-/*
-void SideMenu::addButton(
-	const std::string& key,
-	float pos_y,
-	float width, float height,
-	int charSize, std::string text,
-	sf::Color idleColor, sf::Color hoverColor, sf::Color pressedColor,
-	sf::Color outlineIdleColor, sf::Color outlineHoverColor, sf::Color outlinePressedColor,
-	sf::Color textIdleColor, sf::Color textHoverColor, sf::Color textPressedColor,
-	float outlineThickness, short unsigned id)
-{
-	float x = this->container.getPosition().x + this->container.getSize().x / 2.f - width / 2.f;
-
-	this->buttons[key] = new gui::Button(
-		x, pos_y, width, height,
-		this->font, text, charSize,
-		idleColor, hoverColor, pressedColor,
-		outlineIdleColor, outlineHoverColor, outlinePressedColor,
-		textIdleColor, textHoverColor, textPressedColor,
-		outlineThickness, id
-	);
-}
-*/
-
 // mutators:
 void gui::SideMenu::setPosition(const sf::Vector2f& new_pos)
 {
@@ -108,6 +82,13 @@ void gui::SideMenu::setPosition(const sf::Vector2f& new_pos)
 				new_pos.y - oldPos.y + scaleSlider.second->getPosition().y
 			)
 		);
+
+	// texts:
+	for (auto& text : this->texts)
+		text.setPosition(
+			new_pos.x - oldPos.x + text.getPosition().x,
+			new_pos.y - oldPos.y + text.getPosition().y
+		);
 }
 
 void gui::SideMenu::addTextureButton(
@@ -130,20 +111,20 @@ void gui::SideMenu::addButton(
 	const std::string& key, 
 	const sf::Vector2f& pos, 
 	float width, float height, 
-	int charSize, std::string text, 
-	sf::Color idleColor, sf::Color hoverColor, sf::Color pressedColor, 
-	sf::Color outlineIdleColor, sf::Color outlineHoverColor, sf::Color outlinePressedColor, 
-	sf::Color textIdleColor, sf::Color textHoverColor, sf::Color textPressedColor, 
+	int char_size, const sf::Font& font, const std::string& text,
+	sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
+	sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
+	sf::Color text_idle_color, sf::Color text_hover_color, sf::Color text_pressed_color,
 	float outlineThickness, 
 	short unsigned id)
 {
 	this->buttons[key] = new gui::Button(
 		pos.x, pos.y,
 		width, height,
-		this->font, text, charSize,
-		idleColor, hoverColor, pressedColor,
-		outlineIdleColor, outlineHoverColor, outlinePressedColor,
-		textIdleColor, textHoverColor, textPressedColor,
+		font, text, char_size,
+		idle_color, hover_color, pressed_color,
+		outline_idle_color, outline_hover_color, outline_pressed_color,
+		text_idle_color, text_hover_color, text_pressed_color,
 		outlineThickness,
 		id
 	);
@@ -170,21 +151,32 @@ void gui::SideMenu::addScaleSlider(
 	);
 }
 
+void gui::SideMenu::addCenteredText(
+	float pos_y, 
+	unsigned char_size, 
+	const sf::Font& font,
+	const std::string& text, 
+	sf::Color color)
+{
+	this->texts.push_back(sf::Text());
+
+	this->texts.back().setFont(font);
+	this->texts.back().setString(text);
+	this->texts.back().setCharacterSize(char_size);
+	this->texts.back().setFillColor(color);
+
+	auto rect = this->texts.back().getLocalBounds();
+
+	this->texts.back().setPosition(
+		this->background.getPosition().x + this->background.getSize().x / 2.f - rect.width / 2.f,
+		pos_y
+	);
+}
+
 void gui::SideMenu::setTextureOfTextureButton(const std::string& button_key, const std::string& texture_key)
 {
 	this->textureButtons[button_key]->setTexture(texture_key);
 }
-
-/*
-void SideMenu::addText(float pos_y, unsigned charSize, std::string text, sf::Color textColor)
-{
-	this->title.setFont(this->font);
-	this->title.setCharacterSize(charSize);
-	this->title.setString(text);
-	this->title.setFillColor(textColor);
-	this->title.setPosition(gui::p2pX(50, this->videoMode) - this->title.getGlobalBounds().width / 2.f, pos_y);
-}
-*/
 
 // other public methods:
 void SideMenu::update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events)
@@ -203,11 +195,13 @@ void SideMenu::render(sf::RenderTarget& target)
 {
 	target.draw(this->background);
 
-	for (auto& textureButton : this->textureButtons) textureButton.second->render(target);
+	for (const auto& textureButton : this->textureButtons) textureButton.second->render(target);
 	
-	for (auto& button : this->buttons) button.second->render(target);
+	for (const auto& button : this->buttons) button.second->render(target);
 
-	for (auto& scaleSlider : this->scaleSliders) scaleSlider.second->render(target);
+	for (const auto& scaleSlider : this->scaleSliders) scaleSlider.second->render(target);
+
+	for (const auto& text : this->texts) target.draw(text);
 }
 
 // private methods:

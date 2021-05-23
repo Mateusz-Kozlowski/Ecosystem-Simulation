@@ -19,7 +19,7 @@ public:
 private:
 	bool paused;
 	
-	sf::Font font;
+	std::unordered_map<std::string, sf::Font> fonts;
 	
 	sf::View view;
 
