@@ -37,7 +37,7 @@ gui::InputField::InputField(
     this->updateTextAndCursorPositions();
     this->textCursor.setOrigin(0.f, this->charSize / 2.f);
     this->textCursor.setSize(sf::Vector2f(outline_thickness, char_size));
-    this->textCursor.setFillColor(this->textColor);    
+    this->textCursor.setFillColor(this->textColor);
 }
 
 // accessors:
@@ -104,11 +104,11 @@ void gui::InputField::updateTextAndCursorPositions()
 {
     // text:
     this->text.setOrigin(
-        this->text.getLocalBounds().left + this->text.getLocalBounds().width / 2.f,
+        0.f,
         this->text.getLocalBounds().top + this->text.getLocalBounds().height / 2.f
     );
     this->text.setPosition(
-        this->posX + 2.f * this->outlineThickness + this->text.getGlobalBounds().width / 2.f, 
+        this->posX + 2.f * this->outlineThickness, 
         this->posY + height / 2.f
     );
 

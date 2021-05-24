@@ -11,8 +11,8 @@ namespace gui
 	public:
 		// constructor:
 		Button(
-			float posX, float posY,
-			float width, float height,
+			const sf::Vector2f& pos,
+			const sf::Vector2f& size,
 			const sf::Font& font, const std::string& text, int charSize,
 			sf::Color idleColor, sf::Color hoverColor, sf::Color pressedColor,
 			sf::Color outlineIdleColor, sf::Color outlineHoverColor, sf::Color outlinePressedColor,

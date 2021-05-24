@@ -95,22 +95,22 @@ void gui::SideMenu::addTextureButton(
 	const std::string& key,
 	const std::vector<std::pair<std::string, std::string>>& textures_path_and_keys,
 	const std::string& key_of_default_texture,
-	float pos_x, float pos_y, 
-	float width, float height, 
+	const sf::Vector2f& pos, 
+	const sf::Vector2f& size,
 	int id)
 {
 	this->textureButtons[key] = new gui::TextureButton(
 		textures_path_and_keys,
 		key_of_default_texture,
-		pos_x, pos_y,
-		width, height
+		pos,
+		size
 	);
 }
 
 void gui::SideMenu::addButton(
 	const std::string& key, 
 	const sf::Vector2f& pos, 
-	float width, float height, 
+	const sf::Vector2f& size, 
 	int char_size, const sf::Font& font, const std::string& text,
 	sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
 	sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
@@ -119,8 +119,8 @@ void gui::SideMenu::addButton(
 	short unsigned id)
 {
 	this->buttons[key] = new gui::Button(
-		pos.x, pos.y,
-		width, height,
+		pos,
+		size,
 		font, text, char_size,
 		idle_color, hover_color, pressed_color,
 		outline_idle_color, outline_hover_color, outline_pressed_color,
@@ -132,7 +132,7 @@ void gui::SideMenu::addButton(
 
 void gui::SideMenu::addScaleSlider(
 	const std::string& key,
-	float pos_x, float pos_y, 
+	const sf::Vector2f& pos, 
 	float textures_scale, 
 	const std::pair<float, float>& range, 
 	float default_value, 
@@ -141,7 +141,7 @@ void gui::SideMenu::addScaleSlider(
 	const std::string& axis_pressed_path, const std::string& handle_pressed_path)
 {
 	this->scaleSliders[key] = new gui::ScaleSlider(
-		pos_x, pos_y,
+		pos,
 		textures_scale,
 		range,
 		default_value,

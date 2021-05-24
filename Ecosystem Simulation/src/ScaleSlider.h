@@ -9,7 +9,7 @@ namespace gui
 	public:
 		// constructor:
 		ScaleSlider(
-			float posX, float posY,
+			const sf::Vector2f& pos,
 			float textures_scale,
 			const std::pair<float, float>& range,
 			float default_value,

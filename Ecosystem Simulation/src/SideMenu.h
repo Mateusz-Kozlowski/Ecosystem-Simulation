@@ -35,8 +35,8 @@ namespace gui
 			const std::string& key,
 			const std::vector<std::pair<std::string, std::string>>& textures_path_and_keys,
 			const std::string& key_of_default_texture,
-			float pos_x, float pos_y,
-			float width, float height,
+			const sf::Vector2f& pos,
+			const sf::Vector2f& size,
 			int id = 0
 		);
 
@@ -48,7 +48,7 @@ namespace gui
 		void addButton(
 			const std::string& key,
 			const sf::Vector2f& pos,
-			float width, float height,
+			const sf::Vector2f& size,
 			int char_size, const sf::Font& font, const std::string& text,
 			sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
 			sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
@@ -58,7 +58,7 @@ namespace gui
 
 		void addScaleSlider(
 			const std::string& key,
-			float posX, float posY,
+			const sf::Vector2f& pos,
 			float textures_scale,
 			const std::pair<float, float>& range,
 			float default_value,

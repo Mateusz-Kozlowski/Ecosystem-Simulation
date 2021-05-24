@@ -32,12 +32,13 @@ void SimulationState::update(float dt)
 	this->updateView();
 
 	this->updateMousePositions(&this->view);
+
+	this->updateSideMenu();
+
+	this->getUpdatesFromSideMenuGui();
 	
 	if (!this->paused)
 		this->stateData->ecosystem->update(dt, *this->stateData->events, this->mousePosView, this->paused);
-
-	this->sideMenu->update(this->mousePosWindow, *this->stateData->events);
-	this->getUpdateFromSideMenuGui();
 }
 
 void SimulationState::render(sf::RenderTarget* target)
@@ -133,6 +134,9 @@ void SimulationState::initDeferredRender()
 
 void SimulationState::initSideMenu()
 {
+	// temporary variable:
+	const std::string& guiPath = "resources/textures/GUI";
+
 	const sf::VideoMode resolution = this->stateData->gfxSettings->resolution;
 
 	// create new SideMenu:
@@ -145,63 +149,223 @@ void SimulationState::initSideMenu()
 	// add widgets:
 	this->sideMenu->addCenteredText(
 		gui::p2pY(4.f, resolution),
-		gui::calcCharSize(resolution, 28.f),
+		gui::calcCharSize(resolution, 26.f),
 		this->fonts["CONSOLAB"],
 		"PLAY/STOP:",
 		sf::Color(225, 225, 225)
 	);
 	this->sideMenu->addTextureButton(
 		"PAUSE",
-		{ {"PLAY", "resources/textures/GUI/SideMenu/play.png"}, {"STOP", "resources/textures/GUI/SideMenu/stop.png"} },
-		"PLAY",
-		gui::p2pX(10.33f, resolution), gui::p2pY(9.5f, resolution),
-		gui::p2pX(100.f * 64.f / 1920.f, resolution), gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		{
+			{"PLAY IDLE", guiPath + "/play and stop/play idle.png"}, 
+			{"STOP IDLE", guiPath + "/play and stop/stop idle.png"},
+			
+			{"PLAY HOVERED", guiPath + "/play and stop/play hovered.png"}, 
+			{"STOP HOVERED", guiPath + "/play and stop/stop hovered.png"},
+			
+			{"PLAY PRESSED", guiPath + "/play and stop/play pressed.png"}, 
+			{"STOP PRESSED", guiPath + "/play and stop/stop pressed.png"}
+		},
+		"PLAY IDLE",
+		sf::Vector2f(
+			gui::p2pX(10.33f, resolution),
+			gui::p2pY(9.5f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution),
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
 	);
 
 	this->sideMenu->addCenteredText(
 		gui::p2pY(20.f, resolution),
-		gui::calcCharSize(resolution, 30.f),
+		gui::calcCharSize(resolution, 26.f),
 		this->fonts["CONSOLAB"],
 		"SPEED:",
 		sf::Color(225, 225, 225)
 	);
 	this->sideMenu->addScaleSlider(
 		"SPEED",
-		gui::p2pX(12.f, resolution), gui::p2pY(27.f, resolution),
+		sf::Vector2f(
+			gui::p2pX(12.f, resolution),
+			gui::p2pY(27.f, resolution)
+		), 
 		256.f / 1840.f,
 		{ 0.0f, 1.0f },
 		1.0f,
-		"resources/textures/GUI/SideMenu/axis idle.png", "resources/textures/GUI/SideMenu/handle idle.png",
-		"resources/textures/GUI/SideMenu/axis hovered.png", "resources/textures/GUI/SideMenu/handle hovered.png",
-		"resources/textures/GUI/SideMenu/axis pressed.png", "resources/textures/GUI/SideMenu/handle pressed.png"
+		guiPath + "/scale sliders/axes/axis idle.png",    
+		guiPath + "/scale sliders/handles/handle idle.png",
+		
+		guiPath + "/scale sliders/axes/axis hovered.png", 
+		guiPath + "/scale sliders/handles/handle hovered.png",
+		
+		guiPath + "/scale sliders/axes/axis pressed.png", 
+		guiPath + "/scale sliders/handles/handle pressed.png"
 	);
 
 	this->sideMenu->addCenteredText(
 		gui::p2pY(37.f, resolution),
-		gui::calcCharSize(resolution, 27.f),
+		gui::calcCharSize(resolution, 26.f),
 		this->fonts["CONSOLAB"],
 		"MOVE THIS PANEL:",
 		sf::Color(225, 225, 225)
 	);
 	this->sideMenu->addTextureButton(
 		"ARROW",
-		{ {"LEFT", "resources/textures/GUI/SideMenu/left arrow.png"}, {"RIGHT", "resources/textures/GUI/SideMenu/right arrow.png"} },
-		"RIGHT",
-		gui::p2pX(10.33f, resolution), gui::p2pY(42.f, resolution),
-		gui::p2pX(100.f * 64.f / 1920.f, resolution), gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		{ 
+			{"LEFT IDLE", guiPath + "/arrows/left arrow idle.png"}, 
+			{"RIGHT IDLE", guiPath + "/arrows/right arrow idle.png"}, 
+			
+			{"LEFT HOVERED", guiPath + "/arrows/left arrow hovered.png"}, 
+			{"RIGHT HOVERED", guiPath + "/arrows/right arrow hovered.png"},
+			
+			{"LEFT PRESSED", guiPath + "/arrows/left arrow pressed.png"}, 
+			{"RIGHT PRESSED", guiPath + "/arrows/right arrow pressed.png"} 
+		},
+		"RIGHT IDLE",
+		sf::Vector2f(
+			gui::p2pX(10.33f, resolution),
+			gui::p2pY(42.f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution),
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
+	);
+
+	this->sideMenu->addCenteredText(
+		gui::p2pY(52.f, resolution),
+		gui::calcCharSize(resolution, 26.f),
+		this->fonts["CONSOLAB"],
+		"TOOLS (PLAY GOD):",
+		sf::Color(225, 225, 225)
+	);
+
+	this->sideMenu->addTextureButton(
+		"CURSOR",
+		{
+			{"IDLE", guiPath + "/tools/cursors/cursor idle.png"},
+			{"HOVERED", guiPath + "/tools/cursors/cursor hovered.png"},
+			{"PRESSED", guiPath + "/tools/cursors/cursor pressed.png"}
+		},
+		"IDLE",
+		sf::Vector2f(
+			gui::p2pX(4.f, resolution), 
+			gui::p2pY(57.f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution), 
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
+	);
+
+	this->sideMenu->addTextureButton(
+		"REMOVE",
+		{
+			{"IDLE", guiPath + "/tools/remove/remove idle.png"},
+			{"HOVERED", guiPath + "/tools/remove/remove hovered.png"},
+			{"PRESSED", guiPath + "/tools/remove/remove pressed.png"}
+		},
+		"IDLE",
+		sf::Vector2f(
+			gui::p2pX(8.f, resolution),
+			gui::p2pY(57.f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution),
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
+	);
+
+	this->sideMenu->addTextureButton(
+		"MOVE",
+		{
+			{"IDLE", guiPath + "/tools/replace/replace idle.png"},
+			{"HOVERED", guiPath + "/tools/replace/replace hovered.png"},
+			{"PRESSED", guiPath + "/tools/replace/replace pressed.png"}
+		},
+		"IDLE",
+		sf::Vector2f(
+			gui::p2pX(12.f, resolution),
+			gui::p2pY(57.f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution),
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
+	);
+
+	this->sideMenu->addTextureButton(
+		"BRAIN",
+		{
+			{"IDLE", guiPath + "/tools/brain/brain idle.png"},
+			{"HOVERED", guiPath + "/tools/brain/brain hovered.png"},
+			{"PRESSED", guiPath + "/tools/brain/brain pressed.png"}
+		},
+		"IDLE",
+		sf::Vector2f(
+			gui::p2pX(16.f, resolution),
+			gui::p2pY(57.f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution),
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
+	);
+
+	this->sideMenu->addTextureButton(
+		"CLONE",
+		{
+			{"IDLE", guiPath + "/tools/clone/clone idle.png"},
+			{"HOVERED", guiPath + "/tools/clone/clone hovered.png"},
+			{"PRESSED", guiPath + "/tools/clone/clone pressed.png"}
+		},
+		"IDLE",
+		sf::Vector2f(
+			gui::p2pX(8.f, resolution),
+			gui::p2pY(57.f, resolution) + gui::p2pX(4.f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution),
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
+	);
+
+	this->sideMenu->addTextureButton(
+		"STOP",
+		{
+			{"IDLE", guiPath + "/tools/stop/stop idle.png"},
+			{"HOVERED", guiPath + "/tools/stop/stop hovered.png"},
+			{"PRESSED", guiPath + "/tools/stop/stop pressed.png"}
+		},
+		"IDLE",
+		sf::Vector2f(
+			gui::p2pX(12.f, resolution),
+			gui::p2pY(57.f, resolution) + gui::p2pX(4.f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution),
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
 	);
 
 	this->sideMenu->addButton(
 		"QUIT",
-		sf::Vector2f(gui::p2pX(5.f, resolution), gui::p2pY(87.f, resolution)),
-		gui::p2pX(14.f, resolution), gui::p2pY(6.f, resolution),
+		sf::Vector2f(
+			gui::p2pX(3.f, resolution), 
+			gui::p2pY(87.f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(18.f, resolution), 
+			gui::p2pY(3.f * 7.f / 4.f, resolution)
+		),
 		gui::calcCharSize(resolution, 28U),
 		this->fonts["CONSOLAB"],
 		"QUIT",
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution)
+		gui::p2pY(0.6f, resolution)
 	);
 }
 
@@ -296,31 +460,34 @@ void SimulationState::updateMousePositions(const sf::View* view)
 		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
 }
 
-void SimulationState::getUpdateFromSideMenuGui()
-{	
-	this->getUpdateFromSideMenuButtons();
-	this->getUpdateFromSideMenuTexturesButtons();
+void SimulationState::updateSideMenu()
+{
+	this->sideMenu->update(this->mousePosWindow, *this->stateData->events);
+
+	this->updateSideMenuGui();
 }
 
-// private utilities:
-void SimulationState::getUpdateFromSideMenuTexturesButtons()
-{
+void SimulationState::getUpdatesFromSideMenuGui()
+{	
+	// get update from side menu texture buttons:
 	if (this->sideMenu->getTextureButtons().at("PAUSE")->hasBeenClicked())
 	{
 		this->paused = !this->paused;
 
-		const std::string& currentTextureKey = this->sideMenu->getTextureButtons().at("PAUSE")->getCurrentTextureKey();
+		std::string currentTextureKey = this->sideMenu->getTextureButtons().at("PAUSE")->getCurrentTextureKey();
 
-		if (currentTextureKey == "PLAY") this->sideMenu->setTextureOfTextureButton("PAUSE", "STOP");
+		if (currentTextureKey.substr(0, 4) == "PLAY")
+			this->sideMenu->setTextureOfTextureButton("PAUSE", currentTextureKey.replace(0, 4, "STOP"));
 
-		else this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
+		else
+			this->sideMenu->setTextureOfTextureButton("PAUSE", currentTextureKey.replace(0, 4, "PLAY"));
 	}
 
 	if (this->sideMenu->getTextureButtons().at("ARROW")->hasBeenClicked())
 	{
-		const std::string& currentTextureKey = this->sideMenu->getTextureButtons().at("ARROW")->getCurrentTextureKey();
+		std::string currentTextureKey = this->sideMenu->getTextureButtons().at("ARROW")->getCurrentTextureKey();
 
-		if (currentTextureKey == "RIGHT")
+		if (currentTextureKey.substr(0, 5) == "RIGHT")
 		{
 			this->sideMenu->setPosition(
 				sf::Vector2f(
@@ -329,7 +496,7 @@ void SimulationState::getUpdateFromSideMenuTexturesButtons()
 				)
 			);
 
-			this->sideMenu->setTextureOfTextureButton("ARROW", "LEFT");
+			this->sideMenu->setTextureOfTextureButton("ARROW", currentTextureKey.replace(0, 5, "LEFT"));
 		}
 		else
 		{
@@ -340,13 +507,80 @@ void SimulationState::getUpdateFromSideMenuTexturesButtons()
 				)
 			);
 
-			this->sideMenu->setTextureOfTextureButton("ARROW", "RIGHT");
+			this->sideMenu->setTextureOfTextureButton("ARROW", currentTextureKey.replace(0, 4, "RIGHT"));
 		}
 	}
+
+	// get update from side menu buttons:
+	if (this->sideMenu->getButtons().at("QUIT")->isClicked()) this->endState();
 }
 
-void SimulationState::getUpdateFromSideMenuButtons()
+// private utilities:
+void SimulationState::updateSideMenuGui()
 {
-	if (this->sideMenu->getButtons().at("QUIT")->isClicked())
-		this->endState();
+	// change themes of texture buttons:
+	for (auto& textureButton : this->sideMenu->getTextureButtons())
+	{
+		if (textureButton.first == "PAUSE") // pause button:
+		{
+			if (textureButton.second->getCurrentTextureKey().substr(0, 4) == "PLAY")
+			{
+				if (textureButton.second->isPressed())
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "PLAY PRESSED");
+
+				else if (textureButton.second->isHovered())
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "PLAY HOVERED");
+
+				else
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "PLAY IDLE");
+			}
+			else
+			{
+				if (textureButton.second->isPressed())
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "STOP PRESSED");
+
+				else if (textureButton.second->isHovered())
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "STOP HOVERED");
+
+				else
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "STOP IDLE");
+			}
+		}
+		else if (textureButton.first == "ARROW") // arrow button:
+		{
+			if (textureButton.second->getCurrentTextureKey().substr(0, 5) == "RIGHT")
+			{
+				if (textureButton.second->isPressed())
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "RIGHT PRESSED");
+
+				else if (textureButton.second->isHovered())
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "RIGHT HOVERED");
+
+				else
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "RIGHT IDLE");
+			}
+			else
+			{
+				if (textureButton.second->isPressed())
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "LEFT PRESSED");
+
+				else if (textureButton.second->isHovered())
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "LEFT HOVERED");
+
+				else
+					this->sideMenu->setTextureOfTextureButton(textureButton.first, "LEFT IDLE");
+			}
+		}
+		else // tools buttons:
+		{
+			if (textureButton.second->isPressed())
+				this->sideMenu->setTextureOfTextureButton(textureButton.first, "PRESSED");
+
+			else if (textureButton.second->isHovered())
+				this->sideMenu->setTextureOfTextureButton(textureButton.first, "HOVERED");
+
+			else
+				this->sideMenu->setTextureOfTextureButton(textureButton.first, "IDLE");
+		}
+	}
 }

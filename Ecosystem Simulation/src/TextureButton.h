@@ -11,17 +11,23 @@ namespace gui
 		TextureButton(
 			const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths,
 			const std::string& key_of_default_texture,
-			float x, float y,
-			float width, float height,
+			const sf::Vector2f& pos,
+			const sf::Vector2f& size,
 			int id = 0
 		);
 
 		// accessors:
 		bool hasBeenClicked() const;
 
+		bool isPressed() const;
+
+		bool isHovered() const;
+
 		const std::string& getCurrentTextureKey() const;
 
 		const sf::Vector2f& getPosition() const;
+		
+		const sf::Vector2f& getSize() const;
 
 		// mutators:
 		void setTexture(const std::string& key);
@@ -41,10 +47,18 @@ namespace gui
 
 		bool hasBeenClickedSinceLastFrame;
 
+		bool pressed;
+
+		bool hovered;
+
 		std::string currentTextureKey;
 
 		// initialization:
 		void initTextures(const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths);
-		void initSprite(const std::string& key_of_default_texture, float x, float y, float width, float height);
+		void initSprite(
+			const std::string& key_of_default_texture,
+			const sf::Vector2f& pos,
+			const sf::Vector2f& size
+		);
 	};
 }

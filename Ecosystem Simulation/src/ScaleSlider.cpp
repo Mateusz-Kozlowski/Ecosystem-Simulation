@@ -3,7 +3,7 @@
 
 // constructor:
 gui::ScaleSlider::ScaleSlider(
-	float posX, float posY,
+	const sf::Vector2f& pos,
 	float textures_scale,
 	const std::pair<float, float>& range,
 	float default_value,
@@ -47,8 +47,8 @@ gui::ScaleSlider::ScaleSlider(
 		);
 
 		temp.setPosition(
-			posX - temp.getGlobalBounds().width / 2.f,
-			posY - temp.getGlobalBounds().height / 2.f
+			pos.x - temp.getGlobalBounds().width / 2.f,
+			pos.y - temp.getGlobalBounds().height / 2.f
 		);
 
 		this->axes[it.first] = temp;

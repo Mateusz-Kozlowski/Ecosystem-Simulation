@@ -1,15 +1,14 @@
 The smaller number the greater priority (the sooner that thing will be implemented)
 
-1 rmv debug button
-
 1 select and track an animal
 1 in side menu add switcher that allows to hide/show a brain
-1 God hand <==> interventions:
-	- killing animals
-	- cloning animals (with or without mutations)
-	- replacing animals
+1 tools (play God):
+	- select (only for animals or for both animals and food?)
+	- remove
+	- replacing
+	- show/hide brain
+	- clone animal (with or without mutations)
 	- stopping animals
-	- replacing food
 
 1 better "eating algorithm" (with complexity better than the current one (O(f*a)))
 
@@ -20,6 +19,11 @@ The smaller number the greater priority (the sooner that thing will be implement
 1 add consts to renders where it is possible (and also to other places)
 
 1 what with hp rendering? Does it have bool like nn preview? Do ecosystem control check that bool? I don't think so...
+
+1 input field outline should be inside, not outside
+
+1 default positions of animals shouldn't be [0, 0]
+	also by default their bodies are white, they should be red
 
 2 use sf::Vector2<T> instead of 2 floats
 2 animal tracking
@@ -35,6 +39,7 @@ The smaller number the greater priority (the sooner that thing will be implement
 2 cloning
 2 add a better way of dealing with random numbers generator
 2 set text function in Button class change string of sf::Text member, but doesn't "recenter" it, should this happen?
+2 hovered textures for texture buttons
 
 3 events to gui elements
 3 define states freezing

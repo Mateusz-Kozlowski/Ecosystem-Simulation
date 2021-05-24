@@ -88,63 +88,99 @@ void MainMenuState::initButtons()
 	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
 	this->buttons["SIMULATE"] = new gui::Button(
-		gui::p2pX(38.f, vm), gui::p2pY(19.f, vm),
-		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		sf::Vector2f(
+			gui::p2pX(38.f, vm), 
+			gui::p2pY(19.f, vm)
+		),
+		sf::Vector2f(
+			gui::p2pX(24.f, vm), 
+			gui::p2pY(7.f, vm)
+		),
 		this->fonts["Retroica"], "SIMULATE", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm)
+		gui::p2pY(0.8f, vm)
 	);
 
 	this->buttons["NEW ECOSYSTEM"] = new gui::Button(
-		gui::p2pX(38.f, vm), gui::p2pY(31.f, vm),
-		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		sf::Vector2f(
+			gui::p2pX(38.f, vm), 
+			gui::p2pY(31.f, vm)
+		),
+		sf::Vector2f(
+			gui::p2pX(24.f, vm), 
+			gui::p2pY(7.f, vm)
+		),
 		this->fonts["Retroica"], "NEW ECOSYSTEM", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm)
+		gui::p2pY(0.8f, vm)
 	);
 
 	this->buttons["EDIT"] = new gui::Button(
-		gui::p2pX(38.f, vm), gui::p2pY(43.f, vm),
-		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		sf::Vector2f(
+			gui::p2pX(38.f, vm), 
+			gui::p2pY(43.f, vm)
+		),
+		sf::Vector2f(
+			gui::p2pX(24.f, vm), 
+			gui::p2pY(7.f, vm)
+		),
 		this->fonts["Retroica"], "EDIT", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm)
+		gui::p2pY(0.8f, vm)
 	);
 
 	this->buttons["SAVE"] = new gui::Button(
-		gui::p2pX(38.f, vm), gui::p2pY(55.f, vm),
-		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		sf::Vector2f(
+			gui::p2pX(38.f, vm), 
+			gui::p2pY(55.f, vm)
+		),
+		sf::Vector2f(
+			gui::p2pX(24.f, vm), 
+			gui::p2pY(7.f, vm)
+		),
 		this->fonts["Retroica"], "SAVE", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm)
+		gui::p2pY(0.8f, vm)
 	);
 
 	this->buttons["LOAD"] = new gui::Button(
-		gui::p2pX(38.f, vm), gui::p2pY(67.f, vm),
-		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		sf::Vector2f(
+			gui::p2pX(38.f, vm), 
+			gui::p2pY(67.f, vm)
+		),
+		sf::Vector2f(
+			gui::p2pX(24.f, vm), 
+			gui::p2pY(7.f, vm)
+		),
 		this->fonts["Retroica"], "LOAD", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm)
+		gui::p2pY(0.8f, vm)
 	);
 
 	this->buttons["QUIT"] = new gui::Button(
-		gui::p2pX(38.f, vm), gui::p2pY(79.f, vm),
-		gui::p2pX(24.f, vm), gui::p2pY(7.f, vm),
+		sf::Vector2f(
+			gui::p2pX(38.f, vm), 
+			gui::p2pY(79.f, vm)
+		),
+		sf::Vector2f(
+			gui::p2pX(24.f, vm), 
+			gui::p2pY(7.f, vm)
+		),
 		this->fonts["Retroica"], "QUIT", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm)
+		gui::p2pY(0.8f, vm)
 	);
 }
 

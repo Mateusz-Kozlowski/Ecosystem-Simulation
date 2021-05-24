@@ -5,8 +5,8 @@ using namespace gui;
 
 // constructor:
 gui::Button::Button(
-	float posX, float posY,
-	float width, float height,
+	const sf::Vector2f& pos,
+	const sf::Vector2f& size,
 	const sf::Font& font, const std::string& text, int charSize,
 	sf::Color idleColor, sf::Color hoverColor, sf::Color pressedColor,
 	sf::Color outlineIdleColor, sf::Color outlineHoverColor, sf::Color outlinePressedColor,
@@ -18,8 +18,8 @@ gui::Button::Button(
 	this->state = ButtonState::BTN_IDLE;
 	this->id = id;
 
-	this->rect.setPosition(posX, posY);
-	this->rect.setSize(sf::Vector2f(width, height));
+	this->rect.setPosition(pos);
+	this->rect.setSize(size);
 	this->rect.setOutlineThickness(outlineThickness);
 	this->rect.setOutlineColor(outlineIdleColor);
 	this->rect.setFillColor(idleColor);
