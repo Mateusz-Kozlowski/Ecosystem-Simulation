@@ -237,16 +237,16 @@ void SimulationState::initSideMenu()
 		gui::p2pY(52.f, resolution),
 		gui::calcCharSize(resolution, 26.f),
 		this->fonts["CONSOLAB"],
-		"TOOLS (PLAY GOD):",
+		"GOD TOOLS:",
 		sf::Color(225, 225, 225)
 	);
 
 	this->sideMenu->addTextureButton(
 		"CURSOR",
 		{
-			{"IDLE", guiPath + "/tools/cursors/cursor idle.png"},
-			{"HOVERED", guiPath + "/tools/cursors/cursor hovered.png"},
-			{"PRESSED", guiPath + "/tools/cursors/cursor pressed.png"}
+			{"IDLE", guiPath + "/God tools/cursors/cursor idle.png"},
+			{"HOVERED", guiPath + "/God tools/cursors/cursor hovered.png"},
+			{"PRESSED", guiPath + "/God tools/cursors/cursor pressed.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -262,9 +262,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"REMOVE",
 		{
-			{"IDLE", guiPath + "/tools/remove/remove idle.png"},
-			{"HOVERED", guiPath + "/tools/remove/remove hovered.png"},
-			{"PRESSED", guiPath + "/tools/remove/remove pressed.png"}
+			{"IDLE", guiPath + "/God tools/remove/remove idle.png"},
+			{"HOVERED", guiPath + "/God tools/remove/remove hovered.png"},
+			{"PRESSED", guiPath + "/God tools/remove/remove pressed.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -280,9 +280,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"MOVE",
 		{
-			{"IDLE", guiPath + "/tools/replace/replace idle.png"},
-			{"HOVERED", guiPath + "/tools/replace/replace hovered.png"},
-			{"PRESSED", guiPath + "/tools/replace/replace pressed.png"}
+			{"IDLE", guiPath + "/God tools/replace/replace idle.png"},
+			{"HOVERED", guiPath + "/God tools/replace/replace hovered.png"},
+			{"PRESSED", guiPath + "/God tools/replace/replace pressed.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -298,9 +298,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"BRAIN",
 		{
-			{"IDLE", guiPath + "/tools/brain/brain idle.png"},
-			{"HOVERED", guiPath + "/tools/brain/brain hovered.png"},
-			{"PRESSED", guiPath + "/tools/brain/brain pressed.png"}
+			{"IDLE", guiPath + "/God tools/brain/brain idle.png"},
+			{"HOVERED", guiPath + "/God tools/brain/brain hovered.png"},
+			{"PRESSED", guiPath + "/God tools/brain/brain pressed.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -316,9 +316,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"CLONE",
 		{
-			{"IDLE", guiPath + "/tools/clone/clone idle.png"},
-			{"HOVERED", guiPath + "/tools/clone/clone hovered.png"},
-			{"PRESSED", guiPath + "/tools/clone/clone pressed.png"}
+			{"IDLE", guiPath + "/God tools/clone/clone idle.png"},
+			{"HOVERED", guiPath + "/God tools/clone/clone hovered.png"},
+			{"PRESSED", guiPath + "/God tools/clone/clone pressed.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -334,9 +334,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"STOP",
 		{
-			{"IDLE", guiPath + "/tools/stop/stop idle.png"},
-			{"HOVERED", guiPath + "/tools/stop/stop hovered.png"},
-			{"PRESSED", guiPath + "/tools/stop/stop pressed.png"}
+			{"IDLE", guiPath + "/God tools/stop/stop idle.png"},
+			{"HOVERED", guiPath + "/God tools/stop/stop hovered.png"},
+			{"PRESSED", guiPath + "/God tools/stop/stop pressed.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -571,7 +571,7 @@ void SimulationState::updateSideMenuGui()
 					this->sideMenu->setTextureOfTextureButton(textureButton.first, "LEFT IDLE");
 			}
 		}
-		else // tools buttons:
+		else // God tools buttons:
 		{
 			if (textureButton.second->isPressed())
 				this->sideMenu->setTextureOfTextureButton(textureButton.first, "PRESSED");
