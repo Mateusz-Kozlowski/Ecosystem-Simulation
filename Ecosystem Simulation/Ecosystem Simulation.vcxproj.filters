@@ -144,11 +144,41 @@
     <Filter Include="resources\textures\GUI">
       <UniqueIdentifier>{b3414b4e-7877-410c-8a9e-a9450690d422}</UniqueIdentifier>
     </Filter>
-    <Filter Include="resources\textures\GUI\SideMenu">
-      <UniqueIdentifier>{0bc09d31-f876-4dcb-bcd3-17e686315332}</UniqueIdentifier>
+    <Filter Include="resources\textures\GUI\arrows">
+      <UniqueIdentifier>{278321aa-f466-4d7d-bb08-79b36183e9b8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="resources\textures\GUI\SideMenu\xcf">
-      <UniqueIdentifier>{345bb53c-3c5d-41c7-9b9f-8d06ab417306}</UniqueIdentifier>
+    <Filter Include="resources\textures\GUI\God tools">
+      <UniqueIdentifier>{b4222ea3-9d34-4859-ad91-d866020d9030}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\play and stop">
+      <UniqueIdentifier>{f7dd9bde-f356-4e0c-aded-d74ed662a591}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\scale sliders">
+      <UniqueIdentifier>{1bd82ea7-066e-4ddd-a6c0-a6d9745e12d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\God tools\clone">
+      <UniqueIdentifier>{d425c46b-7582-44dd-b14c-6177e314d256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\God tools\cursors">
+      <UniqueIdentifier>{0f597dfa-a6d4-4d44-bc50-93047dac13ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\God tools\brain">
+      <UniqueIdentifier>{da4c25e4-cb6a-4738-aa34-dd6f1133f630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\God tools\remove">
+      <UniqueIdentifier>{3b6c4759-4338-4269-9629-a4667252ed30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\God tools\replace">
+      <UniqueIdentifier>{c6b2582b-e956-416d-99bc-c71506b4eb27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\God tools\stop">
+      <UniqueIdentifier>{f7bba167-8a1a-4859-8a3e-a9805bc7626f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\scale sliders\axes">
+      <UniqueIdentifier>{2a949479-05ef-4375-ae88-3892f26207a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\GUI\scale sliders\handles">
+      <UniqueIdentifier>{b1f2ba67-b714-4ba4-830b-67a86c21a81c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -286,11 +316,41 @@
     <None Include="resources\template files\ecosystem initializator.ini">
       <Filter>resources\template files</Filter>
     </None>
-    <None Include="resources\textures\GUI\SideMenu\xcf\arrow.xcf">
-      <Filter>resources\textures\GUI\SideMenu\xcf</Filter>
-    </None>
     <None Include="config\ecosystem_creator_keybinds.ini">
       <Filter>config</Filter>
+    </None>
+    <None Include="resources\textures\GUI\God tools\tool background.xcf">
+      <Filter>resources\textures\GUI\God tools</Filter>
+    </None>
+    <None Include="resources\textures\GUI\God tools\brain\brain.xcf">
+      <Filter>resources\textures\GUI\God tools\brain</Filter>
+    </None>
+    <None Include="resources\textures\GUI\God tools\clone.xcf">
+      <Filter>resources\textures\GUI\God tools\clone</Filter>
+    </None>
+    <None Include="resources\textures\GUI\God tools\cursors\cursor.xcf">
+      <Filter>resources\textures\GUI\God tools\cursors</Filter>
+    </None>
+    <None Include="resources\textures\GUI\arrows\left arrow.xcf">
+      <Filter>resources\textures\GUI\arrows</Filter>
+    </None>
+    <None Include="resources\textures\GUI\play and stop\play.xcf">
+      <Filter>resources\textures\GUI\play and stop</Filter>
+    </None>
+    <None Include="resources\textures\GUI\God tools\remove\remove.xcf">
+      <Filter>resources\textures\GUI\God tools\remove</Filter>
+    </None>
+    <None Include="resources\textures\GUI\God tools\replace\replace.xcf">
+      <Filter>resources\textures\GUI\God tools\replace</Filter>
+    </None>
+    <None Include="resources\textures\GUI\arrows\right arrow.xcf">
+      <Filter>resources\textures\GUI\arrows</Filter>
+    </None>
+    <None Include="resources\textures\GUI\play and stop\stop.xcf">
+      <Filter>resources\textures\GUI\play and stop</Filter>
+    </None>
+    <None Include="resources\textures\GUI\God tools\stop\stop.xcf">
+      <Filter>resources\textures\GUI\God tools\stop</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -302,35 +362,113 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\textures\GUI\SideMenu\axis hovered.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\scale sliders\axes\axis hovered.png">
+      <Filter>resources\textures\GUI\scale sliders\axes</Filter>
     </Image>
-    <Image Include="resources\textures\GUI\SideMenu\axis idle.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\scale sliders\axes\axis idle.png">
+      <Filter>resources\textures\GUI\scale sliders\axes</Filter>
     </Image>
-    <Image Include="resources\textures\GUI\SideMenu\axis pressed.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\scale sliders\axes\axis pressed.png">
+      <Filter>resources\textures\GUI\scale sliders\axes</Filter>
     </Image>
-    <Image Include="resources\textures\GUI\SideMenu\handle hovered.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\God tools\brain\brain hovered.png">
+      <Filter>resources\textures\GUI\God tools\brain</Filter>
     </Image>
-    <Image Include="resources\textures\GUI\SideMenu\handle idle.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\God tools\brain\brain idle.png">
+      <Filter>resources\textures\GUI\God tools\brain</Filter>
     </Image>
-    <Image Include="resources\textures\GUI\SideMenu\handle pressed.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\God tools\brain\brain pressed.png">
+      <Filter>resources\textures\GUI\God tools\brain</Filter>
     </Image>
-    <Image Include="resources\textures\GUI\SideMenu\left arrow.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\God tools\clone\clone hovered.png">
+      <Filter>resources\textures\GUI\God tools\clone</Filter>
     </Image>
-    <Image Include="resources\textures\GUI\SideMenu\play.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\God tools\clone\clone idle.png">
+      <Filter>resources\textures\GUI\God tools\clone</Filter>
     </Image>
-    <Image Include="resources\textures\GUI\SideMenu\right arrow.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\God tools\clone\clone pressed.png">
+      <Filter>resources\textures\GUI\God tools\clone</Filter>
     </Image>
-    <Image Include="resources\textures\GUI\SideMenu\stop.png">
-      <Filter>resources\textures\GUI\SideMenu</Filter>
+    <Image Include="resources\textures\GUI\God tools\cursors\cursor hovered.png">
+      <Filter>resources\textures\GUI\God tools\cursors</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\cursors\cursor idle.png">
+      <Filter>resources\textures\GUI\God tools\cursors</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\cursors\cursor pressed.png">
+      <Filter>resources\textures\GUI\God tools\cursors</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\scale sliders\handles\handle hovered.png">
+      <Filter>resources\textures\GUI\scale sliders\handles</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\scale sliders\handles\handle idle.png">
+      <Filter>resources\textures\GUI\scale sliders\handles</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\scale sliders\handles\handle pressed.png">
+      <Filter>resources\textures\GUI\scale sliders\handles</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\arrows\left arrow hovered.png">
+      <Filter>resources\textures\GUI\arrows</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\arrows\left arrow idle.png">
+      <Filter>resources\textures\GUI\arrows</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\arrows\left arrow pressed.png">
+      <Filter>resources\textures\GUI\arrows</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\play and stop\play hovered.png">
+      <Filter>resources\textures\GUI\play and stop</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\play and stop\play idle.png">
+      <Filter>resources\textures\GUI\play and stop</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\play and stop\play pressed.png">
+      <Filter>resources\textures\GUI\play and stop</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\remove\remove hovered.png">
+      <Filter>resources\textures\GUI\God tools\remove</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\remove\remove idle.png">
+      <Filter>resources\textures\GUI\God tools\remove</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\remove\remove pressed.png">
+      <Filter>resources\textures\GUI\God tools\remove</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\replace\replace idle.png">
+      <Filter>resources\textures\GUI\God tools\replace</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\replace\replace hovered.png">
+      <Filter>resources\textures\GUI\God tools\replace</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\replace\replace pressed.png">
+      <Filter>resources\textures\GUI\God tools\replace</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\arrows\right arrow hovered.png">
+      <Filter>resources\textures\GUI\arrows</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\arrows\right arrow idle.png">
+      <Filter>resources\textures\GUI\arrows</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\arrows\right arrow pressed.png">
+      <Filter>resources\textures\GUI\arrows</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\play and stop\stop hovered.png">
+      <Filter>resources\textures\GUI\play and stop</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\play and stop\stop idle.png">
+      <Filter>resources\textures\GUI\play and stop</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\play and stop\stop pressed.png">
+      <Filter>resources\textures\GUI\play and stop</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\stop\stop hovered.png">
+      <Filter>resources\textures\GUI\God tools\stop</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\stop\stop idle.png">
+      <Filter>resources\textures\GUI\God tools\stop</Filter>
+    </Image>
+    <Image Include="resources\textures\GUI\God tools\stop\stop pressed.png">
+      <Filter>resources\textures\GUI\God tools\stop</Filter>
     </Image>
   </ItemGroup>
 </Project>
