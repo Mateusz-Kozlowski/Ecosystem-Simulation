@@ -37,7 +37,13 @@ void SimulationState::update(float dt)
 
 	this->getUpdatesFromSideMenuGui();
 	
-	this->stateData->ecosystem->update(dt, *this->stateData->events, this->mousePosView, this->paused);
+	this->stateData->ecosystem->update(
+		dt, 
+		*this->stateData->events, 
+		this->mousePosView, 
+		this->paused,
+		this->currentTool
+	);
 }
 
 void SimulationState::render(sf::RenderTarget* target)
@@ -85,7 +91,7 @@ void SimulationState::initVariables()
 	this->sideMenuIsRendered = false;
 	this->paused = true;
 	this->previousMousePosWindow = sf::Vector2i(0, 0);
-	this->currentTool = nullptr;
+	this->currentTool = "";
 }
 
 void SimulationState::initFonts()
@@ -242,11 +248,11 @@ void SimulationState::initSideMenu()
 	);
 
 	this->sideMenu->addTextureButton(
-		"CURSOR",
+		"TRACK",
 		{
-			{"IDLE", guiPath + "/God tools/cursors/cursor.png"},
-			{"LIGHT", guiPath + "/God tools/cursors/cursor light.png"},
-			{"DARK", guiPath + "/God tools/cursors/cursor dark.png"}
+			{"IDLE", guiPath + "/God tools/track/track.png"},
+			{"LIGHT", guiPath + "/God tools/track/track light.png"},
+			{"DARK", guiPath + "/God tools/track/track dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -278,7 +284,7 @@ void SimulationState::initSideMenu()
 	);
 
 	this->sideMenu->addTextureButton(
-		"MOVE",
+		"REPLACE",
 		{
 			{"IDLE", guiPath + "/God tools/replace/replace.png"},
 			{"LIGHT", guiPath + "/God tools/replace/replace light.png"},
@@ -519,104 +525,119 @@ void SimulationState::getUpdatesFromSideMenuGui()
 void SimulationState::updateSideMenuGui()
 {
 	// change themes of texture buttons:
-	for (auto& textureButton : this->sideMenu->getTextureButtons())
+	for (auto& it : this->sideMenu->getTextureButtons())
 	{
-		if (textureButton.first == "PAUSE") // pause button:
+		if (it.first == "PAUSE") // pause button:
 		{
-			if (textureButton.second->getCurrentTextureKey().substr(0, 4) == "PLAY")
+			if (it.second->getCurrentTextureKey().substr(0, 4) == "PLAY")
 			{
-				if (textureButton.second->isPressed())
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "PLAY PRESSED");
+				if (it.second->isPressed())
+					this->sideMenu->setTextureOfTextureButton(it.first, "PLAY PRESSED");
 
-				else if (textureButton.second->isHovered())
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "PLAY HOVERED");
+				else if (it.second->isHovered())
+					this->sideMenu->setTextureOfTextureButton(it.first, "PLAY HOVERED");
 
 				else
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "PLAY IDLE");
+					this->sideMenu->setTextureOfTextureButton(it.first, "PLAY IDLE");
 			}
 			else
 			{
-				if (textureButton.second->isPressed())
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "STOP PRESSED");
+				if (it.second->isPressed())
+					this->sideMenu->setTextureOfTextureButton(it.first, "STOP PRESSED");
 
-				else if (textureButton.second->isHovered())
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "STOP HOVERED");
+				else if (it.second->isHovered())
+					this->sideMenu->setTextureOfTextureButton(it.first, "STOP HOVERED");
 
 				else
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "STOP IDLE");
+					this->sideMenu->setTextureOfTextureButton(it.first, "STOP IDLE");
 			}
 		}
-		else if (textureButton.first == "ARROW") // arrow button:
+		else if (it.first == "ARROW") // arrow button:
 		{
-			if (textureButton.second->getCurrentTextureKey().substr(0, 5) == "RIGHT")
+			if (it.second->getCurrentTextureKey().substr(0, 5) == "RIGHT")
 			{
-				if (textureButton.second->isPressed())
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "RIGHT PRESSED");
+				if (it.second->isPressed())
+					this->sideMenu->setTextureOfTextureButton(it.first, "RIGHT PRESSED");
 
-				else if (textureButton.second->isHovered())
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "RIGHT HOVERED");
+				else if (it.second->isHovered())
+					this->sideMenu->setTextureOfTextureButton(it.first, "RIGHT HOVERED");
 
 				else
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "RIGHT IDLE");
+					this->sideMenu->setTextureOfTextureButton(it.first, "RIGHT IDLE");
 			}
 			else
 			{
-				if (textureButton.second->isPressed())
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "LEFT PRESSED");
+				if (it.second->isPressed())
+					this->sideMenu->setTextureOfTextureButton(it.first, "LEFT PRESSED");
 
-				else if (textureButton.second->isHovered())
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "LEFT HOVERED");
+				else if (it.second->isHovered())
+					this->sideMenu->setTextureOfTextureButton(it.first, "LEFT HOVERED");
 
 				else
-					this->sideMenu->setTextureOfTextureButton(textureButton.first, "LEFT IDLE");
+					this->sideMenu->setTextureOfTextureButton(it.first, "LEFT IDLE");
 			}
 		}
 		else // God tools buttons: 
-			this->updateToolButton(textureButton.second);
+			this->updateGodToolButton(it.first);
 	}
 }
 
-void SimulationState::updateToolButton(gui::TextureButton* tool_btn)
+void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
 {
-	if (tool_btn == this->currentTool) // the argument is the current tool:
+	if (god_tool_btn_key == this->currentTool) // the argument is the current tool:
 	{
 		// if the current tool has been clicked, it is no longer the current tool:
-		if (tool_btn->hasBeenClicked())
+		if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->hasBeenClicked())
 		{
 			// the button is hovered, because u can't click a button without hovering it with a mouse cursor:
-			tool_btn->setTexture("LIGHT"); 
-			
-			this->currentTool = nullptr;
+			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
+
+			this->currentTool = "";
 		}
 
 		// pretty straight forward, it's pressed so it's dark:
-		else if (tool_btn->isPressed()) tool_btn->setTexture("DARK");
+		else if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->isPressed())
+		{
+			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "DARK");
+		}
 
 		// is hovered so is light:
-		else if (tool_btn->isHovered()) tool_btn->setTexture("LIGHT");
+		else if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->isHovered())
+		{
+			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
+		}
 
 		// it is neither hovered nor pressed, but let me remind u, that it's still the current tool, so we darken it:
-		else tool_btn->setTexture("DARK");
+		else
+		{
+			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "DARK");
+		}
 	}
 	else // the argument isn't the current tool:
 	{
 		// the tool become the current one:
-		if (tool_btn->hasBeenClicked())
+		if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->hasBeenClicked())
 		{
 			// old tool (if it exists at all) ceases to be the current tool:
-			if (this->currentTool) this->currentTool->setTexture("IDLE");
+			if (this->currentTool != "") this->sideMenu->setTextureOfTextureButton(this->currentTool, "IDLE");
  
-			this->currentTool = tool_btn;
+			this->currentTool = god_tool_btn_key;
 
 			// we brighten it up,
 			// because a mouse cursor is still covering it (because it has just been clicked and a mouse hasn't go away yet):
-			tool_btn->setTexture("LIGHT");
+			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
 		}
 
 		// next pretty straight forward line, it's hovered so it's light: 
-		else if (tool_btn->isHovered()) tool_btn->setTexture("LIGHT");
+		else if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->isHovered())
+		{
+			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
+		}
 		
 		// the most common case, ordinary idle tool:
-		else tool_btn->setTexture("IDLE");
+		else
+		{
+			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "IDLE");
+		}
 	}
 }

@@ -27,7 +27,13 @@ public:
 	void printAnimalsPositions() const;
 
 	// other public methods:
-	void update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view, bool paused);
+	void update(
+		float dt, 
+		const std::vector<sf::Event>& events, 
+		const sf::Vector2f& mouse_pos_view, 
+		bool paused,
+		const std::string& god_tool
+	);
 	void render(sf::RenderTarget& target);
 
 private:
@@ -53,4 +59,29 @@ private:
 	std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;
 
 	Food* findTheNearestFood(const Animal& animal) const;
+
+	void useGodTool(
+		const std::vector<sf::Event>& events,
+		const sf::Vector2f& mouse_pos_view,
+		const std::string& tool
+	);
+
+	void removeDeadAnimals();
+
+	void avoidGoingBeyondTheWorld();
+
+	void feedAnimalsWithFood();
+
+	// God tools:
+	void track(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+
+	void remove(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+	
+	void replace(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+	
+	void brainVisibility(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+	
+	void clone(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+	
+	void stop(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
 };

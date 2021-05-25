@@ -165,102 +165,24 @@ void Ecosystem::printAnimalsPositions() const
 }
 
 // other public methods:
-void Ecosystem::update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mousePosView, bool paused)
+void Ecosystem::update(
+	float dt, 
+	const std::vector<sf::Event>& events, 
+	const sf::Vector2f& mouse_pos_view, 
+	bool paused,
+	const std::string& god_tool)
 {
-	if (!paused)
-	{
-		for (const auto& animal : this->animals)
-		{
-			// TODO: rmv later:
-			//std::cout << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-			animal->updateBodyAndHp(dt, getInputsForBrain(*animal));
-		}
+	this->useGodTool(events, mouse_pos_view, god_tool);
 
-		// avoid going beyond the world:
-		for (auto& animal : this->animals)
-		{
-			// left border:
-			if (animal->getPos().x - animal->getRadius() < this->borderThickness)
-			{
-				animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
-				animal->setPos(sf::Vector2f(this->borderThickness + animal->getRadius(), animal->getPos().y));
-			}
+	if (paused) return;
+	
+	for (const auto& animal : this->animals) animal->updateBodyAndHp(dt, getInputsForBrain(*animal));
 
-			// right border:
-			else if (animal->getPos().x + animal->getRadius() > this->worldSize.x - this->borderThickness)
-			{
-				animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
-				animal->setPos(sf::Vector2f(this->worldSize.x - this->borderThickness - animal->getRadius(), animal->getPos().y));
-			}
+	this->removeDeadAnimals();
 
-			// it is possible that an animal crossed 2 perpendicular borders in the same frame, so we don't use else if here:
-			// top border:
-			if (animal->getPos().y - animal->getRadius() < this->borderThickness)
-			{
-				animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
-				animal->setPos(sf::Vector2f(animal->getPos().x, this->borderThickness + animal->getRadius()));
-			}
+	this->avoidGoingBeyondTheWorld();
 
-			// bottom border:
-			else if (animal->getPos().y + animal->getRadius() > this->worldSize.y - this->borderThickness)
-			{
-				animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
-				animal->setPos(sf::Vector2f(animal->getPos().x, this->worldSize.y - this->borderThickness - animal->getRadius()));
-			}
-		}
-
-		// eat food!:
-		// TODO: come up with a new way of generating random numbers:
-		CrappyNeuralNets::RandomNumbersGenerator generator;
-
-		// TODO: improve algorithm complexity (currently O(f*a))
-		for (int i = 0; i < this->animals.size(); i++)
-		{
-			for (int j = 0; j < this->food.size(); j++)
-			{
-				float a = this->animals[i]->getPos().x - this->food[j]->getPosition().x;
-				float b = this->animals[i]->getPos().y - this->food[j]->getPosition().y;
-
-				float distance = sqrt(pow(a, 2) + pow(b, 2));
-
-				if (distance <= this->animals[i]->getRadius() + this->food[j]->getRadius())
-				{
-					this->animals[i]->setHp(this->animals[i]->getMaxHp());
-					this->food[j]->setRandomPos(this->worldSize, this->borderThickness, generator);
-				}
-			}
-		}
-
-		// kill animals that aren't alive (even if this sentense doesn't make sense ;)) 
-		for (int i = 0; i < this->animals.size(); i++)
-			if (!this->animals[i]->isAlive())
-			{
-				delete this->animals[i];
-				std::swap(this->animals[i], this->animals.back());
-				this->animals.pop_back();
-			}
-	}
-
-	// brain showing:
-	bool temp = false;
-
-	for (const auto& event : events)
-		if (event.type == sf::Event::MouseButtonPressed)
-		{
-			temp = true;
-			break;
-		}
-
-	if (temp)
-		for (auto& animal : this->animals)
-		{
-			float a = animal->getPos().x - mousePosView.x;
-			float b = animal->getPos().y - mousePosView.y;
-
-			float distance = sqrt(pow(a, 2) + pow(b, 2));
-
-			if (animal->getRadius() >= distance) animal->setBrainIsRendered(!animal->isBrainRendered());
-		}
+	this->feedAnimalsWithFood();
 
 	for (auto& animal : this->animals)
 		if (animal->isBrainRendered())
@@ -420,4 +342,166 @@ Food* Ecosystem::findTheNearestFood(const Animal& animal) const
 	}
 	
 	return theNearestFood;
+}
+
+void Ecosystem::useGodTool(
+	const std::vector<sf::Event>& events,
+	const sf::Vector2f& mouse_pos_view, 
+	const std::string& god_tool)
+{
+	// TODO: add info that if there is no God tool then god_tool string should be equal to ""
+
+	if (god_tool == "TRACK") this->track(events, mouse_pos_view);
+
+	else if (god_tool == "REMOVE") this->remove(events, mouse_pos_view);
+
+	else if (god_tool == "REPLACE") this->replace(events, mouse_pos_view);
+
+	else if (god_tool == "BRAIN") this->brainVisibility(events, mouse_pos_view);
+
+	else if (god_tool == "CLONE") this->clone(events, mouse_pos_view);
+
+	else if (god_tool == "STOP") this->stop(events, mouse_pos_view);
+
+	else if (god_tool == "") return;
+
+	else
+	{
+		std::cerr << "INCORRECT GOD TOOL: " << god_tool << '\n';
+		exit(-1);
+	}
+}
+
+void Ecosystem::removeDeadAnimals()
+{
+	for (int i = 0; i < this->animals.size(); i++)
+		if (!this->animals[i]->isAlive())
+		{
+			delete this->animals[i];
+			std::swap(this->animals[i], this->animals.back());
+			this->animals.pop_back();
+		}
+}
+
+void Ecosystem::avoidGoingBeyondTheWorld()
+{
+	// avoid going beyond the world:
+	for (auto& animal : this->animals)
+	{
+		// left border:
+		if (animal->getPos().x - animal->getRadius() < this->borderThickness)
+		{
+			animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
+			animal->setPos(sf::Vector2f(this->borderThickness + animal->getRadius(), animal->getPos().y));
+		}
+
+		// right border:
+		else if (animal->getPos().x + animal->getRadius() > this->worldSize.x - this->borderThickness)
+		{
+			animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
+			animal->setPos(sf::Vector2f(this->worldSize.x - this->borderThickness - animal->getRadius(), animal->getPos().y));
+		}
+
+		// it is possible that an animal crossed 2 perpendicular borders in the same frame, so we don't use else if here:
+		// top border:
+		if (animal->getPos().y - animal->getRadius() < this->borderThickness)
+		{
+			animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
+			animal->setPos(sf::Vector2f(animal->getPos().x, this->borderThickness + animal->getRadius()));
+		}
+
+		// bottom border:
+		else if (animal->getPos().y + animal->getRadius() > this->worldSize.y - this->borderThickness)
+		{
+			animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
+			animal->setPos(sf::Vector2f(animal->getPos().x, this->worldSize.y - this->borderThickness - animal->getRadius()));
+		}
+	}
+}
+
+void Ecosystem::feedAnimalsWithFood()
+{
+	// TODO: come up with a new way of generating random numbers:
+	CrappyNeuralNets::RandomNumbersGenerator generator;
+
+	// TODO: improve algorithm complexity (currently O(f*a))
+	for (int i = 0; i < this->animals.size(); i++)
+	{
+		for (int j = 0; j < this->food.size(); j++)
+		{
+			float a = this->animals[i]->getPos().x - this->food[j]->getPosition().x;
+			float b = this->animals[i]->getPos().y - this->food[j]->getPosition().y;
+
+			float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+			if (distance <= this->animals[i]->getRadius() + this->food[j]->getRadius())
+			{
+				this->animals[i]->setHp(this->animals[i]->getMaxHp());
+				this->food[j]->setRandomPos(this->worldSize, this->borderThickness, generator);
+			}
+		}
+	}
+}
+
+// God tools:
+void Ecosystem::track(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+{
+}
+
+void Ecosystem::remove(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+{
+}
+
+void Ecosystem::replace(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+{
+}
+
+void Ecosystem::brainVisibility(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+{
+	bool mouseHasBeenPressed = false;
+
+	for (const auto& event : events)
+		if (event.type == sf::Event::MouseButtonPressed)
+		{
+			mouseHasBeenPressed = true;
+			break;
+		}
+
+	if (mouseHasBeenPressed)
+		for (auto& animal : this->animals)
+		{
+			float a = animal->getPos().x - mouse_pos_view.x;
+			float b = animal->getPos().y - mouse_pos_view.y;
+
+			float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+			if (animal->getRadius() >= distance) animal->setBrainIsRendered(!animal->isBrainRendered());
+		}
+}
+
+void Ecosystem::clone(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+{
+}
+
+void Ecosystem::stop(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+{
+	bool mouseHasBeenPressed = false;
+
+	for (const auto& event : events)
+		if (event.type == sf::Event::MouseButtonPressed)
+		{
+			mouseHasBeenPressed = true;
+			break;
+		}
+
+	if (mouseHasBeenPressed)
+		for (auto& animal : this->animals)
+		{
+			float a = animal->getPos().x - mouse_pos_view.x;
+			float b = animal->getPos().y - mouse_pos_view.y;
+
+			float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+			if (animal->getRadius() >= distance) animal->setVelocity(sf::Vector2f(0.f, 0.f));
+		}
 }

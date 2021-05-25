@@ -29,7 +29,7 @@ private:
 
 	gui::SideMenu* sideMenu;
 
-	gui::TextureButton* currentTool;
+	std::string currentTool;
 
 	sf::RenderTexture renderTexture;
 	sf::Sprite renderSprite;
@@ -52,5 +52,5 @@ private:
 
 	// private utilities:
 	void updateSideMenuGui();
-	void updateToolButton(gui::TextureButton* tool_btn);
+	void updateGodToolButton(const std::string& god_tool_btn_key);
 };
