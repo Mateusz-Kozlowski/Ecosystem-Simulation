@@ -39,7 +39,7 @@ void SimulationState::update(float dt)
 	
 	this->stateData->ecosystem->update(
 		dt, 
-		*this->stateData->events, 
+		this->mouseButtonPressedEvent(), 
 		this->mousePosView, 
 		this->paused,
 		this->currentTool

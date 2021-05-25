@@ -29,7 +29,7 @@ public:
 	// other public methods:
 	void update(
 		float dt, 
-		const std::vector<sf::Event>& events, 
+		bool mouse_button_pressed_event,
 		const sf::Vector2f& mouse_pos_view, 
 		bool paused,
 		const std::string& god_tool
@@ -61,7 +61,7 @@ private:
 	Food* findTheNearestFood(const Animal& animal) const;
 
 	void useGodTool(
-		const std::vector<sf::Event>& events,
+		bool mouse_button_pressed_event,
 		const sf::Vector2f& mouse_pos_view,
 		const std::string& tool
 	);
@@ -73,15 +73,15 @@ private:
 	void feedAnimalsWithFood();
 
 	// God tools:
-	void track(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
-
-	void remove(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+	void track(const sf::Vector2f& mouse_pos_view);
 	
-	void replace(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+	void remove(const sf::Vector2f& mouse_pos_view);
 	
-	void brainVisibility(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+	void replace(const sf::Vector2f& mouse_pos_view);
 	
-	void clone(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+	void brainVisibility(const sf::Vector2f& mouse_pos_view);
 	
-	void stop(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+	void clone(const sf::Vector2f& mouse_pos_view);
+	
+	void stop(const sf::Vector2f& mouse_pos_view);
 };

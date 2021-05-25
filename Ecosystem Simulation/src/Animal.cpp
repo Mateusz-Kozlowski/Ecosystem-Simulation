@@ -148,28 +148,14 @@ void Animal::renderBrain(sf::RenderTarget& target) const
 	this->brainPreview->render(target);
 }
 
-bool Animal::isMouseClickedOnIt(const sf::Vector2f& mouse_pos_view) const
-{
-	if (!sf::Mouse::isButtonPressed)
-	{
-		return false;
-	}
-	
-	if (mouse_pos_view.x > this->movementComponent->get_x() - this->getRadius())
-	{
-		if (mouse_pos_view.x < this->movementComponent->get_x() + this->getRadius())
-		{
-			if (mouse_pos_view.y > this->movementComponent->get_y() + this->getRadius())
-			{
-				if (mouse_pos_view.y < this->movementComponent->get_y() + this->getRadius())
-				{
-					return true;
-				}
-			}
-		}
-	}
+bool Animal::isHoveredByMouse(const sf::Vector2f& mouse_pos_view) const
+{	
+	float a = this->movementComponent->get_x() - mouse_pos_view.x;
+	float b = this->movementComponent->get_y() - mouse_pos_view.y;
 
-	return false;
+	float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+	return this->getRadius() >= distance;
 }
 
 // private utilities:

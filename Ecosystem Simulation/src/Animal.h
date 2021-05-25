@@ -47,7 +47,7 @@ public:
 	void renderHpBar(sf::RenderTarget& target) const;
 	void renderBrain(sf::RenderTarget& target) const;
 
-	bool isMouseClickedOnIt(const sf::Vector2f& mouse_pos_view) const;
+	bool isHoveredByMouse(const sf::Vector2f& mouse_pos_view) const;
 
 private:
 	bool alive;

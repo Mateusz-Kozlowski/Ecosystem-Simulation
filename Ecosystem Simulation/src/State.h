@@ -61,4 +61,7 @@ protected:
 	
 	virtual void initKeybinds() = 0;
 	virtual void updateInput() = 0;
+
+	// protected utilities:
+	bool mouseButtonPressedEvent() const;
 };

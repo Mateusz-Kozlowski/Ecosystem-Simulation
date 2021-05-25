@@ -167,12 +167,12 @@ void Ecosystem::printAnimalsPositions() const
 // other public methods:
 void Ecosystem::update(
 	float dt, 
-	const std::vector<sf::Event>& events, 
+	bool mouse_button_pressed_event, 
 	const sf::Vector2f& mouse_pos_view, 
 	bool paused,
 	const std::string& god_tool)
 {
-	this->useGodTool(events, mouse_pos_view, god_tool);
+	this->useGodTool(mouse_button_pressed_event, mouse_pos_view, god_tool);
 
 	if (paused) return;
 	
@@ -345,23 +345,25 @@ Food* Ecosystem::findTheNearestFood(const Animal& animal) const
 }
 
 void Ecosystem::useGodTool(
-	const std::vector<sf::Event>& events,
+	bool mouse_button_pressed_event,
 	const sf::Vector2f& mouse_pos_view, 
 	const std::string& god_tool)
 {
 	// TODO: add info that if there is no God tool then god_tool string should be equal to ""
 
-	if (god_tool == "TRACK") this->track(events, mouse_pos_view);
+	if (!mouse_button_pressed_event) return;
 
-	else if (god_tool == "REMOVE") this->remove(events, mouse_pos_view);
+	if (god_tool == "TRACK") this->track(mouse_pos_view);
 
-	else if (god_tool == "REPLACE") this->replace(events, mouse_pos_view);
+	else if (god_tool == "REMOVE") this->remove(mouse_pos_view);
 
-	else if (god_tool == "BRAIN") this->brainVisibility(events, mouse_pos_view);
+	else if (god_tool == "REPLACE") this->replace(mouse_pos_view);
 
-	else if (god_tool == "CLONE") this->clone(events, mouse_pos_view);
+	else if (god_tool == "BRAIN") this->brainVisibility(mouse_pos_view);
 
-	else if (god_tool == "STOP") this->stop(events, mouse_pos_view);
+	else if (god_tool == "CLONE") this->clone(mouse_pos_view);
+
+	else if (god_tool == "STOP") this->stop(mouse_pos_view);
 
 	else if (god_tool == "") return;
 
@@ -444,64 +446,40 @@ void Ecosystem::feedAnimalsWithFood()
 }
 
 // God tools:
-void Ecosystem::track(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+void Ecosystem::track(const sf::Vector2f& mouse_pos_view)
 {
 }
 
-void Ecosystem::remove(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+void Ecosystem::remove(const sf::Vector2f& mouse_pos_view)
 {
 }
 
-void Ecosystem::replace(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+void Ecosystem::replace(const sf::Vector2f& mouse_pos_view)
 {
 }
 
-void Ecosystem::brainVisibility(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+void Ecosystem::brainVisibility(const sf::Vector2f& mouse_pos_view)
 {
-	bool mouseHasBeenPressed = false;
-
-	for (const auto& event : events)
-		if (event.type == sf::Event::MouseButtonPressed)
+	for (auto& animal : this->animals)
+	{
+		if (animal->isHoveredByMouse(mouse_pos_view))
 		{
-			mouseHasBeenPressed = true;
-			break;
+			animal->setBrainIsRendered(!animal->isBrainRendered());
 		}
-
-	if (mouseHasBeenPressed)
-		for (auto& animal : this->animals)
-		{
-			float a = animal->getPos().x - mouse_pos_view.x;
-			float b = animal->getPos().y - mouse_pos_view.y;
-
-			float distance = sqrt(pow(a, 2) + pow(b, 2));
-
-			if (animal->getRadius() >= distance) animal->setBrainIsRendered(!animal->isBrainRendered());
-		}
+	}
 }
 
-void Ecosystem::clone(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+void Ecosystem::clone(const sf::Vector2f& mouse_pos_view)
 {
 }
 
-void Ecosystem::stop(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+void Ecosystem::stop(const sf::Vector2f& mouse_pos_view)
 {
-	bool mouseHasBeenPressed = false;
-
-	for (const auto& event : events)
-		if (event.type == sf::Event::MouseButtonPressed)
+	for (auto& animal : this->animals)
+	{
+		if (animal->isHoveredByMouse(mouse_pos_view))
 		{
-			mouseHasBeenPressed = true;
-			break;
+			animal->setVelocity(sf::Vector2f(0.f, 0.f));
 		}
-
-	if (mouseHasBeenPressed)
-		for (auto& animal : this->animals)
-		{
-			float a = animal->getPos().x - mouse_pos_view.x;
-			float b = animal->getPos().y - mouse_pos_view.y;
-
-			float distance = sqrt(pow(a, 2) + pow(b, 2));
-
-			if (animal->getRadius() >= distance) animal->setVelocity(sf::Vector2f(0.f, 0.f));
-		}
+	}
 }
