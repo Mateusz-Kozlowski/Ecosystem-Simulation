@@ -22,6 +22,7 @@ smart pointers!
 set text function in Button class change string of sf::Text member, but doesn't "recenter" it, should this happen? =>
 	=> Rewrite some GUI classes at all. =>
 		=> events to gui elements and so on...
+		=> and is clicked should use mouse pressed instead of released, but it should also prevent repeating clicks
 define states freezing
 keys editor (Did I mean keybinds?)
 nn viewer never beyond the world

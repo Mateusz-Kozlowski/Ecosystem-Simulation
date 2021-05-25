@@ -79,7 +79,7 @@ void gui::TextureButton::update(const sf::Vector2i& mouse_pos_window, const std:
 			// check if has been clicked:
 			for (const auto& event : events)
 			{
-				if (event.type == sf::Event::MouseButtonReleased)
+				if (event.type == sf::Event::MouseButtonPressed)
 				{
 					this->hasBeenClickedSinceLastFrame = true;
 					break;

@@ -86,6 +86,7 @@ void SimulationState::initVariables()
 	this->sideMenuIsRendered = false;
 	this->paused = true;
 	this->previousMousePosWindow = sf::Vector2i(0, 0);
+	this->currentTool = nullptr;
 }
 
 void SimulationState::initFonts()
@@ -157,14 +158,14 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"PAUSE",
 		{
-			{"PLAY IDLE", guiPath + "/play and stop/play idle.png"}, 
-			{"STOP IDLE", guiPath + "/play and stop/stop idle.png"},
+			{"PLAY IDLE", guiPath + "/play and stop/play.png"}, 
+			{"STOP IDLE", guiPath + "/play and stop/stop.png"},
 			
-			{"PLAY HOVERED", guiPath + "/play and stop/play hovered.png"}, 
-			{"STOP HOVERED", guiPath + "/play and stop/stop hovered.png"},
+			{"PLAY HOVERED", guiPath + "/play and stop/play light.png"}, 
+			{"STOP HOVERED", guiPath + "/play and stop/stop light.png"},
 			
-			{"PLAY PRESSED", guiPath + "/play and stop/play pressed.png"}, 
-			{"STOP PRESSED", guiPath + "/play and stop/stop pressed.png"}
+			{"PLAY PRESSED", guiPath + "/play and stop/play dark.png"}, 
+			{"STOP PRESSED", guiPath + "/play and stop/stop dark.png"}
 		},
 		"PLAY IDLE",
 		sf::Vector2f(
@@ -193,14 +194,14 @@ void SimulationState::initSideMenu()
 		256.f / 1840.f,
 		{ 0.0f, 1.0f },
 		1.0f,
-		guiPath + "/scale sliders/axes/axis idle.png",    
-		guiPath + "/scale sliders/handles/handle idle.png",
+		guiPath + "/scale sliders/axes/axis.png",    
+		guiPath + "/scale sliders/handles/handle.png",
 		
-		guiPath + "/scale sliders/axes/axis hovered.png", 
-		guiPath + "/scale sliders/handles/handle hovered.png",
+		guiPath + "/scale sliders/axes/axis light.png", 
+		guiPath + "/scale sliders/handles/handle light.png",
 		
-		guiPath + "/scale sliders/axes/axis pressed.png", 
-		guiPath + "/scale sliders/handles/handle pressed.png"
+		guiPath + "/scale sliders/axes/axis dark.png", 
+		guiPath + "/scale sliders/handles/handle dark.png"
 	);
 
 	this->sideMenu->addCenteredText(
@@ -213,14 +214,14 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"ARROW",
 		{ 
-			{"LEFT IDLE", guiPath + "/arrows/left arrow idle.png"}, 
-			{"RIGHT IDLE", guiPath + "/arrows/right arrow idle.png"}, 
+			{"LEFT IDLE", guiPath + "/arrows/left arrow.png"}, 
+			{"RIGHT IDLE", guiPath + "/arrows/right arrow.png"}, 
 			
-			{"LEFT HOVERED", guiPath + "/arrows/left arrow hovered.png"}, 
-			{"RIGHT HOVERED", guiPath + "/arrows/right arrow hovered.png"},
+			{"LEFT HOVERED", guiPath + "/arrows/left arrow light.png"}, 
+			{"RIGHT HOVERED", guiPath + "/arrows/right arrow light.png"},
 			
-			{"LEFT PRESSED", guiPath + "/arrows/left arrow pressed.png"}, 
-			{"RIGHT PRESSED", guiPath + "/arrows/right arrow pressed.png"} 
+			{"LEFT PRESSED", guiPath + "/arrows/left arrow dark.png"}, 
+			{"RIGHT PRESSED", guiPath + "/arrows/right arrow dark.png"} 
 		},
 		"RIGHT IDLE",
 		sf::Vector2f(
@@ -244,9 +245,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"CURSOR",
 		{
-			{"IDLE", guiPath + "/God tools/cursors/cursor idle.png"},
-			{"HOVERED", guiPath + "/God tools/cursors/cursor hovered.png"},
-			{"PRESSED", guiPath + "/God tools/cursors/cursor pressed.png"}
+			{"IDLE", guiPath + "/God tools/cursors/cursor.png"},
+			{"LIGHT", guiPath + "/God tools/cursors/cursor light.png"},
+			{"DARK", guiPath + "/God tools/cursors/cursor dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -262,9 +263,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"REMOVE",
 		{
-			{"IDLE", guiPath + "/God tools/remove/remove idle.png"},
-			{"HOVERED", guiPath + "/God tools/remove/remove hovered.png"},
-			{"PRESSED", guiPath + "/God tools/remove/remove pressed.png"}
+			{"IDLE", guiPath + "/God tools/remove/remove.png"},
+			{"LIGHT", guiPath + "/God tools/remove/remove light.png"},
+			{"DARK", guiPath + "/God tools/remove/remove dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -280,9 +281,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"MOVE",
 		{
-			{"IDLE", guiPath + "/God tools/replace/replace idle.png"},
-			{"HOVERED", guiPath + "/God tools/replace/replace hovered.png"},
-			{"PRESSED", guiPath + "/God tools/replace/replace pressed.png"}
+			{"IDLE", guiPath + "/God tools/replace/replace.png"},
+			{"LIGHT", guiPath + "/God tools/replace/replace light.png"},
+			{"DARK", guiPath + "/God tools/replace/replace dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -298,9 +299,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"BRAIN",
 		{
-			{"IDLE", guiPath + "/God tools/brain/brain idle.png"},
-			{"HOVERED", guiPath + "/God tools/brain/brain hovered.png"},
-			{"PRESSED", guiPath + "/God tools/brain/brain pressed.png"}
+			{"IDLE", guiPath + "/God tools/brain/brain.png"},
+			{"LIGHT", guiPath + "/God tools/brain/brain light.png"},
+			{"DARK", guiPath + "/God tools/brain/brain dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -316,9 +317,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"CLONE",
 		{
-			{"IDLE", guiPath + "/God tools/clone/clone idle.png"},
-			{"HOVERED", guiPath + "/God tools/clone/clone hovered.png"},
-			{"PRESSED", guiPath + "/God tools/clone/clone pressed.png"}
+			{"IDLE", guiPath + "/God tools/clone/clone.png"},
+			{"LIGHT", guiPath + "/God tools/clone/clone light.png"},
+			{"DARK", guiPath + "/God tools/clone/clone dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -334,9 +335,9 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"STOP",
 		{
-			{"IDLE", guiPath + "/God tools/stop/stop idle.png"},
-			{"HOVERED", guiPath + "/God tools/stop/stop hovered.png"},
-			{"PRESSED", guiPath + "/God tools/stop/stop pressed.png"}
+			{"IDLE", guiPath + "/God tools/stop/stop.png"},
+			{"LIGHT", guiPath + "/God tools/stop/stop light.png"},
+			{"DARK", guiPath + "/God tools/stop/stop dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -571,16 +572,52 @@ void SimulationState::updateSideMenuGui()
 					this->sideMenu->setTextureOfTextureButton(textureButton.first, "LEFT IDLE");
 			}
 		}
-		else // God tools buttons:
+		else // God tools buttons: 
+			this->updateToolButton(textureButton.second);
+	}
+}
+
+void SimulationState::updateToolButton(gui::TextureButton* tool_btn)
+{
+	if (tool_btn == this->currentTool) // the argument is the current tool:
+	{
+		// if the current tool has been clicked, it is no longer the current tool:
+		if (tool_btn->hasBeenClicked())
 		{
-			if (textureButton.second->isPressed())
-				this->sideMenu->setTextureOfTextureButton(textureButton.first, "PRESSED");
-
-			else if (textureButton.second->isHovered())
-				this->sideMenu->setTextureOfTextureButton(textureButton.first, "HOVERED");
-
-			else
-				this->sideMenu->setTextureOfTextureButton(textureButton.first, "IDLE");
+			// the button is hovered, because u can't click a button without hovering it with a mouse cursor:
+			tool_btn->setTexture("LIGHT"); 
+			
+			this->currentTool = nullptr;
 		}
+
+		// pretty straight forward, it's pressed so it's dark:
+		else if (tool_btn->isPressed()) tool_btn->setTexture("DARK");
+
+		// is hovered so is light:
+		else if (tool_btn->isHovered()) tool_btn->setTexture("LIGHT");
+
+		// it is neither hovered nor pressed, but let me remind u, that it's still the current tool, so we darken it:
+		else tool_btn->setTexture("DARK");
+	}
+	else // the argument isn't the current tool:
+	{
+		// the tool become the current one:
+		if (tool_btn->hasBeenClicked())
+		{
+			// old tool (if it exists at all) ceases to be the current tool:
+			if (this->currentTool) this->currentTool->setTexture("IDLE");
+ 
+			this->currentTool = tool_btn;
+
+			// we brighten it up,
+			// because a mouse cursor is still covering it (because it has just been clicked and a mouse hasn't go away yet):
+			tool_btn->setTexture("LIGHT");
+		}
+
+		// next pretty straight forward line, it's hovered so it's light: 
+		else if (tool_btn->isHovered()) tool_btn->setTexture("LIGHT");
+		
+		// the most common case, ordinary idle tool:
+		else tool_btn->setTexture("IDLE");
 	}
 }

@@ -29,6 +29,8 @@ private:
 
 	gui::SideMenu* sideMenu;
 
+	gui::TextureButton* currentTool;
+
 	sf::RenderTexture renderTexture;
 	sf::Sprite renderSprite;
 
@@ -50,4 +52,5 @@ private:
 
 	// private utilities:
 	void updateSideMenuGui();
+	void updateToolButton(gui::TextureButton* tool_btn);
 };
