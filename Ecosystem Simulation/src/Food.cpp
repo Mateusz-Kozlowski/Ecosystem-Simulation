@@ -5,8 +5,9 @@
 Food::Food()
 {
 	this->shape.setFillColor(sf::Color::Green);
-	this->shape.setPointCount(3.f);
+	this->shape.setPointCount(16.f);
 	this->shape.setRadius(4.f);
+	this->shape.setOrigin(this->shape.getRadius(), this->shape.getRadius());
 }
 
 // mutators:
@@ -44,4 +45,14 @@ float Food::getRadius() const
 void Food::render(sf::RenderTarget& target) const
 {
 	target.draw(this->shape);
+}
+
+bool Food::isCovered(const sf::Vector2f& mouse_pos_view) const
+{
+	float a = this->shape.getPosition().x - mouse_pos_view.x;
+	float b = this->shape.getPosition().y - mouse_pos_view.y;
+	
+	float distance = sqrt(pow(a, 2) + pow(b, 2));
+	
+	return this->getRadius() >= distance;
 }

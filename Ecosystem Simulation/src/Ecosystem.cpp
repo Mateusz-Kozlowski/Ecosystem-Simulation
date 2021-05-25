@@ -452,6 +452,29 @@ void Ecosystem::track(const sf::Vector2f& mouse_pos_view)
 
 void Ecosystem::remove(const sf::Vector2f& mouse_pos_view)
 {
+	// animals:
+	for (auto& animal : this->animals)
+	{
+		if (animal->isCovered(mouse_pos_view))
+		{
+			delete animal;
+			std::swap(animal, this->animals.back());
+			this->animals.pop_back();
+			break;
+		}
+	}
+
+	// food:
+	for (auto& f : this->food)
+	{
+		if (f->isCovered(mouse_pos_view))
+		{
+			delete f;
+			std::swap(f, this->food.back());
+			this->food.pop_back();
+			return;
+		}
+	}
 }
 
 void Ecosystem::replace(const sf::Vector2f& mouse_pos_view)
@@ -462,9 +485,10 @@ void Ecosystem::brainVisibility(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
 	{
-		if (animal->isHoveredByMouse(mouse_pos_view))
+		if (animal->isCovered(mouse_pos_view))
 		{
 			animal->setBrainIsRendered(!animal->isBrainRendered());
+			return;
 		}
 	}
 }
@@ -477,9 +501,10 @@ void Ecosystem::stop(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
 	{
-		if (animal->isHoveredByMouse(mouse_pos_view))
+		if (animal->isCovered(mouse_pos_view))
 		{
 			animal->setVelocity(sf::Vector2f(0.f, 0.f));
+			return;
 		}
 	}
 }

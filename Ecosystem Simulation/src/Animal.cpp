@@ -148,7 +148,7 @@ void Animal::renderBrain(sf::RenderTarget& target) const
 	this->brainPreview->render(target);
 }
 
-bool Animal::isHoveredByMouse(const sf::Vector2f& mouse_pos_view) const
+bool Animal::isCovered(const sf::Vector2f& mouse_pos_view) const
 {	
 	float a = this->movementComponent->get_x() - mouse_pos_view.x;
 	float b = this->movementComponent->get_y() - mouse_pos_view.y;

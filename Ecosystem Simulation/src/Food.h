@@ -24,6 +24,8 @@ public:
 	// other public methods:
 	void render(sf::RenderTarget& target) const;
 
+	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
+
 private:
 	sf::CircleShape shape;
 };
