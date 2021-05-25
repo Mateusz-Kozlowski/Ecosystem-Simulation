@@ -167,110 +167,81 @@ void Ecosystem::printAnimalsPositions() const
 // other public methods:
 void Ecosystem::update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mousePosView, bool paused)
 {
-	if (paused)
+	if (!paused)
 	{
 		for (const auto& animal : this->animals)
 		{
-			if (animal->isMouseClickedOnIt(mousePosView))
+			// TODO: rmv later:
+			//std::cout << animal->getPos().x << ' ' << animal->getPos().y << '\n';
+			animal->updateBodyAndHp(dt, getInputsForBrain(*animal));
+		}
+
+		// avoid going beyond the world:
+		for (auto& animal : this->animals)
+		{
+			// left border:
+			if (animal->getPos().x - animal->getRadius() < this->borderThickness)
 			{
-				//std::cout << animal->getPos().x << ' ' << animal->getPos().y << '\n';
+				animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
+				animal->setPos(sf::Vector2f(this->borderThickness + animal->getRadius(), animal->getPos().y));
+			}
+
+			// right border:
+			else if (animal->getPos().x + animal->getRadius() > this->worldSize.x - this->borderThickness)
+			{
+				animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
+				animal->setPos(sf::Vector2f(this->worldSize.x - this->borderThickness - animal->getRadius(), animal->getPos().y));
+			}
+
+			// it is possible that an animal crossed 2 perpendicular borders in the same frame, so we don't use else if here:
+			// top border:
+			if (animal->getPos().y - animal->getRadius() < this->borderThickness)
+			{
+				animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
+				animal->setPos(sf::Vector2f(animal->getPos().x, this->borderThickness + animal->getRadius()));
+			}
+
+			// bottom border:
+			else if (animal->getPos().y + animal->getRadius() > this->worldSize.y - this->borderThickness)
+			{
+				animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
+				animal->setPos(sf::Vector2f(animal->getPos().x, this->worldSize.y - this->borderThickness - animal->getRadius()));
 			}
 		}
-		return;
-	}
 
-	for (const auto& animal : this->animals)
-	{
-		// TODO: rmv later:
-		//std::cout << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-		animal->updateBodyAndHp(dt, getInputsForBrain(*animal));
-	}
+		// eat food!:
+		// TODO: come up with a new way of generating random numbers:
+		CrappyNeuralNets::RandomNumbersGenerator generator;
 
-	// avoid going beyond the world:
-	for (auto& animal : this->animals)
-	{
-		/*
-		bool crossedLeftBorder = animal->getPos().x < this->borderThickness;
-		bool crossedRightBorder = animal->getPos().x > this->worldSize.x - this->borderThickness;
-
-		if (crossedLeftBorder && animal->getVelocity().x < 0)
-			animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
-
-		if (crossedRightBorder && animal->getVelocity().x > 0)
-			animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
-
-		bool crossedTopBorder = animal->getPos().y < this->borderThickness + animal->getRadius();
-		bool crossedBottomBorder = animal->getPos().y > this->worldSize.y - this->borderThickness - animal->getRadius();
-
-		if (crossedTopBorder && animal->getVelocity().y < 0)
-			animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
-
-		if (crossedBottomBorder && animal->getVelocity().y > 0)
-			animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
-		*/
-
-		// left border:
-		if (animal->getPos().x - animal->getRadius() < this->borderThickness)
+		// TODO: improve algorithm complexity (currently O(f*a))
+		for (int i = 0; i < this->animals.size(); i++)
 		{
-			animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
-			animal->setPos(sf::Vector2f(this->borderThickness + animal->getRadius(), animal->getPos().y));
-		}
-
-		// right border:
-		else if (animal->getPos().x + animal->getRadius() > this->worldSize.x - this->borderThickness)
-		{
-			animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
-			animal->setPos(sf::Vector2f(this->worldSize.x - this->borderThickness - animal->getRadius(), animal->getPos().y));
-		}
-
-		// it is possible that an animal crossed 2 perpendicular borders in the same frame, so we don't use else if here:
-		// top border:
-		if (animal->getPos().y - animal->getRadius() < this->borderThickness)
-		{
-			animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
-			animal->setPos(sf::Vector2f(animal->getPos().x, this->borderThickness + animal->getRadius()));
-		}
-
-		// bottom border:
-		else if (animal->getPos().y + animal->getRadius() > this->worldSize.y - this->borderThickness)
-		{
-			animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
-			animal->setPos(sf::Vector2f(animal->getPos().x, this->worldSize.y - this->borderThickness - animal->getRadius()));
-		}
-	}
-
-	// eat food!:
-	// TODO: come up with a new way of generating random numbers:
-	CrappyNeuralNets::RandomNumbersGenerator generator;
-
-	// TODO: improve algorithm complexity (currently O(f*a))
-	for (int i=0; i<this->animals.size(); i++)
-	{
-		for (int j=0; j<this->food.size(); j++)
-		{
-			float a = this->animals[i]->getPos().x - this->food[j]->getPosition().x;
-			float b = this->animals[i]->getPos().y - this->food[j]->getPosition().y;
-
-			float distance = sqrt(pow(a, 2) + pow(b, 2));
-
-			if (distance <= this->animals[i]->getRadius() + this->food[j]->getRadius())
+			for (int j = 0; j < this->food.size(); j++)
 			{
-				this->animals[i]->setHp(this->animals[i]->getMaxHp());
-				this->food[j]->setRandomPos(this->worldSize, this->borderThickness, generator);
+				float a = this->animals[i]->getPos().x - this->food[j]->getPosition().x;
+				float b = this->animals[i]->getPos().y - this->food[j]->getPosition().y;
+
+				float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+				if (distance <= this->animals[i]->getRadius() + this->food[j]->getRadius())
+				{
+					this->animals[i]->setHp(this->animals[i]->getMaxHp());
+					this->food[j]->setRandomPos(this->worldSize, this->borderThickness, generator);
+				}
 			}
 		}
+
+		// kill animals that aren't alive (even if this sentense doesn't make sense ;)) 
+		for (int i = 0; i < this->animals.size(); i++)
+			if (!this->animals[i]->isAlive())
+			{
+				delete this->animals[i];
+				std::swap(this->animals[i], this->animals.back());
+				this->animals.pop_back();
+			}
 	}
 
-	// kill animals that aren't alive (even if this sentense doesn't make sense ;)) 
-	for (int i = 0; i < this->animals.size(); i++)
-		if (!this->animals[i]->isAlive())
-		{
-			delete this->animals[i];
-			std::swap(this->animals[i], this->animals.back());
-			this->animals.pop_back();
-		}
-
-	// showing brain:
+	// brain showing:
 	bool temp = false;
 
 	for (const auto& event : events)

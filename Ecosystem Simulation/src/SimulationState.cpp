@@ -37,8 +37,7 @@ void SimulationState::update(float dt)
 
 	this->getUpdatesFromSideMenuGui();
 	
-	if (!this->paused)
-		this->stateData->ecosystem->update(dt, *this->stateData->events, this->mousePosView, this->paused);
+	this->stateData->ecosystem->update(dt, *this->stateData->events, this->mousePosView, this->paused);
 }
 
 void SimulationState::render(sf::RenderTarget* target)
