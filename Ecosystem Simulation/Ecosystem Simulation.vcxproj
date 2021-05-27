@@ -167,6 +167,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\EventsAccessor.cpp" />
     <ClCompile Include="src\NeuralNetPreview.cpp" />
     <ClCompile Include="src\ProgressBar.cpp" />
     <ClCompile Include="src\MovementComponent.cpp" />
@@ -236,6 +237,7 @@
     <ClCompile Include="src\TextureButton.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\EventsAccessor.h" />
     <ClInclude Include="src\NeuralNetPreview.h" />
     <ClInclude Include="src\ProgressBar.h" />
     <ClInclude Include="src\MovementComponent.h" />

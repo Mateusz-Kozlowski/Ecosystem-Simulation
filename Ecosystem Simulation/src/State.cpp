@@ -48,13 +48,3 @@ void State::updateMousePositions(const sf::View* view)
 	else
 		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
 }
-
-// protected utilities:
-bool State::mouseButtonPressedEvent() const
-{
-	for (const auto& event : *this->stateData->events)
-		if (event.type == sf::Event::MouseButtonPressed) 
-			return true;
-
-	return false;
-}

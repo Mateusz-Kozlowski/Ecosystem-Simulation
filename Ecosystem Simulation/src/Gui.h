@@ -1,5 +1,7 @@
 #pragma once
 
+#include "EventsAccessor.h"
+
 namespace gui
 {
 	float p2pX(float perc, const sf::VideoMode& vm);

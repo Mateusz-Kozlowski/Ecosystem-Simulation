@@ -91,6 +91,9 @@
     <ClCompile Include="src\TextureButton.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\EventsAccessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -265,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="src\TextureButton.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EventsAccessor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

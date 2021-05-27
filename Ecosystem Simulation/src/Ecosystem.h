@@ -2,6 +2,7 @@
 
 #include "Animal.h"
 #include "Food.h"
+#include "EventsAccessor.h"
 
 class Ecosystem
 {
@@ -29,7 +30,7 @@ public:
 	// other public methods:
 	void update(
 		float dt, 
-		bool mouse_button_pressed_event,
+		const std::vector<sf::Event>& events,
 		const sf::Vector2f& mouse_pos_view, 
 		bool paused,
 		const std::string& god_tool
@@ -61,7 +62,7 @@ private:
 	Food* findTheNearestFood(const Animal& animal) const;
 
 	void useGodTool(
-		bool mouse_button_pressed_event,
+		const std::vector<sf::Event>& events,
 		const sf::Vector2f& mouse_pos_view,
 		const std::string& tool
 	);

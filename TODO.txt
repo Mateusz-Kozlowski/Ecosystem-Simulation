@@ -5,13 +5,14 @@ implement God tools
 better "eating algorithm" (with complexity better than the current one (O(f*a)))
 slowing down and speeding up a simulation
 new energy system
-rebuild the program structure at ecosystem and animala level (rewrite Ecosystem && Animal class)
+NeuralNetPreview class should be a member of Ecosystem class, not a member of Animal class
+rebuild the program structure at ecosystem and animals level (rewrite Ecosystem && Animal class)
 
 2:
+use EventsAccessors class wherever possible (including GUI classes)
 debug showing brain while a simulation is paused (brain renders probably in the previous position)
 update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
 use that tricky way of dealing with event (not necessarily passing reference, but using utility from State) everywhere
-brains should be members of Ecosystem class, not membres of Animal class
 convention of names in tools (->replace is also called move and it shouldn't have 2 names)(->track and select also)
 	(rmv and delete? I used remove everywhere, but delete may be a better option)
 loading "from main menu" (loading state will be neccessairly)

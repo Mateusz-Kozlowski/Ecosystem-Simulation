@@ -167,12 +167,12 @@ void Ecosystem::printAnimalsPositions() const
 // other public methods:
 void Ecosystem::update(
 	float dt, 
-	bool mouse_button_pressed_event, 
+	const std::vector<sf::Event>& events,
 	const sf::Vector2f& mouse_pos_view, 
 	bool paused,
 	const std::string& god_tool)
 {
-	this->useGodTool(mouse_button_pressed_event, mouse_pos_view, god_tool);
+	this->useGodTool(events, mouse_pos_view, god_tool);
 
 	if (paused) return;
 	
@@ -345,14 +345,16 @@ Food* Ecosystem::findTheNearestFood(const Animal& animal) const
 }
 
 void Ecosystem::useGodTool(
-	bool mouse_button_pressed_event,
+	const std::vector<sf::Event>& events,
 	const sf::Vector2f& mouse_pos_view, 
 	const std::string& god_tool)
 {
 	// TODO: add info that if there is no God tool then god_tool string should be equal to ""
 
-	if (!mouse_button_pressed_event) return;
+	if (!EventsAccessor::hasEventOccured(sf::Event::MouseButtonPressed, events))
+		return;
 
+	// now use God tool:
 	if (god_tool == "TRACK") this->track(mouse_pos_view);
 
 	else if (god_tool == "REMOVE") this->remove(mouse_pos_view);
