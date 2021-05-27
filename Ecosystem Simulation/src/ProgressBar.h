@@ -9,8 +9,8 @@ public:
 	ProgressBar(
 		float x, float y, 
 		float width, float height,
-		const sf::Vector2f& range, float defaultValue,
-		sf::Color backgroundColor, sf::Color progressColor
+		const sf::Vector2f& range, float default_value,
+		sf::Color background_color, sf::Color progress_color
 	);
 
 	// accessors:
@@ -18,7 +18,10 @@ public:
 
 	// mutators:
 	void increaseValue(float change);
+
 	void setPos(const sf::Vector2f& new_pos);
+
+	void setProgressColor(const sf::Color& color);
 
 	// other public methods:
 	void render(sf::RenderTarget& target) const;

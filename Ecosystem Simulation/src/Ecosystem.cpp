@@ -69,7 +69,7 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 // constructor/destructor:
 Ecosystem::Ecosystem()
-	: directoryPath("ECOSYSTEM IS NOT INITIALIZED"), borderThickness(0U)
+	: directoryPath("ECOSYSTEM IS NOT INITIALIZED"), borderThickness(0U), trackedAnimal(nullptr)
 {
 	
 }
@@ -162,6 +162,13 @@ void Ecosystem::printAnimalsPositions() const
 	std::cout << "Animal positions:\n";
 	for (const auto& animal : this->animals)
 		std::cout << animal->getPos().x << ' ' << animal->getPos().y << '\n';
+}
+
+const sf::Vector2f* Ecosystem::getTrackedAnimalPosition() const
+{
+	if (this->trackedAnimal) return &this->trackedAnimal->getPos();
+	
+	return nullptr;
 }
 
 // other public methods:
@@ -450,6 +457,31 @@ void Ecosystem::feedAnimalsWithFood()
 // God tools:
 void Ecosystem::track(const sf::Vector2f& mouse_pos_view)
 {
+	for (auto& animal : this->animals)
+	{
+		if (animal->isCovered(mouse_pos_view))
+		{
+			// the tracked animal is no longer tracked:
+			if (animal == this->trackedAnimal)
+			{
+				animal->setColor(sf::Color::Red); // reset its color
+				this->trackedAnimal = nullptr;
+				return;
+			}
+			
+			// a new animal is tracked:
+			// reset body color of the previous tracked animal:
+			if (this->trackedAnimal) this->trackedAnimal->setColor(sf::Color::Red);
+			
+			// set new tracked animal:
+			this->trackedAnimal = animal;
+			
+			// change color:
+			animal->setColor(sf::Color(150, 0, 200));
+
+			return;
+		}
+	}
 }
 
 void Ecosystem::remove(const sf::Vector2f& mouse_pos_view)

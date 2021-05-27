@@ -18,8 +18,9 @@ public:
 	void loadFromFolder(const std::string& folder_path);
 
 	// accessors:
-	sf::Vector2f getPos() const;
-	sf::Vector2f getVelocity() const;
+	const sf::Vector2f& getPos() const;
+	const sf::Vector2f& getVelocity() const;
+
 	float getRadius() const;
 	
 	bool isBrainRendered() const;
@@ -38,6 +39,8 @@ public:
 	void setBrainIsRendered(bool brain_is_rendered);
 
 	void setHp(float new_hp);
+
+	void setColor(const sf::Color& new_color);
 
 	// other public methods:
 	void updateBodyAndHp(float dt, const std::vector<double>& brain_inputs);

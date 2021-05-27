@@ -5,12 +5,12 @@
 ProgressBar::ProgressBar(
 	float x, float y, 
 	float width, float height, 
-	const sf::Vector2f& range, float defaultValue, 
-	sf::Color backgroundColor, sf::Color progressColor)
-	:	range(range), value(defaultValue)
+	const sf::Vector2f& range, float default_value, 
+	sf::Color background_color, sf::Color progress_color)
+	:	range(range), value(default_value)
 {
-	this->initBackground(x, y, width, height, backgroundColor);
-	this->initProgress(progressColor);
+	this->initBackground(x, y, width, height, background_color);
+	this->initProgress(progress_color);
 }
 
 // accessors:
@@ -33,6 +33,11 @@ void ProgressBar::setPos(const sf::Vector2f& new_pos)
 {
 	this->backgroundRect.setPosition(new_pos);
 	this->progressRect.setPosition(new_pos);
+}
+
+void ProgressBar::setProgressColor(const sf::Color& color)
+{
+	this->progressRect.setFillColor(color);
 }
 
 // other public methods:

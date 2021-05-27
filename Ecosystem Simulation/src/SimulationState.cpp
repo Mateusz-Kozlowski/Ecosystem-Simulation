@@ -194,7 +194,7 @@ void SimulationState::initSideMenu()
 		"SPEED",
 		sf::Vector2f(
 			gui::p2pX(12.f, resolution),
-			gui::p2pY(27.f, resolution)
+			gui::p2pY(26.5f, resolution)
 		), 
 		256.f / 1840.f,
 		{ 0.0f, 1.0f },
@@ -422,6 +422,10 @@ void SimulationState::updateView()
 			offsetY * this->view.getSize().y / this->stateData->gfxSettings->resolution.height
 		);
 	}
+
+	// change the center of view if an animal is tracked:
+	if (this->stateData->ecosystem->getTrackedAnimalPosition())
+		this->view.setCenter(*this->stateData->ecosystem->getTrackedAnimalPosition());
 	
 	// correct zoom:
 	float worldWidth = static_cast<float>(this->stateData->ecosystem->getWorldSize().x);

@@ -9,6 +9,9 @@ NeuralNetPreview class should be a member of Ecosystem class, not a member of An
 rebuild the program structure at ecosystem and animals level (rewrite Ecosystem && Animal class)
 
 2:
+some GUI widgets positions are set relative to their centers and some are set relative to their upper-left corners... =>
+	=> fix that!
+	=> maybe allow to choose both ways of setting positions?...
 use EventsAccessors class wherever possible (including GUI classes)
 debug showing brain while a simulation is paused (brain renders probably in the previous position)
 update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))

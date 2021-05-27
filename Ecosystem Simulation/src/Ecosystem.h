@@ -27,6 +27,8 @@ public:
 
 	void printAnimalsPositions() const;
 
+	const sf::Vector2f* getTrackedAnimalPosition() const;
+
 	// other public methods:
 	void update(
 		float dt, 
@@ -55,6 +57,8 @@ private:
 
 	std::vector<Animal*> animals;
 	std::vector<Food*> food;
+
+	Animal* trackedAnimal;
 
 	// private utilities:
 	std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;

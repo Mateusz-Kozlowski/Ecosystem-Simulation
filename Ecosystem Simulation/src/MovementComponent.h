@@ -21,6 +21,11 @@ public:
 	// accessors:
 	const CrappyNeuralNets::NeuralNet& getBrain() const;
 
+	const sf::Vector2f& getPos() const;
+	
+	const sf::Vector2f& getVelocity() const;
+
+	// TODO: replace all of this with sf::Vectors:
 	float get_x() const;
 	float get_y() const;
 

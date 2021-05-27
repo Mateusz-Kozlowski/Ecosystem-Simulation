@@ -58,14 +58,14 @@ void Animal::loadFromFolder(const std::string& folder_path)
 }
 
 // accessors:
-sf::Vector2f Animal::getPos() const
+const sf::Vector2f& Animal::getPos() const
 {
-	return { this->movementComponent->get_x(), this->movementComponent->get_y() };
+	return this->movementComponent->getPos();
 }
 
-sf::Vector2f Animal::getVelocity() const
+const sf::Vector2f& Animal::getVelocity() const
 {
-	return { this->movementComponent->get_vx(), this->movementComponent->get_vy() };
+	return this->movementComponent->getVelocity();
 }
 
 float Animal::getRadius() const
@@ -114,6 +114,12 @@ void Animal::setBrainIsRendered(bool brain_is_rendered)
 void Animal::setHp(float new_hp)
 {
 	this->hpBar->increaseValue(new_hp - this->hpBar->getCurrentValue());
+}
+
+void Animal::setColor(const sf::Color& new_color)
+{
+	this->body.setFillColor(new_color);
+	this->hpBar->setProgressColor(new_color);
 }
 
 // other public methods:
