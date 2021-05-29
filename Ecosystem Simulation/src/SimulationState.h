@@ -42,7 +42,8 @@ private:
 	void initView();
 	void initDeferredRender();
 	void initSideMenu();
-	
+	void initGodToolsGui();
+
 	// other private methods:
 	virtual void updateInput();
 	void updateView();
