@@ -36,7 +36,7 @@ public:
 	float get_ay() const;
 
 	// other public methods:
-	void update(float dt, const std::vector<double>& brain_inputs);
+	void update(float dt, float speed_factor, const std::vector<double>& brain_inputs);
 
 	void saveToFolder(const std::string& folder_path) const;
 	void loadFromFolder(const std::string& folder_path);

@@ -33,12 +33,13 @@ void SimulationState::update(float dt)
 
 	this->updateMousePositions(&this->view);
 
-	this->updateSideMenu();
+	if (this->sideMenuIsRendered) this->updateSideMenu();
 
 	this->getUpdatesFromSideMenuGui();
 	
 	this->stateData->ecosystem->update(
-		dt, 
+		dt,
+		this->sideMenu->getScaleSliders().at("SPEED")->getCurrentValue(),
 		*this->stateData->events, 
 		this->mousePosView, 
 		this->paused,
@@ -195,17 +196,18 @@ void SimulationState::initSideMenu()
 		sf::Vector2f(
 			gui::p2pX(12.f, resolution),
 			gui::p2pY(26.f, resolution)
-		), 
+		),
 		256.f / 1840.f,
 		{ 0.0f, 1.0f },
+		{ 0.15f, 0.85f },
 		1.0f,
-		guiPath + "/scale sliders/axes/axis.png",    
+		guiPath + "/scale sliders/axes/axis.png",
 		guiPath + "/scale sliders/handles/handle.png",
-		
-		guiPath + "/scale sliders/axes/axis light.png", 
+
+		guiPath + "/scale sliders/axes/axis light.png",
 		guiPath + "/scale sliders/handles/handle light.png",
-		
-		guiPath + "/scale sliders/axes/axis dark.png", 
+
+		guiPath + "/scale sliders/axes/axis dark.png",
 		guiPath + "/scale sliders/handles/handle dark.png"
 	);
 

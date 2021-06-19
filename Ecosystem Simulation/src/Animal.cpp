@@ -46,9 +46,6 @@ Animal::Animal()
 		sf::Color(128, 128, 128), sf::Color::Red,
 		true
 	);
-
-	// TODO: rmv later:
-	this->t.resize(5);
 }
 
 Animal::~Animal()
@@ -133,26 +130,15 @@ void Animal::setColor(const sf::Color& color)
 }
 
 // other public methods:
-void Animal::updateBodyAndHp(float dt, const std::vector<double>& brain_inputs)
+void Animal::updateBodyAndHp(float dt, float speed_factor, const std::vector<double>& brain_inputs)
 {
-	auto t0 = std::chrono::steady_clock::now();
-	this->movementComponent->update(dt, brain_inputs);
+	this->movementComponent->update(dt, speed_factor, brain_inputs);
 
-	auto t1 = std::chrono::steady_clock::now();
 	this->body.setPosition(this->movementComponent->get_x(), this->movementComponent->get_y());
 
-	auto t2 = std::chrono::steady_clock::now();
-	this->updateHp(dt);
+	this->updateHp(dt, speed_factor);
 
-	auto t3 = std::chrono::steady_clock::now();
 	this->alive = this->hp > 0.f;
-
-	auto t4 = std::chrono::steady_clock::now();
-
-	this->t[0] += std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
-	this->t[1] += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-	this->t[2] += std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count();
-	this->t[3] += std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
 }
 
 void Animal::updateBrainPreview()
@@ -186,7 +172,7 @@ bool Animal::isCovered(const sf::Vector2f& mouse_pos_view) const
 }
 
 // private utilities:
-void Animal::updateHp(float dt)
+void Animal::updateHp(float dt, float speed_factor)
 {
 	// first update position:
 	this->hpBar->setPosition(
@@ -202,7 +188,8 @@ void Animal::updateHp(float dt)
 	// Pythagorean theorem for acceleration and velocity vectors:
 	float a = sqrt(pow(this->movementComponent->get_ax(), 2) + pow(this->movementComponent->get_ay(), 2));
 	float v = sqrt(pow(this->movementComponent->get_vx(), 2) + pow(this->movementComponent->get_vy(), 2));
-	
+	v *= speed_factor;
+
 	// calculate energy delta (where does it come from is explaneid at the bottom of the function)
 	float dE = -a * v * dt;
 

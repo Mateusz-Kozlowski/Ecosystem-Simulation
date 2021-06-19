@@ -69,7 +69,8 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 // constructor/destructor:
 Ecosystem::Ecosystem()
-	: directoryPath("ECOSYSTEM IS NOT INITIALIZED"), borderThickness(0U), trackedAnimal(nullptr)
+	: directoryPath("ECOSYSTEM IS NOT INITIALIZED"), borderThickness(0U), trackedAnimal(nullptr),
+	  totalTimeElapsed(0.f), dtSinceLastWorldUpdate(0.f)
 {
 	
 }
@@ -171,65 +172,25 @@ const sf::Vector2f* Ecosystem::getTrackedAnimalPosition() const
 	return nullptr;
 }
 
+float Ecosystem::getTotalTimeElapsed() const
+{
+	return this->totalTimeElapsed;
+}
+
 // other public methods:
 void Ecosystem::update(
-	float dt, 
+	float dt,
+	float speed_factor,
 	const std::vector<sf::Event>& events,
 	const sf::Vector2f& mouse_pos_view, 
 	bool paused,
 	const std::string& god_tool)
 {
-	//auto t0 = std::chrono::steady_clock::now();
+	this->totalTimeElapsed += dt;
+	
 	this->useGodTool(events, mouse_pos_view, god_tool);
 
-	if (paused) return;
-	
-	//auto t1 = std::chrono::steady_clock::now();
-	for (const auto& animal : this->animals) animal->updateBodyAndHp(dt, getInputsForBrain(*animal));
-
-	//auto t2 = std::chrono::steady_clock::now();
-	this->removeDeadAnimals();
-
-	//auto t3 = std::chrono::steady_clock::now();
-	this->avoidGoingBeyondTheWorld();
-
-	//auto t4 = std::chrono::steady_clock::now();
-	this->feedAnimalsWithFood();
-
-	//auto t5 = std::chrono::steady_clock::now();
-	this->removeEatenFood();
-
-	//auto t6 = std::chrono::steady_clock::now();
-	for (auto& animal : this->animals)
-		if (animal->isBrainRendered())
-			animal->updateBrainPreview();
-
-	//auto t7 = std::chrono::steady_clock::now();
-
-	//std::cout << "tool=" << std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() << '\n';
-	//std::cout << "body hp=" << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << '\n';
-	//std::cout << "rmv dead=" << std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count() << '\n';
-	//std::cout << "avoid beyond=" << std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count() << '\n';
-	//std::cout << "feed=" << std::chrono::duration_cast<std::chrono::microseconds>(t5 - t4).count() << '\n';
-	//std::cout << "rmv eaten=" << std::chrono::duration_cast<std::chrono::microseconds>(t6 - t5).count() << '\n';
-	//std::cout << "brain prev=" << std::chrono::duration_cast<std::chrono::microseconds>(t7 - t6).count() << '\n';
-
-	/*
-	std::vector<long long> t(4);
-
-	for (const auto& animal : this->animals)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			t[i] += animal->t[i];
-		}
-	}
-
-	std::cout << "mvc: " << t[0] << '\n';
-	std::cout << "body pos: " << t[1] << '\n';
-	std::cout << "update hp: " << t[2] << '\n';
-	std::cout << "alive: " << t[3] << '\n';
-	*/
+	if (!paused) this->updateWorld(dt, speed_factor);
 }
 
 void Ecosystem::render(sf::RenderTarget& target)
@@ -246,17 +207,6 @@ void Ecosystem::render(sf::RenderTarget& target)
 	for (const auto& animal : this->animals)
 		if (animal->isBrainRendered())
 			animal->renderBrain(target);
-
-	// TODO: rmv later!:
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) && !this->shownDebugHps)
-	{
-		for (const auto& animal : this->animals)
-		{
-			std::cout << animal->getHp() << '\n';
-		}
-
-		this->shownDebugHps = true;
-	}
 }
 
 // private methods:
@@ -334,6 +284,24 @@ void Ecosystem::useGodTool(
 	}
 }
 
+void Ecosystem::updateWorld(float dt, float speed_factor)
+{
+	for (const auto& animal : this->animals)
+		animal->updateBodyAndHp(dt, speed_factor, getInputsForBrain(*animal));
+
+	this->removeDeadAnimals();
+
+	this->avoidGoingBeyondTheWorld();
+
+	this->feedAnimals();
+
+	this->removeEatenFood();
+
+	for (auto& animal : this->animals)
+		if (animal->isBrainRendered())
+			animal->updateBrainPreview();
+}
+
 void Ecosystem::removeDeadAnimals()
 {
 	for (int i = 0; i < this->animals.size(); i++)
@@ -381,7 +349,7 @@ void Ecosystem::avoidGoingBeyondTheWorld()
 	}
 }
 
-void Ecosystem::feedAnimalsWithFood()
+void Ecosystem::feedAnimals()
 {
 	std::sort(this->animals.begin(), this->animals.end(), compareAnimalsYPositions);
 

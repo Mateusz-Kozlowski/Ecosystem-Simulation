@@ -6,6 +6,7 @@ gui::ScaleSlider::ScaleSlider(
 	const sf::Vector2f& pos,
 	float textures_scale,
 	const std::pair<float, float>& range,
+	const std::pair<float, float>& not_snapping_to_edges_range,
 	float default_value,
 	const std::string& axis_idle_path, const std::string& handle_idle_path,
 	const std::string& axis_hover_path, const std::string& handle_hover_path,
@@ -88,7 +89,7 @@ gui::ScaleSlider::ScaleSlider(
 	this->state = "IDLE";
 
 	this->range = range;
-	this->minimizeToZero = false;
+	this->notSnappinToEdgesRange = not_snapping_to_edges_range;
 	this->value = default_value;
 }
 
@@ -117,11 +118,6 @@ void gui::ScaleSlider::setValue(float value)
 				it.second.getPosition().y
 			)
 		);
-}
-
-void gui::ScaleSlider::setMinimizeToZero(bool minimizeToZero)
-{
-	this->minimizeToZero = minimizeToZero;
 }
 
 void gui::ScaleSlider::setPosition(const sf::Vector2f& new_pos)
@@ -198,21 +194,30 @@ void gui::ScaleSlider::update(sf::Vector2i mousePosWindow)
 		}
 	}
 
-	// updating variables:
-	float x = this->handles[this->state].getPosition().x + this->handles[this->state].getGlobalBounds().width / 2.f;
-
-	float left = this->axes["IDLE"].getGlobalBounds().left;
-	float right = left + this->axes["IDLE"].getGlobalBounds().width;
-
-	this->value = this->range.second * (x - left) / (right - left);
-
-	// setting very small values equal to 0:
-	if (this->minimizeToZero && this->value < 0.1f * this->range.second)
-		this->setValue(0.f);
+	this->updateCurrentValue();
+	this->snapToEdges();
 }
 
 void gui::ScaleSlider::render(sf::RenderTarget& target)
 {
 	target.draw(this->axes[this->state]);
 	target.draw(this->handles[this->state]);
+}
+
+// private utilities:
+void gui::ScaleSlider::updateCurrentValue()
+{
+	float x = this->handles[this->state].getPosition().x + this->handles[this->state].getGlobalBounds().width / 2.f;
+
+	float left = this->axes["IDLE"].getGlobalBounds().left;
+	float right = left + this->axes["IDLE"].getGlobalBounds().width;
+
+	this->value = this->range.second * (x - left) / (right - left);
+}
+
+void gui::ScaleSlider::snapToEdges()
+{
+	if (this->value < this->notSnappinToEdgesRange.first) this->setValue(this->range.first);
+
+	else if (this->value > this->notSnappinToEdgesRange.second) this->setValue(this->range.second);
 }

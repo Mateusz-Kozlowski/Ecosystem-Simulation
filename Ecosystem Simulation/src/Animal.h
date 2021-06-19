@@ -43,7 +43,7 @@ public:
 	void setColor(const sf::Color& new_color);
 
 	// other public methods:
-	void updateBodyAndHp(float dt, const std::vector<double>& brain_inputs);
+	void updateBodyAndHp(float dt, float speed_factor, const std::vector<double>& brain_inputs);
 	void updateBrainPreview();
 
 	void renderBody(sf::RenderTarget& target) const ;
@@ -51,8 +51,6 @@ public:
 	void renderBrain(sf::RenderTarget& target) const;
 
 	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
-
-	std::vector<long long> t;
 
 private:
 	bool alive;
@@ -72,5 +70,5 @@ private:
 	bool brainIsRendered;
 
 	// private utilities:
-	void updateHp(float dt);
+	void updateHp(float dt, float speed_factor = 1.f);
 };

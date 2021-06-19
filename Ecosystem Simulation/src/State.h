@@ -37,8 +37,6 @@ public:
 	// accessors:
 	bool getQuit() const;
 
-	virtual bool isPaused() const;
-
 	// mutators:
 	void endState();
 
@@ -53,8 +51,6 @@ protected:
 	std::unordered_map<std::string, int> keybinds;
 
 	bool quit;
-	
-	bool paused;
 
 	sf::Vector2i mousePosScreen;
 	sf::Vector2i mousePosWindow;

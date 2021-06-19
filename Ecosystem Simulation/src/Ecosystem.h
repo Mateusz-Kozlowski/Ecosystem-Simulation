@@ -29,18 +29,18 @@ public:
 
 	const sf::Vector2f* getTrackedAnimalPosition() const;
 
+	float getTotalTimeElapsed() const;
+
 	// other public methods:
 	void update(
-		float dt, 
+		float dt,
+		float speed_factor,
 		const std::vector<sf::Event>& events,
 		const sf::Vector2f& mouse_pos_view, 
 		bool paused,
 		const std::string& god_tool
 	);
 	void render(sf::RenderTarget& target);
-
-	// TODO: rmv later:
-	bool shownDebugHps = false;
 
 private:
 	// private static variables:
@@ -63,6 +63,9 @@ private:
 
 	Animal* trackedAnimal;
 
+	float totalTimeElapsed;
+	float dtSinceLastWorldUpdate;
+
 	// private utilities:
 	std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;
 
@@ -74,15 +77,13 @@ private:
 		const std::string& tool
 	);
 
+	void updateWorld(float dt, float speed_factor);
+
 	void removeDeadAnimals();
 
 	void avoidGoingBeyondTheWorld();
 
-	void feedAnimalsWithFood();
-
-	void feedWithNlogN();
-
-	void feedWithSquare();
+	void feedAnimals();
 
 	static bool compareAnimalsYPositions(const Animal* a1, const Animal* a2);
 

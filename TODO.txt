@@ -2,7 +2,7 @@ The smaller number the greater priority (the sooner that thing should be impleme
 
 1:
 implement God tools
-better "eating algorithm" (with complexity better than the current one (O(f*a)))
+better nearest food searching algo (with complexity better than the current one (O(f*a)))
 slowing down and speeding up a simulation
 new energy system
 NeuralNetPreview class should be a member of Ecosystem class, not a member of Animal class

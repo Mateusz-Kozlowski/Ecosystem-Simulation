@@ -90,7 +90,7 @@ float MovementComponent::get_ay() const
 	return this->a.y;
 }
 
-void MovementComponent::update(float dt, const std::vector<double>& brain_inputs)
+void MovementComponent::update(float dt, float speed_factor, const std::vector<double>& brain_inputs)
 {
 	// update acceleration:
 	const std::vector<double>& brainOutput = this->brain.predict(brain_inputs);
@@ -103,8 +103,8 @@ void MovementComponent::update(float dt, const std::vector<double>& brain_inputs
 	this->v.y += this->a.y * dt;
 
 	// update positions:
-	this->pos.x += this->v.x * dt;
-	this->pos.y += this->v.y * dt;
+	this->pos.x += this->v.x * dt * speed_factor;
+	this->pos.y += this->v.y * dt * speed_factor;
 }
 
 void MovementComponent::saveToFolder(const std::string& folder_path) const

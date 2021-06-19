@@ -61,6 +61,7 @@ namespace gui
 			const sf::Vector2f& pos,
 			float textures_scale,
 			const std::pair<float, float>& range,
+			const std::pair<float, float>& not_snapping_to_edges_range,
 			float default_value,
 			const std::string& axis_idle_path, const std::string& handle_idle_path,
 			const std::string& axis_hover_path, const std::string& handle_hover_path,

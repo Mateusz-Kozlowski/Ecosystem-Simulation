@@ -18,11 +18,6 @@ bool State::getQuit() const
 	return this->quit;
 }
 
-bool State::isPaused() const
-{
-	return this->paused;
-}
-
 // mutators:
 void State::endState()
 {
