@@ -50,7 +50,7 @@ const CrappyNeuralNets::NeuralNet& MovementComponent::getBrain() const
 	return this->brain;
 }
 
-const sf::Vector2f& MovementComponent::getPos() const
+const sf::Vector2f& MovementComponent::getPosition() const
 {
 	return this->pos;
 }

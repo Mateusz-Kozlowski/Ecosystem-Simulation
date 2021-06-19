@@ -2,7 +2,8 @@
 #include "Food.h"
 
 // constructor:
-Food::Food()
+Food::Food(float energy)
+	: energy(energy)
 {
 	this->shape.setFillColor(sf::Color::Green);
 	this->shape.setPointCount(16.f);
@@ -11,7 +12,7 @@ Food::Food()
 }
 
 // mutators:
-void Food::setPos(float x, float y)
+void Food::setPosition(float x, float y)
 {
 	this->shape.setPosition(x, y);
 }
@@ -30,6 +31,11 @@ void Food::setRandomPos(
 	this->shape.setPosition(x, y);
 }
 
+void Food::setEnergy(float energy)
+{
+	this->energy = energy;
+}
+
 // accessors:
 const sf::Vector2f& Food::getPosition() const
 {
@@ -39,6 +45,11 @@ const sf::Vector2f& Food::getPosition() const
 float Food::getRadius() const
 {
 	return this->shape.getRadius();
+}
+
+float Food::getEnergy() const
+{
+	return this->energy;
 }
 
 // other public methods:

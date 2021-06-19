@@ -21,7 +21,7 @@ public:
 	// accessors:
 	const CrappyNeuralNets::NeuralNet& getBrain() const;
 
-	const sf::Vector2f& getPos() const;
+	const sf::Vector2f& getPosition() const;
 	
 	const sf::Vector2f& getVelocity() const;
 

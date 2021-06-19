@@ -19,7 +19,7 @@ SideMenu::~SideMenu()
 }
 
 // accessors:
-const sf::Vector2f& gui::SideMenu::getPos() const
+const sf::Vector2f& gui::SideMenu::getPosition() const
 {
 	return this->background.getPosition();
 }

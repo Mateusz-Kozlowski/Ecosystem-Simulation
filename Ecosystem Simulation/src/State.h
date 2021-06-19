@@ -37,6 +37,8 @@ public:
 	// accessors:
 	bool getQuit() const;
 
+	virtual bool isPaused() const;
+
 	// mutators:
 	void endState();
 
@@ -52,6 +54,8 @@ protected:
 
 	bool quit;
 	
+	bool paused;
+
 	sf::Vector2i mousePosScreen;
 	sf::Vector2i mousePosWindow;
 	sf::Vector2f mousePosView;

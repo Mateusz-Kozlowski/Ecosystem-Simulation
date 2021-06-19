@@ -30,9 +30,18 @@ void App::run()
 {
 	while (this->window->isOpen())
 	{
+		//auto t0 = std::chrono::high_resolution_clock::now();
 		this->updateDt();
+		//auto t1 = std::chrono::high_resolution_clock::now();
 		this->update();
+		//auto t2 = std::chrono::high_resolution_clock::now();
 		this->render();
+		//auto t3 = std::chrono::high_resolution_clock::now();
+
+		//std::cout << "Update=" << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << '\n';
+		//std::cout << "Render=" << std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count() << '\n';
+
+		//std::cout << "FPS=" << 10e6 / std::chrono::duration_cast<std::chrono::microseconds>(t3 - t0).count() << '\n';
 	}
 }
 

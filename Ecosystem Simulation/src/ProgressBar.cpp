@@ -3,13 +3,14 @@
 
 // constructor:
 ProgressBar::ProgressBar(
-	float x, float y, 
-	float width, float height, 
+	const sf::Vector2f& pos, 
+	const sf::Vector2f& size,
 	const sf::Vector2f& range, float default_value, 
-	sf::Color background_color, sf::Color progress_color)
-	:	range(range), value(default_value)
+	sf::Color background_color, sf::Color progress_color,
+	bool correct_value_if_exceeds_range)
+	:	range(range), value(default_value), correctValueIfExceedsRange(correct_value_if_exceeds_range)
 {
-	this->initBackground(x, y, width, height, background_color);
+	this->initBackground(pos, size, background_color);
 	this->initProgress(progress_color);
 }
 
@@ -19,20 +20,34 @@ float ProgressBar::getCurrentValue() const
 	return this->value;
 }
 
+const sf::Vector2f& ProgressBar::getPosition() const
+{
+	return this->backgroundRect.getPosition();
+}
+
 // mutators:
 void ProgressBar::increaseValue(float change)
 {
 	this->value += change;
 
-	this->avoidGoingBeyondRange();
+	if (this->correctValueIfExceedsRange) this->avoidGoingBeyondRange();
 
 	this->updateProgressRectSize();
 }
 
-void ProgressBar::setPos(const sf::Vector2f& new_pos)
+void ProgressBar::setValue(float value)
 {
-	this->backgroundRect.setPosition(new_pos);
-	this->progressRect.setPosition(new_pos);
+	this->value = value;
+
+	if (this->correctValueIfExceedsRange) this->avoidGoingBeyondRange();
+
+	this->updateProgressRectSize();
+}
+
+void ProgressBar::setPosition(const sf::Vector2f& position)
+{
+	this->backgroundRect.setPosition(position);
+	this->progressRect.setPosition(position);
 }
 
 void ProgressBar::setProgressColor(const sf::Color& color)
@@ -49,18 +64,18 @@ void ProgressBar::render(sf::RenderTarget& target) const
 
 // private methods:
 // initialization:
-void ProgressBar::initBackground(float x, float y, float width, float height, sf::Color backgroundColor)
+void ProgressBar::initBackground(const sf::Vector2f& position, const sf::Vector2f& size, sf::Color background_color)
 {
-	this->backgroundRect.setPosition(x, y);
-	this->backgroundRect.setSize(sf::Vector2f(width, height));
-	this->backgroundRect.setFillColor(backgroundColor);
+	this->backgroundRect.setPosition(position);
+	this->backgroundRect.setSize(size);
+	this->backgroundRect.setFillColor(background_color);
 }
 
-void ProgressBar::initProgress(sf::Color progressColor)
+void ProgressBar::initProgress(sf::Color progress_color)
 {
 	this->progressRect.setPosition(this->backgroundRect.getPosition().x, this->backgroundRect.getPosition().y);
 	this->updateProgressRectSize(); // sets size
-	this->progressRect.setFillColor(progressColor);
+	this->progressRect.setFillColor(progress_color);
 }
 
 // private utilities:

@@ -39,6 +39,9 @@ public:
 	);
 	void render(sf::RenderTarget& target);
 
+	// TODO: rmv later:
+	bool shownDebugHps = false;
+
 private:
 	// private static variables:
 	static std::string templateConfigFilePath;
@@ -76,6 +79,23 @@ private:
 	void avoidGoingBeyondTheWorld();
 
 	void feedAnimalsWithFood();
+
+	void feedWithNlogN();
+
+	void feedWithSquare();
+
+	static bool compareAnimalsYPositions(const Animal* a1, const Animal* a2);
+
+	bool animalIsToHigh(const Animal& animal, const Food& food);
+
+	bool animalReachesFoodInY(const Animal& animal, const Food& food);
+	bool animalReachesFood(const Animal& animal, const Food& food);
+
+	int tryToFindConsumer(Food& fruit, unsigned start_animal_index);
+
+	void eat(Animal& animal, Food& fruit);
+
+	void removeEatenFood();
 
 	// God tools:
 	void track(const sf::Vector2f& mouse_pos_view);

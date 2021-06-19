@@ -6,20 +6,24 @@ class Food
 {
 public:
 	// constructor:
-	Food();
+	Food(float energy);
 
 	// mutators:
-	void setPos(float x, float y);
+	void setPosition(float x, float y);
+
 	void setRandomPos(
 		const sf::Vector2f& worldSize,
 		float bordersThickness,
 		CrappyNeuralNets::RandomNumbersGenerator& generator
 	);
+	void setEnergy(float energy);
 
 	// accessors:
 	const sf::Vector2f& getPosition() const;
 
 	float getRadius() const;
+
+	float getEnergy() const;
 
 	// other public methods:
 	void render(sf::RenderTarget& target) const;
@@ -28,4 +32,6 @@ public:
 
 private:
 	sf::CircleShape shape;
+
+	float energy;
 };

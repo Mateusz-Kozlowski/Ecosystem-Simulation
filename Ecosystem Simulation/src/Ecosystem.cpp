@@ -57,7 +57,7 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 	for (float i = 0.f; i < foodCount; i++) 
 	{
-		Food f;
+		Food f(10e2);
 		f.setRandomPos(worldSize, borderThickness, generator);
 		ss << f.getPosition().x << ' ' << f.getPosition().y << '\n';
 	}
@@ -136,8 +136,8 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	{
 		file1 >> x;
 		file1 >> y;
-		this->food.push_back(new Food());
-		this->food.back()->setPos(x, y);
+		this->food.push_back(new Food(10e6));
+		this->food.back()->setPosition(x, y);
 	}
 }
 
@@ -161,12 +161,12 @@ void Ecosystem::printAnimalsPositions() const
 {
 	std::cout << "Animal positions:\n";
 	for (const auto& animal : this->animals)
-		std::cout << animal->getPos().x << ' ' << animal->getPos().y << '\n';
+		std::cout << animal->getPosition().x << ' ' << animal->getPosition().y << '\n';
 }
 
 const sf::Vector2f* Ecosystem::getTrackedAnimalPosition() const
 {
-	if (this->trackedAnimal) return &this->trackedAnimal->getPos();
+	if (this->trackedAnimal) return &this->trackedAnimal->getPosition();
 	
 	return nullptr;
 }
@@ -179,21 +179,57 @@ void Ecosystem::update(
 	bool paused,
 	const std::string& god_tool)
 {
+	//auto t0 = std::chrono::steady_clock::now();
 	this->useGodTool(events, mouse_pos_view, god_tool);
 
 	if (paused) return;
 	
+	//auto t1 = std::chrono::steady_clock::now();
 	for (const auto& animal : this->animals) animal->updateBodyAndHp(dt, getInputsForBrain(*animal));
 
+	//auto t2 = std::chrono::steady_clock::now();
 	this->removeDeadAnimals();
 
+	//auto t3 = std::chrono::steady_clock::now();
 	this->avoidGoingBeyondTheWorld();
 
+	//auto t4 = std::chrono::steady_clock::now();
 	this->feedAnimalsWithFood();
 
+	//auto t5 = std::chrono::steady_clock::now();
+	this->removeEatenFood();
+
+	//auto t6 = std::chrono::steady_clock::now();
 	for (auto& animal : this->animals)
 		if (animal->isBrainRendered())
 			animal->updateBrainPreview();
+
+	//auto t7 = std::chrono::steady_clock::now();
+
+	//std::cout << "tool=" << std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() << '\n';
+	//std::cout << "body hp=" << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << '\n';
+	//std::cout << "rmv dead=" << std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count() << '\n';
+	//std::cout << "avoid beyond=" << std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count() << '\n';
+	//std::cout << "feed=" << std::chrono::duration_cast<std::chrono::microseconds>(t5 - t4).count() << '\n';
+	//std::cout << "rmv eaten=" << std::chrono::duration_cast<std::chrono::microseconds>(t6 - t5).count() << '\n';
+	//std::cout << "brain prev=" << std::chrono::duration_cast<std::chrono::microseconds>(t7 - t6).count() << '\n';
+
+	/*
+	std::vector<long long> t(4);
+
+	for (const auto& animal : this->animals)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			t[i] += animal->t[i];
+		}
+	}
+
+	std::cout << "mvc: " << t[0] << '\n';
+	std::cout << "body pos: " << t[1] << '\n';
+	std::cout << "update hp: " << t[2] << '\n';
+	std::cout << "alive: " << t[3] << '\n';
+	*/
 }
 
 void Ecosystem::render(sf::RenderTarget& target)
@@ -201,110 +237,25 @@ void Ecosystem::render(sf::RenderTarget& target)
 	target.draw(this->border);
 	target.draw(this->background);
 
-	for (const auto& food : this->food) food->render(target);
-
-	/*
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
-	{
-		std::cout << this->worldSize.x << ' ' << this->worldSize.y << '\n';
-		std::cout << this->background.getSize().y << '\n';
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
-	{
-		std::cout << "Simply animals positions:\n";
-		for (const auto& animal : this->animals)
-		{
-			std::cout << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-		}
-		std::cout << "The end of animal positions!\n";
-	}
-	*/
-
-	for (const auto& animal : this->animals)
-	{
-		if (animal->getPos().y + animal->getRadius() > 2160 - this->borderThickness)
-		{
-			std::cout << "Y above:\n";
-			std::cout << animal->getPos().y << '\n';
-		}
-
-		if (animal->getPos().x - animal->getRadius() < this->borderThickness)
-		{
-			std::cout << "LEFT DOESN'T WORK\n";
-			std::cout << "INFO ABOUT WANTED:\n";
-			std::cout << "pos: " << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-			std::cout << "vel: " << animal->getVelocity().x << ' ' << animal->getVelocity().y << '\n';
-			exit(-1);
-		}
-		else if (animal->getPos().x + animal->getRadius() > this->worldSize.x - this->borderThickness)
-		{
-			std::cout << "RIGHT DOESN'T WORK\n";
-			std::cout << "INFO ABOUT WANTED:\n";
-			std::cout << "pos: " << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-			std::cout << "vel: " << animal->getVelocity().x << ' ' << animal->getVelocity().y << '\n';
-			exit(-1);
-		}
-		else if (animal->getPos().y - animal->getRadius() < this->borderThickness)
-		{
-			std::cout << "TOP DOESN'T WORK\n";
-			std::cout << "INFO ABOUT WANTED:\n";
-			std::cout << "pos: " << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-			std::cout << "vel: " << animal->getVelocity().x << ' ' << animal->getVelocity().y << '\n';
-			exit(-1);
-		}
-		else if (animal->getPos().y + animal->getRadius() > this->worldSize.y - this->borderThickness)
-		{
-			std::cout << "BOTTOM DOESN'T WORK\n";
-			std::cout << "INFO ABOUT WANTED:\n";
-			std::cout << "pos: " << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-			std::cout << "vel: " << animal->getVelocity().x << ' ' << animal->getVelocity().y << '\n';
-			exit(-1);
-		}
-	}
-
 	for (const auto& animal : this->animals) animal->renderBody(target);
 	
 	for (const auto& animal : this->animals) animal->renderHpBar(target);
 	
+	for (const auto& food : this->food) food->render(target);
+
 	for (const auto& animal : this->animals)
 		if (animal->isBrainRendered())
 			animal->renderBrain(target);
 
-	for (const auto& animal : this->animals)
+	// TODO: rmv later!:
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) && !this->shownDebugHps)
 	{
-		if (animal->getPos().x < this->borderThickness)
+		for (const auto& animal : this->animals)
 		{
-			std::cout << "LEFT DOESN'T WORK\n";
-			std::cout << "INFO ABOUT WANTED:\n";
-			std::cout << "pos: " << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-			std::cout << "vel: " << animal->getVelocity().x << ' ' << animal->getVelocity().y << '\n';
-			exit(-1);
+			std::cout << animal->getHp() << '\n';
 		}
-		else if (animal->getPos().x > this->worldSize.x - this->borderThickness)
-		{
-			std::cout << "RIGHT DOESN'T WORK\n";
-			std::cout << "INFO ABOUT WANTED:\n";
-			std::cout << "pos: " << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-			std::cout << "vel: " << animal->getVelocity().x << ' ' << animal->getVelocity().y << '\n';
-			exit(-1);
-		}
-		else if (animal->getPos().y < this->borderThickness)
-		{
-			std::cout << "TOP DOESN'T WORK\n";
-			std::cout << "INFO ABOUT WANTED:\n";
-			std::cout << "pos: " << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-			std::cout << "vel: " << animal->getVelocity().x << ' ' << animal->getVelocity().y << '\n';
-			exit(-1);
-		}
-		else if (animal->getPos().y > this->worldSize.y - this->borderThickness)
-		{
-			std::cout << "BOTTOM DOESN'T WORK\n";
-			std::cout << "INFO ABOUT WANTED:\n";
-			std::cout << "pos: " << animal->getPos().x << ' ' << animal->getPos().y << '\n';
-			std::cout << "vel: " << animal->getVelocity().x << ' ' << animal->getVelocity().y << '\n';
-			exit(-1);
-		}
+
+		this->shownDebugHps = true;
 	}
 }
 
@@ -319,12 +270,12 @@ std::vector<CrappyNeuralNets::Scalar> Ecosystem::getInputsForBrain(const Animal&
 	inputsForBrain.push_back(animal.getVelocity().x);
 	inputsForBrain.push_back(animal.getVelocity().y);
 	
-	inputsForBrain.push_back(animal.getHp() / animal.getMaxHp());
+	inputsForBrain.push_back(log2(animal.getHp()));
 
 	Food* theNearestFood = findTheNearestFood(animal);
 	
-	inputsForBrain.push_back(theNearestFood->getPosition().x - animal.getPos().x);
-	inputsForBrain.push_back(theNearestFood->getPosition().y - animal.getPos().y);
+	inputsForBrain.push_back(theNearestFood->getPosition().x - animal.getPosition().x);
+	inputsForBrain.push_back(theNearestFood->getPosition().y - animal.getPosition().y);
 
 	return inputsForBrain;
 }
@@ -336,8 +287,8 @@ Food* Ecosystem::findTheNearestFood(const Animal& animal) const
 
 	for (const auto& it : this->food)
 	{
-		float a = animal.getPos().x - it->getPosition().x;
-		float b = animal.getPos().y - it->getPosition().y;
+		float a = animal.getPosition().x - it->getPosition().x;
+		float b = animal.getPosition().y - it->getPosition().y;
 
 		float distance = sqrt(pow(a, 2) + pow(b, 2));
 
@@ -400,58 +351,123 @@ void Ecosystem::avoidGoingBeyondTheWorld()
 	for (auto& animal : this->animals)
 	{
 		// left border:
-		if (animal->getPos().x - animal->getRadius() < this->borderThickness)
+		if (animal->getPosition().x - animal->getRadius() < this->borderThickness)
 		{
 			animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
-			animal->setPos(sf::Vector2f(this->borderThickness + animal->getRadius(), animal->getPos().y));
+			animal->setPosition(sf::Vector2f(this->borderThickness + animal->getRadius(), animal->getPosition().y));
 		}
 
 		// right border:
-		else if (animal->getPos().x + animal->getRadius() > this->worldSize.x - this->borderThickness)
+		else if (animal->getPosition().x + animal->getRadius() > this->worldSize.x - this->borderThickness)
 		{
 			animal->setVelocity({ -animal->getVelocity().x, animal->getVelocity().y });
-			animal->setPos(sf::Vector2f(this->worldSize.x - this->borderThickness - animal->getRadius(), animal->getPos().y));
+			animal->setPosition(sf::Vector2f(this->worldSize.x - this->borderThickness - animal->getRadius(), animal->getPosition().y));
 		}
 
 		// it is possible that an animal crossed 2 perpendicular borders in the same frame, so we don't use else if here:
 		// top border:
-		if (animal->getPos().y - animal->getRadius() < this->borderThickness)
+		if (animal->getPosition().y - animal->getRadius() < this->borderThickness)
 		{
 			animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
-			animal->setPos(sf::Vector2f(animal->getPos().x, this->borderThickness + animal->getRadius()));
+			animal->setPosition(sf::Vector2f(animal->getPosition().x, this->borderThickness + animal->getRadius()));
 		}
 
 		// bottom border:
-		else if (animal->getPos().y + animal->getRadius() > this->worldSize.y - this->borderThickness)
+		else if (animal->getPosition().y + animal->getRadius() > this->worldSize.y - this->borderThickness)
 		{
 			animal->setVelocity({ animal->getVelocity().x, -animal->getVelocity().y });
-			animal->setPos(sf::Vector2f(animal->getPos().x, this->worldSize.y - this->borderThickness - animal->getRadius()));
+			animal->setPosition(sf::Vector2f(animal->getPosition().x, this->worldSize.y - this->borderThickness - animal->getRadius()));
 		}
 	}
 }
 
 void Ecosystem::feedAnimalsWithFood()
 {
-	// TODO: come up with a new way of generating random numbers:
-	CrappyNeuralNets::RandomNumbersGenerator generator;
+	std::sort(this->animals.begin(), this->animals.end(), compareAnimalsYPositions);
 
-	// TODO: improve algorithm complexity (currently O(f*a))
-	for (int i = 0; i < this->animals.size(); i++)
+	for (int f = 0; f < this->food.size(); f++)
 	{
-		for (int j = 0; j < this->food.size(); j++)
+		unsigned left = 0, right = this->animals.size() - 1U;
+
+		while (left < right)
 		{
-			float a = this->animals[i]->getPos().x - this->food[j]->getPosition().x;
-			float b = this->animals[i]->getPos().y - this->food[j]->getPosition().y;
+			unsigned center = (left + right) / 2;
 
-			float distance = sqrt(pow(a, 2) + pow(b, 2));
-
-			if (distance <= this->animals[i]->getRadius() + this->food[j]->getRadius())
+			if (this->animalIsToHigh(*this->animals[center], *this->food[f]))
 			{
-				this->animals[i]->setHp(this->animals[i]->getMaxHp());
-				this->food[j]->setRandomPos(this->worldSize, this->borderThickness, generator);
+				left = center + 1;
+			}
+			else
+			{
+				right = center;
 			}
 		}
+
+		this->tryToFindConsumer(*this->food[f], left);
 	}
+}
+
+bool Ecosystem::compareAnimalsYPositions(const Animal* a1, const Animal* a2)
+{
+	return a1->getPosition().y < a2->getPosition().y;
+}
+
+bool Ecosystem::animalIsToHigh(const Animal& animal, const Food& food)
+{
+	return (animal.getPosition().y - food.getPosition().y) < -(animal.getRadius() + food.getRadius());
+}
+
+bool Ecosystem::animalReachesFoodInY(const Animal& animal, const Food& food)
+{
+	if (abs(animal.getPosition().y - food.getPosition().y) <= animal.getRadius() + food.getRadius()) return true;
+	
+	return false;
+}
+
+bool Ecosystem::animalReachesFood(const Animal& animal, const Food& food)
+{
+	float a = animal.getPosition().x - food.getPosition().x;
+	float b = animal.getPosition().y - food.getPosition().y;
+
+	float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+	if (distance <= animal.getRadius() + food.getRadius()) return true;
+
+	return false;
+}
+
+int Ecosystem::tryToFindConsumer(Food& fruit, unsigned start_animal_index)
+{
+	unsigned animal_index = start_animal_index;
+
+	while (animal_index < this->animals.size() && this->animalReachesFoodInY(*this->animals[animal_index], fruit))
+	{
+		if (this->animalReachesFood(*this->animals[animal_index], fruit))
+		{
+			this->eat(*this->animals[animal_index], fruit);
+			return 1;
+		}
+		animal_index++;
+	}
+
+	return 0;
+}
+
+void Ecosystem::eat(Animal& animal, Food& fruit)
+{
+	animal.increaseHp(fruit.getEnergy());
+	fruit.setEnergy(0.f);
+}
+
+void Ecosystem::removeEatenFood()
+{
+	for (int i = 0; i < this->food.size(); i++)
+		if (this->food[i]->getEnergy() == 0.f)
+		{
+			delete this->food[i];
+			std::swap(this->food[i], this->food.back());
+			this->food.pop_back();
+		}
 }
 
 // God tools:
@@ -502,7 +518,7 @@ void Ecosystem::remove(const sf::Vector2f& mouse_pos_view)
 	for (auto& f : this->food)
 	{
 		if (f->isCovered(mouse_pos_view))
-		{
+		{			
 			delete f;
 			std::swap(f, this->food.back());
 			this->food.pop_back();

@@ -18,7 +18,7 @@ public:
 	void loadFromFolder(const std::string& folder_path);
 
 	// accessors:
-	const sf::Vector2f& getPos() const;
+	const sf::Vector2f& getPosition() const;
 	const sf::Vector2f& getVelocity() const;
 
 	float getRadius() const;
@@ -27,18 +27,18 @@ public:
 	
 	bool isAlive() const;
 
-	float getMaxHp() const;
-
 	float getHp() const;
 
 	// mutators:
-	void setPos(const sf::Vector2f& new_pos);
+	void setPosition(const sf::Vector2f& new_pos);
 
 	void setVelocity(const sf::Vector2f& v);
 
 	void setBrainIsRendered(bool brain_is_rendered);
 
-	void setHp(float new_hp);
+	void setHp(float hp);
+
+	void increaseHp(float hp_increase);
 
 	void setColor(const sf::Color& new_color);
 
@@ -52,18 +52,20 @@ public:
 
 	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
 
+	std::vector<long long> t;
+
 private:
 	bool alive;
 	
 	sf::CircleShape body;
 
 	MovementComponent* movementComponent;
-	
-	float maxHp;
+
+	float defaultHpValue;
+
+	float hp;
 
 	ProgressBar* hpBar;
-
-	bool hpIsRendered;
 
 	NeuralNetPreview* brainPreview;
 

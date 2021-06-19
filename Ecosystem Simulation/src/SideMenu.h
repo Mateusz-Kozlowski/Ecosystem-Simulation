@@ -18,7 +18,7 @@ namespace gui
 		~SideMenu();
 
 		// accessors:
-		const sf::Vector2f& getPos() const;
+		const sf::Vector2f& getPosition() const;
 
 		const sf::Vector2f& getSize() const;
 

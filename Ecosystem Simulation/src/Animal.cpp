@@ -16,7 +16,7 @@ void Animal::setUpAnimalFolder(const std::string& folder_path)
 
 // constructor:
 Animal::Animal()
-	: hpIsRendered(false), brainIsRendered(true), alive(true), maxHp(10e10)
+	: brainIsRendered(false), alive(true), defaultHpValue(10e6), hp(defaultHpValue)
 {
 	this->body.setFillColor(sf::Color::Red);
 	this->body.setPointCount(16);
@@ -32,16 +32,23 @@ Animal::Animal()
 		sf::Color(128, 128, 128, 128)
 	);
 
-	//this->renderingComponent = new RenderingComponent(*this->movementComponent);
-
-	//this->radius = 8.f;
-
 	// get rid of that hardcoded stuff:
 	this->hpBar = new ProgressBar(
-		this->movementComponent->get_x() - 4.f * this->body.getRadius(), this->movementComponent->get_y() - 3.f * this->body.getRadius(),
-		8.f * this->body.getRadius(), this->body.getRadius(),
-		sf::Vector2f(0.f, this->maxHp), this->maxHp, sf::Color(128, 128, 128), sf::Color::Red
+		sf::Vector2f(
+			this->movementComponent->get_x() - 4.f * this->body.getRadius(), 
+			this->movementComponent->get_y() - 3.f * this->body.getRadius()
+		),
+		sf::Vector2f(
+			8.f * this->body.getRadius(), 
+			this->body.getRadius()
+		),
+		sf::Vector2f(0.f, this->defaultHpValue), this->defaultHpValue, 
+		sf::Color(128, 128, 128), sf::Color::Red,
+		true
 	);
+
+	// TODO: rmv later:
+	this->t.resize(5);
 }
 
 Animal::~Animal()
@@ -58,9 +65,9 @@ void Animal::loadFromFolder(const std::string& folder_path)
 }
 
 // accessors:
-const sf::Vector2f& Animal::getPos() const
+const sf::Vector2f& Animal::getPosition() const
 {
-	return this->movementComponent->getPos();
+	return this->movementComponent->getPosition();
 }
 
 const sf::Vector2f& Animal::getVelocity() const
@@ -83,18 +90,13 @@ bool Animal::isAlive() const
 	return this->alive;
 }
 
-float Animal::getMaxHp() const
-{
-	return this->maxHp;
-}
-
 float Animal::getHp() const
 {
-	return this->hpBar->getCurrentValue();
+	return this->hp;
 }
 
 // mutators:
-void Animal::setPos(const sf::Vector2f& new_pos)
+void Animal::setPosition(const sf::Vector2f& new_pos)
 {
 	this->movementComponent->set_x(new_pos.x);
 	this->movementComponent->set_y(new_pos.y);
@@ -111,27 +113,46 @@ void Animal::setBrainIsRendered(bool brain_is_rendered)
 	this->brainIsRendered = brain_is_rendered;
 }
 
-void Animal::setHp(float new_hp)
+void Animal::setHp(float hp)
 {
-	this->hpBar->increaseValue(new_hp - this->hpBar->getCurrentValue());
+	std::cout << "Hp set to: " << hp << '\n';
+	this->hp = hp;
+	this->hpBar->setValue(hp);
 }
 
-void Animal::setColor(const sf::Color& new_color)
+void Animal::increaseHp(float hp_increase)
 {
-	this->body.setFillColor(new_color);
-	this->hpBar->setProgressColor(new_color);
+	this->hp += hp_increase;
+	this->hpBar->increaseValue(hp_increase);
+}
+
+void Animal::setColor(const sf::Color& color)
+{
+	this->body.setFillColor(color);
+	this->hpBar->setProgressColor(color);
 }
 
 // other public methods:
 void Animal::updateBodyAndHp(float dt, const std::vector<double>& brain_inputs)
 {
+	auto t0 = std::chrono::steady_clock::now();
 	this->movementComponent->update(dt, brain_inputs);
 
+	auto t1 = std::chrono::steady_clock::now();
 	this->body.setPosition(this->movementComponent->get_x(), this->movementComponent->get_y());
 
+	auto t2 = std::chrono::steady_clock::now();
 	this->updateHp(dt);
 
-	this->alive = this->hpBar->getCurrentValue() > 0.f;
+	auto t3 = std::chrono::steady_clock::now();
+	this->alive = this->hp > 0.f;
+
+	auto t4 = std::chrono::steady_clock::now();
+
+	this->t[0] += std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
+	this->t[1] += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+	this->t[2] += std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count();
+	this->t[3] += std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
 }
 
 void Animal::updateBrainPreview()
@@ -168,7 +189,7 @@ bool Animal::isCovered(const sf::Vector2f& mouse_pos_view) const
 void Animal::updateHp(float dt)
 {
 	// first update position:
-	this->hpBar->setPos(
+	this->hpBar->setPosition(
 		sf::Vector2f(
 			this->movementComponent->get_x() - 4.f * this->body.getRadius(),
 			this->movementComponent->get_y() - 3.f * this->body.getRadius()
@@ -183,13 +204,11 @@ void Animal::updateHp(float dt)
 	float v = sqrt(pow(this->movementComponent->get_vx(), 2) + pow(this->movementComponent->get_vy(), 2));
 	
 	// calculate energy delta (where does it come from is explaneid at the bottom of the function)
-	//float dE = a * v * dt;
-	float dE = v * dt;
+	float dE = -a * v * dt;
 
-	this->hpBar->increaseValue(-dE);
-
-	// sometimes (for debug purposes) we want to decrease energy every frame by a constant:
-	//this->hpBar->increaseValue(-0.05f);
+	//this->increaseHp(dE);
+	this->hp += dE;
+	this->hpBar->increaseValue(dE);
 
 	/*
 	dE <==> energy delta [J]
