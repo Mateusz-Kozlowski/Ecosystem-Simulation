@@ -3,6 +3,7 @@
 #include "Animal.h"
 #include "Food.h"
 #include "EventsAccessor.h"
+#include "NeuralNetPreview.h"
 
 class Ecosystem
 {
@@ -58,13 +59,25 @@ private:
 	sf::RectangleShape border;
 	sf::RectangleShape background;
 
+	unsigned animalsCount;
+	unsigned fruitsCount;
+
 	std::vector<Animal*> animals;
+	std::unordered_map<Animal*, NeuralNetPreview*> brainsPreviews;
 	std::vector<Food*> food;
 
 	Animal* trackedAnimal;
 
 	float totalTimeElapsed;
 	float dtSinceLastWorldUpdate;
+
+	// private initialization:
+	void readDataFromConfigFile(const std::string& folder_path);
+	void initBorders();
+	void initBackground();
+	void initAnimals(const std::string& folder_path);
+	void initBrainPreviews();
+	void initFruits(const std::string& folder_path);
 
 	// private utilities:
 	std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;

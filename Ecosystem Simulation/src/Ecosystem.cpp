@@ -69,7 +69,10 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 // constructor/destructor:
 Ecosystem::Ecosystem()
-	: directoryPath("ECOSYSTEM IS NOT INITIALIZED"), borderThickness(0U), trackedAnimal(nullptr),
+	: directoryPath("ECOSYSTEM IS NOT INITIALIZED"), 
+	  borderThickness(0U), 
+	  animalsCount(0U), fruitsCount(0U),
+	  trackedAnimal(nullptr),
 	  totalTimeElapsed(0.f), dtSinceLastWorldUpdate(0.f)
 {
 	
@@ -78,6 +81,8 @@ Ecosystem::Ecosystem()
 Ecosystem::~Ecosystem()
 {
 	for (auto& animal : this->animals) delete animal;
+	
+	for (auto& brainPreview : this->brainsPreviews) delete brainPreview.second;
 	
 	for (auto& food : this->food) delete food;
 }
@@ -89,68 +94,14 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 
 	this->directoryPath = folder_path;
 	
-	// read data from config file:
-	std::ifstream file(folder_path + '/' + Ecosystem::configFileName);
-
-	if (!file.is_open()) std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
-
-	std::string temp;
-	unsigned animalsCount = 0U, foodCount = 0U;
-
-	file >> temp >> this->worldSize.x;
-	file >> temp >> this->worldSize.y;
-	file >> temp >> this->borderThickness;
-	file >> temp >> animalsCount;
-	file >> temp >> foodCount;
-
-	file.close();
-
-	std::cout << "READING FROM A FILE IS DONE\n";
-
-	// borders and backgroundRect:
-	this->border.setFillColor(sf::Color(48, 48, 48));
-	this->border.setSize(this->worldSize);
-
-	this->background.setFillColor(sf::Color(32, 32, 32));
-	this->background.setSize(
-		sf::Vector2f(
-			this->worldSize.x - 2.f * this->borderThickness,
-			this->worldSize.y - 2.f * this->borderThickness
-		)
-	);
-	this->background.setPosition(this->borderThickness, this->borderThickness);
-
-	std::cout << "BORDERS AND BACKGROUND INITIALIZED\n";
-
-	// animals:
-	for (int i = 0; i < animalsCount; i++)
-	{	
-		this->animals.push_back(new Animal());
-		this->animals[i]->loadFromFolder(folder_path + '/' + "animal" + std::to_string(i));
-	}
-
-	std::cout << "ANIMALS ARE DONE\n";
-
-	// food:
-	// TODO: add static food name file
-	std::ifstream file1(folder_path + '/' + "food.ini");
-
-	if (!file1.is_open()) std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
-
-	this->food.reserve(foodCount);
-
-	std::cout << "FOOD RESERVED\n";
-
-	float x, y;
-
-	for (int i = 0; i < foodCount; i++)
-	{
-		file1 >> x;
-		file1 >> y;
-		this->food.push_back(new Food(10e6));
-		this->food.back()->setPosition(x, y);
-	}
-
+	this->readDataFromConfigFile(folder_path);
+	this->initBorders();
+	this->initBackground();
+	this->initAnimals(folder_path);
+	this->initBrainPreviews();
+	this->initFruits(folder_path);
+	
+	// TODO: rmv later!:
 	std::cout << "AN ECOSYSTEM HAS BEEN LOADED CORRECTLY\n";
 }
 
@@ -218,7 +169,103 @@ void Ecosystem::render(sf::RenderTarget& target)
 
 	for (const auto& animal : this->animals)
 		if (animal->isBrainRendered())
-			animal->renderBrain(target);
+			this->brainsPreviews[animal]->render(target);
+}
+
+// private initialization:
+void Ecosystem::readDataFromConfigFile(const std::string& folder_path)
+{
+	std::ifstream file(folder_path + '/' + Ecosystem::configFileName);
+
+	if (!file.is_open()) std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
+
+	std::string temp;
+	unsigned animalsCount = 0U, fruitsCount = 0U;
+
+	file >> temp >> this->worldSize.x;
+	file >> temp >> this->worldSize.y;
+	file >> temp >> this->borderThickness;
+	file >> temp >> this->animalsCount;
+	file >> temp >> this->fruitsCount;
+
+	file.close();
+
+	// TODO: rmv later!:
+	std::cout << "READING FROM A FILE IS DONE\n";
+}
+
+void Ecosystem::initBorders()
+{
+	this->border.setFillColor(sf::Color(48, 48, 48));
+	this->border.setSize(this->worldSize);
+}
+
+void Ecosystem::initBackground()
+{
+	this->background.setFillColor(sf::Color(32, 32, 32));
+	this->background.setSize(
+		sf::Vector2f(
+			this->worldSize.x - 2.f * this->borderThickness,
+			this->worldSize.y - 2.f * this->borderThickness
+		)
+	);
+	this->background.setPosition(this->borderThickness, this->borderThickness);
+
+	// TODO: rmv later!:
+	std::cout << "BACKGROUND IS DONE!\n";
+}
+
+void Ecosystem::initAnimals(const std::string& folder_path)
+{
+	for (int i = 0; i < this->animalsCount; i++)
+	{
+		this->animals.push_back(new Animal());
+		this->animals[i]->loadFromFolder(folder_path + '/' + "animal" + std::to_string(i));
+	}
+
+	// TODO: rmv later!:
+	std::cout << "ANIMALS ARE DONE\n";
+}
+
+void Ecosystem::initBrainPreviews()
+{
+	for (int i = 0; i < this->animalsCount; i++)
+	{
+		this->brainsPreviews[this->animals[i]] = new NeuralNetPreview(
+			this->animals[i]->getMovementComponent().getBrain(),
+			this->animals[i]->getPosition(),
+			sf::Vector2f(144.f, 144.f),
+			sf::Color(128, 128, 128, 128)
+		);
+	}
+
+	// TODO: rmv later!:
+	std::cout << "BRAIN PREVIEWS ARE DONE\n";
+}
+
+void Ecosystem::initFruits(const std::string& folder_path)
+{
+	// TODO: add static food name file
+	std::ifstream file1(folder_path + '/' + "food.ini");
+
+	if (!file1.is_open()) std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
+
+	this->food.reserve(this->fruitsCount);
+
+	std::cout << "FRUITS RESERVATION IS DONE!\n";
+
+	for (int i = 0; i < this->fruitsCount; i++)
+	{
+		float x, y;
+
+		file1 >> x;
+		file1 >> y;
+		
+		this->food.push_back(new Food(10e6)); // TODO: rmv that hardcoded variable!
+		this->food.back()->setPosition(x, y);
+	}
+
+	std::cout << "FRUITS ARE DONE!\n";
 }
 
 // private methods:
@@ -271,7 +318,7 @@ void Ecosystem::useGodTool(
 {
 	// TODO: add info that if there is no God tool then god_tool string should be equal to ""
 
-	if (!EventsAccessor::hasEventOccured(sf::Event::MouseButtonPressed, events))
+	if (!EventsAccessor::hasEventOccured(static_cast<sf::Event::EventType>(sf::Event::MouseButtonPressed), events))
 		return;
 
 	// now use God tool:
@@ -299,7 +346,7 @@ void Ecosystem::useGodTool(
 void Ecosystem::updateWorld(float dt, float speed_factor)
 {
 	for (const auto& animal : this->animals)
-		animal->updateBodyAndHp(dt, speed_factor, getInputsForBrain(*animal));
+		animal->update(dt, speed_factor, getInputsForBrain(*animal));
 
 	this->removeDeadAnimals();
 
@@ -311,7 +358,7 @@ void Ecosystem::updateWorld(float dt, float speed_factor)
 
 	for (auto& animal : this->animals)
 		if (animal->isBrainRendered())
-			animal->updateBrainPreview();
+			this->brainsPreviews[animal]->update(animal->getPosition());
 }
 
 void Ecosystem::removeDeadAnimals()
@@ -474,6 +521,9 @@ void Ecosystem::track(const sf::Vector2f& mouse_pos_view)
 			
 			// change color:
 			animal->setColor(sf::Color(150, 0, 200));
+
+			// TODO: rmv later!:
+			std::cout << animal->getHp() << '\n';
 
 			return;
 		}

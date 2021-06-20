@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ProgressBar.h"
-#include "NeuralNetPreview.h"
 #include "MovementComponent.h"
 
 class Animal
@@ -29,6 +28,10 @@ public:
 
 	float getHp() const;
 
+	const MovementComponent& getMovementComponent() const;
+
+	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
+
 	// mutators:
 	void setPosition(const sf::Vector2f& new_pos);
 
@@ -43,14 +46,10 @@ public:
 	void setColor(const sf::Color& new_color);
 
 	// other public methods:
-	void updateBodyAndHp(float dt, float speed_factor, const std::vector<double>& brain_inputs);
-	void updateBrainPreview();
+	void update(float dt, float speed_factor, const std::vector<double>& brain_inputs);
 
 	void renderBody(sf::RenderTarget& target) const ;
 	void renderHpBar(sf::RenderTarget& target) const;
-	void renderBrain(sf::RenderTarget& target) const;
-
-	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
 
 private:
 	bool alive;
@@ -65,9 +64,12 @@ private:
 
 	ProgressBar* hpBar;
 
-	NeuralNetPreview* brainPreview;
-
 	bool brainIsRendered;
+
+	// private initialization:
+	void initBody();
+	void initMovementComponent();
+	void initHpBar();
 
 	// private utilities:
 	void updateHp(float dt, float speed_factor = 1.f);

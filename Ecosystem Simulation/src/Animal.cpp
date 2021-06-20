@@ -18,40 +18,14 @@ void Animal::setUpAnimalFolder(const std::string& folder_path)
 Animal::Animal()
 	: brainIsRendered(false), alive(true), defaultHpValue(10e6), hp(defaultHpValue)
 {
-	this->body.setFillColor(sf::Color::Red);
-	this->body.setPointCount(16);
-	this->body.setRadius(8.f);
-	this->body.setOrigin(this->body.getRadius(), this->body.getRadius());
-
-	this->movementComponent = new MovementComponent();
-
-	this->brainPreview = new NeuralNetPreview(
-		this->movementComponent->getBrain(),
-		this->body.getPosition(),
-		sf::Vector2f(144.f, 144.f),
-		sf::Color(128, 128, 128, 128)
-	);
-
-	// get rid of that hardcoded stuff:
-	this->hpBar = new ProgressBar(
-		sf::Vector2f(
-			this->movementComponent->get_x() - 4.f * this->body.getRadius(), 
-			this->movementComponent->get_y() - 3.f * this->body.getRadius()
-		),
-		sf::Vector2f(
-			8.f * this->body.getRadius(), 
-			this->body.getRadius()
-		),
-		sf::Vector2f(0.f, this->defaultHpValue), this->defaultHpValue, 
-		sf::Color(128, 128, 128), sf::Color::Red,
-		true
-	);
+	this->initBody();
+	this->initMovementComponent();
+	this->initHpBar();
 }
 
 Animal::~Animal()
 {
 	delete this->movementComponent;
-	delete this->brainPreview;
 	delete this->hpBar;
 }
 
@@ -92,6 +66,21 @@ float Animal::getHp() const
 	return this->hp;
 }
 
+const MovementComponent& Animal::getMovementComponent() const
+{
+	return *this->movementComponent;
+}
+
+bool Animal::isCovered(const sf::Vector2f& mouse_pos_view) const
+{
+	float a = this->movementComponent->get_x() - mouse_pos_view.x;
+	float b = this->movementComponent->get_y() - mouse_pos_view.y;
+
+	float distance = sqrt(pow(a, 2) + pow(b, 2));
+
+	return this->getRadius() >= distance;
+}
+
 // mutators:
 void Animal::setPosition(const sf::Vector2f& new_pos)
 {
@@ -130,7 +119,7 @@ void Animal::setColor(const sf::Color& color)
 }
 
 // other public methods:
-void Animal::updateBodyAndHp(float dt, float speed_factor, const std::vector<double>& brain_inputs)
+void Animal::update(float dt, float speed_factor, const std::vector<double>& brain_inputs)
 {
 	this->movementComponent->update(dt, speed_factor, brain_inputs);
 
@@ -139,11 +128,6 @@ void Animal::updateBodyAndHp(float dt, float speed_factor, const std::vector<dou
 	this->updateHp(dt, speed_factor);
 
 	this->alive = this->hp > 0.f;
-}
-
-void Animal::updateBrainPreview()
-{
-	this->brainPreview->update(this->body.getPosition());
 }
 
 void Animal::renderBody(sf::RenderTarget& target) const
@@ -156,19 +140,36 @@ void Animal::renderHpBar(sf::RenderTarget& target) const
 	this->hpBar->render(target);
 }
 
-void Animal::renderBrain(sf::RenderTarget& target) const
+// private initialization:
+void Animal::initBody()
 {
-	this->brainPreview->render(target);
+	this->body.setFillColor(sf::Color::Red);
+	this->body.setPointCount(16);
+	this->body.setRadius(8.f);
+	this->body.setOrigin(this->body.getRadius(), this->body.getRadius());
 }
 
-bool Animal::isCovered(const sf::Vector2f& mouse_pos_view) const
-{	
-	float a = this->movementComponent->get_x() - mouse_pos_view.x;
-	float b = this->movementComponent->get_y() - mouse_pos_view.y;
+void Animal::initMovementComponent()
+{
+	this->movementComponent = new MovementComponent();
+}
 
-	float distance = sqrt(pow(a, 2) + pow(b, 2));
-
-	return this->getRadius() >= distance;
+void Animal::initHpBar()
+{
+	// get rid of that hardcoded stuff:
+	this->hpBar = new ProgressBar(
+		sf::Vector2f(
+			this->movementComponent->get_x() - 4.f * this->body.getRadius(),
+			this->movementComponent->get_y() - 3.f * this->body.getRadius()
+		),
+		sf::Vector2f(
+			8.f * this->body.getRadius(),
+			this->body.getRadius()
+		),
+		sf::Vector2f(0.f, this->defaultHpValue), this->defaultHpValue,
+		sf::Color(128, 128, 128), sf::Color::Red,
+		true
+	);
 }
 
 // private utilities:
