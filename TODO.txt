@@ -3,10 +3,12 @@ The smaller number the greater priority (the sooner that thing should be impleme
 1:
 implement God tools
 better nearest food searching algo (with complexity better than the current one (O(f*a)))
-slowing down and speeding up a simulation
 new energy system
 NeuralNetPreview class should be a member of Ecosystem class, not a member of Animal class
 rebuild the program structure at ecosystem and animals level (rewrite Ecosystem && Animal classes)
+cloning while eating
+new food creation while dying (from kinethic energy) (a random place or the place of death?)
+if there is no food the program crashes! (it's not surprising :))
 
 2:
 rename food to fruit/fruits?

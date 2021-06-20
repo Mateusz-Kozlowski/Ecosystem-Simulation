@@ -139,7 +139,8 @@ void gui::SideMenu::addScaleSlider(
 	float default_value, 
 	const std::string& axis_idle_path, const std::string& handle_idle_path, 
 	const std::string& axis_hover_path, const std::string& handle_hover_path, 
-	const std::string& axis_pressed_path, const std::string& handle_pressed_path)
+	const std::string& axis_pressed_path, const std::string& handle_pressed_path,
+	const std::string& scale_function)
 {
 	this->scaleSliders[key] = new gui::ScaleSlider(
 		pos,
@@ -149,7 +150,8 @@ void gui::SideMenu::addScaleSlider(
 		default_value,
 		axis_idle_path, handle_idle_path,
 		axis_hover_path, handle_hover_path,
-		axis_pressed_path, handle_pressed_path
+		axis_pressed_path, handle_pressed_path,
+		scale_function
 	);
 }
 

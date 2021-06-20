@@ -85,6 +85,8 @@ Ecosystem::~Ecosystem()
 // initialization:
 void Ecosystem::loadFromFolder(const std::string& folder_path)
 {
+	std::cout << "LOADING AN ECOSYSTEM FROM FOLDER LOGS:\n";
+
 	this->directoryPath = folder_path;
 	
 	// read data from config file:
@@ -103,6 +105,8 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 
 	file.close();
 
+	std::cout << "READING FROM A FILE IS DONE\n";
+
 	// borders and backgroundRect:
 	this->border.setFillColor(sf::Color(48, 48, 48));
 	this->border.setSize(this->worldSize);
@@ -116,12 +120,16 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	);
 	this->background.setPosition(this->borderThickness, this->borderThickness);
 
+	std::cout << "BORDERS AND BACKGROUND INITIALIZED\n";
+
 	// animals:
 	for (int i = 0; i < animalsCount; i++)
 	{	
 		this->animals.push_back(new Animal());
 		this->animals[i]->loadFromFolder(folder_path + '/' + "animal" + std::to_string(i));
 	}
+
+	std::cout << "ANIMALS ARE DONE\n";
 
 	// food:
 	// TODO: add static food name file
@@ -130,6 +138,8 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	if (!file1.is_open()) std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
 
 	this->food.reserve(foodCount);
+
+	std::cout << "FOOD RESERVED\n";
 
 	float x, y;
 
@@ -140,6 +150,8 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 		this->food.push_back(new Food(10e6));
 		this->food.back()->setPosition(x, y);
 	}
+
+	std::cout << "AN ECOSYSTEM HAS BEEN LOADED CORRECTLY\n";
 }
 
 // accessors:

@@ -65,7 +65,8 @@ namespace gui
 			float default_value,
 			const std::string& axis_idle_path, const std::string& handle_idle_path,
 			const std::string& axis_hover_path, const std::string& handle_hover_path,
-			const std::string& axis_pressed_path, const std::string& handle_pressed_path
+			const std::string& axis_pressed_path, const std::string& handle_pressed_path,
+			const std::string& scale_function = "linear"
 		);
 
 		void addCenteredText(

@@ -199,8 +199,8 @@ void SimulationState::initSideMenu()
 		),
 		256.f / 1840.f,
 		{ 0.0f, 1.0f },
-		{ 0.15f, 0.85f },
-		1.0f,
+		{ 0.01f, 0.81f },
+		1.f,
 		guiPath + "/scale sliders/axes/axis.png",
 		guiPath + "/scale sliders/handles/handle.png",
 
@@ -208,7 +208,9 @@ void SimulationState::initSideMenu()
 		guiPath + "/scale sliders/handles/handle light.png",
 
 		guiPath + "/scale sliders/axes/axis dark.png",
-		guiPath + "/scale sliders/handles/handle dark.png"
+		guiPath + "/scale sliders/handles/handle dark.png",
+
+		"quadratic"
 	);
 
 	this->sideMenu->addCenteredText(
