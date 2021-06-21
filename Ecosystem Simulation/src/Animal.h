@@ -43,6 +43,8 @@ public:
 
 	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
 
+	float getValueOfVelocityVector() const;
+
 	// mutators:
 	void setPosition(const sf::Vector2f& new_position);
 	void setVelocity(const sf::Vector2f& new_velocity);

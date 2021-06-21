@@ -93,6 +93,8 @@ private:
 
 	void removeDeadAnimals();
 
+	void convertKineticEnergyToFruit(Animal* animal);
+
 	void removeDeadAnimal(Animal*& animal);
 
 	void avoidGoingBeyondTheWorld();

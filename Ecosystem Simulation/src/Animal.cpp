@@ -138,6 +138,13 @@ bool Animal::isCovered(const sf::Vector2f& mouse_pos_view) const
 	return this->getRadius() >= distance;
 }
 
+float Animal::getValueOfVelocityVector() const
+{
+	sf::Vector2f velocity = this->movementComponent->getVelocity();
+
+	return sqrt(pow(velocity.x, 2) + pow(velocity.y, 2));
+}
+
 // mutators:
 void Animal::setPosition(const sf::Vector2f& new_position)
 {
@@ -272,7 +279,7 @@ void Animal::updateHp(float dt, float speed_factor)
 
 	// Pythagorean theorem for acceleration and velocity vectors:
 	float acceleration = sqrt(pow(this->movementComponent->get_ax(), 2) + pow(this->movementComponent->get_ay(), 2));
-	float velocity = sqrt(pow(this->movementComponent->get_vx(), 2) + pow(this->movementComponent->get_vy(), 2));
+	float velocity = this->getValueOfVelocityVector();
 	velocity *= speed_factor;
 
 	// calculate energy delta (where does it come from is explaneid at the bottom of the function)

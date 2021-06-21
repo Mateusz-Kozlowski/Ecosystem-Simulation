@@ -17,16 +17,18 @@ void Food::setPosition(float x, float y)
 	this->shape.setPosition(x, y);
 }
 
-void Food::setRandomPos(
-	const sf::Vector2f& worldSize, 
-	float bordersThickness,
-	CrappyNeuralNets::RandomNumbersGenerator& generator)
+void Food::setPosition(const sf::Vector2f& new_position)
+{
+	this->shape.setPosition(new_position);
+}
+
+void Food::setRandomPos(const sf::Vector2f& worldSize, float bordersThickness)
 {
 	std::pair<unsigned, unsigned> px = { bordersThickness, worldSize.x - bordersThickness };
 	std::pair<unsigned, unsigned> py = { bordersThickness, worldSize.y - bordersThickness };
 
-	float x = generator.getRandomNumber(px);
-	float y = generator.getRandomNumber(py);
+	float x = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(px);
+	float y = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(py);
 
 	this->shape.setPosition(x, y);
 }

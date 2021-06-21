@@ -52,13 +52,11 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 	if (!foodFile.is_open()) throw("ERROR::ECOSYSTEM::CANNOT OPEN A FILE: " + folder_path + '/' + Ecosystem::foodFileName);
 
 	std::stringstream ss;
-	
-	CrappyNeuralNets::RandomNumbersGenerator generator;
 
 	for (float i = 0.f; i < foodCount; i++) 
 	{
 		Food f(10e2);
-		f.setRandomPos(worldSize, borderThickness, generator);
+		f.setRandomPos(worldSize, borderThickness);
 		ss << f.getPosition().x << ' ' << f.getPosition().y << '\n';
 	}
 
@@ -218,7 +216,7 @@ void Ecosystem::initAnimals(const std::string& folder_path)
 {
 	for (int i = 0; i < this->animalsCount; i++)
 	{
-		this->animals.push_back(new Animal(10e6, 10e6, true, true));
+		this->animals.push_back(new Animal(10e6, 10e6, false, false));
 		this->animals[i]->loadFromFolder(folder_path + '/' + "animal" + std::to_string(i));
 	}
 
@@ -344,10 +342,22 @@ void Ecosystem::removeDeadAnimals()
 {
 	for (int i = 0; i < this->animals.size();)
 	{
-		if (!this->animals[i]->isAlive()) this->removeDeadAnimal(this->animals[i]);
+		if (!this->animals[i]->isAlive())
+		{
+			this->convertKineticEnergyToFruit(this->animals[i]);
+			this->removeDeadAnimal(this->animals[i]);
+		}
 
 		else i++;
 	}
+}
+
+void Ecosystem::convertKineticEnergyToFruit(Animal* animal)
+{
+	this->food.push_back(new Food(0.5 * pow(animal->getValueOfVelocityVector(), 2)));
+	this->food.back()->setPosition(animal->getPosition());
+
+	animal->setVelocity(sf::Vector2f(0.0f, 0.0f));
 }
 
 void Ecosystem::removeDeadAnimal(Animal*& animal)
@@ -467,16 +477,29 @@ int Ecosystem::tryToFindConsumer(Food& fruit, unsigned start_animal_index)
 }
 
 void Ecosystem::eat(Animal& animal, Food& fruit)
-{
-	if (animal.getHp() + fruit.getEnergy() > animal.getMaxHp())
+{	
+	if (fruit.getEnergy() + animal.getHp() > animal.getMaxHp())
 	{
-		// clone using energy surplus!:		
+		fruit.setEnergy(fruit.getEnergy() + animal.getHp() - animal.getMaxHp());
+		animal.setHp(animal.getMaxHp());
+
+		// clone using energy surplus!:
+		while (fruit.getEnergy() > animal.getMaxHp())
+		{
+			fruit.setEnergy(fruit.getEnergy() - animal.getMaxHp());
+
+			this->animals.push_back(new Animal(0.f, 0.f, true, true));
+			this->animals.back()->copyConstructor(animal);
+			this->animals.back()->setHp(animal.getMaxHp());
+			this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+			this->animals.back()->randomMutate(50.0);
+		}
+
 		this->animals.push_back(new Animal(0.f, 0.f, true, true));
 		this->animals.back()->copyConstructor(animal);
-		this->animals.back()->setHp(animal.getHp() + fruit.getEnergy() - animal.getMaxHp());
+		this->animals.back()->setHp(fruit.getEnergy());
 		this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
-		this->animals.back()->randomMutate(10.0);
-		animal.setHp(animal.getMaxHp());
+		this->animals.back()->randomMutate(50.0);
 	}
 	else
 	{

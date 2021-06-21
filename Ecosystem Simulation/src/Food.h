@@ -10,12 +10,9 @@ public:
 
 	// mutators:
 	void setPosition(float x, float y);
+	void setPosition(const sf::Vector2f& new_position);
 
-	void setRandomPos(
-		const sf::Vector2f& worldSize,
-		float bordersThickness,
-		CrappyNeuralNets::RandomNumbersGenerator& generator
-	);
+	void setRandomPos(const sf::Vector2f& worldSize, float bordersThickness);
 	void setEnergy(float energy);
 
 	// accessors:
