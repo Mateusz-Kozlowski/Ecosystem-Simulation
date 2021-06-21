@@ -427,7 +427,9 @@ void SimulationState::updateView()
 	// move view:
 	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (
+		sf::Mouse::isButtonPressed(sf::Mouse::Left) && 
+		!this->sideMenu->getBackground().getGlobalBounds().contains(static_cast<sf::Vector2f>(this->mousePosWindow)))
 	{
 		int offsetX = this->previousMousePosWindow.x - this->mousePosWindow.x;
 		int offsetY = this->previousMousePosWindow.y - this->mousePosWindow.y;

@@ -49,6 +49,11 @@ bool SideMenu::hasTextureButtonBeenClicked(const std::string& key)
 	return this->textureButtons[key]->hasBeenClicked();
 }
 
+const sf::RectangleShape& gui::SideMenu::getBackground() const
+{
+	return this->background;
+}
+
 // mutators:
 void gui::SideMenu::setPosition(const sf::Vector2f& new_pos)
 {

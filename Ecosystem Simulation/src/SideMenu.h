@@ -27,6 +27,8 @@ namespace gui
 		const std::unordered_map<std::string, gui::ScaleSlider*>& getScaleSliders() const;
 
 		bool hasTextureButtonBeenClicked(const std::string& key);
+
+		const sf::RectangleShape& getBackground() const;
 			
 		// mutators:
 		void setPosition(const sf::Vector2f& new_pos);
