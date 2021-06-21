@@ -1,13 +1,23 @@
 The smaller number the greater priority (the sooner that thing should be implemented)
 
 1:
-implement/remove some God tools
-better nearest food searching algo (with complexity better than the current one (O(f*a)))
-	or maybe even different inputs
-new "ecosystem creation state"
-rebuild the program structure at ecosystem and animals level (rewrite Ecosystem && Animal classes)
 if a user tries to start a simulation but there is no ecosystem selected then highlight top-left text in main menu
 avoid loading non-existing ecosystem/folders
+loading state
+implement/remove some God tools:
+	change tracking icon from cursor to magnifier
+	change rmv icon from big X to skull and change how that tools works
+		so that it won't be able to rmv fruit and instead of rmv animals it will convert them into food
+	change icon of replacing tool from that crossed arrows to some kind of hand that is going to grab sth
+	rmv cloning tool bacause it break the law of energy conservation
+	change the way how stop tool works - if an animal was stopped then the kinectic energy that had been lost
+		is converted into food
+	and maybe implement some new tools?...
+add a gui widget that will allow to zoom in and zoom out the world
+better nearest food searching algo (with complexity better than the current one (O(f*a)))
+	or maybe even different inputs
+rebuild the program structure at ecosystem and animals level (rewrite Ecosystem && Animal classes)
+new "ecosystem creation state"
 dt can be extremelly big if a window lost the focus
 
 2:
