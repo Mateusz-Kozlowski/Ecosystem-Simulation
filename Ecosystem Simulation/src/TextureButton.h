@@ -11,7 +11,7 @@ namespace gui
 		TextureButton(
 			const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths,
 			const std::string& key_of_default_texture,
-			const sf::Vector2f& pos,
+			const sf::Vector2f& position,
 			const sf::Vector2f& size,
 			int id = 0
 		);
@@ -57,7 +57,7 @@ namespace gui
 		void initTextures(const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths);
 		void initSprite(
 			const std::string& key_of_default_texture,
-			const sf::Vector2f& pos,
+			const sf::Vector2f& position,
 			const sf::Vector2f& size
 		);
 	};

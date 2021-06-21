@@ -13,7 +13,7 @@ namespace CrappyNeuralNets
 		// mutators:
 		void setValues(const Scalar& values = 0.0);
 
-		void setRandomValues(const std::pair<Scalar, Scalar>& range, const RandomNumbersGenerator& generator);
+		void setRandomValues(const std::pair<Scalar, Scalar>& range);
 
 		void setValue(const std::pair<unsigned, unsigned>& coordinates, const Scalar& value = 0.0);
 

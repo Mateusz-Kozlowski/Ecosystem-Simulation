@@ -21,6 +21,18 @@ OutputLayer::OutputLayer(unsigned neurons_count, const std::string& activation_f
 	for (int i = 0; i < neurons_count; i++) this->neurons.push_back(new Neuron(activation_function));
 }
 
+void CrappyNeuralNets::OutputLayer::copyConstructor(const CrappyNeuralNets::OutputLayer& output_layer)
+{
+	this->activationFunction = output_layer.activationFunction;
+	this->outputs = output_layer.outputs;
+	
+	this->neurons.resize(output_layer.getNeuronsCount());
+	for (int i = 0; i < this->neurons.size(); i++)
+	{
+		*this->neurons[i] = *output_layer.getNeurons()[i];
+	}
+}
+
 // mutators:
 void OutputLayer::input(const std::vector<Scalar>& previous_layer_outputs, const Matrix* weights)
 {

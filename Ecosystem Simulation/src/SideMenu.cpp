@@ -5,11 +5,11 @@ using namespace gui;
 
 // constructor/destructor:
 SideMenu::SideMenu(
-	const sf::Vector2f& pos, 
+	const sf::Vector2f& position, 
 	const sf::Vector2f& size,
 	const sf::Color& background_color)
 {
-	this->initBackground(pos, size, background_color);
+	this->initBackground(position, size, background_color);
 }
 
 SideMenu::~SideMenu()
@@ -95,21 +95,21 @@ void gui::SideMenu::addTextureButton(
 	const std::string& key,
 	const std::vector<std::pair<std::string, std::string>>& textures_path_and_keys,
 	const std::string& key_of_default_texture,
-	const sf::Vector2f& pos, 
+	const sf::Vector2f& position, 
 	const sf::Vector2f& size,
 	int id)
 {
 	this->textureButtons[key] = new gui::TextureButton(
 		textures_path_and_keys,
 		key_of_default_texture,
-		pos,
+		position,
 		size
 	);
 }
 
 void gui::SideMenu::addButton(
 	const std::string& key, 
-	const sf::Vector2f& pos, 
+	const sf::Vector2f& position, 
 	const sf::Vector2f& size, 
 	int char_size, const sf::Font& font, const std::string& text,
 	sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
@@ -119,7 +119,7 @@ void gui::SideMenu::addButton(
 	short unsigned id)
 {
 	this->buttons[key] = new gui::Button(
-		pos,
+		position,
 		size,
 		font, text, char_size,
 		idle_color, hover_color, pressed_color,
@@ -132,7 +132,7 @@ void gui::SideMenu::addButton(
 
 void gui::SideMenu::addScaleSlider(
 	const std::string& key,
-	const sf::Vector2f& pos, 
+	const sf::Vector2f& position, 
 	float textures_scale, 
 	const std::pair<float, float>& range,
 	const std::pair<float, float>& not_snapping_to_edges_range,
@@ -143,7 +143,7 @@ void gui::SideMenu::addScaleSlider(
 	const std::string& scale_function)
 {
 	this->scaleSliders[key] = new gui::ScaleSlider(
-		pos,
+		position,
 		textures_scale,
 		range,
 		not_snapping_to_edges_range,
@@ -210,9 +210,9 @@ void SideMenu::render(sf::RenderTarget& target)
 
 // private methods:
 // initialization:
-void gui::SideMenu::initBackground(const sf::Vector2f& pos, const sf::Vector2f& size, const sf::Color& color)
+void gui::SideMenu::initBackground(const sf::Vector2f& position, const sf::Vector2f& size, const sf::Color& color)
 {
-	this->background.setPosition(pos);
+	this->background.setPosition(position);
 	this->background.setSize(size);
 	this->background.setFillColor(color);
 }

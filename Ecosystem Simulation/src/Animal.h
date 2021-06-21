@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ProgressBar.h"
 #include "MovementComponent.h"
+#include "ProgressBar.h"
+#include "NeuralNetPreview.h"
 
 class Animal
 {
@@ -10,8 +11,10 @@ public:
 	static void setUpAnimalFolder(const std::string& folder_path);
 
 	// constructor/destructor:
-	Animal();
+	Animal(float max_hp, float default_hp, bool hp_bar_is_rendered = true, bool brain_is_rendered = true);
 	~Animal();
+
+	void copyConstructor(const Animal& animal);
 
 	// initialization:
 	void loadFromFolder(const std::string& folder_path);
@@ -22,20 +25,29 @@ public:
 
 	float getRadius() const;
 	
+	bool isHpBarRendered() const;
+
 	bool isBrainRendered() const;
 	
 	bool isAlive() const;
 
+	const MovementComponent& getMovementComponent() const;
+
+	float getMaxHp() const;
+
 	float getHp() const;
 
-	const MovementComponent& getMovementComponent() const;
+	const sf::Color& getColor() const;
+
+	const CrappyNeuralNets::NeuralNet& getBrain() const;
 
 	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
 
 	// mutators:
-	void setPosition(const sf::Vector2f& new_pos);
+	void setPosition(const sf::Vector2f& new_position);
+	void setVelocity(const sf::Vector2f& new_velocity);
 
-	void setVelocity(const sf::Vector2f& v);
+	void setHpBarIsRendered(bool hp_bar_is_rendered);
 
 	void setBrainIsRendered(bool brain_is_rendered);
 
@@ -45,11 +57,17 @@ public:
 
 	void setColor(const sf::Color& new_color);
 
+	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
+
 	// other public methods:
 	void update(float dt, float speed_factor, const std::vector<double>& brain_inputs);
 
-	void renderBody(sf::RenderTarget& target) const ;
+	void renderBody(sf::RenderTarget& target) const;
 	void renderHpBar(sf::RenderTarget& target) const;
+	void renderBrainPreview(sf::RenderTarget& target) const;
+
+	// TODO: rmv later!:
+	std::string copied;
 
 private:
 	bool alive;
@@ -58,19 +76,22 @@ private:
 
 	MovementComponent* movementComponent;
 
-	float defaultHpValue;
-
+	float maxHp;
 	float hp;
 
-	ProgressBar* hpBar;
-
+	bool hpBarIsRendered;
 	bool brainIsRendered;
+
+	ProgressBar* hpBar;
+	NeuralNetPreview* brainPreview;
 
 	// private initialization:
 	void initBody();
 	void initMovementComponent();
 	void initHpBar();
+	void initBrainPreview();
 
 	// private utilities:
 	void updateHp(float dt, float speed_factor = 1.f);
+	void updateHpBar();
 };

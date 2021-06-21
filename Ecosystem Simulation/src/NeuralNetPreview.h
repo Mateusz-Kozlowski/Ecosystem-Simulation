@@ -8,7 +8,7 @@ public:
 	// constructor:
 	NeuralNetPreview(
 		const CrappyNeuralNets::NeuralNet& brain, 
-		const sf::Vector2f& pos, 
+		const sf::Vector2f& position, 
 		const sf::Vector2f& size,
 		const sf::Color& background_color
 	);

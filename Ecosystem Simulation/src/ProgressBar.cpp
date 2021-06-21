@@ -3,14 +3,14 @@
 
 // constructor:
 ProgressBar::ProgressBar(
-	const sf::Vector2f& pos, 
+	const sf::Vector2f& position, 
 	const sf::Vector2f& size,
 	const sf::Vector2f& range, float default_value, 
 	sf::Color background_color, sf::Color progress_color,
 	bool correct_value_if_exceeds_range)
 	:	range(range), value(default_value), correctValueIfExceedsRange(correct_value_if_exceeds_range)
 {
-	this->initBackground(pos, size, background_color);
+	this->initBackground(position, size, background_color);
 	this->initProgress(progress_color);
 }
 

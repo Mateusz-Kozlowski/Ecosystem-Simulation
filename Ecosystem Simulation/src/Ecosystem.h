@@ -3,6 +3,7 @@
 #include "Animal.h"
 #include "Food.h"
 #include "EventsAccessor.h"
+#include "ProgressBar.h"
 #include "NeuralNetPreview.h"
 
 class Ecosystem
@@ -63,7 +64,6 @@ private:
 	unsigned fruitsCount;
 
 	std::vector<Animal*> animals;
-	std::unordered_map<Animal*, NeuralNetPreview*> brainsPreviews;
 	std::vector<Food*> food;
 
 	Animal* trackedAnimal;
@@ -76,7 +76,6 @@ private:
 	void initBorders();
 	void initBackground();
 	void initAnimals(const std::string& folder_path);
-	void initBrainPreviews();
 	void initFruits(const std::string& folder_path);
 
 	// private utilities:
@@ -93,6 +92,8 @@ private:
 	void updateWorld(float dt, float speed_factor);
 
 	void removeDeadAnimals();
+
+	void removeDeadAnimal(Animal*& animal);
 
 	void avoidGoingBeyondTheWorld();
 

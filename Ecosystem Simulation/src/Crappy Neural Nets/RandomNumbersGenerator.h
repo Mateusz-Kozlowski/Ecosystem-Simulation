@@ -7,12 +7,8 @@ namespace CrappyNeuralNets
 	class RandomNumbersGenerator
 	{
 	public:
-		// constructor:
-		RandomNumbersGenerator();
+		static const Scalar& getRandomNumber(const std::pair<Scalar, Scalar>& range);
 
-		// accessors:
-		const Scalar& getRandomNumber(const std::pair<Scalar, Scalar>& range) const;
-
-		unsigned getRandomNumber(const std::pair<unsigned, unsigned>& range) const;
+		static unsigned getRandomNumber(const std::pair<unsigned, unsigned>& range);
 	};
 }

@@ -3,15 +3,7 @@
 
 using namespace CrappyNeuralNets;
 
-// constructor:
-RandomNumbersGenerator::RandomNumbersGenerator()
-{
-	// TODO: deal with it in a some way:
-	// srand(static_cast<unsigned>(time(nullptr)));
-}
-
-// accessors:
-const Scalar& RandomNumbersGenerator::getRandomNumber(const std::pair<Scalar, Scalar>& range) const
+const Scalar& RandomNumbersGenerator::getRandomNumber(const std::pair<Scalar, Scalar>& range)
 {
 	Scalar randomNum = static_cast<Scalar>(rand());
 	Scalar randMax = static_cast<Scalar>(RAND_MAX);
@@ -21,7 +13,7 @@ const Scalar& RandomNumbersGenerator::getRandomNumber(const std::pair<Scalar, Sc
 	return (rangeSize * randomNum / randMax) + range.first;
 }
 
-unsigned RandomNumbersGenerator::getRandomNumber(const std::pair<unsigned, unsigned>& range) const
+unsigned RandomNumbersGenerator::getRandomNumber(const std::pair<unsigned, unsigned>& range)
 {
 	assert(range.first <= range.second);
 

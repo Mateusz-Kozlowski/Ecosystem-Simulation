@@ -18,12 +18,14 @@ Matrix::Matrix(const std::pair<unsigned, unsigned>& dimensions, const Scalar& in
 // mutators:
 void Matrix::setValues(const Scalar& values)
 {
-	for (auto& v : this->values) for (auto& c : v) c = values;
+	for (auto& velocity : this->values) for (auto& c : velocity) c = values;
 }
 
-void Matrix::setRandomValues(const std::pair<Scalar, Scalar>& range, const RandomNumbersGenerator& generator)
+void Matrix::setRandomValues(const std::pair<Scalar, Scalar>& range)
 {
-	for (auto& v : this->values) for (auto& c : v) c = generator.getRandomNumber(range);
+	for (auto& velocity : this->values) 
+		for (auto& c : velocity) 
+			c = RandomNumbersGenerator::getRandomNumber(range);
 }
 
 void Matrix::setValue(const std::pair<unsigned, unsigned>& coordinates, const Scalar& value)
@@ -75,9 +77,9 @@ const std::string& Matrix::toString()
 {
 	this->string = "";
 
-	for (auto& v : this->values)
+	for (auto& velocity : this->values)
 	{
-		for (auto& c : v) this->string += std::to_string(c) + '\t';
+		for (auto& c : velocity) this->string += std::to_string(c) + '\t';
 		
 		this->string += '\n';
 	}

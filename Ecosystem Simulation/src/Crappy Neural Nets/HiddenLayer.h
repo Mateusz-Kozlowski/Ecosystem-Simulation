@@ -15,6 +15,8 @@ namespace CrappyNeuralNets
             const Scalar& dropout_rate = 1.0
         );
 
+        void copyConstructor(const CrappyNeuralNets::HiddenLayer& hidden_layer);
+
         // mutators:
         void setDropoutRate(const Scalar& dropout_rate);
 
@@ -28,8 +30,6 @@ namespace CrappyNeuralNets
         void setBias(unsigned neuron_index, const Scalar& new_bias_value);
 
         //void setLeakyReLUalfa(const Scalar& leaky_ReLU_alfa);
-
-        void setRandomNumbersGenerator(RandomNumbersGenerator& generator);
 
         // accessors:
         const Scalar& getDropoutRate() const;
@@ -50,8 +50,6 @@ namespace CrappyNeuralNets
         std::vector<Neuron*> neurons;
 
         Scalar leakyReLUalfa;
-
-        RandomNumbersGenerator* randomNumbersGenerator;
 
         // private functions:
         void setNewDropout();

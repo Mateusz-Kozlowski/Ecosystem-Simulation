@@ -11,7 +11,7 @@ namespace gui
 	public:
 		// constructor/destructor:
 		SideMenu(
-			const sf::Vector2f& pos, 
+			const sf::Vector2f& position, 
 			const sf::Vector2f& size,
 			const sf::Color& background_color
 		);
@@ -35,7 +35,7 @@ namespace gui
 			const std::string& key,
 			const std::vector<std::pair<std::string, std::string>>& textures_path_and_keys,
 			const std::string& key_of_default_texture,
-			const sf::Vector2f& pos,
+			const sf::Vector2f& position,
 			const sf::Vector2f& size,
 			int id = 0
 		);
@@ -47,7 +47,7 @@ namespace gui
 
 		void addButton(
 			const std::string& key,
-			const sf::Vector2f& pos,
+			const sf::Vector2f& position,
 			const sf::Vector2f& size,
 			int char_size, const sf::Font& font, const std::string& text,
 			sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
@@ -58,7 +58,7 @@ namespace gui
 
 		void addScaleSlider(
 			const std::string& key,
-			const sf::Vector2f& pos,
+			const sf::Vector2f& position,
 			float textures_scale,
 			const std::pair<float, float>& range,
 			const std::pair<float, float>& not_snapping_to_edges_range,
@@ -91,6 +91,6 @@ namespace gui
 		std::vector<sf::Text> texts;
 
 		// initialization:
-		void initBackground(const sf::Vector2f& pos, const sf::Vector2f& size, const sf::Color& color);
+		void initBackground(const sf::Vector2f& position, const sf::Vector2f& size, const sf::Color& color);
 	};
 }

@@ -60,10 +60,10 @@ void Food::render(sf::RenderTarget& target) const
 
 bool Food::isCovered(const sf::Vector2f& mouse_pos_view) const
 {
-	float a = this->shape.getPosition().x - mouse_pos_view.x;
+	float acceleration = this->shape.getPosition().x - mouse_pos_view.x;
 	float b = this->shape.getPosition().y - mouse_pos_view.y;
 	
-	float distance = sqrt(pow(a, 2) + pow(b, 2));
+	float distance = sqrt(pow(acceleration, 2) + pow(b, 2));
 	
 	return this->getRadius() >= distance;
 }

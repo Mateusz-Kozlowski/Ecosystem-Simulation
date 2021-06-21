@@ -13,35 +13,48 @@ MovementComponent::MovementComponent()
 	this->brain.compile();
 }
 
+void MovementComponent::copyConstructor(const MovementComponent& movement_component)
+{
+	this->brain.copyConstructor(movement_component.getBrain());
+	this->position = movement_component.position;
+	this->velocity = movement_component.velocity;
+	this->acceleration = movement_component.acceleration;
+}
+
 // mutators:
 void MovementComponent::set_x(float x)
 {
-	this->pos.x = x;
+	this->position.x = x;
 }
 
 void MovementComponent::set_y(float y)
 {
-	this->pos.y = y;
+	this->position.y = y;
 }
 
 void MovementComponent::set_vx(float vx)
 {
-	this->v.x = vx;
+	this->velocity.x = vx;
 }
 
 void MovementComponent::set_vy(float vy)
 {
-	this->v.y = vy;
+	this->velocity.y = vy;
 }
 
 void MovementComponent::set_ax(float ax)
 {
-	this->a.x = ax;
+	this->acceleration.x = ax;
 }
 
 void MovementComponent::set_ay(float ay)
 {
-	this->a.y = ay;
+	this->acceleration.y = ay;
+}
+
+void MovementComponent::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
+{
+	this->brain.randomMutate(mutation_percentage);
 }
 
 // accessors:
@@ -52,42 +65,42 @@ const CrappyNeuralNets::NeuralNet& MovementComponent::getBrain() const
 
 const sf::Vector2f& MovementComponent::getPosition() const
 {
-	return this->pos;
+	return this->position;
 }
 
 const sf::Vector2f& MovementComponent::getVelocity() const
 {
-	return this->v;
+	return this->velocity;
 }
 
 float MovementComponent::get_x() const
 {
-	return this->pos.x;
+	return this->position.x;
 }
 
 float MovementComponent::get_y() const
 {
-	return this->pos.y;
+	return this->position.y;
 }
 
 float MovementComponent::get_vx() const
 {
-	return this->v.x;
+	return this->velocity.x;
 }
 
 float MovementComponent::get_vy() const
 {
-	return this->v.y;
+	return this->velocity.y;
 }
 
 float MovementComponent::get_ax() const
 {
-	return this->a.x;
+	return this->acceleration.x;
 }
 
 float MovementComponent::get_ay() const
 {
-	return this->a.y;
+	return this->acceleration.y;
 }
 
 void MovementComponent::update(float dt, float speed_factor, const std::vector<double>& brain_inputs)
@@ -95,16 +108,16 @@ void MovementComponent::update(float dt, float speed_factor, const std::vector<d
 	// update acceleration:
 	const std::vector<double>& brainOutput = this->brain.predict(brain_inputs);
 
-	this->a.x = brainOutput[0];
-	this->a.y = brainOutput[1];
+	this->acceleration.x = brainOutput[0];
+	this->acceleration.y = brainOutput[1];
 
 	// update velocity:
-	this->v.x += this->a.x * dt;
-	this->v.y += this->a.y * dt;
+	this->velocity.x += this->acceleration.x * dt;
+	this->velocity.y += this->acceleration.y * dt;
 
 	// update positions:
-	this->pos.x += this->v.x * dt * speed_factor;
-	this->pos.y += this->v.y * dt * speed_factor;
+	this->position.x += this->velocity.x * dt * speed_factor;
+	this->position.y += this->velocity.y * dt * speed_factor;
 }
 
 void MovementComponent::saveToFolder(const std::string& folder_path) const
@@ -121,9 +134,9 @@ void MovementComponent::saveToFolder(const std::string& folder_path) const
 
 	std::stringstream ss;
 	
-	ss << this->pos.x << ' ' << this->pos.y << '\n';
-	ss << this->v.x << ' ' << this->v.y << '\n';
-	ss << this->a.x << ' ' << this->a.y << '\n';
+	ss << this->position.x << ' ' << this->position.y << '\n';
+	ss << this->velocity.x << ' ' << this->velocity.y << '\n';
+	ss << this->acceleration.x << ' ' << this->acceleration.y << '\n';
 
 	kinematicsFile << ss.str();
 
@@ -140,9 +153,9 @@ void MovementComponent::loadFromFolder(const std::string& folder_path)
 	if (!kinematicsFile.is_open())
 		throw("ERROR::MOVEMENTCOMPONENT::CANNOT OPEN A FILE: " + folder_path + "/kinematics stuff.ini");
 
-	kinematicsFile >> this->pos.x >> this->pos.y;
-	kinematicsFile >> this->v.x >> this->v.y;
-	kinematicsFile >> this->a.x >> this->a.y;
+	kinematicsFile >> this->position.x >> this->position.y;
+	kinematicsFile >> this->velocity.x >> this->velocity.y;
+	kinematicsFile >> this->acceleration.x >> this->acceleration.y;
 
 	kinematicsFile.close();
 }

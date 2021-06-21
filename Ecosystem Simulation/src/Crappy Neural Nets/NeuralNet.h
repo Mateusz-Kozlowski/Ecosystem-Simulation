@@ -14,6 +14,8 @@ namespace CrappyNeuralNets
 		NeuralNet();
 		~NeuralNet();
 
+		void copyConstructor(const CrappyNeuralNets::NeuralNet& neural_net);
+
 		// public methods:
 		void initInputLayer(InputLayer* input_layer);
 
@@ -54,7 +56,7 @@ namespace CrappyNeuralNets
 
 		bool saveToFile(const std::string& file_path) const;
 
-		void randomMutate(const Scalar& mutationPercentage = 10.0);
+		void randomMutate(const Scalar& mutation_percentage = 10.0);
 
 		// architecture accessors:
 		const InputLayer* getInputLayer() const;
@@ -83,8 +85,6 @@ namespace CrappyNeuralNets
 		std::string string;
 
 		bool isCompiled;
-
-		RandomNumbersGenerator randomNumbersGenerator;
 
 		// privates methods:
 

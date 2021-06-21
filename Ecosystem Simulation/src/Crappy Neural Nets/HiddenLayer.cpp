@@ -31,8 +31,18 @@ HiddenLayer::HiddenLayer(
 
 	for (auto& neuron : this->neurons) neuron->setLeakyReLUalfa(leaky_ReLU_alfa);
 	*/
+}
 
-	this->randomNumbersGenerator = nullptr;
+void CrappyNeuralNets::HiddenLayer::copyConstructor(const CrappyNeuralNets::HiddenLayer& hidden_layer)
+{
+	this->dropoutRate = hidden_layer.dropoutRate;
+	this->activationFunction = hidden_layer.activationFunction;
+	
+	this->neurons.resize(hidden_layer.getNeuronsCount());
+	for (int i = 0; i < this->neurons.size(); i++)
+	{
+		*this->neurons[i] = *hidden_layer.getNeurons()[i];
+	}
 }
 
 // mutators:
@@ -126,11 +136,6 @@ void HiddenLayer::setLeakyReLUalfa(const Scalar& leaky_ReLU_alfa)
 }
 */
 
-void HiddenLayer::setRandomNumbersGenerator(RandomNumbersGenerator& generator)
-{
-	this->randomNumbersGenerator = &generator;
-}
-
 // accessors:
 const Scalar& HiddenLayer::getDropoutRate() const
 {
@@ -168,7 +173,7 @@ void HiddenLayer::setNewDropout()
 	{
 		std::pair<unsigned, unsigned> range = { 0U, this->neurons.size() - 1 };
 
-		unsigned randomIndex = this->randomNumbersGenerator->getRandomNumber(range);
+		unsigned randomIndex = RandomNumbersGenerator::getRandomNumber(range);
 
 		if (this->neurons[randomIndex]->isDroppedOut()) continue;
 

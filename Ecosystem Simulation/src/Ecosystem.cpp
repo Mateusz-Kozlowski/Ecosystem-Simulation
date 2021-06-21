@@ -82,8 +82,6 @@ Ecosystem::~Ecosystem()
 {
 	for (auto& animal : this->animals) delete animal;
 	
-	for (auto& brainPreview : this->brainsPreviews) delete brainPreview.second;
-	
 	for (auto& food : this->food) delete food;
 }
 
@@ -98,7 +96,6 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	this->initBorders();
 	this->initBackground();
 	this->initAnimals(folder_path);
-	this->initBrainPreviews();
 	this->initFruits(folder_path);
 	
 	// TODO: rmv later!:
@@ -162,14 +159,16 @@ void Ecosystem::render(sf::RenderTarget& target)
 	target.draw(this->background);
 
 	for (const auto& animal : this->animals) animal->renderBody(target);
-	
-	for (const auto& animal : this->animals) animal->renderHpBar(target);
-	
+
+	for (const auto& animal : this->animals)
+		if (animal->isHpBarRendered())
+			animal->renderHpBar(target);
+
 	for (const auto& food : this->food) food->render(target);
 
 	for (const auto& animal : this->animals)
 		if (animal->isBrainRendered())
-			this->brainsPreviews[animal]->render(target);
+			animal->renderBrainPreview(target);
 }
 
 // private initialization:
@@ -219,28 +218,12 @@ void Ecosystem::initAnimals(const std::string& folder_path)
 {
 	for (int i = 0; i < this->animalsCount; i++)
 	{
-		this->animals.push_back(new Animal());
+		this->animals.push_back(new Animal(10e6, 10e6, true, true));
 		this->animals[i]->loadFromFolder(folder_path + '/' + "animal" + std::to_string(i));
 	}
 
 	// TODO: rmv later!:
-	std::cout << "ANIMALS ARE DONE\n";
-}
-
-void Ecosystem::initBrainPreviews()
-{
-	for (int i = 0; i < this->animalsCount; i++)
-	{
-		this->brainsPreviews[this->animals[i]] = new NeuralNetPreview(
-			this->animals[i]->getMovementComponent().getBrain(),
-			this->animals[i]->getPosition(),
-			sf::Vector2f(144.f, 144.f),
-			sf::Color(128, 128, 128, 128)
-		);
-	}
-
-	// TODO: rmv later!:
-	std::cout << "BRAIN PREVIEWS ARE DONE\n";
+	std::cout << "ANIMALS'RE DONE\n";
 }
 
 void Ecosystem::initFruits(const std::string& folder_path)
@@ -265,7 +248,7 @@ void Ecosystem::initFruits(const std::string& folder_path)
 		this->food.back()->setPosition(x, y);
 	}
 
-	std::cout << "FRUITS ARE DONE!\n";
+	std::cout << "FRUITS'RE DONE!\n";
 }
 
 // private methods:
@@ -296,10 +279,10 @@ Food* Ecosystem::findTheNearestFood(const Animal& animal) const
 
 	for (const auto& it : this->food)
 	{
-		float a = animal.getPosition().x - it->getPosition().x;
+		float acceleration = animal.getPosition().x - it->getPosition().x;
 		float b = animal.getPosition().y - it->getPosition().y;
 
-		float distance = sqrt(pow(a, 2) + pow(b, 2));
+		float distance = sqrt(pow(acceleration, 2) + pow(b, 2));
 
 		if (distance < theSmallestDistance)
 		{
@@ -355,21 +338,23 @@ void Ecosystem::updateWorld(float dt, float speed_factor)
 	this->feedAnimals();
 
 	this->removeEatenFood();
-
-	for (auto& animal : this->animals)
-		if (animal->isBrainRendered())
-			this->brainsPreviews[animal]->update(animal->getPosition());
 }
 
 void Ecosystem::removeDeadAnimals()
 {
-	for (int i = 0; i < this->animals.size(); i++)
-		if (!this->animals[i]->isAlive())
-		{
-			delete this->animals[i];
-			std::swap(this->animals[i], this->animals.back());
-			this->animals.pop_back();
-		}
+	for (int i = 0; i < this->animals.size();)
+	{
+		if (!this->animals[i]->isAlive()) this->removeDeadAnimal(this->animals[i]);
+
+		else i++;
+	}
+}
+
+void Ecosystem::removeDeadAnimal(Animal*& animal)
+{
+	delete animal;
+	std::swap(animal, this->animals.back());
+	this->animals.pop_back();
 }
 
 void Ecosystem::avoidGoingBeyondTheWorld()
@@ -392,6 +377,7 @@ void Ecosystem::avoidGoingBeyondTheWorld()
 		}
 
 		// it is possible that an animal crossed 2 perpendicular borders in the same frame, so we don't use else if here:
+		
 		// top border:
 		if (animal->getPosition().y - animal->getRadius() < this->borderThickness)
 		{
@@ -453,10 +439,10 @@ bool Ecosystem::animalReachesFoodInY(const Animal& animal, const Food& food)
 
 bool Ecosystem::animalReachesFood(const Animal& animal, const Food& food)
 {
-	float a = animal.getPosition().x - food.getPosition().x;
+	float acceleration = animal.getPosition().x - food.getPosition().x;
 	float b = animal.getPosition().y - food.getPosition().y;
 
-	float distance = sqrt(pow(a, 2) + pow(b, 2));
+	float distance = sqrt(pow(acceleration, 2) + pow(b, 2));
 
 	if (distance <= animal.getRadius() + food.getRadius()) return true;
 
@@ -482,7 +468,21 @@ int Ecosystem::tryToFindConsumer(Food& fruit, unsigned start_animal_index)
 
 void Ecosystem::eat(Animal& animal, Food& fruit)
 {
-	animal.increaseHp(fruit.getEnergy());
+	if (animal.getHp() + fruit.getEnergy() > animal.getMaxHp())
+	{
+		// clone using energy surplus!:		
+		this->animals.push_back(new Animal(0.f, 0.f, true, true));
+		this->animals.back()->copyConstructor(animal);
+		this->animals.back()->setHp(animal.getHp() + fruit.getEnergy() - animal.getMaxHp());
+		this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+		this->animals.back()->randomMutate(10.0);
+		animal.setHp(animal.getMaxHp());
+	}
+	else
+	{
+		animal.increaseHp(fruit.getEnergy());
+	}
+	
 	fruit.setEnergy(0.f);
 }
 
@@ -521,9 +521,6 @@ void Ecosystem::track(const sf::Vector2f& mouse_pos_view)
 			
 			// change color:
 			animal->setColor(sf::Color(150, 0, 200));
-
-			// TODO: rmv later!:
-			std::cout << animal->getHp() << '\n';
 
 			return;
 		}

@@ -6,13 +6,13 @@ using namespace gui;
 TextureButton::TextureButton(
 	const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths,
 	const std::string& key_of_default_texture,
-	const sf::Vector2f& pos,
+	const sf::Vector2f& position,
 	const sf::Vector2f& size,
 	int id)
 	: id(id), hasBeenClickedSinceLastFrame(false), hovered(false), currentTextureKey(key_of_default_texture)
 {
 	this->initTextures(textures_keys_and_paths);
-	this->initSprite(key_of_default_texture, pos, size);
+	this->initSprite(key_of_default_texture, position, size);
 }
 
 // accessors:
@@ -104,11 +104,11 @@ void gui::TextureButton::initTextures(const std::vector<std::pair<std::string, s
 
 void gui::TextureButton::initSprite(
 	const std::string& key_of_default_texture, 
-	const sf::Vector2f& pos, 
+	const sf::Vector2f& position, 
 	const sf::Vector2f& size)
 {
 	this->sprite.setTexture(this->textures[key_of_default_texture]);
-	this->sprite.setPosition(pos.x, pos.y);
+	this->sprite.setPosition(position.x, position.y);
 
 	this->sprite.setScale(
 		size.x / this->sprite.getGlobalBounds().width,

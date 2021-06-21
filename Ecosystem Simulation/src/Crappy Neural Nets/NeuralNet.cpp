@@ -11,7 +11,6 @@ NeuralNet::NeuralNet()
 	this->randomWeightsRange = { -1.0, 1.0 };
 	this->string = "";
 	this->isCompiled = false;
-	this->randomNumbersGenerator = RandomNumbersGenerator();
 }
 
 NeuralNet::~NeuralNet()
@@ -25,6 +24,36 @@ NeuralNet::~NeuralNet()
 	this->deallocateAllMemoryAssociatedWithWeights();
 }
 
+void CrappyNeuralNets::NeuralNet::copyConstructor(const CrappyNeuralNets::NeuralNet& neural_net)
+{
+	*this->inputLayer = *neural_net.inputLayer;
+	
+	this->hiddenLayers.resize(neural_net.getHiddenLayers().size());
+	for (int i = 0; i < neural_net.getHiddenLayers().size(); i++)
+	{
+		this->hiddenLayers[i]->copyConstructor(*neural_net.getHiddenLayers()[i]);
+	}
+	
+	this->outputLayer->copyConstructor(*neural_net.getOutputLayer());
+
+	this->weights.resize(neural_net.getWeights().size());
+	for (int i = 0; i < neural_net.getWeights().size(); i++) 
+		*this->weights[i] = *neural_net.getWeights()[i];
+
+	this->transposedWeights.resize(neural_net.getTransposedWeights().size());
+	for (int i = 0; i < neural_net.getTransposedWeights().size(); i++) 
+		*this->transposedWeights[i] = *neural_net.getTransposedWeights()[i];
+
+	this->weightsGradient.resize(neural_net.getWeightsGradient().size());
+	for (int i = 0; i < neural_net.getWeightsGradient().size(); i++)
+		*this->getWeightsGradient()[i] = *neural_net.getWeightsGradient()[i];
+	
+	this->biasesGradient = neural_net.biasesGradient;
+	this->randomWeightsRange = neural_net.randomWeightsRange;
+	this->string = neural_net.string;
+	this->isCompiled = neural_net.isCompiled;
+}
+
 // public methods:
 void NeuralNet::initInputLayer(InputLayer* input_layer)
 {
@@ -36,8 +65,6 @@ void NeuralNet::initInputLayer(InputLayer* input_layer)
 
 	this->inputLayer = input_layer;
 
-	this->inputLayer->setRandomNumbersGenerator(this->randomNumbersGenerator);
-
 	this->isCompiled = false;
 }
 
@@ -46,8 +73,6 @@ void NeuralNet::addHiddenLayer(HiddenLayer* hidden_layer)
 	assert(hidden_layer != nullptr);
 
 	this->hiddenLayers.push_back(hidden_layer);
-
-	this->hiddenLayers[this->hiddenLayers.size() - 1]->setRandomNumbersGenerator(this->randomNumbersGenerator);
 
 	this->isCompiled = false;
 }
@@ -321,7 +346,7 @@ const std::vector<Scalar>& NeuralNet::predict(const std::vector<Scalar>& inputs)
 
 	// prediction:
 	this->feedForward(inputs);
-	
+
 	// set dropout rates to the previous state:
 	this->setDropouts(dropoutRates);
 
@@ -417,8 +442,8 @@ bool NeuralNet::saveToFile(const std::string& file_path) const
 
 	// weights:
 	for (auto& matrix : this->weights)
-		for (auto& v : matrix->getValues())
-			for (auto& c : v) ss << '\n' << c;
+		for (auto& velocity : matrix->getValues())
+			for (auto& c : velocity) ss << '\n' << c;
 
 	file << ss.str();
 
@@ -439,7 +464,7 @@ void NeuralNet::randomMutate(const Scalar& mutation_percentage)
 				// to get value in range <-mutation_percentage; mutation_percentage>:
 				std::pair<Scalar, Scalar> range = { -1.0, 1.0 };
 
-				Scalar mutation = mutation_percentage * this->randomNumbersGenerator.getRandomNumber(range);
+				Scalar mutation = mutation_percentage * RandomNumbersGenerator::getRandomNumber(range);
 
 				this->weights[i]->setValue(
 					{ j, k },
@@ -465,7 +490,7 @@ void NeuralNet::randomMutate(const Scalar& mutation_percentage)
 			// to get value in range <-mutation_percentage; mutation_percentage>:
 			std::pair<Scalar, Scalar> range = { -1.0, 1.0 };
 
-			Scalar mutation = mutation_percentage * this->randomNumbersGenerator.getRandomNumber(range);
+			Scalar mutation = mutation_percentage * RandomNumbersGenerator::getRandomNumber(range);
 
 			hiddenLayer->setBias(
 				i,
@@ -481,7 +506,7 @@ void NeuralNet::randomMutate(const Scalar& mutation_percentage)
 		// to get value in range <-mutation_percentage; mutation_percentage>:
 		std::pair<Scalar, Scalar> range = { -1.0, 1.0 };
 
-		Scalar mutation = mutation_percentage * this->randomNumbersGenerator.getRandomNumber(range);
+		Scalar mutation = mutation_percentage * RandomNumbersGenerator::getRandomNumber(range);
 
 		this->outputLayer->setBias(
 			i,
@@ -550,7 +575,7 @@ void NeuralNet::initRandomWeights()
 	for (size_t i = 0; i < topology.size() - 1; i++)
 	{
 		this->weights.push_back(new Matrix({ topology[i + 1], topology[i] }));
-		this->weights[i]->setRandomValues(this->randomWeightsRange, this->randomNumbersGenerator);
+		this->weights[i]->setRandomValues(this->randomWeightsRange);
 
 		Matrix* T = new Matrix(*this->weights[i]);
 		T->transpose();
@@ -651,7 +676,10 @@ void NeuralNet::feedForward(const std::vector<Scalar>& inputs)
 			this->weights[this->weights.size() - 1]
 		);
 	}
-	else this->outputLayer->input(this->inputLayer->output(), this->weights[0]);
+	else
+	{
+		this->outputLayer->input(this->inputLayer->output(), this->weights[0]);
+	}
 }
 
 void NeuralNet::backpropagateErrors(
@@ -864,7 +892,7 @@ void NeuralNet::updateBiases(const Scalar& learning_rate, const Scalar& mini_bat
 	}
 
 	// reset biases gradient:
-	for (auto& v : this->biasesGradient) for (auto& biasGradient : v) biasGradient = 0.0;
+	for (auto& velocity : this->biasesGradient) for (auto& biasGradient : velocity) biasGradient = 0.0;
 }
 
 // other helpers:
@@ -876,7 +904,7 @@ void NeuralNet::randomShuffle(
 	{
 		std::pair<unsigned, unsigned> range = { 0U, inputs.size() - 1 };
 
-		unsigned randomIndex = this->randomNumbersGenerator.getRandomNumber(range);
+		unsigned randomIndex = RandomNumbersGenerator::getRandomNumber(range);
 
 		std::swap(inputs[randomIndex], inputs[i]);
 		std::swap(desired_outputs[randomIndex], desired_outputs[i]);

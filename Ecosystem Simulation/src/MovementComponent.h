@@ -8,6 +8,8 @@ public:
 	// constructor:
 	MovementComponent();
 
+	void copyConstructor(const MovementComponent& movement_component);
+
 	// mutators:
 	void set_x(float x);
 	void set_y(float y);
@@ -17,6 +19,8 @@ public:
 	
 	void set_ax(float ax);
 	void set_ay(float ay);
+
+	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
 
 	// accessors:
 	const CrappyNeuralNets::NeuralNet& getBrain() const;
@@ -45,7 +49,7 @@ private:
 	CrappyNeuralNets::NeuralNet brain;
 
 	// kinematics stuff:
-	sf::Vector2f pos;
-	sf::Vector2f v;
-	sf::Vector2f a;
+	sf::Vector2f position;
+	sf::Vector2f velocity;
+	sf::Vector2f acceleration;
 };

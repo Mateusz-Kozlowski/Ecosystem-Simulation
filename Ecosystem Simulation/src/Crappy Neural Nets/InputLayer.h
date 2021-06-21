@@ -15,8 +15,6 @@ namespace CrappyNeuralNets
 
         void input(const std::vector<Scalar>& inputs);
 
-        void setRandomNumbersGenerator(RandomNumbersGenerator& generator);
-
         // accessors:
         const Scalar& getDropoutRate() const;
 
@@ -27,9 +25,7 @@ namespace CrappyNeuralNets
     private:
         Scalar dropoutRate;
 
-        std::vector<Scalar> v;
-
-        RandomNumbersGenerator* randomNumbersGenerator;
+        std::vector<Scalar> velocity;
 
         // private methods:
         void dropout();

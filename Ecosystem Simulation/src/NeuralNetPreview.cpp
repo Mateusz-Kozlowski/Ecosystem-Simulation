@@ -4,12 +4,12 @@
 // constructor:
 NeuralNetPreview::NeuralNetPreview(
 	const CrappyNeuralNets::NeuralNet& brain, 
-	const sf::Vector2f& pos, 
+	const sf::Vector2f& position, 
 	const sf::Vector2f& size, 
 	const sf::Color& background_color)
 	: brain(brain)
 {
-	this->initBackground(pos, size, background_color);
+	this->initBackground(position, size, background_color);
 	this->initNeurons(size);
 	this->initSynapses(size);
 }

@@ -14,6 +14,8 @@ namespace CrappyNeuralNets
             const std::string& activation_function = "linear"
         );
 
+        void copyConstructor(const CrappyNeuralNets::OutputLayer& output_layer);
+
         // mutators:
         void input(const std::vector<Scalar>& previous_layer_outputs, const Matrix* weights);
         void input(const std::vector<Neuron*>& previous_layer_neurons, const Matrix* weights);
