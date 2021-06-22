@@ -2,11 +2,11 @@
 
 #include "Crappy Neural Nets/RandomNumbersGenerator.h"
 
-class Food
+class Fruit
 {
 public:
 	// constructor:
-	Food(float energy);
+	Fruit(float energy);
 
 	// mutators:
 	void setPosition(float x, float y);

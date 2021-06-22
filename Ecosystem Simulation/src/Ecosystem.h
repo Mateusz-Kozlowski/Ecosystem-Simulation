@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Animal.h"
-#include "Food.h"
+#include "Fruit.h"
 #include "EventsAccessor.h"
 #include "ProgressBar.h"
 #include "NeuralNetPreview.h"
@@ -50,7 +50,7 @@ private:
 	// private static variables:
 	static std::string templateConfigFilePath;
 	static std::string configFileName;
-	static std::string foodFileName;
+	static std::string fruitsFileName;
 
 	// other private variables:
 	std::string directoryPath;
@@ -66,7 +66,7 @@ private:
 	unsigned fruitsCount;
 
 	std::vector<Animal*> animals;
-	std::vector<Food*> food;
+	std::vector<Fruit*> fruits;
 
 	Animal* trackedAnimal;
 
@@ -85,7 +85,7 @@ private:
 	// private utilities:
 	std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;
 
-	Food* findTheNearestFood(const Animal& animal) const;
+	Fruit* findTheNearestFruit(const Animal& animal) const;
 
 	void useGodTool(
 		const std::vector<sf::Event>& events,
@@ -107,16 +107,16 @@ private:
 
 	static bool compareAnimalsYPositions(const Animal* a1, const Animal* a2);
 
-	bool animalIsToHigh(const Animal& animal, const Food& food);
+	bool animalIsToHigh(const Animal& animal, const Fruit& Fruit);
 
-	bool animalReachesFoodInY(const Animal& animal, const Food& food);
-	bool animalReachesFood(const Animal& animal, const Food& food);
+	bool animalReachesFruitInY(const Animal& animal, const Fruit& Fruit);
+	bool animalReachesFruit(const Animal& animal, const Fruit& Fruit);
 
-	int tryToFindConsumer(Food& fruit, unsigned start_animal_index);
+	int tryToFindConsumer(Fruit& fruit, unsigned start_animal_index);
 
-	void eat(Animal& animal, Food& fruit);
+	void eat(Animal& animal, Fruit& fruit);
 
-	void removeEatenFood();
+	void removeEatenFruit();
 
 	// God tools:
 	void track(const sf::Vector2f& mouse_pos_view);

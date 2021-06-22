@@ -172,7 +172,7 @@
     <ClCompile Include="src\NeuralNetPreview.cpp" />
     <ClCompile Include="src\ProgressBar.cpp" />
     <ClCompile Include="src\MovementComponent.cpp" />
-    <ClCompile Include="src\Food.cpp" />
+    <ClCompile Include="src\Fruit.cpp" />
     <ClCompile Include="src\Animal.cpp" />
     <ClCompile Include="src\InputField.cpp" />
     <ClCompile Include="src\Button.cpp" />
@@ -242,7 +242,7 @@
     <ClInclude Include="src\NeuralNetPreview.h" />
     <ClInclude Include="src\ProgressBar.h" />
     <ClInclude Include="src\MovementComponent.h" />
-    <ClInclude Include="src\Food.h" />
+    <ClInclude Include="src\Fruit.h" />
     <ClInclude Include="src\Animal.h" />
     <ClInclude Include="src\InputField.h" />
     <ClInclude Include="src\Button.h" />

@@ -4,7 +4,7 @@
 // static variables:
 std::string Ecosystem::templateConfigFilePath = "resources/template files/ecosystem initializator.ini";
 std::string Ecosystem::configFileName = "ecosystem initializator.ini";
-std::string Ecosystem::foodFileName = "food.ini";
+std::string Ecosystem::fruitsFileName = "fruits.ini";
 
 // public static methods:
 void Ecosystem::createConfigFile(const std::string& folder_path)
@@ -32,13 +32,13 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 	std::string temp;
 	sf::Vector2f worldSize;
 	float borderThickness;
-	unsigned animalsCount = 0U, foodCount = 0U;
+	unsigned animalsCount = 0U, fruitsCount = 0U;
 
 	file >> temp >> worldSize.x;
 	file >> temp >> worldSize.y;
 	file >> temp >> borderThickness;
 	file >> temp >> animalsCount;
-	file >> temp >> foodCount;
+	file >> temp >> fruitsCount;
 
 	file.close();
 
@@ -46,23 +46,23 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 	for (int i = 0; i < animalsCount; i++)
 		Animal::setUpAnimalFolder(folder_path + '/' + "animal" + std::to_string(i));
 
-	// food file:
-	std::ofstream foodFile(folder_path + '/' + Ecosystem::foodFileName);
+	// fruits file:
+	std::ofstream fruitsFile(folder_path + '/' + Ecosystem::fruitsFileName);
 
-	if (!foodFile.is_open()) throw("ERROR::ECOSYSTEM::CANNOT OPEN A FILE: " + folder_path + '/' + Ecosystem::foodFileName);
+	if (!fruitsFile.is_open()) throw("ERROR::ECOSYSTEM::CANNOT OPEN A FILE: " + folder_path + '/' + Ecosystem::fruitsFileName);
 
 	std::stringstream ss;
 
-	for (float i = 0.f; i < foodCount; i++) 
+	for (float i = 0.f; i < fruitsCount; i++) 
 	{
-		Food f(10e2);
+		Fruit f(10e2);
 		f.setRandomPos(worldSize, borderThickness);
 		ss << f.getPosition().x << ' ' << f.getPosition().y << '\n';
 	}
 
-	foodFile << ss.str();
+	fruitsFile << ss.str();
 
-	foodFile.close();
+	fruitsFile.close();
 }
 
 // constructor/destructor:
@@ -80,7 +80,7 @@ Ecosystem::~Ecosystem()
 {
 	for (auto& animal : this->animals) delete animal;
 	
-	for (auto& food : this->food) delete food;
+	for (auto& Fruit : this->fruits) delete Fruit;
 }
 
 // initialization:
@@ -169,7 +169,7 @@ void Ecosystem::render(sf::RenderTarget& target)
 		if (animal->isHpBarRendered())
 			animal->renderHpBar(target);
 
-	for (const auto& food : this->food) food->render(target);
+	for (const auto& Fruit : this->fruits) Fruit->render(target);
 
 	for (const auto& animal : this->animals)
 		if (animal->isBrainRendered())
@@ -237,16 +237,16 @@ void Ecosystem::initAnimals(const std::string& folder_path)
 
 void Ecosystem::initFruits(const std::string& folder_path)
 {
-	// TODO: add static food name file
-	std::ifstream file1(folder_path + '/' + "food.ini");
+	// TODO: add static Fruit name file
+	std::ifstream file1(folder_path + '/' + "fruits.ini");
 
 	if (!file1.is_open())
 	{
-		std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
+		std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::fruitsFileName;
 		exit(-1);
 	}
 
-	this->food.reserve(this->fruitsCount);
+	this->fruits.reserve(this->fruitsCount);
 
 	std::cout << "FRUITS RESERVATION IS DONE!\n";
 
@@ -257,8 +257,8 @@ void Ecosystem::initFruits(const std::string& folder_path)
 		file1 >> x;
 		file1 >> y;
 		
-		this->food.push_back(new Food(10e6)); // TODO: rmv that hardcoded variable!
-		this->food.back()->setPosition(x, y);
+		this->fruits.push_back(new Fruit(10e6)); // TODO: rmv that hardcoded variable!
+		this->fruits.back()->setPosition(x, y);
 	}
 
 	std::cout << "FRUITS'RE DONE!\n";
@@ -277,20 +277,20 @@ std::vector<CrappyNeuralNets::Scalar> Ecosystem::getInputsForBrain(const Animal&
 	
 	inputsForBrain.push_back(log2(animal.getHp()));
 
-	Food* theNearestFood = findTheNearestFood(animal);
+	Fruit* theNearestFruit = findTheNearestFruit(animal);
 	
-	inputsForBrain.push_back(theNearestFood->getPosition().x - animal.getPosition().x);
-	inputsForBrain.push_back(theNearestFood->getPosition().y - animal.getPosition().y);
+	inputsForBrain.push_back(theNearestFruit->getPosition().x - animal.getPosition().x);
+	inputsForBrain.push_back(theNearestFruit->getPosition().y - animal.getPosition().y);
 
 	return inputsForBrain;
 }
 
-Food* Ecosystem::findTheNearestFood(const Animal& animal) const
+Fruit* Ecosystem::findTheNearestFruit(const Animal& animal) const
 {
-	Food* theNearestFood = this->food[0];
+	Fruit* theNearestFruit = this->fruits[0];
 	float theSmallestDistance = INFINITY;
 
-	for (const auto& it : this->food)
+	for (const auto& it : this->fruits)
 	{
 		float acceleration = animal.getPosition().x - it->getPosition().x;
 		float b = animal.getPosition().y - it->getPosition().y;
@@ -300,11 +300,11 @@ Food* Ecosystem::findTheNearestFood(const Animal& animal) const
 		if (distance < theSmallestDistance)
 		{
 			theSmallestDistance = distance;
-			theNearestFood = it;
+			theNearestFruit = it;
 		}
 	}
 	
-	return theNearestFood;
+	return theNearestFruit;
 }
 
 void Ecosystem::useGodTool(
@@ -350,7 +350,7 @@ void Ecosystem::updateWorld(float dt, float speed_factor)
 
 	this->feedAnimals();
 
-	this->removeEatenFood();
+	this->removeEatenFruit();
 }
 
 void Ecosystem::removeDeadAnimals()
@@ -369,8 +369,8 @@ void Ecosystem::removeDeadAnimals()
 
 void Ecosystem::convertKineticEnergyToFruit(Animal* animal)
 {
-	this->food.push_back(new Food(0.5 * pow(animal->getValueOfVelocityVector(), 2)));
-	this->food.back()->setPosition(animal->getPosition());
+	this->fruits.push_back(new Fruit(0.5 * pow(animal->getValueOfVelocityVector(), 2)));
+	this->fruits.back()->setPosition(animal->getPosition());
 
 	animal->setVelocity(sf::Vector2f(0.0f, 0.0f));
 }
@@ -423,7 +423,7 @@ void Ecosystem::feedAnimals()
 {
 	std::sort(this->animals.begin(), this->animals.end(), compareAnimalsYPositions);
 
-	for (int f = 0; f < this->food.size(); f++)
+	for (int f = 0; f < this->fruits.size(); f++)
 	{
 		unsigned left = 0, right = this->animals.size() - 1U;
 
@@ -431,7 +431,7 @@ void Ecosystem::feedAnimals()
 		{
 			unsigned center = (left + right) / 2;
 
-			if (this->animalIsToHigh(*this->animals[center], *this->food[f]))
+			if (this->animalIsToHigh(*this->animals[center], *this->fruits[f]))
 			{
 				left = center + 1;
 			}
@@ -441,7 +441,7 @@ void Ecosystem::feedAnimals()
 			}
 		}
 
-		this->tryToFindConsumer(*this->food[f], left);
+		this->tryToFindConsumer(*this->fruits[f], left);
 	}
 }
 
@@ -450,37 +450,37 @@ bool Ecosystem::compareAnimalsYPositions(const Animal* a1, const Animal* a2)
 	return a1->getPosition().y < a2->getPosition().y;
 }
 
-bool Ecosystem::animalIsToHigh(const Animal& animal, const Food& food)
+bool Ecosystem::animalIsToHigh(const Animal& animal, const Fruit& Fruit)
 {
-	return (animal.getPosition().y - food.getPosition().y) < -(animal.getRadius() + food.getRadius());
+	return (animal.getPosition().y - Fruit.getPosition().y) < -(animal.getRadius() + Fruit.getRadius());
 }
 
-bool Ecosystem::animalReachesFoodInY(const Animal& animal, const Food& food)
+bool Ecosystem::animalReachesFruitInY(const Animal& animal, const Fruit& Fruit)
 {
-	if (abs(animal.getPosition().y - food.getPosition().y) <= animal.getRadius() + food.getRadius()) return true;
+	if (abs(animal.getPosition().y - Fruit.getPosition().y) <= animal.getRadius() + Fruit.getRadius()) return true;
 	
 	return false;
 }
 
-bool Ecosystem::animalReachesFood(const Animal& animal, const Food& food)
+bool Ecosystem::animalReachesFruit(const Animal& animal, const Fruit& Fruit)
 {
-	float acceleration = animal.getPosition().x - food.getPosition().x;
-	float b = animal.getPosition().y - food.getPosition().y;
+	float acceleration = animal.getPosition().x - Fruit.getPosition().x;
+	float b = animal.getPosition().y - Fruit.getPosition().y;
 
 	float distance = sqrt(pow(acceleration, 2) + pow(b, 2));
 
-	if (distance <= animal.getRadius() + food.getRadius()) return true;
+	if (distance <= animal.getRadius() + Fruit.getRadius()) return true;
 
 	return false;
 }
 
-int Ecosystem::tryToFindConsumer(Food& fruit, unsigned start_animal_index)
+int Ecosystem::tryToFindConsumer(Fruit& fruit, unsigned start_animal_index)
 {
 	unsigned animal_index = start_animal_index;
 
-	while (animal_index < this->animals.size() && this->animalReachesFoodInY(*this->animals[animal_index], fruit))
+	while (animal_index < this->animals.size() && this->animalReachesFruitInY(*this->animals[animal_index], fruit))
 	{
-		if (this->animalReachesFood(*this->animals[animal_index], fruit))
+		if (this->animalReachesFruit(*this->animals[animal_index], fruit))
 		{
 			this->eat(*this->animals[animal_index], fruit);
 			return 1;
@@ -491,7 +491,7 @@ int Ecosystem::tryToFindConsumer(Food& fruit, unsigned start_animal_index)
 	return 0;
 }
 
-void Ecosystem::eat(Animal& animal, Food& fruit)
+void Ecosystem::eat(Animal& animal, Fruit& fruit)
 {	
 	if (fruit.getEnergy() + animal.getHp() > animal.getMaxHp())
 	{
@@ -524,14 +524,14 @@ void Ecosystem::eat(Animal& animal, Food& fruit)
 	fruit.setEnergy(0.f);
 }
 
-void Ecosystem::removeEatenFood()
+void Ecosystem::removeEatenFruit()
 {
-	for (int i = 0; i < this->food.size(); i++)
-		if (this->food[i]->getEnergy() == 0.f)
+	for (int i = 0; i < this->fruits.size(); i++)
+		if (this->fruits[i]->getEnergy() == 0.f)
 		{
-			delete this->food[i];
-			std::swap(this->food[i], this->food.back());
-			this->food.pop_back();
+			delete this->fruits[i];
+			std::swap(this->fruits[i], this->fruits.back());
+			this->fruits.pop_back();
 		}
 }
 
@@ -579,14 +579,14 @@ void Ecosystem::remove(const sf::Vector2f& mouse_pos_view)
 		}
 	}
 
-	// food:
-	for (auto& f : this->food)
+	// Fruit:
+	for (auto& f : this->fruits)
 	{
 		if (f->isCovered(mouse_pos_view))
 		{			
 			delete f;
-			std::swap(f, this->food.back());
-			this->food.pop_back();
+			std::swap(f, this->fruits.back());
+			this->fruits.pop_back();
 			return;
 		}
 	}
