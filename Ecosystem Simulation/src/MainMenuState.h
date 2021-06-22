@@ -50,5 +50,4 @@ private:
 	void updateEcosystemText(float dt);
 	
 	void renderButtons(sf::RenderTarget& target);
-	void renderEcosystemText(sf::RenderTarget& target);
 };

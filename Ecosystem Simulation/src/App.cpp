@@ -136,7 +136,11 @@ void App::update()
 				delete this->states.top();
 				this->states.pop();
 
-				if (!this->states.empty()) this->states.top()->freeze();
+				if (!this->states.empty())
+				{
+					this->states.top()->freeze();
+					this->update();
+				}
 
 				else this->window->close();
 			}

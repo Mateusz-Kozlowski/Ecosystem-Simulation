@@ -67,11 +67,11 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 // constructor/destructor:
 Ecosystem::Ecosystem()
-	: directoryPath("ECOSYSTEM IS NOT INITIALIZED"), 
-	  borderThickness(0U), 
+	: borderThickness(0U), 
 	  animalsCount(0U), fruitsCount(0U),
 	  trackedAnimal(nullptr),
-	  totalTimeElapsed(0.f), dtSinceLastWorldUpdate(0.f)
+	  totalTimeElapsed(0.f), dtSinceLastWorldUpdate(0.f),
+	  initialized(false)
 {
 	
 }
@@ -96,6 +96,8 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	this->initAnimals(folder_path);
 	this->initFruits(folder_path);
 	
+	this->initialized = true;
+
 	// TODO: rmv later!:
 	std::cout << "AN ECOSYSTEM HAS BEEN LOADED CORRECTLY\n";
 }
@@ -133,6 +135,11 @@ const sf::Vector2f* Ecosystem::getTrackedAnimalPosition() const
 float Ecosystem::getTotalTimeElapsed() const
 {
 	return this->totalTimeElapsed;
+}
+
+bool Ecosystem::isInitialized() const
+{
+	return this->initialized;
 }
 
 // other public methods:

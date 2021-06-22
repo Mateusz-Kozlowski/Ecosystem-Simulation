@@ -26,7 +26,7 @@ void MainMenuState::freeze()
 
 void MainMenuState::update(float dt)
 {
-	this->updateMousePositions();
+	this->updateMousePositions();	
 	this->updateInput();
 	this->getUpdateFromButtons();
 	this->updateEcosystemText(dt);
@@ -39,7 +39,8 @@ void MainMenuState::render(sf::RenderTarget* target)
 	target->draw(this->backgroundRect);
 
 	this->renderButtons(*target);
-	this->renderEcosystemText(*target);
+	
+	target->draw(this->ecosystemText);
 }
 
 // initialization:
@@ -198,7 +199,7 @@ void MainMenuState::initButtons()
 void MainMenuState::initEcosystemText()
 {
 	this->ecosystemText.setFont(this->fonts["CONSOLAB"]);
-	this->ecosystemText.setString("No string has been set for this text");
+	this->ecosystemText.setString("NO STRING HAS BEEN SET FOR THIS TEXT");
 	this->ecosystemText.setPosition(50.0f, 50.0f);
 	this->ecosystemText.setCharacterSize(32U);
 	this->ecosystemText.setFillColor(this->defaultEcosystemTextColor);
@@ -233,7 +234,7 @@ void MainMenuState::getUpdateFromButtons()
 
 	if (this->buttons["SIMULATE"]->isClicked())
 	{
-		if (this->stateData->ecosystem)
+		if (this->stateData->ecosystem->isInitialized())
 		{
 			this->stateData->states->push(new SimulationState(this->stateData));
 			this->stateData->states->top()->freeze();
@@ -271,9 +272,9 @@ void MainMenuState::getUpdateFromButtons()
 
 void MainMenuState::updateEcosystemText(float dt)
 {
-	if (!this->stateData->ecosystem)
+	if (!this->stateData->ecosystem->isInitialized())
 	{
-		this->ecosystemText.setString("Create a new ecosystem or load an existing one");
+		this->ecosystemText.setString("CREATE A NEW ECOSYSTEM OR LOAD AN EXISTING ONE");
 
 		if (this->ecosystemText.getFillColor() == this->highlightedEcosystemTextColor)
 		{
@@ -284,15 +285,10 @@ void MainMenuState::updateEcosystemText(float dt)
 		}
 	}
 
-	else this->ecosystemText.setString("Current ecosystem folder: " + this->stateData->ecosystem->getDirectoryPath());
+	else this->ecosystemText.setString("CURRENT ECOSYSTEM FOLDER: " + this->stateData->ecosystem->getDirectoryPath());
 }
 
 void MainMenuState::renderButtons(sf::RenderTarget& target)
 {
 	for (auto& it : this->buttons) it.second->render(target);
-}
-
-void MainMenuState::renderEcosystemText(sf::RenderTarget& target)
-{
-	this->stateData->window->draw(this->ecosystemText);
 }

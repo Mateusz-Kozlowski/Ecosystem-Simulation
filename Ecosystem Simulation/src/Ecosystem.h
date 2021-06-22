@@ -33,6 +33,8 @@ public:
 
 	float getTotalTimeElapsed() const;
 
+	bool isInitialized() const;
+
 	// other public methods:
 	void update(
 		float dt,
@@ -70,6 +72,8 @@ private:
 
 	float totalTimeElapsed;
 	float dtSinceLastWorldUpdate;
+
+	bool initialized;
 
 	// private initialization:
 	void readDataFromConfigFile(const std::string& folder_path);
