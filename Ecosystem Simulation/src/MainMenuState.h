@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SimulationState.h"
-#include "EcosystemCreatorState.h"
+#include "LoadingState.h"
 #include "Gui.h"
 
 class MainMenuState : public State
@@ -46,7 +46,7 @@ private:
 
 	// other private methods:
 	virtual void updateInput();
-	void updateButtons();
+	void getUpdateFromButtons();
 	void updateEcosystemText(float dt);
 	
 	void renderButtons(sf::RenderTarget& target);

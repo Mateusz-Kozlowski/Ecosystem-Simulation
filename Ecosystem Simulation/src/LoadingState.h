@@ -4,39 +4,36 @@
 #include "Button.h"
 #include "InputField.h"
 
-class EcosystemCreatorState : public State
+class LoadingState : public State
 {
 public:
 	// constructor/destructor:
-	EcosystemCreatorState(StateData* state_data);
-	virtual ~EcosystemCreatorState();
+	LoadingState(StateData* state_data);
+	~LoadingState();
 
 	// mutators:
 	virtual void freeze();
 
+	// other public methods:
 	virtual void update(float dt);
 	virtual void render(sf::RenderTarget* target = nullptr);
 
 private:
-	sf::RectangleShape backgroundRect;
+	sf::RectangleShape background;
 
 	sf::Font font;
-	
-	std::unordered_map<std::string, sf::Text> texts;
-	std::unordered_map<std::string, gui::Button*> buttons;
 
+	std::unordered_map<std::string, gui::Button*> buttons;
 	gui::InputField* inputField;
 
 	// initialization:
 	virtual void initKeybinds();
 	void initBackground();
 	void initFonts();
-	void initTexts();
-	void initButtons();
 	void initInputField();
+	void initButtons();
 
-	// other private methods:
+	// other public methods:
 	virtual void updateInput();
-	void updateButtons();
-	void renderButtons(sf::RenderTarget& target);
+	void getUpdateFromButtons();
 };

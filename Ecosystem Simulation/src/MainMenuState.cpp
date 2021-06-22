@@ -28,7 +28,7 @@ void MainMenuState::update(float dt)
 {
 	this->updateMousePositions();
 	this->updateInput();
-	this->updateButtons();
+	this->getUpdateFromButtons();
 	this->updateEcosystemText(dt);
 }
 
@@ -227,7 +227,7 @@ void MainMenuState::updateInput()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"]))) this->endState();
 }
 
-void MainMenuState::updateButtons()
+void MainMenuState::getUpdateFromButtons()
 {
 	for (auto& it : this->buttons) it.second->update(this->mousePosWindow);
 
@@ -240,14 +240,14 @@ void MainMenuState::updateButtons()
 	}
 
 	else if (this->buttons["NEW ECOSYSTEM"]->isClicked())
-		this->stateData->states->push(new EcosystemCreatorState(this->stateData));
+		//this->stateData->states->push(new EcosystemCreatorState(this->stateData));
+		std::cout << "ECOSYSTEM CREATION STATE IS NOT DEFINED YET!\n";
 
 	else if (this->buttons["SAVE"]->isClicked())
 		this->saveEcosystem(*this->stateData->ecosystem);
 
 	else if (this->buttons["LOAD"]->isClicked())
-		//this->stateData->states->push(new LoadingState(this->stateData));
-		std::cout << "LOAD IS NOT DEFINET\n";
+		this->stateData->states->push(new LoadingState(this->stateData));
 
 	else if (this->buttons["EDIT"]->isClicked())
 		//this->stateData->states->push(new EditorState(this->stateData));

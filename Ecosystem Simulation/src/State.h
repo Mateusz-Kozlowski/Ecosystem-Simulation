@@ -42,6 +42,7 @@ public:
 
 	virtual void freeze();
 
+	// other public methods:
 	virtual void update(float dt) = 0;
 	virtual void render(sf::RenderTarget* target = nullptr) = 0;
 
