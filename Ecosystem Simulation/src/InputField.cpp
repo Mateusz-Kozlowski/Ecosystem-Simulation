@@ -104,17 +104,17 @@ void gui::InputField::updateTextAndCursorPositions()
 {
     // text:
     this->text.setOrigin(
-        0.f,
+        this->text.getGlobalBounds().width / 2.f,
         this->text.getLocalBounds().top + this->text.getLocalBounds().height / 2.f
     );
     this->text.setPosition(
-        this->posX + 2.f * this->outlineThickness, 
+        this->field.getGlobalBounds().left + this->field.getGlobalBounds().width / 2.f, 
         this->posY + height / 2.f
     );
 
     // cursor:
     this->textCursor.setPosition(
-        this->posX + 3.f * this->outlineThickness + this->text.getGlobalBounds().width,
+        this->text.getGlobalBounds().left + this->text.getGlobalBounds().width,
         this->posY + height / 2.f
     );
 }

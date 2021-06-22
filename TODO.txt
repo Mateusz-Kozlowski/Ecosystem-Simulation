@@ -18,7 +18,6 @@ new "ecosystem creation state"
 dt can be extremelly big if a window lost the focus
 
 2:
-rename food to fruit/fruits?
 one convention for all gui widgets, meybe even polimorphizm
 some GUI widgets positions are set relative to their centers and some are set relative to their upper-left corners... =>
 	=> fix that!
