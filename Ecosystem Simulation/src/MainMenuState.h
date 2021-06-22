@@ -26,17 +26,29 @@ private:
 
 	sf::Text ecosystemText;
 
+	sf::Color defaultEcosystemTextColor;
+	sf::Color highlightedEcosystemTextColor;
+	
+	float ecosystemTextStopwatch;
+	float highlightningTime;
+
 	// initialization:
+	void initVariables();
 	virtual void initKeybinds();
 	void initBackground();
 	void initFonts();
 	void initButtons();
 	void initEcosystemText();
 
+	// private utilities:
+	void highlightEcosystemText();
+	void saveEcosystem(const Ecosystem& ecosystem);
+
 	// other private methods:
 	virtual void updateInput();
 	void updateButtons();
-	void updateEcosystemText();
+	void updateEcosystemText(float dt);
+	
 	void renderButtons(sf::RenderTarget& target);
 	void renderEcosystemText(sf::RenderTarget& target);
 };

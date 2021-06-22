@@ -2,8 +2,10 @@
 #include "MainMenuState.h"
 
 // constructor/destructor:
-MainMenuState::MainMenuState(StateData* state_data) : State(state_data)
+MainMenuState::MainMenuState(StateData* state_data)
+	: State(state_data)
 {
+	this->initVariables();
 	this->initKeybinds();
 	this->initBackground();
 	this->initFonts();
@@ -27,7 +29,7 @@ void MainMenuState::update(float dt)
 	this->updateMousePositions();
 	this->updateInput();
 	this->updateButtons();
-	this->updateEcosystemText();
+	this->updateEcosystemText(dt);
 }
 
 void MainMenuState::render(sf::RenderTarget* target)
@@ -41,6 +43,15 @@ void MainMenuState::render(sf::RenderTarget* target)
 }
 
 // initialization:
+void MainMenuState::initVariables()
+{
+	this->defaultEcosystemTextColor = sf::Color(216, 216, 216);
+	this->highlightedEcosystemTextColor = sf::Color::Red;
+
+	this->ecosystemTextStopwatch = 0.0f;
+	this->highlightningTime = 0.5f;
+}
+
 void MainMenuState::initKeybinds()
 {
 	std::string path = "config/main_menu_keybinds.ini";
@@ -190,7 +201,19 @@ void MainMenuState::initEcosystemText()
 	this->ecosystemText.setString("No string has been set for this text");
 	this->ecosystemText.setPosition(50.0f, 50.0f);
 	this->ecosystemText.setCharacterSize(32U);
-	this->ecosystemText.setFillColor(sf::Color(216, 216, 216));
+	this->ecosystemText.setFillColor(this->defaultEcosystemTextColor);
+}
+
+// private utilities:
+void MainMenuState::highlightEcosystemText()
+{
+	this->ecosystemText.setFillColor(this->highlightedEcosystemTextColor);
+	this->ecosystemTextStopwatch = 0.0f;
+}
+
+void MainMenuState::saveEcosystem(const Ecosystem& ecosystem)
+{
+	std::cout << "SAVE IS NOT DEFINET YET\n";
 }
 
 // other private methods:
@@ -208,30 +231,46 @@ void MainMenuState::updateButtons()
 {
 	for (auto& it : this->buttons) it.second->update(this->mousePosWindow);
 
-	if (this->buttons["SIMULATE"]->isClicked() && this->stateData->ecosystem)
-		this->stateData->states->push(new SimulationState(this->stateData));
+	if (this->buttons["SIMULATE"]->isClicked())
+	{
+		if (this->stateData->ecosystem)
+			this->stateData->states->push(new SimulationState(this->stateData));
+		else
+			this->highlightEcosystemText();
+	}
 
 	else if (this->buttons["NEW ECOSYSTEM"]->isClicked())
 		this->stateData->states->push(new EcosystemCreatorState(this->stateData));
 
-	/*
 	else if (this->buttons["SAVE"]->isClicked())
-		this->stateData->states->push(new EcosystemCreator(this->stateData));
+		this->saveEcosystem(*this->stateData->ecosystem);
 
 	else if (this->buttons["LOAD"]->isClicked())
-		this->stateData->states->push(new EcosystemCreator(this->stateData));
+		//this->stateData->states->push(new LoadingState(this->stateData));
+		std::cout << "LOAD IS NOT DEFINET\n";
 
 	else if (this->buttons["EDIT"]->isClicked())
-		this->stateData->states->push(new EcosystemCreator(this->stateData));
-	*/
+		//this->stateData->states->push(new EditorState(this->stateData));
+		std::cout << "EDIT IS NOT DEFINET\n";
 
 	else if (this->buttons["QUIT"]->isClicked()) 
 		this->endState();
 }
 
-void MainMenuState::updateEcosystemText()
+void MainMenuState::updateEcosystemText(float dt)
 {
-	if (!this->stateData->ecosystem) this->ecosystemText.setString("Create a new ecosystem or load an existing one");
+	if (!this->stateData->ecosystem)
+	{
+		this->ecosystemText.setString("Create a new ecosystem or load an existing one");
+
+		if (this->ecosystemText.getFillColor() == this->highlightedEcosystemTextColor)
+		{
+			if (this->ecosystemTextStopwatch > this->highlightningTime)
+				this->ecosystemText.setFillColor(this->defaultEcosystemTextColor);
+
+			this->ecosystemTextStopwatch += dt;
+		}
+	}
 
 	else this->ecosystemText.setString("Current ecosystem folder: " + this->stateData->ecosystem->getDirectoryPath());
 }
