@@ -13,7 +13,7 @@ gui::InputField::InputField(
     int id)
     : posX(pos_x), posY(pos_y), 
       width(width), height(height), 
-      font(font), input(default_text), charSize(char_size),
+      font(font), input(default_text), char_size(char_size),
       color(color), textColor(text_color), outlineColor(outline_color),
       outlineThickness(outline_thickness),
       id(id),
@@ -35,7 +35,7 @@ gui::InputField::InputField(
     this->text.setFillColor(textColor);
     this->text.setFont(font);
     this->updateTextAndCursorPositions();
-    this->textCursor.setOrigin(0.f, this->charSize / 2.f);
+    this->textCursor.setOrigin(0.f, this->char_size / 2.f);
     this->textCursor.setSize(sf::Vector2f(outline_thickness, char_size));
     this->textCursor.setFillColor(this->textColor);
 }

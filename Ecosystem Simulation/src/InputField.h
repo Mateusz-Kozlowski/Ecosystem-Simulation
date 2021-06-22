@@ -31,7 +31,7 @@ namespace gui
 
 		const sf::Font& font;
 		std::string input;
-		float charSize;
+		float char_size;
 
 		sf::Color color, textColor, outlineColor;
 

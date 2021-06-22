@@ -234,24 +234,36 @@ void MainMenuState::getUpdateFromButtons()
 	if (this->buttons["SIMULATE"]->isClicked())
 	{
 		if (this->stateData->ecosystem)
+		{
 			this->stateData->states->push(new SimulationState(this->stateData));
+			this->stateData->states->top()->freeze();
+		}
 		else
 			this->highlightEcosystemText();
 	}
 
 	else if (this->buttons["NEW ECOSYSTEM"]->isClicked())
+	{
 		//this->stateData->states->push(new EcosystemCreatorState(this->stateData));
+		//this->stateData->states->top()->freeze();
 		std::cout << "ECOSYSTEM CREATION STATE IS NOT DEFINED YET!\n";
+	}
 
 	else if (this->buttons["SAVE"]->isClicked())
 		this->saveEcosystem(*this->stateData->ecosystem);
 
 	else if (this->buttons["LOAD"]->isClicked())
+	{
 		this->stateData->states->push(new LoadingState(this->stateData));
+		this->stateData->states->top()->freeze();
+	}
 
 	else if (this->buttons["EDIT"]->isClicked())
+	{
 		//this->stateData->states->push(new EditorState(this->stateData));
+		//this->stateData->states->top()->freeze();
 		std::cout << "EDIT IS NOT DEFINET\n";
+	}
 
 	else if (this->buttons["QUIT"]->isClicked()) 
 		this->endState();

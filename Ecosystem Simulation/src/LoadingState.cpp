@@ -23,6 +23,8 @@ LoadingState::~LoadingState()
 void LoadingState::freeze()
 {
 	std::cout << "FREEZING IS NOT DEFINED YET!\n";
+
+	for (auto& it : this->buttons) it.second->setClickBlockade(true);
 }
 
 // other public methods:
@@ -95,8 +97,8 @@ void LoadingState::initInputField()
 	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
 	this->inputField = new gui::InputField(
-		gui::p2pX(35.f, vm), gui::p2pY(50.f, vm),
-		gui::p2pX(30.f, vm), gui::p2pY(5.f, vm),
+		gui::p2pX(35.f, vm), gui::p2pY(40.f, vm),
+		gui::p2pX(30.f, vm), gui::p2pY(7.f, vm),
 		this->font, "ecosystems/1024a 1024f", gui::p2pY(3.f, vm),
 		sf::Color(100, 100, 100), sf::Color(255, 255, 255), sf::Color(75, 75, 75),
 		gui::p2pX(0.2f, vm)
@@ -109,8 +111,8 @@ void LoadingState::initButtons()
 
 	this->buttons["LOAD"] = new gui::Button(
 		sf::Vector2f(
-			gui::p2pX(25.f, vm),
-			gui::p2pY(75.f, vm)
+			gui::p2pX(27.f, vm),
+			gui::p2pY(67.f, vm)
 		),
 		sf::Vector2f(
 			gui::p2pX(20.f, vm),
@@ -125,8 +127,8 @@ void LoadingState::initButtons()
 
 	this->buttons["QUIT"] = new gui::Button(
 		sf::Vector2f(
-			gui::p2pX(55.f, vm),
-			gui::p2pY(75.f, vm)
+			gui::p2pX(53.f, vm),
+			gui::p2pY(67.f, vm)
 		),
 		sf::Vector2f(
 			gui::p2pX(20.f, vm),

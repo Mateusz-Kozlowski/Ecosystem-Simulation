@@ -7,11 +7,11 @@ using namespace gui;
 gui::Button::Button(
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
-	const sf::Font& font, const std::string& text, int charSize,
-	sf::Color idleColor, sf::Color hoverColor, sf::Color pressedColor,
-	sf::Color outlineIdleColor, sf::Color outlineHoverColor, sf::Color outlinePressedColor,
-	sf::Color textIdleColor, sf::Color textHoverColor, sf::Color textPressedColor,
-	float outlineThickness, int id)
+	const sf::Font& font, const std::string& text, unsigned char_size,
+	sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
+	sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
+	sf::Color text_idle_color, sf::Color text_hover_color, sf::Color text_pressed_color,
+	float outline_thickness, int id)
 {
 	this->clickBlockade = false;
 	this->clicked = false;
@@ -20,14 +20,14 @@ gui::Button::Button(
 
 	this->rect.setPosition(position);
 	this->rect.setSize(size);
-	this->rect.setOutlineThickness(outlineThickness);
-	this->rect.setOutlineColor(outlineIdleColor);
-	this->rect.setFillColor(idleColor);
+	this->rect.setOutlineThickness(outline_thickness);
+	this->rect.setOutlineColor(outline_idle_color);
+	this->rect.setFillColor(idle_color);
 
 	this->text.setFont(font);
 	this->text.setString(text);
-	this->text.setCharacterSize(charSize);
-	this->text.setFillColor(textIdleColor);
+	this->text.setCharacterSize(char_size);
+	this->text.setFillColor(text_idle_color);
 
 	// centering the input:
 	sf::FloatRect textRect = this->text.getLocalBounds();
@@ -40,17 +40,17 @@ gui::Button::Button(
 		)
 	);
 
-	this->idleColor = idleColor;
-	this->hoverColor = hoverColor;
-	this->pressedColor = pressedColor;
+	this->idleColor = idle_color;
+	this->hoverColor = hover_color;
+	this->pressedColor = pressed_color;
 
-	this->outlineIdleColor = outlineIdleColor;
-	this->outlineHoverColor = outlineHoverColor;
-	this->outlinePressedColor = outlinePressedColor;
+	this->outlineIdleColor = outline_idle_color;
+	this->outlineHoverColor = outline_hover_color;
+	this->outlinePressedColor = outline_pressed_color;
 
-	this->textIdleColor = textIdleColor;
-	this->textHoverColor = textHoverColor;
-	this->textPressedColor = textPressedColor;
+	this->textIdleColor = text_idle_color;
+	this->textHoverColor = text_hover_color;
+	this->textPressedColor = text_pressed_color;
 }
 
 // accessors:
@@ -124,18 +124,17 @@ void gui::Button::setPosition(const sf::Vector2f& new_pos)
 }
 
 // other public methods:
-void gui::Button::update(sf::Vector2i mousePosWindow)
+void gui::Button::update(sf::Vector2i mouse_pos_window)
 {
 	this->clicked = false;
 
-	if (!(sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow))))
-		this->clickBlockade = false;
+	if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) this->clickBlockade = false;
 
 	if (this->state == ButtonState::BTN_PRESSED)
 	{
 		if (!sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
-			if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow)))
+			if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window)))
 				this->state = ButtonState::BTN_HOVERED;
 			else
 				this->state = ButtonState::BTN_IDLE;
@@ -143,7 +142,7 @@ void gui::Button::update(sf::Vector2i mousePosWindow)
 	}
 	else if (this->state == ButtonState::BTN_HOVERED)
 	{
-		if (!this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow)))
+		if (!this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window)))
 			this->state = ButtonState::BTN_IDLE;
 		else
 		{
@@ -157,7 +156,7 @@ void gui::Button::update(sf::Vector2i mousePosWindow)
 	}
 	else if (this->state == ButtonState::BTN_IDLE)
 	{
-		if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow))) 
+		if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window))) 
 			this->state = ButtonState::BTN_HOVERED;
 	}
 

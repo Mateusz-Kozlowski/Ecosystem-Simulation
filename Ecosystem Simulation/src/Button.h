@@ -13,11 +13,11 @@ namespace gui
 		Button(
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
-			const sf::Font& font, const std::string& text, int charSize,
-			sf::Color idleColor, sf::Color hoverColor, sf::Color pressedColor,
-			sf::Color outlineIdleColor, sf::Color outlineHoverColor, sf::Color outlinePressedColor,
-			sf::Color textIdleColor, sf::Color textHoverColor, sf::Color textPressedColor,
-			float outlineThickness = 1.f, int id = 0
+			const sf::Font& font, const std::string& text, unsigned char_size,
+			sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
+			sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
+			sf::Color text_idle_color, sf::Color text_hover_color, sf::Color text_pressed_color,
+			float outline_thickness = 1.f, int id = 0
 		);
 
 		// accessors:
@@ -45,7 +45,7 @@ namespace gui
 		void setPosition(const sf::Vector2f& new_pos);
 
 		// other public methods:
-		void update(sf::Vector2i mousePosWindow);
+		void update(sf::Vector2i mouse_pos_window);
 		void render(sf::RenderTarget& target);
 
 	private:

@@ -64,9 +64,6 @@
     <ClCompile Include="src\Button.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\EcosystemCreatorState.cpp">
-      <Filter>states</Filter>
-    </ClCompile>
     <ClCompile Include="src\Food.cpp">
       <Filter>ecosystem</Filter>
     </ClCompile>
@@ -242,9 +239,6 @@
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\Button.h">
       <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EcosystemCreatorState.h">
-      <Filter>states</Filter>
     </ClInclude>
     <ClInclude Include="src\Food.h">
       <Filter>ecosystem</Filter>
