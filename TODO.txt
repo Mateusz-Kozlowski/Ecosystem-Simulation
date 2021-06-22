@@ -18,45 +18,39 @@ new "ecosystem creation state"
 dt can be extremelly big if a window lost the focus
 
 2:
-one convention for all gui widgets, meybe even polimorphizm
-some GUI widgets positions are set relative to their centers and some are set relative to their upper-left corners... =>
-	=> fix that!
-	=> maybe allow to choose both ways of setting positions?...
-use EventsAccessors class wherever possible (including GUI classes)
-debug showing brain while a simulation is paused (brain renders probably in the previous position)
-update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
-use that tricky way of dealing with event (not necessarily passing reference, but using utility from State) everywhere
-convention of names in tools (->replace is also called move and it shouldn't have 2 names)(->track and select also)
-	(rmv and delete? I used remove everywhere, but delete may be a better option)
-loading "from main menu" (loading state will be neccessairly)
-add consts to renders where it is possible (and also to other places)
-what with hp rendering? Does it have bool like nn preview? Do ecosystem control check that bool? I don't think so...
-input field outline should be inside, not outside
-default positions of animals shouldn't be [0, 0] also by default their bodies are white, they should be red
-new texture for brain hiding?
-use sf::Vector2<T> instead of 2 floats
-Shortcuts/about state
-fix bug with preventing from going beyond the world (not change a sign of a vector but make it correct)
-saving  "from main menu" (loading state will be neccessairly)
-smart pointers!
-set text function in Button class change string of sf::Text member, but doesn't "recenter" it, should this happen? =>
-	=> Rewrite some GUI classes at all. =>
-		=> events to gui elements and so on...
-		=> and is clicked should use mouse pressed instead of released, but it should also prevent repeating clicks
-define states freezing
-keys editor (Did I mean keybinds?)
-nn viewer never beyond the world
-random starts positions? I guess... no, because I think that this "Big Bang" efect is great!
-Species class
-textures (different) and hitbox component
-editor state (for or ecosystem or for animal? or maybe for both of them? maybe...) =>
-check if the string of that text in the left-top corner makes sense
-use real copy constructors (remember about the rule of three!)
-sexual reproduction...
+DEBUG:
+	debug showing brain while a simulation is paused (brain renders probably in the previous position)
+	tunneling
+	update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
+
+STATES:
+	shortcuts/keys state
+
+GUI:
+	one convention for all gui widgets, meybe even polimorphizm
+	some GUI widgets positions are set relative to their centers and some are set relative to their 
+		upper-left corners... =>
+			=> fix that!
+			=> maybe allow to choose both ways of setting positions?...
+	
+CONVENTION/NAMES/COMMENTS/CODE:
+	convention of names in tools (->replace is also called move and it shouldn't have 2 names)(->track and select also)
+		(rmv and delete? I used remove everywhere, but delete may be a better option)
+	add consts to renders where it is possible (and also to other places)
+	use sf::Vector2<T> instead of 2 floats
+	smart pointers!
+
+OTHERS:
+	use EventsAccessors class wherever possible (including GUI classes)
+	define states freezing
+	nn viewer should never beyond the world
+	textures (different) and hitbox component
+	use real copy constructors (remember about the rule of three!)	
+	sexual reproduction...
 
 3:
 Crappy Neural Nets! =>
 	=> NEAT REAL TIME
 	since using NEAT:
-		brains preview in side panel/menu and next to the animals
+		brains preview also in side panel/menu and next to the animals
 	=> <random> library? Check it out!
