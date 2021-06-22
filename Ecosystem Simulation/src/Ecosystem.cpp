@@ -181,7 +181,11 @@ void Ecosystem::readDataFromConfigFile(const std::string& folder_path)
 {
 	std::ifstream file(folder_path + '/' + Ecosystem::configFileName);
 
-	if (!file.is_open()) std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
+	if (!file.is_open())
+	{
+		std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
+		exit(-1);
+	}
 
 	std::string temp;
 	unsigned animalsCount = 0U, fruitsCount = 0U;
@@ -236,7 +240,11 @@ void Ecosystem::initFruits(const std::string& folder_path)
 	// TODO: add static food name file
 	std::ifstream file1(folder_path + '/' + "food.ini");
 
-	if (!file1.is_open()) std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
+	if (!file1.is_open())
+	{
+		std::cerr << "ERROR::ECOSYSTEM::CANNOT OPEN FILE: " + folder_path + '/' + Ecosystem::configFileName;
+		exit(-1);
+	}
 
 	this->food.reserve(this->fruitsCount);
 
