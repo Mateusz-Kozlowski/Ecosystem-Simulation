@@ -16,6 +16,14 @@ better nearest food searching algo (with complexity better than the current one 
 rebuild the program structure at ecosystem and animals level (rewrite Ecosystem && Animal classes)
 new "ecosystem creation state"
 dt can be extremelly big if a window lost the focus
+side menu should be able to be opened not only using Esc key but also using a gui widget that doesn't even exist now
+
+shortcuts:
+	speeding up and slowing down
+	moving side panel
+	God tools
+
+some way of getting info/history of an animal and general info about an ecosystem
 
 2:
 DEBUG:
