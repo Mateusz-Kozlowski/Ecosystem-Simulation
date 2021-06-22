@@ -9,25 +9,20 @@ gui::InputField::InputField(
     float width, float height, 
     const sf::Font& font, const std::string& default_text, float char_size, 
     sf::Color color, sf::Color text_color, sf::Color outline_color, 
-    float outline_thickness, 
+    float outline_thickness, float cursor_width,
     int id)
-    : posX(pos_x), posY(pos_y), 
-      width(width), height(height), 
-      font(font), input(default_text), char_size(char_size),
+    : font(font), input(default_text), char_size(char_size),
       color(color), textColor(text_color), outlineColor(outline_color),
-      outlineThickness(outline_thickness),
       id(id),
       stopwatch(0.f)
 {
-    // outline:
-    this->outline.setPosition(pos_x, pos_y);
-    this->outline.setSize(sf::Vector2f(width, height));
-    this->outline.setFillColor(outline_color);
+    // field:
+    this->rect.setPosition(pos_x, pos_y);
+    this->rect.setSize(sf::Vector2f(width, height));
+    this->rect.setFillColor(color);
 
-    // field body:
-    this->field.setPosition(pos_x + outline_thickness, pos_y + outline_thickness);
-    this->field.setSize(sf::Vector2f(width - 2.f * outline_thickness, height - 2.f * outline_thickness));
-    this->field.setFillColor(color);
+    this->rect.setOutlineThickness(outline_thickness);
+    this->rect.setOutlineColor(outline_color);
 
     // input text and cursor:
     this->text.setString(default_text);
@@ -36,7 +31,7 @@ gui::InputField::InputField(
     this->text.setFont(font);
     this->updateTextAndCursorPositions();
     this->textCursor.setOrigin(0.f, this->char_size / 2.f);
-    this->textCursor.setSize(sf::Vector2f(outline_thickness, char_size));
+    this->textCursor.setSize(sf::Vector2f(cursor_width, char_size));
     this->textCursor.setFillColor(this->textColor);
 }
 
@@ -93,8 +88,7 @@ void gui::InputField::update(float dt, const std::vector<sf::Event>& events)
 
 void gui::InputField::render(sf::RenderTarget& target)
 {
-    target.draw(this->outline);
-    target.draw(this->field);
+    target.draw(this->rect);
     target.draw(this->text);
     target.draw(this->textCursor);
 }
@@ -108,13 +102,13 @@ void gui::InputField::updateTextAndCursorPositions()
         this->text.getLocalBounds().top + this->text.getLocalBounds().height / 2.f
     );
     this->text.setPosition(
-        this->field.getGlobalBounds().left + this->field.getGlobalBounds().width / 2.f, 
-        this->posY + height / 2.f
+        this->rect.getGlobalBounds().left + this->rect.getGlobalBounds().width / 2.f, 
+        this->rect.getGlobalBounds().top + this->rect.getGlobalBounds().height / 2.f
     );
 
     // cursor:
     this->textCursor.setPosition(
         this->text.getGlobalBounds().left + this->text.getGlobalBounds().width,
-        this->posY + height / 2.f
+        this->rect.getGlobalBounds().top + this->rect.getGlobalBounds().height / 2.f
     );
 }

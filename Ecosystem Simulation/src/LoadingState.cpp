@@ -97,11 +97,11 @@ void LoadingState::initInputField()
 	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
 	this->inputField = new gui::InputField(
-		gui::p2pX(35.f, vm), gui::p2pY(40.f, vm),
-		gui::p2pX(30.f, vm), gui::p2pY(7.f, vm),
-		this->font, "ecosystems/1024a 1024f", gui::p2pY(3.f, vm),
-		sf::Color(100, 100, 100), sf::Color(255, 255, 255), sf::Color(75, 75, 75),
-		gui::p2pX(0.2f, vm)
+		gui::p2pX(27.f, vm), gui::p2pY(37.9f, vm),
+		gui::p2pX(50.f, vm), gui::p2pY(7.f, vm),
+		this->font, "ecosystems/1024a 1024f", gui::calcCharSize(vm, 32U),
+		sf::Color(100, 100, 100), sf::Color(225, 225, 225), sf::Color(64, 64, 64),
+		gui::p2pY(0.8f, vm), gui::p2pY(100.f / 1080.f, vm)
 	);
 }
 
@@ -112,33 +112,33 @@ void LoadingState::initButtons()
 	this->buttons["LOAD"] = new gui::Button(
 		sf::Vector2f(
 			gui::p2pX(27.f, vm),
-			gui::p2pY(67.f, vm)
+			gui::p2pY(54.3f, vm)
 		),
 		sf::Vector2f(
-			gui::p2pX(20.f, vm),
+			gui::p2pX(24.f, vm),
 			gui::p2pY(7.f, vm)
 		),
-		this->font, "LOAD", gui::calcCharSize(vm, 30),
+		this->font, "LOAD", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm), 4
+		gui::p2pY(0.8f, vm), 0
 	);
 
 	this->buttons["QUIT"] = new gui::Button(
 		sf::Vector2f(
 			gui::p2pX(53.f, vm),
-			gui::p2pY(67.f, vm)
+			gui::p2pY(54.3f, vm)
 		),
 		sf::Vector2f(
-			gui::p2pX(20.f, vm),
+			gui::p2pX(24.f, vm),
 			gui::p2pY(7.f, vm)
 		),
-		this->font, "QUIT", gui::calcCharSize(vm, 30),
+		this->font, "QUIT", gui::calcCharSize(vm, 32),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, vm), 4
+		gui::p2pY(0.8f, vm), 1
 	);
 }
 

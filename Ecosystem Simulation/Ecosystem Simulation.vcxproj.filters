@@ -91,7 +91,9 @@
     <ClCompile Include="src\EventsAccessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\LoadingState.cpp" />
+    <ClCompile Include="src\LoadingState.cpp">
+      <Filter>states</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -267,7 +269,9 @@
     <ClInclude Include="src\EventsAccessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\LoadingState.h" />
+    <ClInclude Include="src\LoadingState.h">
+      <Filter>states</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-window-d-2.dll">

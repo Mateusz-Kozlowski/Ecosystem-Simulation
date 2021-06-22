@@ -13,7 +13,7 @@ namespace gui
 			float width, float height,
 			const sf::Font& font, const std::string& default_text, float char_size,
 			sf::Color color, sf::Color text_color, sf::Color outline_color,
-			float outline_thickness, 
+			float outline_thickness, float cursor_width,
 			int id = 0
 		);
 
@@ -26,23 +26,22 @@ namespace gui
 		void render(sf::RenderTarget& target);
 
 	private:
-		float posX, posY;
-		float width, height;
-
 		const sf::Font& font;
+		
 		std::string input;
+		
 		float char_size;
 
-		sf::Color color, textColor, outlineColor;
-
-		float outlineThickness;
+		sf::Color color;
+		sf::Color textColor;
+		sf::Color outlineColor;
 
 		int id;
 
 		bool change;
 
-		sf::RectangleShape outline;
-		sf::RectangleShape field;
+		sf::RectangleShape rect;
+		
 		sf::RectangleShape textCursor;
 
 		sf::Text text;
