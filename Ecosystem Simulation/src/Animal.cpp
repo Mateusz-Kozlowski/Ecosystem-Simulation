@@ -145,6 +145,11 @@ float Animal::getValueOfVelocityVector() const
 	return sqrt(pow(velocity.x, 2) + pow(velocity.y, 2));
 }
 
+float Animal::getKineticEnergy() const
+{
+	return 0.5f * pow(this->getValueOfVelocityVector(), 2.0);
+}
+
 // mutators:
 void Animal::setPosition(const sf::Vector2f& new_position)
 {

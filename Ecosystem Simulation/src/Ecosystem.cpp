@@ -318,17 +318,17 @@ void Ecosystem::useGodTool(
 		return;
 
 	// now use God tool:
-	if (god_tool == "TRACK") this->track(mouse_pos_view);
+	if (god_tool == "TRACK") this->trackingTool(mouse_pos_view);
 
-	else if (god_tool == "REMOVE") this->remove(mouse_pos_view);
+	else if (god_tool == "KILL") this->killingTool(mouse_pos_view);
 
-	else if (god_tool == "REPLACE") this->replace(mouse_pos_view);
+	else if (god_tool == "REPLACE") this->replacingTool(mouse_pos_view);
 
-	else if (god_tool == "BRAIN") this->brainVisibility(mouse_pos_view);
+	else if (god_tool == "BRAIN") this->brainTool(mouse_pos_view);
 
-	else if (god_tool == "CLONE") this->clone(mouse_pos_view);
+	else if (god_tool == "STOP") this->stoppingTool(mouse_pos_view);
 
-	else if (god_tool == "STOP") this->stop(mouse_pos_view);
+	else if (god_tool == "INFO") this->infoTool(mouse_pos_view);
 
 	else if (god_tool == "") return;
 
@@ -359,24 +359,30 @@ void Ecosystem::removeDeadAnimals()
 	{
 		if (!this->animals[i]->isAlive())
 		{
-			this->convertKineticEnergyToFruit(this->animals[i]);
-			this->removeDeadAnimal(this->animals[i]);
+			this->convertKineticEnergyToFruit(this->animals[i], false);
+			this->removeAnimal(this->animals[i]);
 		}
 
 		else i++;
 	}
 }
 
-void Ecosystem::convertKineticEnergyToFruit(Animal* animal)
+void Ecosystem::convertKineticEnergyToFruit(Animal* animal, bool random_pos)
 {
-	this->fruits.push_back(new Fruit(0.5 * pow(animal->getValueOfVelocityVector(), 2)));
-	this->fruits.back()->setPosition(animal->getPosition());
+	this->fruits.push_back(new Fruit(animal->getKineticEnergy()));
+	
+	if (random_pos)
+		this->fruits.back()->setRandomPos(this->worldSize, this->borderThickness);
+	else
+		this->fruits.back()->setPosition(animal->getPosition());
 
 	animal->setVelocity(sf::Vector2f(0.0f, 0.0f));
 }
 
-void Ecosystem::removeDeadAnimal(Animal*& animal)
+void Ecosystem::removeAnimal(Animal*& animal)
 {
+	if (animal == this->trackedAnimal) this->trackedAnimal = nullptr;
+
 	delete animal;
 	std::swap(animal, this->animals.back());
 	this->animals.pop_back();
@@ -535,8 +541,18 @@ void Ecosystem::removeEatenFruit()
 		}
 }
 
+void Ecosystem::convertAnimalToFruit(Animal*& animal)
+{
+	this->fruits.push_back(new Fruit(animal->getHp() + animal->getKineticEnergy()));
+	this->fruits.back()->setPosition(animal->getPosition());
+
+	if (animal == this->trackedAnimal) this->trackedAnimal = nullptr;
+
+	this->removeAnimal(animal);
+}
+
 // God tools:
-void Ecosystem::track(const sf::Vector2f& mouse_pos_view)
+void Ecosystem::trackingTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
 	{
@@ -565,38 +581,25 @@ void Ecosystem::track(const sf::Vector2f& mouse_pos_view)
 	}
 }
 
-void Ecosystem::remove(const sf::Vector2f& mouse_pos_view)
+void Ecosystem::killingTool(const sf::Vector2f& mouse_pos_view)
 {
 	// animals:
 	for (auto& animal : this->animals)
 	{
 		if (animal->isCovered(mouse_pos_view))
 		{
-			delete animal;
-			std::swap(animal, this->animals.back());
-			this->animals.pop_back();
+			this->convertAnimalToFruit(animal);
 			break;
 		}
 	}
-
-	// Fruit:
-	for (auto& f : this->fruits)
-	{
-		if (f->isCovered(mouse_pos_view))
-		{			
-			delete f;
-			std::swap(f, this->fruits.back());
-			this->fruits.pop_back();
-			return;
-		}
-	}
 }
 
-void Ecosystem::replace(const sf::Vector2f& mouse_pos_view)
+void Ecosystem::replacingTool(const sf::Vector2f& mouse_pos_view)
 {
+	std::cout << "REPLACING TOOL IS NOT DEFINED YET!\n";
 }
 
-void Ecosystem::brainVisibility(const sf::Vector2f& mouse_pos_view)
+void Ecosystem::brainTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
 	{
@@ -608,18 +611,19 @@ void Ecosystem::brainVisibility(const sf::Vector2f& mouse_pos_view)
 	}
 }
 
-void Ecosystem::clone(const sf::Vector2f& mouse_pos_view)
-{
-}
-
-void Ecosystem::stop(const sf::Vector2f& mouse_pos_view)
+void Ecosystem::stoppingTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
 	{
 		if (animal->isCovered(mouse_pos_view))
 		{
-			animal->setVelocity(sf::Vector2f(0.f, 0.f));
+			this->convertKineticEnergyToFruit(animal, true);
 			return;
 		}
 	}
+}
+
+void Ecosystem::infoTool(const sf::Vector2f& mouse_pos_view)
+{
+	std::cout << "INFO TOOL ISN'T DEFINED YET!\n";
 }

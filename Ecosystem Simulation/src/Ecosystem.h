@@ -97,9 +97,9 @@ private:
 
 	void removeDeadAnimals();
 
-	void convertKineticEnergyToFruit(Animal* animal);
+	void convertKineticEnergyToFruit(Animal* animal, bool random_pos);
 
-	void removeDeadAnimal(Animal*& animal);
+	void removeAnimal(Animal*& animal);
 
 	void avoidGoingBeyondTheWorld();
 
@@ -117,17 +117,19 @@ private:
 	void eat(Animal& animal, Fruit& fruit);
 
 	void removeEatenFruit();
+	
+	void convertAnimalToFruit(Animal*& animal);
 
 	// God tools:
-	void track(const sf::Vector2f& mouse_pos_view);
+	void trackingTool(const sf::Vector2f& mouse_pos_view);
 	
-	void remove(const sf::Vector2f& mouse_pos_view);
+	void killingTool(const sf::Vector2f& mouse_pos_view);
 	
-	void replace(const sf::Vector2f& mouse_pos_view);
+	void replacingTool(const sf::Vector2f& mouse_pos_view);
 	
-	void brainVisibility(const sf::Vector2f& mouse_pos_view);
+	void brainTool(const sf::Vector2f& mouse_pos_view);
 	
-	void clone(const sf::Vector2f& mouse_pos_view);
-	
-	void stop(const sf::Vector2f& mouse_pos_view);
+	void stoppingTool(const sf::Vector2f& mouse_pos_view);
+
+	void infoTool(const sf::Vector2f& mouse_pos_view);
 };

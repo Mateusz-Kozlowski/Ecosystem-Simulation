@@ -300,11 +300,11 @@ void SimulationState::initGodToolsGui()
 	);
 
 	this->sideMenu->addTextureButton(
-		"REMOVE",
+		"KILL",
 		{
-			{"IDLE", guiPath + "/God tools/remove/remove.png"},
-			{"LIGHT", guiPath + "/God tools/remove/remove light.png"},
-			{"DARK", guiPath + "/God tools/remove/remove dark.png"}
+			{"IDLE", guiPath + "/God tools/kill/kill.png"},
+			{"LIGHT", guiPath + "/God tools/kill/kill light.png"},
+			{"DARK", guiPath + "/God tools/kill/kill dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -354,11 +354,11 @@ void SimulationState::initGodToolsGui()
 	);
 
 	this->sideMenu->addTextureButton(
-		"CLONE",
+		"STOP",
 		{
-			{"IDLE", guiPath + "/God tools/clone/clone.png"},
-			{"LIGHT", guiPath + "/God tools/clone/clone light.png"},
-			{"DARK", guiPath + "/God tools/clone/clone dark.png"}
+			{"IDLE", guiPath + "/God tools/stop/stop.png"},
+			{"LIGHT", guiPath + "/God tools/stop/stop light.png"},
+			{"DARK", guiPath + "/God tools/stop/stop dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(
@@ -372,11 +372,11 @@ void SimulationState::initGodToolsGui()
 	);
 
 	this->sideMenu->addTextureButton(
-		"STOP",
+		"INFO",
 		{
-			{"IDLE", guiPath + "/God tools/stop/stop.png"},
-			{"LIGHT", guiPath + "/God tools/stop/stop light.png"},
-			{"DARK", guiPath + "/God tools/stop/stop dark.png"}
+			{"IDLE", guiPath + "/God tools/info/info.png"},
+			{"LIGHT", guiPath + "/God tools/info/info light.png"},
+			{"DARK", guiPath + "/God tools/info/info dark.png"}
 		},
 		"IDLE",
 		sf::Vector2f(

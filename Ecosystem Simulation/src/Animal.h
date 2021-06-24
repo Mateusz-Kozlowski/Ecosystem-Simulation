@@ -45,6 +45,8 @@ public:
 
 	float getValueOfVelocityVector() const;
 
+	float getKineticEnergy() const;
+
 	// mutators:
 	void setPosition(const sf::Vector2f& new_position);
 	void setVelocity(const sf::Vector2f& new_velocity);
