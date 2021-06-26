@@ -10,9 +10,11 @@ gui::InputField::InputField(
     const sf::Font& font, const std::string& default_text, float char_size, 
     sf::Color color, sf::Color text_color, sf::Color outline_color, 
     float outline_thickness, float cursor_width,
+    bool active,
     int id)
     : font(font), input(default_text), char_size(char_size),
       color(color), textColor(text_color), outlineColor(outline_color),
+      active(active),
       id(id),
       stopwatch(0.f)
 {
@@ -46,10 +48,34 @@ const std::string& gui::InputField::getInput() const
     return this->input;
 }
 
+bool gui::InputField::isActive() const
+{
+    return this->active;
+}
+
+bool gui::InputField::hasBeenClicked(const sf::Vector2f& mouse_pos_window, const std::vector<sf::Event>& events) const
+{
+    if (!this->rect.getGlobalBounds().contains(mouse_pos_window)) return false;
+
+    if (!EventsAccessor::hasEventOccured(sf::Event::MouseButtonPressed, events)) return false;
+
+    return true;
+}
+
+// mutators:
+void gui::InputField::setActive(bool active)
+{
+    this->active = active;
+
+    if (!active) this->textCursor.setFillColor(sf::Color::Transparent);
+}
+
 // other public methods:
 void gui::InputField::update(float dt, const std::vector<sf::Event>& events)
 {
     this->change = false;
+
+    if (!this->active) return;
 
     for (const auto& event : events)
         if (event.type == sf::Event::TextEntered)

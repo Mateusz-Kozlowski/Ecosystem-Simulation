@@ -29,13 +29,13 @@ void SimulationState::update(float dt)
 {
 	this->updateInput();
 
-	this->updateView();
-
 	this->updateMousePositions(&this->view);
 
 	if (this->sideMenuIsRendered) this->updateSideMenu();
 
 	this->getUpdatesFromSideMenuGui();
+
+	this->updateView();
 	
 	this->stateData->ecosystem->update(
 		dt,
@@ -220,6 +220,7 @@ void SimulationState::initSideMenu()
 		"MOVE THIS PANEL:",
 		sf::Color(225, 225, 225)
 	);
+
 	this->sideMenu->addTextureButton(
 		"ARROW",
 		{ 
@@ -245,6 +246,50 @@ void SimulationState::initSideMenu()
 
 	this->initGodToolsGui();
 
+	this->sideMenu->addCenteredText(
+		gui::p2pY(72.f, resolution),
+		gui::calcCharSize(resolution, 26.f),
+		this->fonts["CONSOLAB"],
+		"ZOOM:",
+		sf::Color(225, 225, 225)
+	);
+
+	this->sideMenu->addTextureButton(
+		"ZOOM IN",
+		{
+			{"IDLE", guiPath + "/zoom/zoom in.png"},
+			{"HOVERED", guiPath + "/zoom/zoom in light.png"},
+			{"PRESSED", guiPath + "/zoom/zoom in dark.png"}
+		},
+		"IDLE",
+		sf::Vector2f(
+			gui::p2pX(8.f + 1.f / 3.f, resolution),
+			gui::p2pY(76.5f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution),
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
+	);
+
+	this->sideMenu->addTextureButton(
+		"ZOOM OUT",
+		{
+			{"IDLE", guiPath + "/zoom/zoom out.png"},
+			{"HOVERED", guiPath + "/zoom/zoom out light.png"},
+			{"PRESSED", guiPath + "/zoom/zoom out dark.png"}
+		},
+		"IDLE",
+		sf::Vector2f(
+			gui::p2pX(12.f + 1.f / 3.f, resolution),
+			gui::p2pY(76.5f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.f * 64.f / 1920.f, resolution),
+			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+		)
+	);
+	
 	this->sideMenu->addButton(
 		"QUIT",
 		sf::Vector2f(
@@ -538,6 +583,12 @@ void SimulationState::getUpdatesFromSideMenuGui()
 		}
 	}
 
+	if (this->sideMenu->getTextureButtons().at("ZOOM IN")->isPressed())
+		this->view.zoom(0.9f);
+
+	if (this->sideMenu->getTextureButtons().at("ZOOM OUT")->isPressed())
+		this->view.zoom(1.0f / 0.9f);
+
 	// get update from side menu buttons:
 	if (this->sideMenu->getButtons().at("QUIT")->isClicked()) this->endState();
 }
@@ -597,6 +648,17 @@ void SimulationState::updateSideMenuGui()
 				else
 					this->sideMenu->setTextureOfTextureButton(it.first, "LEFT IDLE");
 			}
+		}
+		else if (it.first.substr(0, 4) == "ZOOM")
+		{
+			if (it.second->isPressed())
+				this->sideMenu->setTextureOfTextureButton(it.first, "PRESSED");
+
+			else if (it.second->isHovered())
+				this->sideMenu->setTextureOfTextureButton(it.first, "HOVERED");
+
+			else
+				this->sideMenu->setTextureOfTextureButton(it.first, "IDLE");
 		}
 		else // God tools buttons: 
 			this->updateGodToolButton(it.first);

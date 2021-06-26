@@ -14,12 +14,24 @@ namespace gui
 			const sf::Font& font, const std::string& default_text, float char_size,
 			sf::Color color, sf::Color text_color, sf::Color outline_color,
 			float outline_thickness, float cursor_width,
+			bool active = true,
 			int id = 0
 		);
 
 		// accessors:
 		int getId() const;
+
 		const std::string& getInput() const;
+
+		bool isActive() const;
+
+		bool hasBeenClicked(
+			const sf::Vector2f& mouse_pos_window,
+			const std::vector<sf::Event>& events
+		) const;
+
+		// mutators:
+		void setActive(bool active);
 	
 		// other public methods:
 		void update(float dt, const std::vector<sf::Event>& events);
@@ -35,6 +47,8 @@ namespace gui
 		sf::Color color;
 		sf::Color textColor;
 		sf::Color outlineColor;
+
+		bool active;
 
 		int id;
 
