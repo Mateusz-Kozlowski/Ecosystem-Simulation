@@ -24,6 +24,7 @@ void MainMenuState::freeze()
 	std::cerr << "FREEZING IS NOT DEFINED YET!\n";
 }
 
+// other public methods:
 void MainMenuState::update(float dt)
 {
 	this->updateMousePositions();	
@@ -245,9 +246,8 @@ void MainMenuState::getUpdateFromButtons()
 
 	else if (this->buttons["NEW ECOSYSTEM"]->isClicked())
 	{
-		//this->stateData->states->push(new EcosystemCreatorState(this->stateData));
-		//this->stateData->states->top()->freeze();
-		std::cout << "ECOSYSTEM CREATION STATE IS NOT DEFINED YET!\n";
+		this->stateData->states->push(new EcosystemCreatorState(this->stateData));
+		this->stateData->states->top()->freeze();
 	}
 
 	else if (this->buttons["SAVE"]->isClicked())

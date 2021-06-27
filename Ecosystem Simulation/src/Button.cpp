@@ -124,7 +124,7 @@ void gui::Button::setPosition(const sf::Vector2f& new_pos)
 }
 
 // other public methods:
-void gui::Button::update(sf::Vector2i mouse_pos_window)
+void gui::Button::update(const sf::Vector2i& mouse_pos_window)
 {
 	this->clicked = false;
 

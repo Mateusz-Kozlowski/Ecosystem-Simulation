@@ -25,6 +25,7 @@ void SimulationState::freeze()
 	std::cerr << "FREEZING IS NOT DEFINED YET!\n";
 }
 
+// other public methods:
 void SimulationState::update(float dt)
 {
 	this->updateInput();
@@ -464,10 +465,11 @@ void SimulationState::updateInput()
 
 void SimulationState::updateView()
 {
+	// TODO: move that to updateInput method? And put into a separate function?:
 	// zoom view:
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) this->view.zoom(0.9f);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) this->view.zoom(0.95f);
 
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) this->view.zoom(1.0f / 0.9f);
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) this->view.zoom(1.0f / 0.95f);
 
 	// move view:
 	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
@@ -584,10 +586,10 @@ void SimulationState::getUpdatesFromSideMenuGui()
 	}
 
 	if (this->sideMenu->getTextureButtons().at("ZOOM IN")->isPressed())
-		this->view.zoom(0.9f);
+		this->view.zoom(0.95f);
 
 	if (this->sideMenu->getTextureButtons().at("ZOOM OUT")->isPressed())
-		this->view.zoom(1.0f / 0.9f);
+		this->view.zoom(1.0f / 0.95f);
 
 	// get update from side menu buttons:
 	if (this->sideMenu->getButtons().at("QUIT")->isClicked()) this->endState();

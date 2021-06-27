@@ -8,11 +8,12 @@ class SimulationState : public State
 public:
 	// constructor/destructor:
 	SimulationState(StateData* state_data);
-	~SimulationState();
+	virtual ~SimulationState();
 
 	// mutators:
 	virtual void freeze();
 
+	// other public methods:
 	virtual void update(float dt);
 	virtual void render(sf::RenderTarget* target = nullptr);
 

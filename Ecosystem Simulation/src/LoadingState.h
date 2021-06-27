@@ -9,7 +9,7 @@ class LoadingState : public State
 public:
 	// constructor/destructor:
 	LoadingState(StateData* state_data);
-	~LoadingState();
+	virtual ~LoadingState();
 
 	// mutators:
 	virtual void freeze();

@@ -16,6 +16,9 @@ shortcuts:
 
 saving zoom/world camera can be useful
 
+"fake async loading" - before loading render some text with information about loading and after the process is complited
+	stop rendering that text
+
 2:
 DEBUG:
 	debug showing brain while a simulation is paused (brain renders probably in the previous position)
@@ -38,6 +41,17 @@ CONVENTION/NAMES/COMMENTS/CODE:
 	add consts to renders where it is possible (and also to other places)
 	use sf::Vector2<T> instead of 2 floats
 	smart pointers!
+	in initKeybinds functions (are maybe in others that contains reading from files) there are issues with if statements:
+		replace sth like this:
+			if(file.is_good())
+			{
+				reading from file...
+			}
+			else error
+		with sth like this:
+			if(!file.is_good()) error and exit(-1)
+			
+			reading from file...
 
 OTHERS:
 	implement info tool (probably it'll be able to give info not only about the entire ecosystem

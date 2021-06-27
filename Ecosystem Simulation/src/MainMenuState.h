@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SimulationState.h"
+#include "EcosystemCreatorState.h"
 #include "LoadingState.h"
 #include "Gui.h"
 
@@ -14,6 +15,7 @@ public:
 	// mutators:
 	virtual void freeze();
 
+	// other public methods:
 	virtual void update(float dt);
 	virtual void render(sf::RenderTarget* target = nullptr);
 

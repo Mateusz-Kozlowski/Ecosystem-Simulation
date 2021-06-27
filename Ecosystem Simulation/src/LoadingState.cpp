@@ -34,7 +34,7 @@ void LoadingState::update(float dt)
 
 	this->updateInput();
 
-	this->inputField->update(dt, *this->stateData->events);
+	this->inputField->update(dt, *this->stateData->events, this->mousePosWindow);
 
 	for (auto& it : this->buttons) it.second->update(this->mousePosWindow);
 
@@ -97,11 +97,19 @@ void LoadingState::initInputField()
 	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
 	this->inputField = new gui::InputField(
-		gui::p2pX(27.f, vm), gui::p2pY(37.9f, vm),
-		gui::p2pX(50.f, vm), gui::p2pY(7.f, vm),
+		sf::Vector2f(
+			gui::p2pX(27.f, vm), 
+			gui::p2pY(37.9f, vm)
+		),
+		sf::Vector2f(
+			gui::p2pX(50.f, vm), 
+			gui::p2pY(7.f, vm)
+		),
 		this->font, "ecosystems/1024a 1024f", gui::calcCharSize(vm, 32U),
-		sf::Color(100, 100, 100), sf::Color(225, 225, 225), sf::Color(64, 64, 64),
-		gui::p2pY(0.8f, vm), gui::p2pY(100.f / 1080.f, vm)
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.8f, vm), gui::p2pY(100.f / 1080.f, vm), 0.5f
 	);
 }
 

@@ -9,13 +9,14 @@ namespace gui
 	public:
 		// constructor:
 		InputField(
-			float pos_x, float pos_y, 
-			float width, float height,
-			const sf::Font& font, const std::string& default_text, float char_size,
-			sf::Color color, sf::Color text_color, sf::Color outline_color,
-			float outline_thickness, float cursor_width,
-			bool active = true,
-			int id = 0
+			const sf::Vector2f& position,
+			const sf::Vector2f& size,
+			const sf::Font& font, const std::string& default_str, float char_size,
+			const sf::Color& idle_color, const sf::Color& hovered_color, const sf::Color& pressed_color,
+			const sf::Color& outline_idle_color, const sf::Color& outline_hovered_color, const sf::Color& outline_pressed_color,
+			const sf::Color& text_idle_color, const sf::Color& text_hovered_color, const sf::Color& text_pressed_color,
+			float outline_thickness, float cursor_width, float cursor_frequency,
+			bool turned_on = true, int id = 0
 		);
 
 		// accessors:
@@ -23,46 +24,79 @@ namespace gui
 
 		const std::string& getInput() const;
 
-		bool isActive() const;
+		bool isTurnedOn() const;
 
-		bool hasBeenClicked(
-			const sf::Vector2f& mouse_pos_window,
-			const std::vector<sf::Event>& events
-		) const;
+		bool hasBeenTurnedOn() const;
 
 		// mutators:
-		void setActive(bool active);
+		void turnOn();
+		void turnOff();
+
+		void setString(const std::string& string);
 	
 		// other public methods:
-		void update(float dt, const std::vector<sf::Event>& events);
+		void update(float dt, const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window);
 		void render(sf::RenderTarget& target);
 
 	private:
+		sf::RectangleShape rect;
+		
 		const sf::Font& font;
 		
+		float char_size;
+		
+		sf::Text text;
+
 		std::string input;
 		
-		float char_size;
+		sf::RectangleShape cursor;
 
-		sf::Color color;
-		sf::Color textColor;
-		sf::Color outlineColor;
+		float stopwatch;
+		float cursorFrequency;
 
-		bool active;
+		bool cursorIsRendered;
+
+		std::unordered_map<std::string, std::unordered_map<std::string, sf::Color>> colors;
+
+		bool turnedOnBlockade;
+
+		bool turnedOn;
+		bool mHasBeenTurnedOn;
 
 		int id;
 
-		bool change;
+		std::string state;
 
-		sf::RectangleShape rect;
-		
-		sf::RectangleShape textCursor;
+		bool textHasChanged;
+		bool stateHasChanged;
 
-		sf::Text text;
+		// initialization:
+		void initRect(
+			const sf::Vector2f& position,
+			const sf::Vector2f& size,
+			const sf::Color& idle_color,
+			const sf::Color& outline_idle_color,
+			float outline_thickness
+		);
+		void initText(
+			const std::string& default_str,
+			unsigned char_size,
+			const sf::Color& text_idle_color
+		);
+		void initCursor(float cursor_width, const sf::Color& text_idle_color);
 
-		float stopwatch;
+		void initColors(
+			const sf::Color& idle_color, const sf::Color& hovered_color, const sf::Color& pressed_color,
+			const sf::Color& outline_idle_color, const sf::Color& outline_hovered_color, const sf::Color& outline_pressed_color,
+			const sf::Color& text_idle_color, const sf::Color& text_hovered_color, const sf::Color& text_pressed_color
+		);
 
-		// private methods:
-		void updateTextAndCursorPositions();
+		// other private methods:
+		void updateState(const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window);
+		void updateColors();
+		void handleTextEntering(const std::vector<sf::Event>& events);
+		void updateTextPosition();
+		void updateCursorPosition();
+		void updateCursorVisibility(float dt);
 	};
 }

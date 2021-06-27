@@ -11,7 +11,7 @@ GraphicsSettings::GraphicsSettings()
 	this->frameRateLimit = 144U;
 	this->contextSettings.antialiasingLevel = 0;
 	this->videoModes = sf::VideoMode::getFullscreenModes();
-	this->position = std::make_pair(0, 0);
+	this->position = { 0, 0 };
 }
 
 // methods:

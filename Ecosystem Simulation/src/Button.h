@@ -45,7 +45,7 @@ namespace gui
 		void setPosition(const sf::Vector2f& new_pos);
 
 		// other public methods:
-		void update(sf::Vector2i mouse_pos_window);
+		void update(const sf::Vector2i& mouse_pos_window);
 		void render(sf::RenderTarget& target);
 
 	private:

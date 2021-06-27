@@ -94,6 +94,9 @@
     <ClCompile Include="src\LoadingState.cpp">
       <Filter>states</Filter>
     </ClCompile>
+    <ClCompile Include="src\EcosystemCreatorState.cpp">
+      <Filter>states</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -270,6 +273,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\LoadingState.h">
+      <Filter>states</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EcosystemCreatorState.h">
       <Filter>states</Filter>
     </ClInclude>
   </ItemGroup>

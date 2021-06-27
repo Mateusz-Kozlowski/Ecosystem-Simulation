@@ -76,6 +76,9 @@ void App::initWindow()
 			this->gfxSettings.position.second
 		)
 	);
+
+	// TODO: what about that?:
+	//this->window->setKeyRepeatEnabled(true);
 }
 
 void App::initKeys()
