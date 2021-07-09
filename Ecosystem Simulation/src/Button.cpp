@@ -4,7 +4,7 @@
 using namespace gui;
 
 // constructor:
-gui::Button::Button(
+Button::Button(
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
 	const sf::Font& font, const std::string& text, unsigned char_size,
@@ -54,48 +54,48 @@ gui::Button::Button(
 }
 
 // accessors:
-bool gui::Button::isClicked() const
+bool Button::isClicked() const
 {
 	return this->clicked;
 }
 
-const std::string& gui::Button::getText() const
+const std::string& Button::getText() const
 {
 	return this->text.getString();
 }
 
-int gui::Button::getId() const
+int Button::getId() const
 {
 	return this->id;
 }
 
-ButtonState gui::Button::getState() const
+ButtonState Button::getState() const
 {
 	return this->state;
 }
 
-const sf::Vector2f& gui::Button::getPosition() const
+const sf::Vector2f& Button::getPosition() const
 {
 	return this->rect.getPosition();
 }
 
 // mutators:
-void gui::Button::setText(const std::string& text)
+void Button::setText(const std::string& text)
 {
 	this->text.setString(text);
 }
 
-void gui::Button::setId(int id)
+void Button::setId(int id)
 {
 	this->id = id;
 }
 
-void gui::Button::setClickBlockade(bool blockade)
+void Button::setClickBlockade(bool blockade)
 {
 	this->clickBlockade = blockade;
 }
 
-void gui::Button::setIdle()
+void Button::setIdle()
 {
 	this->state = ButtonState::BTN_IDLE;
 	this->rect.setFillColor(this->idleColor);
@@ -103,7 +103,7 @@ void gui::Button::setIdle()
 	this->text.setFillColor(this->textIdleColor);
 }
 
-void gui::Button::setHovered()
+void Button::setHovered()
 {
 	this->state = ButtonState::BTN_HOVERED;
 	this->rect.setFillColor(this->hoverColor);
@@ -111,7 +111,7 @@ void gui::Button::setHovered()
 	this->text.setFillColor(this->textHoverColor);
 }
 
-void gui::Button::setPosition(const sf::Vector2f& new_pos)
+void Button::setPosition(const sf::Vector2f& new_pos)
 {
 	this->rect.setPosition(new_pos);
 
@@ -124,7 +124,7 @@ void gui::Button::setPosition(const sf::Vector2f& new_pos)
 }
 
 // other public methods:
-void gui::Button::update(const sf::Vector2i& mouse_pos_window)
+void Button::update(const sf::Vector2i& mouse_pos_window)
 {
 	this->clicked = false;
 
@@ -156,7 +156,7 @@ void gui::Button::update(const sf::Vector2i& mouse_pos_window)
 	}
 	else if (this->state == ButtonState::BTN_IDLE)
 	{
-		if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window))) 
+		if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window)))
 			this->state = ButtonState::BTN_HOVERED;
 	}
 
@@ -180,7 +180,7 @@ void gui::Button::update(const sf::Vector2i& mouse_pos_window)
 	}
 }
 
-void gui::Button::render(sf::RenderTarget& target)
+void Button::render(sf::RenderTarget& target)
 {
 	target.draw(this->rect);
 	target.draw(this->text);

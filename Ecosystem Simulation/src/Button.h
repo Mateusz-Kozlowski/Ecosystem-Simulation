@@ -17,7 +17,7 @@ namespace gui
 			sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
 			sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
 			sf::Color text_idle_color, sf::Color text_hover_color, sf::Color text_pressed_color,
-			float outline_thickness = 1.f, int id = 0
+			float outline_thickness = 1.0f, int id = 0
 		);
 
 		// accessors:
