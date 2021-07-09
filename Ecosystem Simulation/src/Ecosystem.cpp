@@ -55,8 +55,8 @@ void Ecosystem::setUpEcosystemFolder(const std::string& folder_path)
 
 	for (float i = 0.f; i < fruitsCount; i++) 
 	{
-		Fruit f(10e2);
-		f.setRandomPos(worldSize, borderThickness);
+		Fruit f;
+		f.setRandomPosition(worldSize, borderThickness);
 		ss << f.getPosition().x << ' ' << f.getPosition().y << '\n';
 	}
 
@@ -292,8 +292,15 @@ void Ecosystem::initFruits(const std::string& folder_path)
 		file1 >> x;
 		file1 >> y;
 		
-		this->fruits.push_back(new Fruit(10e6)); // TODO: rmv that hardcoded variable!
-		this->fruits.back()->setPosition(x, y);
+		// TODO: rmv those hardcoded variables!:
+		this->fruits.push_back(
+			new Fruit(
+				10e6, 
+				sf::Vector2f(x, y),
+				8.f,
+				sf::Color::Green
+				)
+		);
 	}
 
 	std::cout << "FRUITS'RE DONE!\n";
@@ -403,12 +410,18 @@ void Ecosystem::removeDeadAnimals()
 
 void Ecosystem::convertKineticEnergyToFruit(Animal* animal, bool random_pos)
 {
-	this->fruits.push_back(new Fruit(animal->getKineticEnergy()));
+	// TODO: rmv that hardcoded variable!:
+	this->fruits.push_back(
+		new Fruit(
+			animal->getKineticEnergy(),
+			animal->getPosition(),
+			8.f,
+			sf::Color::Green
+		)
+	);
 	
 	if (random_pos)
-		this->fruits.back()->setRandomPos(this->worldSize, this->borderThickness);
-	else
-		this->fruits.back()->setPosition(animal->getPosition());
+		this->fruits.back()->setRandomPosition(this->worldSize, this->borderThickness);
 
 	animal->setVelocity(sf::Vector2f(0.0f, 0.0f));
 }
@@ -577,10 +590,17 @@ void Ecosystem::removeEatenFruit()
 
 void Ecosystem::convertAnimalToFruit(Animal*& animal)
 {
-	this->fruits.push_back(new Fruit(animal->getHp() + animal->getKineticEnergy()));
-	this->fruits.back()->setPosition(animal->getPosition());
+	this->fruits.push_back(
+		new Fruit(
+			animal->getHp() + animal->getKineticEnergy(),
+			animal->getPosition(),
+			8.f,
+			sf::Color::Green
+		)
+	);
 
-	if (animal == this->trackedAnimal) this->trackedAnimal = nullptr;
+	if (animal == this->trackedAnimal) 
+		this->trackedAnimal = nullptr;
 
 	this->removeAnimal(animal);
 }

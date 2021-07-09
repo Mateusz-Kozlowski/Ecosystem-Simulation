@@ -5,30 +5,54 @@
 class Fruit
 {
 public:
-	// constructor:
-	Fruit(float energy);
+	// constructors:
+	Fruit();
+	Fruit(
+		float energy,
+		const sf::Vector2f& position,
+		float radius,
+		const sf::Color& color
+	);
 
-	// mutators:
-	void setPosition(float x, float y);
-	void setPosition(const sf::Vector2f& new_position);
+	// public methods:
+	void saveToFile(const std::string& path) const;
+	void loadFromFile(const std::string& path);
 
-	void setRandomPos(const sf::Vector2f& worldSize, float bordersThickness);
-	void setEnergy(float energy);
-
-	// accessors:
-	const sf::Vector2f& getPosition() const;
-
-	float getRadius() const;
-
-	float getEnergy() const;
-
-	// other public methods:
 	void render(sf::RenderTarget& target) const;
 
 	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
 
+	// mutators:
+	void setEnergy(float energy);
+
+	void setPosition(float x, float y);
+	void setPosition(const sf::Vector2f& new_position);
+
+	void setRandomPosition(const sf::Vector2f& world_size, float borders_thickness);
+
+	void setRadius(float radius);
+
+	void setColor(const sf::Color& color);
+
+	// accessors:
+	float getEnergy() const;
+
+	const sf::Vector2f& getPosition() const;
+
+	float getRadius() const;
+
+	const sf::Color& getColor() const;
+
 private:
+	float energy;
+
 	sf::CircleShape shape;
 
-	float energy;
+	// private methods:
+	// initialization:
+	void initShape(
+		const sf::Vector2f& position,
+		float radius,
+		const sf::Color& color
+	);
 };
