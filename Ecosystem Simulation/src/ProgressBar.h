@@ -2,51 +2,84 @@
 
 #include "Gui.h"
 
-class ProgressBar
+namespace gui
 {
-public:
-	// constructor:
-	ProgressBar(
-		const sf::Vector2f& position, 
-		const sf::Vector2f& size,
-		const sf::Vector2f& range, float default_value,
-		sf::Color background_color, sf::Color progress_color,
-		bool correct_value_if_exceeds_range
-	);
+	class ProgressBar
+	{
+	public:
+		// constructors:
+		ProgressBar();
+		ProgressBar(
+			const sf::Vector2f& values_range,
+			bool correct_over_range_values,
+			float default_value,
+			const sf::Vector2f& position,
+			const sf::Vector2f& size,
+			const sf::Color& background_color,
+			const sf::Color& progress_rect_color
+		);
 
-	// accessors:
-	float getCurrentValue() const;
+		// public methods:
+		void render(sf::RenderTarget& target) const;
 
-	const sf::Vector2f& getPosition() const;
+		// accessors:
+		const sf::Vector2f& getValuesRange() const;
 
-	// mutators:
-	void increaseValue(float change);
+		bool overRangeValuesAreCorrected() const;
 
-	void setValue(float value);
+		float getCurrentValue() const;
 
-	void setPosition(const sf::Vector2f& position);
+		const sf::Vector2f& getPosition() const;
 
-	void setProgressColor(const sf::Color& color);
+		const sf::Vector2f& getSize() const;
 
-	// other public methods:
-	void render(sf::RenderTarget& target) const;
+		const sf::Color& getBackgroundColor() const;
 
-private:
-	sf::RectangleShape backgroundRect;
-	sf::RectangleShape progressRect;
+		const sf::Color& getProgressRectColor() const;
 
-	sf::Vector2f range;
+		// mutators:
+		void setValuesRange(const sf::Vector2f& values_range);
 
-	float value;
+		void setCorrectingOverRangeValues(bool correct_over_range_values);
 
-	bool correctValueIfExceedsRange;
+		void setValue(float value);
 
-	// initialization:
-	void initBackground(const sf::Vector2f& position, const sf::Vector2f& size, sf::Color background_color);
-	void initProgress(sf::Color progress_color);
+		void increaseValue(float value_increase);
 
-	// private utilities:
-	void avoidGoingBeyondRange();
+		void decreaseValue(float value_decrease);
 
-	void updateProgressRectSize();
-};
+		void setPosition(const sf::Vector2f& position);
+
+		void setSize(const sf::Vector2f& size);
+
+		void setBackgroundColor(const sf::Color& background_color);
+
+		void setProgressRectColor(const sf::Color& progress_rect_color);
+
+	private:
+		sf::Vector2f valuesRange;
+
+		bool mOverRangeValuesAreCorrected;
+
+		float value;
+
+		sf::RectangleShape background;
+		sf::RectangleShape progressRect;
+
+		// private methods:
+		// initialization:
+		void initBackground(
+			const sf::Vector2f& position,
+			const sf::Vector2f& size,
+			const sf::Color& background_color
+		);
+		void initProgressRect(const sf::Vector2f& position, const sf::Color& progress_color);
+
+		// private utilities:	
+		void avoidOverRangeValue();
+
+		void updateProgressRectSize();
+
+		float getRangeLength();
+	};
+}

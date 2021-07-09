@@ -252,7 +252,14 @@ void Animal::initMovementComponent()
 
 void Animal::initHpBar()
 {
-	this->hpBar = new ProgressBar(
+	// TODO: rmv that hardcoded variable!:
+	this->hpBar = new gui::ProgressBar(
+		sf::Vector2f(
+			0.f, 
+			this->maxHp
+		),
+		false,
+		this->maxHp,		
 		sf::Vector2f(
 			this->movementComponent->getPosition().x - 4.f * this->body.getRadius(),
 			this->movementComponent->getPosition().y - 3.f * this->body.getRadius()
@@ -261,9 +268,8 @@ void Animal::initHpBar()
 			8.f * this->body.getRadius(),
 			this->body.getRadius()
 		),
-		sf::Vector2f(0.f, this->maxHp), this->maxHp,
-		sf::Color(128, 128, 128), this->body.getFillColor(),
-		true
+		sf::Color(100, 100, 100),
+		this->getColor()
 	);
 }
 

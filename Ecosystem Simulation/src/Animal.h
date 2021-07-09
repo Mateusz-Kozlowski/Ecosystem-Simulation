@@ -86,7 +86,7 @@ private:
 	bool hpBarIsRendered;
 	bool brainIsRendered;
 
-	ProgressBar* hpBar;
+	gui::ProgressBar* hpBar;
 	NeuralNetPreview* brainPreview;
 
 	// private initialization:
