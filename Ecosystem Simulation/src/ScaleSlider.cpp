@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "ScaleSlider.h"
 
+using namespace gui;
+
 // constructor:
-gui::ScaleSlider::ScaleSlider(
+ScaleSlider::ScaleSlider(
 	const sf::Vector2f& position,
 	float textures_scale,
 	const std::pair<float, float>& range,
@@ -13,7 +15,7 @@ gui::ScaleSlider::ScaleSlider(
 	const std::string& axis_pressed_path, const std::string& handle_pressed_path,
 	const std::string& scale_function)
 	: state("IDLE"), range(range), notSnappingToEdgesRange(not_snapping_to_edges_range),
-	  value(default_value), scaleFunction(scale_function)
+	value(default_value), scaleFunction(scale_function)
 {
 	this->initTextures(
 		axis_idle_path, handle_idle_path,
@@ -26,23 +28,23 @@ gui::ScaleSlider::ScaleSlider(
 }
 
 // accessors:
-float gui::ScaleSlider::getCurrentValue() const
+float ScaleSlider::getCurrentValue() const
 {
 	return this->value;
 }
 
-const sf::Vector2f& gui::ScaleSlider::getPosition() const
+const sf::Vector2f& ScaleSlider::getPosition() const
 {
 	return this->axis.at(this->state).getPosition();
 }
 
 // mutators:
-void gui::ScaleSlider::setValue(float value)
+void ScaleSlider::setValue(float value)
 {
 	if (value < this->range.first || value > this->range.second)
 	{
-		std::cerr << "ERROR::gui::ScaleSlider::setValue::ARGUMENT IS NOT IN RANGE ("
-				  << value << "DOESN'T BELONG TO <" << this->range.first << "; " << this->range.second << ">)\n";
+		std::cerr << "ERROR::ScaleSlider::setValue::ARGUMENT IS NOT IN RANGE ("
+			<< value << "DOESN'T BELONG TO <" << this->range.first << "; " << this->range.second << ">)\n";
 		exit(-1);
 	}
 
@@ -54,7 +56,7 @@ void gui::ScaleSlider::setValue(float value)
 	for (auto& it : this->handle)
 	{
 		float offsetX = (this->inverseScaleFunction(this->value) / (this->range.second - this->range.first));
-			
+
 		offsetX *= this->axis["IDLE"].getGlobalBounds().width;
 
 		offsetX -= this->handle["IDLE"].getGlobalBounds().width / 2.f;
@@ -66,16 +68,16 @@ void gui::ScaleSlider::setValue(float value)
 	}
 }
 
-void gui::ScaleSlider::setPosition(const sf::Vector2f& new_pos)
+void ScaleSlider::setPosition(const sf::Vector2f& new_pos)
 {
 	for (auto& axis : this->axis) axis.second.setPosition(new_pos);
-	
+
 	// set handle position taking the current scale slider value into account:
 	this->setValue(this->value);
 }
 
 // other public methods:
-void gui::ScaleSlider::update(sf::Vector2i mousePosWindow)
+void ScaleSlider::update(sf::Vector2i mousePosWindow)
 {
 	if (this->state == "IDLE")
 	{
@@ -135,14 +137,14 @@ void gui::ScaleSlider::update(sf::Vector2i mousePosWindow)
 	this->snapToEdges();
 }
 
-void gui::ScaleSlider::render(sf::RenderTarget& target)
+void ScaleSlider::render(sf::RenderTarget& target)
 {
 	target.draw(this->axis[this->state]);
 	target.draw(this->handle[this->state]);
 }
 
 // initialization:
-void gui::ScaleSlider::initTextures(
+void ScaleSlider::initTextures(
 	const std::string& axis_idle_path, const std::string& handle_idle_path,
 	const std::string& axis_hover_path, const std::string& handle_hover_path,
 	const std::string& axis_pressed_path, const std::string& handle_pressed_path)
@@ -164,7 +166,7 @@ void gui::ScaleSlider::initTextures(
 	}
 }
 
-void gui::ScaleSlider::initSprites(const sf::Vector2f& position, float textures_scale)
+void ScaleSlider::initSprites(const sf::Vector2f& position, float textures_scale)
 {
 	// creating the axis:		
 	for (auto& it : this->axisTextures)
@@ -201,35 +203,35 @@ void gui::ScaleSlider::initSprites(const sf::Vector2f& position, float textures_
 
 		float posX = left + this->axis["IDLE"].getGlobalBounds().width / 2.f - temp.getGlobalBounds().width / 2.f;
 		float posY = this->axis["IDLE"].getGlobalBounds().top;
-		
+
 		temp.setPosition(posX, posY);
 
 		this->handle[it.first] = temp;
 	}
 }
 
-float gui::ScaleSlider::inverseScaleFunction(float y)
+float ScaleSlider::inverseScaleFunction(float y)
 {
 	if (this->scaleFunction == "linear") return y;
 
 	else if (this->scaleFunction == "quadratic") return sqrt(y);
 
-	std::cerr << "ERROR::gui::ScaleSlider::inverseScaleFunction::THERE IS NO: " << this->scaleFunction << " ACTIVATION FUNCTION\n";
+	std::cerr << "ERROR::ScaleSlider::inverseScaleFunction::THERE IS NO: " << this->scaleFunction << " ACTIVATION FUNCTION\n";
 	exit(-1);
 }
 
-float gui::ScaleSlider::scaleFunctionValue(float x)
+float ScaleSlider::scaleFunctionValue(float x)
 {
 	if (this->scaleFunction == "linear") return x;
 
 	else if (this->scaleFunction == "quadratic") return pow(x, 2);
 
-	std::cerr << "ERROR::gui::ScaleSlider::scaleFunctionValue::THERE IS NO: " << this->scaleFunction << " ACTIVATION FUNCTION\n";
+	std::cerr << "ERROR::ScaleSlider::scaleFunctionValue::THERE IS NO: " << this->scaleFunction << " ACTIVATION FUNCTION\n";
 	exit(-1);
 }
 
 // private utilities:
-void gui::ScaleSlider::updateCurrentValue()
+void ScaleSlider::updateCurrentValue()
 {
 	float x = this->handle[this->state].getPosition().x + this->handle[this->state].getGlobalBounds().width / 2.f;
 
@@ -239,7 +241,7 @@ void gui::ScaleSlider::updateCurrentValue()
 	this->value = this->scaleFunctionValue(this->range.first + (this->range.second - this->range.first) * (x - left) / (right - left));
 }
 
-void gui::ScaleSlider::snapToEdges()
+void ScaleSlider::snapToEdges()
 {
 	if (this->value < this->notSnappingToEdgesRange.first) this->setValue(this->range.first);
 
