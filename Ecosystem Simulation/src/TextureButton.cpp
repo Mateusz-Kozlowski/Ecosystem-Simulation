@@ -16,32 +16,32 @@ TextureButton::TextureButton(
 }
 
 // accessors:
-bool gui::TextureButton::hasBeenClicked() const
+bool TextureButton::hasBeenClicked() const
 {
 	return this->hasBeenClickedSinceLastFrame;
 }
 
-bool gui::TextureButton::isPressed() const
+bool TextureButton::isPressed() const
 {
 	return this->pressed;
 }
 
-bool gui::TextureButton::isHovered() const
+bool TextureButton::isHovered() const
 {
 	return this->hovered;
 }
 
-const std::string& gui::TextureButton::getCurrentTextureKey() const
+const std::string& TextureButton::getCurrentTextureKey() const
 {
 	return this->currentTextureKey;
 }
 
-const sf::Vector2f& gui::TextureButton::getPosition() const
+const sf::Vector2f& TextureButton::getPosition() const
 {
 	return this->sprite.getPosition();
 }
 
-const sf::Vector2f& gui::TextureButton::getSize() const
+const sf::Vector2f& TextureButton::getSize() const
 {
 	return sf::Vector2f(this->sprite.getLocalBounds().width, this->sprite.getLocalBounds().height);
 }
@@ -54,13 +54,13 @@ void TextureButton::setTexture(const std::string& key)
 	this->currentTextureKey = key;
 }
 
-void gui::TextureButton::setPosition(const sf::Vector2f& new_pos)
+void TextureButton::setPosition(const sf::Vector2f& new_pos)
 {
 	this->sprite.setPosition(new_pos);
 }
 
 // other public methods:
-void gui::TextureButton::update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events)
+void TextureButton::update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events)
 {
 	this->hasBeenClickedSinceLastFrame = false;
 	this->pressed = false;
@@ -93,18 +93,18 @@ void TextureButton::render(sf::RenderTarget& target) const
 
 // private methods:
 // initialization:
-void gui::TextureButton::initTextures(const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths)
+void TextureButton::initTextures(const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths)
 {
 	for (const auto& it : textures_keys_and_paths)
-	{		
+	{
 		if (!this->textures[it.first].loadFromFile(it.second))
 			throw("ERROR::TEXTUREBUTTON::CANNOT LOAD FROM FILE: " + it.second);
 	}
 }
 
-void gui::TextureButton::initSprite(
-	const std::string& key_of_default_texture, 
-	const sf::Vector2f& position, 
+void TextureButton::initSprite(
+	const std::string& key_of_default_texture,
+	const sf::Vector2f& position,
 	const sf::Vector2f& size)
 {
 	this->sprite.setTexture(this->textures[key_of_default_texture]);
