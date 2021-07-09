@@ -16,9 +16,9 @@ NeuralNet::NeuralNet()
 NeuralNet::~NeuralNet()
 {
 	delete this->inputLayer;
-	
+
 	for (auto& hiddenLayer : this->hiddenLayers) delete hiddenLayer;
-	
+
 	delete this->outputLayer;
 
 	this->deallocateAllMemoryAssociatedWithWeights();
@@ -27,27 +27,27 @@ NeuralNet::~NeuralNet()
 void CrappyNeuralNets::NeuralNet::copyConstructor(const CrappyNeuralNets::NeuralNet& neural_net)
 {
 	*this->inputLayer = *neural_net.inputLayer;
-	
+
 	this->hiddenLayers.resize(neural_net.getHiddenLayers().size());
 	for (int i = 0; i < neural_net.getHiddenLayers().size(); i++)
 	{
 		this->hiddenLayers[i]->copyConstructor(*neural_net.getHiddenLayers()[i]);
 	}
-	
+
 	this->outputLayer->copyConstructor(*neural_net.getOutputLayer());
 
 	this->weights.resize(neural_net.getWeights().size());
-	for (int i = 0; i < neural_net.getWeights().size(); i++) 
+	for (int i = 0; i < neural_net.getWeights().size(); i++)
 		*this->weights[i] = *neural_net.getWeights()[i];
 
 	this->transposedWeights.resize(neural_net.getTransposedWeights().size());
-	for (int i = 0; i < neural_net.getTransposedWeights().size(); i++) 
+	for (int i = 0; i < neural_net.getTransposedWeights().size(); i++)
 		*this->transposedWeights[i] = *neural_net.getTransposedWeights()[i];
 
 	this->weightsGradient.resize(neural_net.getWeightsGradient().size());
 	for (int i = 0; i < neural_net.getWeightsGradient().size(); i++)
 		*this->getWeightsGradient()[i] = *neural_net.getWeightsGradient()[i];
-	
+
 	this->biasesGradient = neural_net.biasesGradient;
 	this->randomWeightsRange = neural_net.randomWeightsRange;
 	this->string = neural_net.string;
@@ -61,7 +61,8 @@ void NeuralNet::initInputLayer(InputLayer* input_layer)
 
 	// TODO: add info about deallocation
 
-	if (this->inputLayer) delete this->inputLayer;
+	if (this->inputLayer)
+		delete this->inputLayer;
 
 	this->inputLayer = input_layer;
 
@@ -82,7 +83,7 @@ void NeuralNet::initOutputLayer(OutputLayer* output_layer)
 	assert(output_layer != nullptr);
 
 	// TODO: add info about deallocation
-	
+
 	delete this->outputLayer;
 
 	this->outputLayer = output_layer;
@@ -93,11 +94,11 @@ void NeuralNet::initOutputLayer(OutputLayer* output_layer)
 void NeuralNet::compile()
 {
 	// sets all weights to random values resets gradients
-	
+
 	assert(this->inputLayer != nullptr && this->outputLayer != nullptr);
 
 	this->initRandomWeights();
-	
+
 	this->initBiasesGradient();
 
 	this->isCompiled = true;
@@ -135,7 +136,7 @@ bool NeuralNet::loadFromFile(const std::string& file_path)
 	this->hiddenLayers.clear();
 
 	//delete this->outputLayer; // initOutputLayer function will deallocate memory
-	
+
 	// create new architecture:
 	for (int i = 0; i < layers_count; i++)
 	{
@@ -177,7 +178,7 @@ bool NeuralNet::loadFromFile(const std::string& file_path)
 
 		this->addHiddenLayer(new HiddenLayer(size, activationFunction, dropoutRate));
 	}
-	
+
 	// weights:
 	this->deallocateAllMemoryAssociatedWithWeights();
 
@@ -217,7 +218,7 @@ bool NeuralNet::loadFromFile(const std::string& file_path)
 	file.close();
 
 	this->initBiasesGradient();
-	
+
 	this->isCompiled = true;
 
 	return true;
@@ -279,8 +280,8 @@ const std::string& NeuralNet::toString()
 }
 
 void NeuralNet::train(
-	std::vector<std::vector<Scalar>>& inputs, 
-	std::vector<std::vector<Scalar>>& desired_outputs, 
+	std::vector<std::vector<Scalar>>& inputs,
+	std::vector<std::vector<Scalar>>& desired_outputs,
 	unsigned epochs_count,
 	const std::string& loss_function,
 	unsigned mini_batch_size,
@@ -292,22 +293,22 @@ void NeuralNet::train(
 	assert(epochs_count >= 1U);
 	assert(mini_batch_size <= inputs.size());
 	assert(learning_rate > 0.0);
-	
+
 	if (!mini_batch_size) mini_batch_size = inputs.size();
 
 	for (int i = 0; i < epochs_count; i++)
 	{
 		if (logs) std::cout << "Epoch " << i + 1 << "/" << epochs_count << "\n\n";
-		
+
 		this->learningEpoch(inputs, desired_outputs, loss_function, mini_batch_size, learning_rate, logs);
 	}
 }
 
 void NeuralNet::train(
-	std::vector<std::vector<Scalar>>& inputs, 
-	std::vector<std::vector<Scalar>>& desired_outputs, 
-	const std::vector<std::vector<Scalar>>& validation_data_inputs, 
-	const std::vector<std::vector<Scalar>>& validation_data_outputs, 
+	std::vector<std::vector<Scalar>>& inputs,
+	std::vector<std::vector<Scalar>>& desired_outputs,
+	const std::vector<std::vector<Scalar>>& validation_data_inputs,
+	const std::vector<std::vector<Scalar>>& validation_data_outputs,
 	unsigned epochs_count,
 	const std::string& loss_function,
 	unsigned mini_batch_size,
@@ -360,11 +361,11 @@ bool NeuralNet::saveCurrentOutputsToFile(const std::string& file_path, const std
 	std::string directoryPath = this->extractDirectoryPath(file_path);
 
 	if (directoryPath != "") std::filesystem::create_directories(directoryPath);
-	
+
 	// if it/they had already existed then nothing bad will happen
 
 	std::ofstream file(file_path);
-		
+
 	if (!file.good())
 	{
 		std::stringstream ss;
@@ -373,9 +374,9 @@ bool NeuralNet::saveCurrentOutputsToFile(const std::string& file_path, const std
 		ss << "THERE IS STH WRONG WITH THIS FILE : " << file_path << "\n\n";
 
 		ss << "If u want to continue program anyway please press any key...";
-		
+
 		std::cerr << ss.str();
-		
+
 		std::cin.get();
 		std::cout << '\n';
 
@@ -396,7 +397,7 @@ bool NeuralNet::saveToFile(const std::string& file_path) const
 	std::string directoryPath = this->extractDirectoryPath(file_path);
 
 	if (directoryPath != "") std::filesystem::create_directories(directoryPath);
-	
+
 	// if it/they had already existed then nothing bad will happen
 
 	std::ofstream file(file_path);
@@ -404,7 +405,7 @@ bool NeuralNet::saveToFile(const std::string& file_path) const
 	if (!file.good())
 	{
 		std::stringstream ss;
-		
+
 		ss << "\nERROR: void NeuralNet::saveToFile(const char* path) const: CANNOT OPEN: " << file_path << "\n\n";
 
 		ss << "If u want to continue program anyway please press any key...";
@@ -473,7 +474,7 @@ void NeuralNet::randomMutate(const Scalar& mutation_percentage)
 
 				this->transposedWeights[i]->setValue(
 					{ k, j },
-					this->transposedWeights[i]->getValue({ k, j }) + 
+					this->transposedWeights[i]->getValue({ k, j }) +
 					this->transposedWeights[i]->getValue({ k, j }) * mutation / 100.0
 				);
 			}
@@ -619,7 +620,7 @@ std::vector<unsigned> NeuralNet::getCurrentTopology() const
 
 // learning:
 void NeuralNet::learningEpoch(
-	std::vector<std::vector<Scalar>>& inputs, 
+	std::vector<std::vector<Scalar>>& inputs,
 	std::vector<std::vector<Scalar>>& desired_outputs,
 	const std::string& loss_function,
 	unsigned mini_batch_size,
@@ -683,7 +684,7 @@ void NeuralNet::feedForward(const std::vector<Scalar>& inputs)
 }
 
 void NeuralNet::backpropagateErrors(
-	const std::vector<Scalar>& desired_outputs, 
+	const std::vector<Scalar>& desired_outputs,
 	const std::string& loss_function)
 {
 	// output layer:
@@ -845,7 +846,7 @@ void NeuralNet::updateWeights(const Scalar& learning_rate, const Scalar& mini_ba
 			{
 				this->weights[i]->setValue(
 					{ j, k },
-					this->weights[i]->getValue({ j, k }) - 
+					this->weights[i]->getValue({ j, k }) -
 					learning_rate * this->weightsGradient[i]->getValue({ j, k }) / mini_batch_size
 				);
 			}
@@ -875,7 +876,7 @@ void NeuralNet::updateBiases(const Scalar& learning_rate, const Scalar& mini_bat
 		{
 			this->hiddenLayers[i]->setBias(
 				j,
-				this->hiddenLayers[i]->getNeurons()[j]->getBias() - 
+				this->hiddenLayers[i]->getNeurons()[j]->getBias() -
 				learning_rate * this->biasesGradient[i][j] / mini_batch_size
 			);
 		}
@@ -886,18 +887,20 @@ void NeuralNet::updateBiases(const Scalar& learning_rate, const Scalar& mini_bat
 	{
 		this->outputLayer->setBias(
 			i,
-			this->outputLayer->getNeurons()[i]->getBias() - 
+			this->outputLayer->getNeurons()[i]->getBias() -
 			learning_rate * this->biasesGradient[this->biasesGradient.size() - 1][i] / mini_batch_size
 		);
 	}
 
 	// reset biases gradient:
-	for (auto& v : this->biasesGradient) for (auto& biasGradient : v) biasGradient = 0.0;
+	for (auto& v : this->biasesGradient) 
+		for (auto& biasGradient : v) 
+			biasGradient = 0.0;
 }
 
 // other helpers:
 void NeuralNet::randomShuffle(
-	std::vector<std::vector<Scalar>>& inputs, 
+	std::vector<std::vector<Scalar>>& inputs,
 	std::vector<std::vector<Scalar>>& desired_outputs) const
 {
 	for (int i = 0; i < inputs.size(); i++)
@@ -912,8 +915,8 @@ void NeuralNet::randomShuffle(
 }
 
 Scalar NeuralNet::validateClassification(
-	const std::vector<std::vector<Scalar>>& validation_data_inputs, 
-	const std::vector<std:: vector<Scalar>>& validation_data_outputs)
+	const std::vector<std::vector<Scalar>>& validation_data_inputs,
+	const std::vector<std::vector<Scalar>>& validation_data_outputs)
 {
 	unsigned goodAnswers = 0U;
 
