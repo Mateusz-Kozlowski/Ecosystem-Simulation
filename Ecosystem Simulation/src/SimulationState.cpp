@@ -157,7 +157,7 @@ void SimulationState::initSideMenu()
 	// add widgets:
 	this->sideMenu->addCenteredText(
 		gui::p2pY(4.f, resolution),
-		gui::calcCharSize(resolution, 26.f),
+		gui::calcCharSize(26.0f, resolution),
 		this->fonts["CONSOLAB"],
 		"PLAY/STOP:",
 		sf::Color(225, 225, 225)
@@ -187,7 +187,7 @@ void SimulationState::initSideMenu()
 
 	this->sideMenu->addCenteredText(
 		gui::p2pY(19.5f, resolution),
-		gui::calcCharSize(resolution, 26.f),
+		gui::calcCharSize(26.0f, resolution),
 		this->fonts["CONSOLAB"],
 		"SPEED:",
 		sf::Color(225, 225, 225)
@@ -216,7 +216,7 @@ void SimulationState::initSideMenu()
 
 	this->sideMenu->addCenteredText(
 		gui::p2pY(34.f, resolution),
-		gui::calcCharSize(resolution, 26.f),
+		gui::calcCharSize(26.0f, resolution),
 		this->fonts["CONSOLAB"],
 		"MOVE THIS PANEL:",
 		sf::Color(225, 225, 225)
@@ -249,7 +249,7 @@ void SimulationState::initSideMenu()
 
 	this->sideMenu->addCenteredText(
 		gui::p2pY(72.f, resolution),
-		gui::calcCharSize(resolution, 26.f),
+		gui::calcCharSize(26.0f, resolution),
 		this->fonts["CONSOLAB"],
 		"ZOOM:",
 		sf::Color(225, 225, 225)
@@ -301,7 +301,7 @@ void SimulationState::initSideMenu()
 			gui::p2pX(18.f, resolution), 
 			gui::p2pY(3.f * 7.f / 4.f, resolution)
 		),
-		gui::calcCharSize(resolution, 28U),
+		gui::calcCharSize(28.0f, resolution),
 		this->fonts["CONSOLAB"],
 		"QUIT",
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
@@ -321,7 +321,7 @@ void SimulationState::initGodToolsGui()
 	// init God tools GUI:
 	this->sideMenu->addCenteredText(
 		gui::p2pY(50.f, resolution),
-		gui::calcCharSize(resolution, 26.f),
+		gui::calcCharSize(26.0f, resolution),
 		this->fonts["CONSOLAB"],
 		"GOD TOOLS:",
 		sf::Color(225, 225, 225)

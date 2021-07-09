@@ -94,59 +94,59 @@ void LoadingState::initFonts()
 
 void LoadingState::initInputField()
 {
-	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
 	this->inputField = new gui::InputField(
 		sf::Vector2f(
-			gui::p2pX(27.f, vm), 
-			gui::p2pY(37.9f, vm)
+			gui::p2pX(27.f, resolution), 
+			gui::p2pY(37.9f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(50.f, vm), 
-			gui::p2pY(7.f, vm)
+			gui::p2pX(50.f, resolution), 
+			gui::p2pY(7.f, resolution)
 		),
-		this->font, "ecosystems/1024a 1024f", gui::calcCharSize(vm, 32U),
+		this->font, "ecosystems/1024a 1024f", gui::calcCharSize(32.0f, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.8f, vm), gui::p2pY(100.f / 1080.f, vm), 0.5f
+		gui::p2pY(0.8f, resolution), gui::p2pY(100.f / 1080.f, resolution), 0.5f
 	);
 }
 
 void LoadingState::initButtons()
 {
-	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
 	this->buttons["LOAD"] = new gui::Button(
 		sf::Vector2f(
-			gui::p2pX(27.f, vm),
-			gui::p2pY(54.3f, vm)
+			gui::p2pX(27.f, resolution),
+			gui::p2pY(54.3f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(24.f, vm),
-			gui::p2pY(7.f, vm)
+			gui::p2pX(24.f, resolution),
+			gui::p2pY(7.f, resolution)
 		),
-		this->font, "LOAD", gui::calcCharSize(vm, 32),
+		this->font, "LOAD", gui::calcCharSize(32.0f, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.8f, vm), 0
+		gui::p2pY(0.8f, resolution), 0
 	);
 
 	this->buttons["QUIT"] = new gui::Button(
 		sf::Vector2f(
-			gui::p2pX(53.f, vm),
-			gui::p2pY(54.3f, vm)
+			gui::p2pX(53.f, resolution),
+			gui::p2pY(54.3f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(24.f, vm),
-			gui::p2pY(7.f, vm)
+			gui::p2pX(24.f, resolution),
+			gui::p2pY(7.f, resolution)
 		),
-		this->font, "QUIT", gui::calcCharSize(vm, 32),
+		this->font, "QUIT", gui::calcCharSize(32.0f, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.8f, vm), 1
+		gui::p2pY(0.8f, resolution), 1
 	);
 }
 
