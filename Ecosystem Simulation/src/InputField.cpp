@@ -4,20 +4,20 @@
 using namespace gui;
 
 // constructor:
-gui::InputField::InputField(
-    const sf::Vector2f& position, 
-    const sf::Vector2f& size, 
-    const sf::Font& font, const std::string& default_str, float char_size, 
+InputField::InputField(
+    const sf::Vector2f& position,
+    const sf::Vector2f& size,
+    const sf::Font& font, const std::string& default_str, float char_size,
     const sf::Color& idle_color, const sf::Color& hovered_color, const sf::Color& pressed_color,
     const sf::Color& outline_idle_color, const sf::Color& outline_hovered_color, const sf::Color& outline_pressed_color,
     const sf::Color& text_idle_color, const sf::Color& text_hovered_color, const sf::Color& text_pressed_color,
     float outline_thickness, float cursor_width, float cursor_frequency,
     bool turned_on, int id)
     : font(font), char_size(char_size), input(default_str),
-      stopwatch(0.f), cursorFrequency(cursor_frequency), cursorIsRendered(false),
-      turnedOnBlockade(false), turnedOn(turned_on), mHasBeenTurnedOn(false), id(id),
-      state("IDLE"),
-      textHasChanged(false), stateHasChanged(false)
+    stopwatch(0.f), cursorFrequency(cursor_frequency), cursorIsRendered(false),
+    turnedOnBlockade(false), turnedOn(turned_on), mHasBeenTurnedOn(false), id(id),
+    state("IDLE"),
+    textHasChanged(false), stateHasChanged(false)
 {
     this->initRect(position, size, idle_color, outline_idle_color, outline_thickness);
     this->initText(default_str, char_size, text_idle_color);
@@ -29,40 +29,40 @@ gui::InputField::InputField(
 }
 
 // accessors:
-int gui::InputField::getId() const
+int InputField::getId() const
 {
     return this->id;
 }
 
-const std::string& gui::InputField::getInput() const
+const std::string& InputField::getInput() const
 {
     return this->input;
 }
 
-bool gui::InputField::isTurnedOn() const
+bool InputField::isTurnedOn() const
 {
     return this->turnedOn;
 }
 
-bool gui::InputField::hasBeenTurnedOn() const
+bool InputField::hasBeenTurnedOn() const
 {
     return this->mHasBeenTurnedOn;
 }
 
 // mutators:
-void gui::InputField::turnOn()
+void InputField::turnOn()
 {
     this->turnedOn = true;
 }
 
-void gui::InputField::turnOff()
+void InputField::turnOff()
 {
     this->turnedOn = false;
 
     this->cursor.setFillColor(sf::Color::Transparent);
 }
 
-void gui::InputField::setString(const std::string& string)
+void InputField::setString(const std::string& string)
 {
     this->text.setString(string);
     this->updateTextPosition();
@@ -71,17 +71,17 @@ void gui::InputField::setString(const std::string& string)
 }
 
 // other public methods:
-void gui::InputField::update(
-    float dt, 
-    const std::vector<sf::Event>& events, 
+void InputField::update(
+    float dt,
+    const std::vector<sf::Event>& events,
     const sf::Vector2i& mouse_pos_window)
 {
     this->updateState(events, mouse_pos_window);
-    
+
     if (this->stateHasChanged) this->updateColors();
 
     if (!this->turnedOn) return;
-    
+
     this->handleTextEntering(events);
 
     if (this->textHasChanged)
@@ -93,18 +93,18 @@ void gui::InputField::update(
     this->updateCursorVisibility(dt);
 }
 
-void gui::InputField::render(sf::RenderTarget& target)
+void InputField::render(sf::RenderTarget& target)
 {
     target.draw(this->rect);
     target.draw(this->text);
-    
+
     if (this->cursorIsRendered) target.draw(this->cursor);
 }
 
 // initialization:
-void gui::InputField::initRect(
-    const sf::Vector2f& position, 
-    const sf::Vector2f& size, 
+void InputField::initRect(
+    const sf::Vector2f& position,
+    const sf::Vector2f& size,
     const sf::Color& idle_color,
     const sf::Color& outline_idle_color,
     float outline_thickness)
@@ -117,9 +117,9 @@ void gui::InputField::initRect(
     this->rect.setOutlineColor(outline_idle_color);
 }
 
-void gui::InputField::initText(
-    const std::string& default_str, 
-    unsigned char_size, 
+void InputField::initText(
+    const std::string& default_str,
+    unsigned char_size,
     const sf::Color& text_idle_color)
 {
     this->text.setString(default_str);
@@ -136,7 +136,7 @@ void gui::InputField::initText(
     );
 }
 
-void gui::InputField::initCursor(float cursor_width, const sf::Color& text_idle_color)
+void InputField::initCursor(float cursor_width, const sf::Color& text_idle_color)
 {
     this->cursor.setOrigin(0.f, this->char_size / 2.f);
     this->cursor.setSize(sf::Vector2f(cursor_width, char_size));
@@ -147,8 +147,8 @@ void gui::InputField::initCursor(float cursor_width, const sf::Color& text_idle_
     );
 }
 
-void gui::InputField::initColors(
-    const sf::Color& idle_color, const sf::Color& hovered_color, const sf::Color& pressed_color, 
+void InputField::initColors(
+    const sf::Color& idle_color, const sf::Color& hovered_color, const sf::Color& pressed_color,
     const sf::Color& outline_idle_color, const sf::Color& outline_hovered_color, const sf::Color& outline_pressed_color,
     const sf::Color& text_idle_color, const sf::Color& text_hovered_color, const sf::Color& text_pressed_color)
 {
@@ -166,7 +166,7 @@ void gui::InputField::initColors(
 }
 
 // other private methods:
-void gui::InputField::updateState(const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window)
+void InputField::updateState(const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window)
 {
     this->mHasBeenTurnedOn = false;
     this->stateHasChanged = false;
@@ -213,7 +213,7 @@ void gui::InputField::updateState(const std::vector<sf::Event>& events, const sf
     }
 }
 
-void gui::InputField::updateColors()
+void InputField::updateColors()
 {
     this->rect.setFillColor(this->colors["INPUT FIELD"][this->state]);
 
@@ -224,7 +224,7 @@ void gui::InputField::updateColors()
     this->cursor.setFillColor(this->colors["TEXT"][this->state]);
 }
 
-void gui::InputField::handleTextEntering(const std::vector<sf::Event>& events)
+void InputField::handleTextEntering(const std::vector<sf::Event>& events)
 {
     this->textHasChanged = false;
 
@@ -246,7 +246,7 @@ void gui::InputField::handleTextEntering(const std::vector<sf::Event>& events)
         }
 }
 
-void gui::InputField::updateTextPosition()
+void InputField::updateTextPosition()
 {
     this->text.setOrigin(
         this->text.getGlobalBounds().width / 2.f,
@@ -258,7 +258,7 @@ void gui::InputField::updateTextPosition()
     );
 }
 
-void gui::InputField::updateCursorPosition()
+void InputField::updateCursorPosition()
 {
     this->cursor.setPosition(
         this->text.getGlobalBounds().left + this->text.getGlobalBounds().width + this->cursor.getSize().x,
@@ -266,7 +266,7 @@ void gui::InputField::updateCursorPosition()
     );
 }
 
-void gui::InputField::updateCursorVisibility(float dt)
+void InputField::updateCursorVisibility(float dt)
 {
     this->stopwatch += dt;
 
