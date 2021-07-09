@@ -30,6 +30,8 @@ void App::run()
 {
 	while (this->window->isOpen())
 	{
+		// TODO: if a new state has been pushed on states stack then it will be rendered before updating
+
 		this->updateDt();
 		this->update();
 		this->render();
@@ -67,9 +69,9 @@ void App::initWindow()
 		);
 
 	this->window->setFramerateLimit(this->gfxSettings.frameRateLimit);
-	
+
 	this->window->setVerticalSyncEnabled(this->gfxSettings.verticalSync);
-	
+
 	this->window->setPosition(
 		sf::Vector2i(
 			this->gfxSettings.position.first,
@@ -142,7 +144,7 @@ void App::update()
 				if (!this->states.empty())
 				{
 					this->states.top()->freeze();
-					this->update();
+					this->update(); // first update new top of states stack and then render it
 				}
 
 				else this->window->close();
@@ -159,7 +161,7 @@ void App::updateEvents()
 	while (this->window->pollEvent(this->event))
 	{
 		if (this->event.type == sf::Event::Closed) this->window->close();
-		
+
 		this->events.push_back(this->event);
 	}
 }
