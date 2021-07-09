@@ -25,7 +25,7 @@ namespace CrappyNeuralNets
     private:
         Scalar dropoutRate;
 
-        std::vector<Scalar> velocity;
+        std::vector<Scalar> v;
 
         // private methods:
         void dropout();

@@ -442,8 +442,8 @@ bool NeuralNet::saveToFile(const std::string& file_path) const
 
 	// weights:
 	for (auto& matrix : this->weights)
-		for (auto& velocity : matrix->getValues())
-			for (auto& c : velocity) ss << '\n' << c;
+		for (auto& v : matrix->getValues())
+			for (auto& c : v) ss << '\n' << c;
 
 	file << ss.str();
 
@@ -892,7 +892,7 @@ void NeuralNet::updateBiases(const Scalar& learning_rate, const Scalar& mini_bat
 	}
 
 	// reset biases gradient:
-	for (auto& velocity : this->biasesGradient) for (auto& biasGradient : velocity) biasGradient = 0.0;
+	for (auto& v : this->biasesGradient) for (auto& biasGradient : v) biasGradient = 0.0;
 }
 
 // other helpers:
