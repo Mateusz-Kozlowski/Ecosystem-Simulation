@@ -19,9 +19,9 @@ public:
 
 private:
 	bool paused;
-	
+
 	std::unordered_map<std::string, sf::Font> fonts;
-	
+
 	sf::View view;
 
 	sf::Vector2i previousMousePosWindow;
@@ -51,6 +51,7 @@ private:
 	virtual void updateMousePositions(const sf::View* view = nullptr);
 	void updateSideMenu();
 	void getUpdatesFromSideMenuGui();
+	void updateEcosystem(float dt);
 
 	// private utilities:
 	void updateSideMenuGui();

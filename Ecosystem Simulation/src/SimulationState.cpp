@@ -2,7 +2,7 @@
 #include "SimulationState.h"
 
 // constructor/destructor:
-SimulationState::SimulationState(StateData* state_data) 
+SimulationState::SimulationState(StateData* state_data)
 	: State(state_data)
 {
 	this->initKeybinds();
@@ -38,22 +38,15 @@ void SimulationState::update(float dt)
 	this->getUpdatesFromSideMenuGui();
 
 	this->updateView();
-	
-	this->stateData->ecosystem->update(
-		dt,
-		this->sideMenu->getScaleSliders().at("SPEED")->getCurrentValue(),
-		*this->stateData->events, 
-		this->mousePosView, 
-		this->paused,
-		this->currentTool
-	);
+
+	this->updateEcosystem(dt);
 }
 
 void SimulationState::render(sf::RenderTarget* target)
 {
-	if (!target) 
+	if (!target)
 		target = this->stateData->window;
-	
+
 	this->renderTexture.clear();
 
 	// draw ecosystem:
@@ -64,7 +57,7 @@ void SimulationState::render(sf::RenderTarget* target)
 	// render simulation menu:
 	this->renderTexture.setView(this->renderTexture.getDefaultView());
 
-	if (this->sideMenuIsRendered) 
+	if (this->sideMenuIsRendered)
 		this->sideMenu->render(this->renderTexture);
 
 	// final render:
@@ -113,7 +106,7 @@ void SimulationState::initFonts()
 
 void SimulationState::initEcosystem()
 {
-	
+
 }
 
 void SimulationState::initView()
@@ -171,13 +164,13 @@ void SimulationState::initSideMenu()
 	this->sideMenu->addTextureButton(
 		"PAUSE",
 		{
-			{"PLAY IDLE", guiPath + "/play and stop/play.png"}, 
+			{"PLAY IDLE", guiPath + "/play and stop/play.png"},
 			{"STOP IDLE", guiPath + "/play and stop/stop.png"},
-			
-			{"PLAY HOVERED", guiPath + "/play and stop/play light.png"}, 
+
+			{"PLAY HOVERED", guiPath + "/play and stop/play light.png"},
 			{"STOP HOVERED", guiPath + "/play and stop/stop light.png"},
-			
-			{"PLAY PRESSED", guiPath + "/play and stop/play dark.png"}, 
+
+			{"PLAY PRESSED", guiPath + "/play and stop/play dark.png"},
 			{"STOP PRESSED", guiPath + "/play and stop/stop dark.png"}
 		},
 		"PLAY IDLE",
@@ -229,15 +222,15 @@ void SimulationState::initSideMenu()
 
 	this->sideMenu->addTextureButton(
 		"ARROW",
-		{ 
-			{"LEFT IDLE", guiPath + "/arrows/left arrow.png"}, 
-			{"RIGHT IDLE", guiPath + "/arrows/right arrow.png"}, 
-			
-			{"LEFT HOVERED", guiPath + "/arrows/left arrow light.png"}, 
+		{
+			{"LEFT IDLE", guiPath + "/arrows/left arrow.png"},
+			{"RIGHT IDLE", guiPath + "/arrows/right arrow.png"},
+
+			{"LEFT HOVERED", guiPath + "/arrows/left arrow light.png"},
 			{"RIGHT HOVERED", guiPath + "/arrows/right arrow light.png"},
-			
-			{"LEFT PRESSED", guiPath + "/arrows/left arrow dark.png"}, 
-			{"RIGHT PRESSED", guiPath + "/arrows/right arrow dark.png"} 
+
+			{"LEFT PRESSED", guiPath + "/arrows/left arrow dark.png"},
+			{"RIGHT PRESSED", guiPath + "/arrows/right arrow dark.png"}
 		},
 		"RIGHT IDLE",
 		sf::Vector2f(
@@ -295,15 +288,15 @@ void SimulationState::initSideMenu()
 			gui::p2pY(100.f * 64.f / 1080.f, resolution)
 		)
 	);
-	
+
 	this->sideMenu->addButton(
 		"QUIT",
 		sf::Vector2f(
-			gui::p2pX(3.f, resolution), 
+			gui::p2pX(3.f, resolution),
 			gui::p2pY(87.f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(18.f, resolution), 
+			gui::p2pX(18.f, resolution),
 			gui::p2pY(3.f * 7.f / 4.f, resolution)
 		),
 		gui::calcCharSize(28.0f, resolution),
@@ -456,7 +449,7 @@ void SimulationState::updateInput()
 			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("PAUSE")))
 			{
 				this->paused = !this->paused;
-				
+
 				if (this->paused)
 					this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
 				else
@@ -465,7 +458,7 @@ void SimulationState::updateInput()
 				break;
 			}
 		}
-	}	
+	}
 }
 
 void SimulationState::updateView()
@@ -480,7 +473,7 @@ void SimulationState::updateView()
 	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
 	if (
-		sf::Mouse::isButtonPressed(sf::Mouse::Left) && 
+		sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
 		!this->sideMenu->getBackground().getGlobalBounds().contains(static_cast<sf::Vector2f>(this->mousePosWindow)))
 	{
 		int offsetX = this->previousMousePosWindow.x - this->mousePosWindow.x;
@@ -493,28 +486,28 @@ void SimulationState::updateView()
 	}
 
 	// change the center of view if an animal is tracked:
-	if (this->stateData->ecosystem->getTrackedAnimalPosition())
-		this->view.setCenter(*this->stateData->ecosystem->getTrackedAnimalPosition());
-	
+	if (this->stateData->ecosystem->getTrackedAnimal())
+		this->view.setCenter(this->stateData->ecosystem->getTrackedAnimal()->getPosition());
+
 	// correct zoom:
 	float worldWidth = static_cast<float>(this->stateData->ecosystem->getWorldSize().x);
 	float worldHeight = static_cast<float>(this->stateData->ecosystem->getWorldSize().y);
-	
+
 	this->view.setSize(
-		std::min(this->view.getSize().x, worldWidth), 
+		std::min(this->view.getSize().x, worldWidth),
 		std::min(this->view.getSize().y, worldHeight)
 	);
 
 	// correct view moving:
-	if (this->view.getCenter().x - this->view.getSize().x / 2.f < 0.f) 
+	if (this->view.getCenter().x - this->view.getSize().x / 2.f < 0.f)
 		this->view.setCenter(this->view.getSize().x / 2.f, this->view.getCenter().y);
-	
-	if (this->view.getCenter().x + this->view.getSize().x / 2.f > worldWidth) 
+
+	if (this->view.getCenter().x + this->view.getSize().x / 2.f > worldWidth)
 		this->view.setCenter(worldWidth - this->view.getSize().x / 2.f, this->view.getCenter().y);
-	
+
 	if (this->view.getCenter().y - this->view.getSize().y / 2.f < 0.f)
 		this->view.setCenter(this->view.getCenter().x, this->view.getSize().y / 2.f);
-	
+
 	if (this->view.getCenter().y + this->view.getSize().y / 2.f > worldHeight)
 		this->view.setCenter(this->view.getCenter().x, worldHeight - this->view.getSize().y / 2.f);
 }
@@ -547,7 +540,7 @@ void SimulationState::updateSideMenu()
 }
 
 void SimulationState::getUpdatesFromSideMenuGui()
-{	
+{
 	// get update from side menu texture buttons:
 	if (this->sideMenu->getTextureButtons().at("PAUSE")->hasBeenClicked())
 	{
@@ -598,6 +591,26 @@ void SimulationState::getUpdatesFromSideMenuGui()
 
 	// get update from side menu buttons:
 	if (this->sideMenu->getButtons().at("QUIT")->isClicked()) this->endState();
+}
+
+void SimulationState::updateEcosystem(float dt)
+{
+	this->stateData->ecosystem->setSimulationSpeedFactor(
+		this->sideMenu->getScaleSliders().at("SPEED")->getCurrentValue()
+	);
+
+	if (this->paused)
+		this->stateData->ecosystem->pauseSimulation();
+	else
+		this->stateData->ecosystem->unpauseSimulation();
+
+	this->stateData->ecosystem->setGodTool(this->currentTool);
+
+	this->stateData->ecosystem->update(
+		dt,
+		*this->stateData->events,
+		this->mousePosView
+	);
 }
 
 // private utilities:
@@ -710,7 +723,7 @@ void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
 		{
 			// old tool (if it exists at all) ceases to be the current tool:
 			if (this->currentTool != "") this->sideMenu->setTextureOfTextureButton(this->currentTool, "IDLE");
- 
+
 			this->currentTool = god_tool_btn_key;
 
 			// we brighten it up,
@@ -723,7 +736,7 @@ void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
 		{
 			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
 		}
-		
+
 		// the most common case, ordinary idle tool:
 		else
 		{

@@ -71,7 +71,9 @@ Ecosystem::Ecosystem()
 	  animalsCount(0U), fruitsCount(0U),
 	  trackedAnimal(nullptr),
 	  totalTimeElapsed(0.f), dtSinceLastWorldUpdate(0.f),
-	  initialized(false)
+	  initialized(false),
+	  simulationSpeedFactor(1.0f),
+	  m_simulationIsPaused(true)
 {
 	
 }
@@ -142,20 +144,53 @@ bool Ecosystem::isInitialized() const
 	return this->initialized;
 }
 
+const Animal* Ecosystem::getTrackedAnimal() const
+{
+	return this->trackedAnimal;
+}
+
+float Ecosystem::getSimulationSpeedFactor() const
+{
+	return this->simulationSpeedFactor;
+}
+
+const std::string& Ecosystem::getGodTool() const
+{
+	return this->godTool;
+}
+
+void Ecosystem::setSimulationSpeedFactor(float simulation_speed_factor)
+{
+	this->simulationSpeedFactor = simulation_speed_factor;
+}
+
+void Ecosystem::pauseSimulation()
+{
+	this->m_simulationIsPaused = true;
+}
+
+void Ecosystem::unpauseSimulation()
+{
+	this->m_simulationIsPaused = false;
+}
+
+void Ecosystem::setGodTool(const std::string& god_tool)
+{
+	this->godTool = god_tool;
+}
+
 // other public methods:
 void Ecosystem::update(
 	float dt,
-	float speed_factor,
 	const std::vector<sf::Event>& events,
-	const sf::Vector2f& mouse_pos_view, 
-	bool paused,
-	const std::string& god_tool)
+	const sf::Vector2f& mouse_pos_view)
 {
 	this->totalTimeElapsed += dt;
 	
-	this->useGodTool(events, mouse_pos_view, god_tool);
+	this->useGodTool(events, mouse_pos_view);
 
-	if (!paused) this->updateWorld(dt, speed_factor);
+	if (!this->m_simulationIsPaused) 
+		this->updateWorld(dt);
 }
 
 void Ecosystem::render(sf::RenderTarget& target)
@@ -309,40 +344,39 @@ Fruit* Ecosystem::findTheNearestFruit(const Animal& animal) const
 
 void Ecosystem::useGodTool(
 	const std::vector<sf::Event>& events,
-	const sf::Vector2f& mouse_pos_view, 
-	const std::string& god_tool)
+	const sf::Vector2f& mouse_pos_view)
 {
-	// TODO: add info that if there is no God tool then god_tool string should be equal to ""
+	// TODO: add info that if there is no God tool then this->godTool string should be equal to ""
 
 	if (!EventsAccessor::hasEventOccured(static_cast<sf::Event::EventType>(sf::Event::MouseButtonPressed), events))
 		return;
 
 	// now use God tool:
-	if (god_tool == "TRACK") this->trackingTool(mouse_pos_view);
+	if (this->godTool == "TRACK") this->trackingTool(mouse_pos_view);
 
-	else if (god_tool == "KILL") this->killingTool(mouse_pos_view);
+	else if (this->godTool == "KILL") this->killingTool(mouse_pos_view);
 
-	else if (god_tool == "REPLACE") this->replacingTool(mouse_pos_view);
+	else if (this->godTool == "REPLACE") this->replacingTool(mouse_pos_view);
 
-	else if (god_tool == "BRAIN") this->brainTool(mouse_pos_view);
+	else if (this->godTool == "BRAIN") this->brainTool(mouse_pos_view);
 
-	else if (god_tool == "STOP") this->stoppingTool(mouse_pos_view);
+	else if (this->godTool == "STOP") this->stoppingTool(mouse_pos_view);
 
-	else if (god_tool == "INFO") this->infoTool(mouse_pos_view);
+	else if (this->godTool == "INFO") this->infoTool(mouse_pos_view);
 
-	else if (god_tool == "") return;
+	else if (this->godTool == "") return;
 
 	else
 	{
-		std::cerr << "INCORRECT GOD TOOL: " << god_tool << '\n';
+		std::cerr << "INCORRECT GOD TOOL: " << this->godTool << '\n';
 		exit(-1);
 	}
 }
 
-void Ecosystem::updateWorld(float dt, float speed_factor)
+void Ecosystem::updateWorld(float dt)
 {
 	for (const auto& animal : this->animals)
-		animal->update(dt, speed_factor, getInputsForBrain(*animal));
+		animal->update(dt, this->simulationSpeedFactor, getInputsForBrain(*animal));
 
 	this->removeDeadAnimals();
 

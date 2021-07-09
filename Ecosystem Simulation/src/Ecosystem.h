@@ -35,14 +35,25 @@ public:
 
 	bool isInitialized() const;
 
+	const Animal* getTrackedAnimal() const;
+
+	float getSimulationSpeedFactor() const;
+
+	const std::string& getGodTool() const;
+
+	// mutators:
+	void setSimulationSpeedFactor(float simulation_speed_factor);
+
+	void pauseSimulation();
+	void unpauseSimulation();
+
+	void setGodTool(const std::string& god_tool);
+
 	// other public methods:
 	void update(
 		float dt,
-		float speed_factor,
 		const std::vector<sf::Event>& events,
-		const sf::Vector2f& mouse_pos_view, 
-		bool paused,
-		const std::string& god_tool
+		const sf::Vector2f& mouse_pos_view
 	);
 	void render(sf::RenderTarget& target);
 
@@ -75,6 +86,12 @@ private:
 
 	bool initialized;
 
+	float simulationSpeedFactor;
+
+	bool m_simulationIsPaused;
+
+	std::string godTool;
+
 	// private initialization:
 	void readDataFromConfigFile(const std::string& folder_path);
 	void initBorders();
@@ -89,11 +106,10 @@ private:
 
 	void useGodTool(
 		const std::vector<sf::Event>& events,
-		const sf::Vector2f& mouse_pos_view,
-		const std::string& tool
+		const sf::Vector2f& mouse_pos_view
 	);
 
-	void updateWorld(float dt, float speed_factor);
+	void updateWorld(float dt);
 
 	void removeDeadAnimals();
 
