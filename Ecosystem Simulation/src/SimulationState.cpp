@@ -32,7 +32,8 @@ void SimulationState::update(float dt)
 
 	this->updateMousePositions(&this->view);
 
-	if (this->sideMenuIsRendered) this->updateSideMenu();
+	if (this->sideMenuIsRendered) 
+		this->updateSideMenu();
 
 	this->getUpdatesFromSideMenuGui();
 
@@ -50,7 +51,8 @@ void SimulationState::update(float dt)
 
 void SimulationState::render(sf::RenderTarget* target)
 {
-	if (!target) target = this->stateData->window;
+	if (!target) 
+		target = this->stateData->window;
 	
 	this->renderTexture.clear();
 
@@ -62,7 +64,8 @@ void SimulationState::render(sf::RenderTarget* target)
 	// render simulation menu:
 	this->renderTexture.setView(this->renderTexture.getDefaultView());
 
-	if (this->sideMenuIsRendered) this->sideMenu->render(this->renderTexture);
+	if (this->sideMenuIsRendered) 
+		this->sideMenu->render(this->renderTexture);
 
 	// final render:
 	this->renderTexture.display();
@@ -73,16 +76,19 @@ void SimulationState::render(sf::RenderTarget* target)
 // initialization:
 void SimulationState::initKeybinds()
 {
-	std::ifstream ifs("config/simulation_keybinds.ini");
+	const std::string path = "config/simulation_keybinds.ini";
+
+	std::ifstream ifs(path);
 
 	if (ifs.is_open())
 	{
-		std::string key = "";
-		std::string key2 = "";
+		std::string key;
+		std::string key2;
 
-		while (ifs >> key >> key2) this->keybinds[key] = this->stateData->supportedKeys->at(key2);
+		while (ifs >> key >> key2)
+			this->keybinds[key] = this->stateData->supportedKeys->at(key2);
 	}
-	else throw("ERROR::SIMULATIONSTATE::CANNOT OPEN FILE: config/simulation_keybinds.ini\n");
+	else throw("ERROR::SIMULATIONSTATE::COULD NOT OPEN: " + path + '\n');
 
 	ifs.close();
 }
@@ -210,7 +216,6 @@ void SimulationState::initSideMenu()
 
 		guiPath + "/scale sliders/axes/axis dark.png",
 		guiPath + "/scale sliders/handles/handle dark.png",
-
 		"quadratic"
 	);
 

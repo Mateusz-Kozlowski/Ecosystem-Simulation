@@ -3,10 +3,11 @@ The smaller number the greater priority (the sooner that thing should be impleme
 1:
 better nearest food searching algo (with complexity better than the current one (O(f*a)))
 	or maybe even different inputs
+
 rebuild the program structure at ecosystem and animals level (rewrite Ecosystem && Animal classes)
-new "ecosystem creation state"
-"precreated ecosystems examples" in ecosystem creation state
-side menu should be able to be opened not only using Esc key but also using a gui widget that doesn't even exist now
+
+side menu should be able to be opened not only using Esc key but also using a gui widget which doesn't even exist yet
+
 dt can be extremelly big if a window lost the focus
 
 shortcuts:
@@ -18,6 +19,26 @@ saving zoom/world camera can be useful
 
 "fake async loading" - before loading render some text with information about loading and after the process is complited
 	stop rendering that text
+
+avoid unnecessarily updates
+
+avoid drawing things that are outside the window
+
+rename neural net preview to sequential preview or sth like that
+
+ALL functions that takes pointer have to check if they are nullptrs
+
+after loading ecosystem side menu panel should be updated (e.g. speed scaler)
+
+crappy neural nets should have a method that allows to set inputs before calling predict/train methods
+
+private methods should use references, public should use pointers, in all classes! Even in Crappy Neural Nets
+
+there is a bug with energy conservation law - animals can reach negative hp
+
+if there is no animals the simulation crashes, which is not surprising
+
+ANIMALS CAN HAVE NEGATIVE HP! AVOID THAT; MAKE SURE THAT NEW FRUITS ENERGY IS CORRECT
 
 2:
 DEBUG:
@@ -52,6 +73,7 @@ CONVENTION/NAMES/COMMENTS/CODE:
 			if(!file.is_good()) error and exit(-1)
 			
 			reading from file...
+		change speed_factor to simulation_speed_factor
 
 OTHERS:
 	implement info tool (probably it'll be able to give info not only about the entire ecosystem
@@ -60,7 +82,8 @@ OTHERS:
 	define states freezing
 	nn viewer should never beyond the world
 	textures (different) and hitbox component
-	use real copy constructors (remember about the rule of three!)	
+	use real copy constructors (remember about the rule of three!)
+	more/better ecosystems templates?	
 	sexual reproduction...
 
 3:
