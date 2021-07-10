@@ -1,55 +1,92 @@
 #pragma once
 
-#include "Crappy Neural Nets/NeuralNet.h"
+#include "Crappy Neural Nets/TempNet.h"
 
-class NeuralNetPreview
+namespace gui
 {
-public:
-	// constructor:
-	NeuralNetPreview(
-		const CrappyNeuralNets::NeuralNet& brain, 
-		const sf::Vector2f& position, 
-		const sf::Vector2f& size,
-		const sf::Color& background_color
-	);
+	class NeuralNetPreview
+	{
+	public:
+		// constructor:
+		NeuralNetPreview(
+			const CrappyNeuralNets::TempNet& brain,
+			const sf::Vector2f& position,
+			const sf::Vector2f& size,
+			const sf::Color& background_color
+		);
 
-	// other public methods:
-	void update(const sf::Vector2f& new_pos);
-	void render(sf::RenderTarget& target) const;
+		// public methods:	
+		void update();
+		void render(sf::RenderTarget& target) const;
 
-private:
-	const CrappyNeuralNets::NeuralNet& brain;
-	
-	sf::RectangleShape background;
+		// accessors:
+		const CrappyNeuralNets::TempNet& getBrain() const;
 
-	std::vector<std::vector<sf::CircleShape>> neurons;
+		const sf::Vector2f& getPosition() const;
 
-	std::vector<std::vector<std::vector<std::vector<sf::Vertex>>>> synapses;
-	//std::vector<std::vector<std::vector<sf::RectangleShape>>> synapses;
+		const sf::Vector2f& getSize() const;
 
-	// initialization:
-	void initBackground(const sf::Vector2f& preview_pos, const sf::Vector2f& size, const sf::Color& background_color);
-	void initNeurons(const sf::Vector2f& size);
-	void initSynapses(const sf::Vector2f& size);
+		const sf::Color& getBackgroundColor() const;
 
-	// private utilities:
-	unsigned biggestLayerSize() const;
+		// mutators:
+		void setPosition(const sf::Vector2f& position);
 
-	void updateNeurons(const sf::Vector2f& new_preview_pos);
-	void updateSynapses(const sf::Vector2f& new_preview_pos);
+		void setSize(const sf::Vector2f& size);
 
-	void setNeuronsPositions(const sf::Vector2f& preview_pos);
-	void setSynapsesPositions(const sf::Vector2f& preview_pos);
+		void setBackgroundColor(const sf::Color& color);
 
-	void setNeuronsColors();
-	void setSynapsesColors();
+	private:
+		// there are some errors in constructor while using here a reference:
+		const CrappyNeuralNets::TempNet* brain;
 
-	CrappyNeuralNets::Scalar getTheBiggestActivatedValue(unsigned layer_index);
-	CrappyNeuralNets::Scalar getTheSmallestActivatedValue(unsigned layer_index);
+		sf::RectangleShape background;
 
-	CrappyNeuralNets::Scalar getTheBiggestWeight();
-	CrappyNeuralNets::Scalar getTheSmallestWeight();
+		std::vector<std::vector<sf::CircleShape>> neurons;
 
-	void renderNeurons(sf::RenderTarget& target) const;
-	void renderSynapses(sf::RenderTarget& target) const;
-};
+		std::vector<std::vector<std::vector<std::vector<sf::Vertex>>>> synapses;
+
+		// private methods:
+		// initialization:
+		void initBackground(
+			const sf::Vector2f& preview_pos, 
+			const sf::Vector2f& size, 
+			const sf::Color& background_color
+		);
+		void initNeurons();
+		void initNeuronsVector();
+		void initSynapses();
+		void initSynapsesVector();
+
+		// private utilities:
+		void setNeuronsPositions();
+
+		sf::Vector2f calcNeuronPosition(unsigned index1, unsigned index2) const;
+
+		float calcTopMargin(unsigned index1) const;
+		float calcGapBetweenLayers() const;
+		float calcNeuronsRadius() const;
+
+		unsigned getTheBiggestLayerSize() const;
+
+		void setNeuronsSizes();
+		void setNeuronsColors();
+
+		void setInputNeuronsColors();
+		void setHiddenNeuronsColors();
+		void setOutputNeuronsColors();
+
+		CrappyNeuralNets::Scalar getTheBiggestActivatedValue(unsigned layer_index);
+		CrappyNeuralNets::Scalar getTheSmallestActivatedValue(unsigned layer_index);
+
+		void setSynapsesPositions();
+		void setSynapsesColors();
+
+		CrappyNeuralNets::Scalar getTheBiggestWeight();
+		CrappyNeuralNets::Scalar getTheSmallestWeight();
+
+		void updateNeurons();
+
+		void renderNeurons(sf::RenderTarget& target) const;
+		void renderSynapses(sf::RenderTarget& target) const;
+	};
+}

@@ -98,11 +98,11 @@ void LoadingState::initInputField()
 
 	this->inputField = new gui::InputField(
 		sf::Vector2f(
-			gui::p2pX(27.f, resolution), 
+			gui::p2pX(27.f, resolution),
 			gui::p2pY(37.9f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(50.f, resolution), 
+			gui::p2pX(50.f, resolution),
 			gui::p2pY(7.f, resolution)
 		),
 		this->font, "ecosystems/1024a 1024f", gui::calcCharSize(32.0f, resolution),

@@ -21,7 +21,7 @@ OutputLayer::OutputLayer(unsigned neurons_count, const std::string& activation_f
 	for (int i = 0; i < neurons_count; i++) this->neurons.push_back(new Neuron(activation_function));
 }
 
-void CrappyNeuralNets::OutputLayer::copyConstructor(const CrappyNeuralNets::OutputLayer& output_layer)
+void OutputLayer::copyConstructor(const CrappyNeuralNets::OutputLayer& output_layer)
 {
 	this->activationFunction = output_layer.activationFunction;
 	this->outputs = output_layer.outputs;

@@ -1,37 +1,81 @@
 #include "stdafx.h"
 #include "NeuralNetPreview.h"
 
+using namespace gui;
+
 // constructor:
 NeuralNetPreview::NeuralNetPreview(
-	const CrappyNeuralNets::NeuralNet& brain, 
-	const sf::Vector2f& position, 
-	const sf::Vector2f& size, 
+	const CrappyNeuralNets::TempNet& brain,
+	const sf::Vector2f& position,
+	const sf::Vector2f& size,
 	const sf::Color& background_color)
-	: brain(brain)
 {
+	this->brain = &brain;
 	this->initBackground(position, size, background_color);
-	this->initNeurons(size);
-	this->initSynapses(size);
+	this->initNeurons();
+	this->initSynapses();
 }
 
-// other public methods:
-void NeuralNetPreview::update(const sf::Vector2f& new_pos)
+// public methods:
+void NeuralNetPreview::update()
 {
-	this->background.setPosition(new_pos);
-
-	this->updateNeurons(new_pos);
-	this->updateSynapses(new_pos);
+	this->updateNeurons();
 }
 
 void NeuralNetPreview::render(sf::RenderTarget& target) const
 {
 	target.draw(this->background);
-	
+
 	this->renderNeurons(target);
 	this->renderSynapses(target);
 }
 
+// accessors:
+const CrappyNeuralNets::TempNet& NeuralNetPreview::getBrain() const
+{
+	return *this->brain;
+}
+
+const sf::Vector2f& NeuralNetPreview::getPosition() const
+{
+	return this->background.getPosition();
+}
+
+const sf::Vector2f& NeuralNetPreview::getSize() const
+{
+	return this->background.getSize();
+}
+
+const sf::Color& NeuralNetPreview::getBackgroundColor() const
+{
+	return this->background.getFillColor();
+}
+
+// mutators:
+void NeuralNetPreview::setPosition(const sf::Vector2f& position)
+{
+	this->background.setPosition(position);
+
+	this->setNeuronsPositions();
+	this->setSynapsesPositions();
+}
+
+void NeuralNetPreview::setSize(const sf::Vector2f& size)
+{
+	this->background.setSize(size);
+
+	this->setNeuronsPositions();
+	this->setNeuronsSizes();
+	this->setSynapsesPositions();
+}
+
+void NeuralNetPreview::setBackgroundColor(const sf::Color& color)
+{
+	this->background.setFillColor(color);
+}
+
 // private methods:
+
 // initialization:
 void NeuralNetPreview::initBackground(const sf::Vector2f& preview_pos, const sf::Vector2f& size, const sf::Color& background_color)
 {
@@ -40,69 +84,79 @@ void NeuralNetPreview::initBackground(const sf::Vector2f& preview_pos, const sf:
 	this->background.setFillColor(background_color);
 }
 
-void NeuralNetPreview::initNeurons(const sf::Vector2f& size)
+void NeuralNetPreview::initNeurons()
 {
-	// calculate useful variables:
-	unsigned hiddenLayersCount = this->brain.getHiddenLayers().size();
+	this->initNeuronsVector();
+	this->setNeuronsPositions();
+	this->setNeuronsSizes();
+	this->setNeuronsColors();
+}
 
-	unsigned biggestLayerSize = this->biggestLayerSize();
+void NeuralNetPreview::initNeuronsVector()
+{
+	/*
+	unsigned hiddenLayersCount = this->brain->getHiddenLayers().size();
 
-	float diameter = size.y / (2U * biggestLayerSize + 1U);
-
-	// resize:
 	this->neurons.resize(hiddenLayersCount + 2U);
 
 	// resize input layer:
-	this->neurons[0].resize(this->brain.getInputLayer()->getSize());
+	this->neurons[0].resize(
+		this->brain->getInputLayer()->getSize(),
+		sf::CircleShape(0.0f, neurons_shapes_point_count)
+	);
 
-	// resize hidden layer:
+	// resize hidden layers:
 	for (int i = 0; i < hiddenLayersCount; i++)
-		this->neurons[i + 1].resize(this->brain.getHiddenLayers()[i]->getNeuronsCount());
+		this->neurons[i + 1].resize(
+			this->brain->getHiddenLayers()[i]->getNeuronsCount(),
+			sf::CircleShape(0.0f, neurons_shapes_point_count)
+		);
 
 	// resize output layer:
-	this->neurons.back().resize(this->brain.getOutputLayer()->getNeuronsCount());
-
-	// set point count:
-	for (int i = 0; i < this->neurons.size(); i++)
-		for (int j = 0; j < this->neurons[i].size(); j++)
-		{
-			this->neurons[i][j].setPointCount(16);
-			this->neurons[i][j].setRadius(diameter / 2);
-		}
+	this->neurons.back().resize(
+		this->brain->getOutputLayer()->getNeuronsCount(),
+		sf::CircleShape(0.0f, neurons_shapes_point_count)
+	);
+	*/
 }
 
-void NeuralNetPreview::initSynapses(const sf::Vector2f& size)
+void NeuralNetPreview::initSynapses()
 {
-	// calculate useful variables:
-	int hiddenLayersCount = this->brain.getHiddenLayers().size();
+	this->initSynapsesVector();
+	this->setSynapsesPositions();
+	this->setSynapsesColors();
+}
 
-	// resize:
-	this->synapses.resize(this->brain.getHiddenLayers().size() + 1U);
+void NeuralNetPreview::initSynapsesVector()
+{
+	/*
+	unsigned hiddenLayersCount = this->brain->getHiddenLayers().size();
 
-	// resize each matrix in synapses vector:
-	// make synapses 2D structure:
+	this->synapses.resize(hiddenLayersCount + 1U);
+
+	// resize each matrix in synapses vector (make synapses a 2D structure):
 	for (int i = 0; i < hiddenLayersCount; i++)
-		this->synapses[i].resize(this->brain.getHiddenLayers()[i]->getNeuronsCount());
+		this->synapses[i].resize(this->brain->getHiddenLayers()[i]->getNeuronsCount());
 
-	this->synapses.back().resize(this->brain.getOutputLayer()->getNeuronsCount());
+	this->synapses.back().resize(this->brain->getOutputLayer()->getNeuronsCount());
 
-	// make synapses 3D structure:
+	// make synapses a 3D structure:
 	if (hiddenLayersCount > 0)
 	{
-		for (int i = 0; i < this->brain.getHiddenLayers()[0]->getNeuronsCount(); i++)
-			this->synapses[0][i].resize(this->brain.getInputLayer()->getSize());
+		for (int i = 0; i < this->brain->getHiddenLayers()[0]->getNeuronsCount(); i++)
+			this->synapses[0][i].resize(this->brain->getInputLayer()->getSize());
 
 		for (int i = 0; i < hiddenLayersCount - 1; i++)
-			for (int j = 0; j < this->brain.getHiddenLayers()[i + 1]->getNeuronsCount(); j++)
-				this->synapses[i + 1][j].resize(this->brain.getHiddenLayers()[i]->getNeuronsCount());
+			for (int j = 0; j < this->brain->getHiddenLayers()[i + 1]->getNeuronsCount(); j++)
+				this->synapses[i + 1][j].resize(this->brain->getHiddenLayers()[i]->getNeuronsCount());
 
-		for (int i = 0; i < this->brain.getOutputLayer()->getNeuronsCount(); i++)
-			this->synapses.back()[i].resize(this->brain.getHiddenLayers().back()->getNeuronsCount());
+		for (int i = 0; i < this->brain->getOutputLayer()->getNeuronsCount(); i++)
+			this->synapses.back()[i].resize(this->brain->getHiddenLayers().back()->getNeuronsCount());
 	}
 	else
 	{
-		for (int i = 0; i < this->brain.getOutputLayer()->getNeuronsCount(); i++)
-			this->synapses.back()[i].resize(this->brain.getInputLayer()->output().size());
+		for (int i = 0; i < this->brain->getOutputLayer()->getNeuronsCount(); i++)
+			this->synapses.back()[i].resize(this->brain->getInputLayer()->output().size());
 	}
 
 	// each synapse consists of 2 vertices:
@@ -110,121 +164,245 @@ void NeuralNetPreview::initSynapses(const sf::Vector2f& size)
 		for (auto& vector : matrix)
 			for (auto& synapse : vector)
 				synapse.resize(2);
-
-	/*
-	// now set up each synapse rectangle size and rotation:
-	for (int i = 0; i < this->synapses.size(); i++)
-	{
-		float topMargin2 = size.y - (2 * this->neurons[i].size() - 1) * diameter;
-
-		for (int j = 0; j < this->synapses[i].size(); j++)
-		{
-			float topMargin1 = size.y - (2 * this->neurons[j].size() - 1) * diameter;
-
-			for (int k = 0; k < this->synapses[i][j].size(); k++)
-			{
-				float y1 = topMargin1 + diameter + 2 * k * diameter + diameter / 2;
-				float y2 = topMargin2 + diameter + 2 * j * diameter + diameter / 2;
-
-				float a = gapBetweenLayers;
-				float b = y1 - y2; // it should be abs(y1 - y2), but it will be squared in a moment, so finally it does not matter
-
-				// Pythagorean theorem:
-				float c = sqrt(pow(a, 2) + pow(b, 2));
-
-				this->synapses[i][j][k].setSize(sf::Vector2f(c, 1));
-				this->synapses[i][j][k].setRotation(atan(b / a));
-			}
-		}
-	}
 	*/
-
-	// synapses are lines, which consist of only 2 vertices, and each vertex consists of only color and position
-	// positions have to be updated every frame, so they don't have to be calculated here
-	// so the only thing that remains is... color
-	this->setSynapsesColors();
-	// synapses colors won't ever change as long as animals cannot mutate during its lives
 }
 
 // private utilities:
-unsigned NeuralNetPreview::biggestLayerSize() const
+void NeuralNetPreview::setNeuronsPositions()
 {
-	// input layer:
-	unsigned biggestLayerSize = this->brain.getInputLayer()->getSize();
-
-	// hidden layers:
-	for (const auto& hiddenLayer : this->brain.getHiddenLayers())
-		biggestLayerSize = std::max(biggestLayerSize, hiddenLayer->getNeuronsCount());
-
-	// output layer:
-	biggestLayerSize = std::max(biggestLayerSize, this->brain.getOutputLayer()->getNeuronsCount());
-
-	return biggestLayerSize;
-}
-
-void NeuralNetPreview::updateNeurons(const sf::Vector2f& new_preview_pos)
-{
-	this->setNeuronsPositions(new_preview_pos);
-	this->setNeuronsColors();
-}
-
-void NeuralNetPreview::updateSynapses(const sf::Vector2f& new_preview_pos)
-{
-	this->setSynapsesPositions(new_preview_pos);
-}
-
-void NeuralNetPreview::setNeuronsPositions(const sf::Vector2f& preview_pos)
-{
-	// calculate useful variables:
-	unsigned hiddenLayersCount = this->brain.getHiddenLayers().size();
-
-	unsigned biggestLayerSize = this->biggestLayerSize();
-
-	float diameter = this->background.getSize().y / (2U * biggestLayerSize + 1U);
-
-	float gapBetweenLayers = (this->background.getSize().x - (4 + hiddenLayersCount) * diameter) / (hiddenLayersCount + 1);
-
-	// set up positions:
 	for (int i = 0; i < this->neurons.size(); i++)
 	{
-		float topMargin = (this->background.getSize().y - (2 * this->neurons[i].size() - 1) * diameter) / 2.f;
-
 		for (int j = 0; j < this->neurons[i].size(); j++)
 		{
-			float x = preview_pos.x + diameter + i * (diameter + gapBetweenLayers);
-			float y = preview_pos.y + topMargin + 2 * j * diameter;
-
-			this->neurons[i][j].setPosition(x, y);
+			this->neurons[i][j].setPosition(this->calcNeuronPosition(i, j));
 		}
 	}
+
 }
 
-void NeuralNetPreview::setSynapsesPositions(const sf::Vector2f& preview_pos)
+sf::Vector2f NeuralNetPreview::calcNeuronPosition(unsigned index1, unsigned index2) const
 {
+	sf::Vector2f result;
+
+	float gapBetweenLayers = this->calcGapBetweenLayers();
+	float topMargin = this->calcTopMargin(index1);
+	float diameter = 2.f * this->calcNeuronsRadius();
+
+	result.x += this->background.getPosition().x + diameter + index1 * (diameter + gapBetweenLayers);
+	result.y += this->background.getPosition().y + topMargin + 2U * index2 * diameter;
+
+	return result;
+}
+
+float NeuralNetPreview::calcGapBetweenLayers() const
+{
+	/*
+	unsigned hiddenLayersCount = this->brain->getHiddenLayers().size();
+	float diameter = 2.f * this->calcNeuronsRadius();
+
+	return (this->background.getSize().x - (4U + hiddenLayersCount) * diameter) / (hiddenLayersCount + 1U);
+	*/
+}
+
+float NeuralNetPreview::calcNeuronsRadius() const
+{
+	float diameter = this->background.getSize().y / (2U * this->getTheBiggestLayerSize() + 1U);
+
+	return diameter / 2.f;
+}
+
+float NeuralNetPreview::calcTopMargin(unsigned index1) const
+{
+	float diameter = 2.f * this->calcNeuronsRadius();
+
+	return (this->background.getSize().y - (2 * this->neurons[index1].size() - 1) * diameter) / 2.f;
+}
+
+unsigned NeuralNetPreview::getTheBiggestLayerSize() const
+{
+	/*
+	// input layer:
+	unsigned getTheBiggestLayerSize = this->brain->getInputLayer()->getSize();
+
+	// hidden layers:
+	for (const auto& hiddenLayer : this->brain->getHiddenLayers())
+		getTheBiggestLayerSize = std::max(getTheBiggestLayerSize, hiddenLayer->getNeuronsCount());
+
+	// output layer:
+	getTheBiggestLayerSize = std::max(getTheBiggestLayerSize, this->brain->getOutputLayer()->getNeuronsCount());
+
+	return getTheBiggestLayerSize;
+	*/
+}
+
+void NeuralNetPreview::setNeuronsSizes()
+{
+	unsigned getTheBiggestLayerSize = this->getTheBiggestLayerSize();
+	float radius = this->calcNeuronsRadius();
+
+	for (auto& it1 : this->neurons)
+		for (auto& it2 : it1)
+			it2.setRadius(radius);
+}
+
+void NeuralNetPreview::setNeuronsColors()
+{
+	this->setInputNeuronsColors();
+	this->setHiddenNeuronsColors();
+	this->setOutputNeuronsColors();
+}
+
+void NeuralNetPreview::setInputNeuronsColors()
+{
+	/*
+	CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(0U);
+	CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(0U);
+
+	CrappyNeuralNets::Scalar theBiggestAbsActVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
+
+	for (int i = 0; i < this->neurons[0].size(); i++)
+	{
+		CrappyNeuralNets::Scalar neuronActVal = this->brain->getInputLayer()->output()[i];
+
+		if (neuronActVal > 0.0)
+			this->neurons[0][i].setFillColor(sf::Color(0, 0, 255 * neuronActVal / theBiggestAbsActVal, 255));
+		else
+			this->neurons[0][i].setFillColor(sf::Color(-255 * neuronActVal / theBiggestAbsActVal, 0, 0, 255));
+	}
+	*/
+}
+
+void NeuralNetPreview::setHiddenNeuronsColors()
+{
+	/*
+	for (int i = 0; i < this->brain->getHiddenLayers().size(); i++)
+	{
+		CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(i + 1);
+		CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(i + 1);
+
+		CrappyNeuralNets::Scalar theBiggestAbsActVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
+
+		for (int j = 0; j < this->neurons[i + 1].size(); j++)
+		{
+			CrappyNeuralNets::Scalar actVal = this->brain->getHiddenLayers()[i]->getNeurons()[j]->getActivatedValue();
+
+			if (actVal > 0.0)
+				this->neurons[i + 1][j].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsActVal));
+			else
+				this->neurons[i + 1][j].setFillColor(sf::Color(-255 * actVal / theBiggestAbsActVal, 0, 0));
+		}
+	}
+	*/
+}
+
+void NeuralNetPreview::setOutputNeuronsColors()
+{
+	/*
+	CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(this->brain->getHiddenLayers().size() + 1);
+	CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(this->brain->getHiddenLayers().size() + 1);
+
+	CrappyNeuralNets::Scalar theBiggestAbsActVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
+
+	for (int i = 0; i < this->neurons.back().size(); i++)
+	{
+		CrappyNeuralNets::Scalar actVal = this->brain->getOutputLayer()->getNeurons()[i]->getActivatedValue();
+
+		if (actVal > 0.0)
+			this->neurons.back()[i].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsActVal));
+		else
+			this->neurons.back()[i].setFillColor(sf::Color(-255 * actVal / theBiggestAbsActVal, 0, 0));
+	}
+	*/
+}
+
+CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestActivatedValue(unsigned layer_index)
+{
+	/*
+	CrappyNeuralNets::Scalar theBiggestActVal = -INFINITY;
+
+	// layer_index == 0 <==> we're dealing with the input layer:
+	if (!layer_index)
+	{
+		for (const auto& it : this->brain->getInputLayer()->output())
+			theBiggestActVal = std::max(theBiggestActVal, it);
+
+		return theBiggestActVal;
+	}
+
+	// layer_index == hidden layers count + 1 <==> we're dealing with the output layer:
+	if (layer_index == this->brain->getHiddenLayers().size() + 1)
+	{
+		for (const auto& neuron : this->brain->getOutputLayer()->getNeurons())
+			theBiggestActVal = std::max(theBiggestActVal, neuron->getActivatedValue());
+
+		return theBiggestActVal;
+	}
+
+	// otherwise we're dealing with a hidden layer:
+	for (const auto& neuron : this->brain->getHiddenLayers()[layer_index - 1]->getNeurons())
+		theBiggestActVal = std::max(theBiggestActVal, neuron->getActivatedValue());
+
+	return theBiggestActVal;
+	*/
+}
+
+CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestActivatedValue(unsigned layer_index)
+{
+	/*
+	CrappyNeuralNets::Scalar theSmallestActVal = INFINITY;
+
+	// layer_index == 0 <==> we're dealing with the input layer:
+	if (!layer_index)
+	{
+		for (const auto& it : this->brain->getInputLayer()->output())
+			theSmallestActVal = std::min(theSmallestActVal, it);
+
+		return theSmallestActVal;
+	}
+
+	// layer_index == hidden layers count + 1 <==> we're dealing with the output layer:
+	if (layer_index == this->brain->getHiddenLayers().size() + 1)
+	{
+		for (const auto& neuron : this->brain->getOutputLayer()->getNeurons())
+			theSmallestActVal = std::min(theSmallestActVal, neuron->getActivatedValue());
+
+		return theSmallestActVal;
+	}
+
+	// otherwise we're dealing with a hidden layer:
+	for (const auto& neuron : this->brain->getHiddenLayers()[layer_index - 1]->getNeurons())
+		theSmallestActVal = std::min(theSmallestActVal, neuron->getActivatedValue());
+
+	return theSmallestActVal;
+	*/
+}
+
+void NeuralNetPreview::setSynapsesPositions()
+{
+	/*
 	// calculate useful variables:
-	unsigned hiddenLayersCount = this->brain.getHiddenLayers().size();
+	unsigned hiddenLayersCount = this->brain->getHiddenLayers().size();
+	unsigned biggestLayerSize = this->getTheBiggestLayerSize();
 
-	unsigned biggestLayerSize = this->biggestLayerSize();
-
-	float diameter = this->background.getSize().y / (2U * biggestLayerSize + 1U);
-
-	float gapBetweenLayers = (this->background.getSize().x - (4 + hiddenLayersCount) * diameter) / (hiddenLayersCount + 1);
+	float gapBetweenLayers = this->calcGapBetweenLayers();
+	float radius = this->calcNeuronsRadius();
+	float diameter = 2.f * radius;
 
 	// set positions:
 	for (int i = 0; i < this->synapses.size(); i++)
 	{
-		float topMargin2 = (this->background.getSize().y - (2 * this->neurons[i].size() - 1) * diameter) / 2;
+		float topMargin2 = this->calcTopMargin(i);
 
 		for (int j = 0; j < this->synapses[i].size(); j++)
 		{
-			float topMargin1 = (this->background.getSize().y - (2 * this->neurons[j].size() - 1) * diameter) / 2;
+			float topMargin1 = this->calcTopMargin(j);
 
 			for (int k = 0; k < this->synapses[i][j].size(); k++)
 			{
-				float y1 = this->neurons[i][k].getPosition().y + diameter / 2;
-				float y2 = this->neurons[i + 1][j].getPosition().y + diameter / 2;
+				float y1 = this->neurons[i][k].getPosition().y + radius;
+				float y2 = this->neurons[i + 1][j].getPosition().y + radius;
 
-				float x1 = preview_pos.x + 2 * diameter + i * (gapBetweenLayers + diameter);
+				float x1 = this->background.getPosition().x + 2 * diameter + i * (gapBetweenLayers + diameter);
 				float x2 = x1 + gapBetweenLayers;
 
 				this->synapses[i][j][k][0].position = sf::Vector2f(x1, y1);
@@ -232,157 +410,68 @@ void NeuralNetPreview::setSynapsesPositions(const sf::Vector2f& preview_pos)
 			}
 		}
 	}
-}
-
-void NeuralNetPreview::setNeuronsColors()
-{
-	// input layer:
-	CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(0);
-	CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(0);
-
-	CrappyNeuralNets::Scalar theBiggestAbsVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
-
-	for (int i = 0; i < this->neurons[0].size(); i++)
-	{
-		CrappyNeuralNets::Scalar actVal = this->brain.getInputLayer()->output()[i];
-
-		if (actVal > 0.0) this->neurons[0][i].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsVal, 255));
-
-		else this->neurons[0][i].setFillColor(sf::Color(-255 * actVal / theBiggestAbsVal, 0, 0, 255));
-	}
-
-	// hidden layers:
-	for (int i = 0; i < this->brain.getHiddenLayers().size(); i++)
-	{
-		theBiggestActVal = this->getTheBiggestActivatedValue(i + 1);
-		theSmallestActVal = this->getTheSmallestActivatedValue(i + 1);
-
-		theBiggestAbsVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
-
-		for (int j = 0; j < this->neurons[i + 1].size(); j++)
-		{
-			CrappyNeuralNets::Scalar actVal = this->brain.getHiddenLayers()[i]->getNeurons()[j]->getActivatedValue();
-
-			if (actVal > 0.0) this->neurons[i + 1][j].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsVal));
-
-			else this->neurons[i + 1][j].setFillColor(sf::Color(-255 * actVal / theBiggestAbsVal, 0, 0));
-		}
-	}
-
-	// output layer:
-	theBiggestActVal = this->getTheBiggestActivatedValue(this->brain.getHiddenLayers().size() + 1);
-	theSmallestActVal = this->getTheSmallestActivatedValue(this->brain.getHiddenLayers().size() + 1);
-
-	theBiggestAbsVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
-
-	for (int i = 0; i < this->neurons.back().size(); i++)
-	{
-		CrappyNeuralNets::Scalar actVal = this->brain.getOutputLayer()->getNeurons()[i]->getActivatedValue();
-
-		if (actVal > 0.0) this->neurons.back()[i].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsVal));
-
-		else this->neurons.back()[i].setFillColor(sf::Color(-255 * actVal / theBiggestAbsVal, 0, 0));
-	}
+	*/
 }
 
 void NeuralNetPreview::setSynapsesColors()
 {
+	/*
 	CrappyNeuralNets::Scalar theBiggestWeight = this->getTheBiggestWeight();
 	CrappyNeuralNets::Scalar theSmallestWeight = this->getTheSmallestWeight();
 
-	CrappyNeuralNets::Scalar theBiggestAbsVal = std::max(abs(theBiggestWeight), abs(theSmallestWeight));
+	CrappyNeuralNets::Scalar theBiggestAbsWeight = std::max(abs(theBiggestWeight), abs(theSmallestWeight));
 
 	for (int i = 0; i < this->synapses.size(); i++)
 		for (int j = 0; j < this->synapses[i].size(); j++)
 			for (int k = 0; k < this->synapses[i][j].size(); k++)
 			{
-				CrappyNeuralNets::Scalar weight = this->brain.getWeights()[i]->getValues()[j][k];
+				CrappyNeuralNets::Scalar weight = this->brain->getWeights()[i]->getValues()[j][k];
 
 				if (weight > 0.0)
 				{
-					this->synapses[i][j][k][0].color = sf::Color(0, 0, 255, 255 * weight / theBiggestAbsVal);
-					this->synapses[i][j][k][1].color = sf::Color(0, 0, 255, 255 * weight / theBiggestAbsVal);
+					this->synapses[i][j][k][0].color = sf::Color(0, 0, 255, 255 * weight / theBiggestAbsWeight);
+					this->synapses[i][j][k][1].color = sf::Color(0, 0, 255, 255 * weight / theBiggestAbsWeight);
 				}
 				else
 				{
-					this->synapses[i][j][k][0].color = sf::Color(255, 0, 0, 255 * weight / theBiggestAbsVal);
-					this->synapses[i][j][k][1].color = sf::Color(255, 0, 0, 255 * weight / theBiggestAbsVal);
+					this->synapses[i][j][k][0].color = sf::Color(255, 0, 0, 255 * weight / theBiggestAbsWeight);
+					this->synapses[i][j][k][1].color = sf::Color(255, 0, 0, 255 * weight / theBiggestAbsWeight);
 				}
 			}
-}
-
-CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestActivatedValue(unsigned layer_index)
-{
-	CrappyNeuralNets::Scalar theBiggestActVal = -INFINITY;
-
-	if (!layer_index)
-	{
-		for (const auto& it : this->brain.getInputLayer()->output())
-			theBiggestActVal = std::max(theBiggestActVal, it);
-
-		return theBiggestActVal;
-	}
-	if (layer_index == this->brain.getHiddenLayers().size() + 1)
-	{
-		for (const auto& neuron : this->brain.getOutputLayer()->getNeurons())
-			theBiggestActVal = std::max(theBiggestActVal, neuron->getActivatedValue());
-
-		return theBiggestActVal;
-	}
-
-	for (const auto& neuron : this->brain.getHiddenLayers()[layer_index - 1]->getNeurons())
-		theBiggestActVal = std::max(theBiggestActVal, neuron->getActivatedValue());
-
-	return theBiggestActVal;
-}
-
-CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestActivatedValue(unsigned layer_index)
-{
-	CrappyNeuralNets::Scalar theSmallestActVal = INFINITY;
-
-	if (!layer_index)
-	{
-		for (const auto& it : this->brain.getInputLayer()->output())
-			theSmallestActVal = std::min(theSmallestActVal, it);
-
-		return theSmallestActVal;
-	}
-	if (layer_index == this->brain.getHiddenLayers().size() + 1)
-	{
-		for (const auto& neuron : this->brain.getOutputLayer()->getNeurons())
-			theSmallestActVal = std::min(theSmallestActVal, neuron->getActivatedValue());
-
-		return theSmallestActVal;
-	}
-
-	for (const auto& neuron : this->brain.getHiddenLayers()[layer_index - 1]->getNeurons())
-		theSmallestActVal = std::min(theSmallestActVal, neuron->getActivatedValue());
-
-	return theSmallestActVal;
+	*/
 }
 
 CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestWeight()
 {
+	/*
 	CrappyNeuralNets::Scalar theBiggestWeight = -INFINITY;
 
 	for (int i = 0; i < this->synapses.size(); i++)
 		for (int j = 0; j < this->synapses[i].size(); j++)
 			for (int k = 0; k < this->synapses[i][j].size(); k++)
-				theBiggestWeight = std::max(theBiggestWeight, this->brain.getWeights()[i]->getValues()[j][k]);
-	
+				theBiggestWeight = std::max(theBiggestWeight, this->brain->getWeights()[i]->getValues()[j][k]);
+
 	return theBiggestWeight;
+	*/
 }
 
 CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestWeight()
 {
+	/*
 	CrappyNeuralNets::Scalar theSmallestWeight = INFINITY;
 
 	for (int i = 0; i < this->synapses.size(); i++)
 		for (int j = 0; j < this->synapses[i].size(); j++)
 			for (int k = 0; k < this->synapses[i][j].size(); k++)
-				theSmallestWeight = std::min(theSmallestWeight, this->brain.getWeights()[i]->getValues()[j][k]);
+				theSmallestWeight = std::min(theSmallestWeight, this->brain->getWeights()[i]->getValues()[j][k]);
 
 	return theSmallestWeight;
+	*/
+}
+
+void NeuralNetPreview::updateNeurons()
+{
+	this->setNeuronsColors();
 }
 
 void NeuralNetPreview::renderNeurons(sf::RenderTarget& target) const
