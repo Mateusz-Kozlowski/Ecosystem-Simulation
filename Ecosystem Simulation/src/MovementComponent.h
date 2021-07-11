@@ -1,55 +1,50 @@
 #pragma once
 
-#include "Crappy Neural Nets/NeuralNet.h"
+#include "Crappy Neural Nets/TempNet.h"
 
 class MovementComponent
 {
 public:
-	// constructor:
-	MovementComponent();
+	MovementComponent(const sf::Vector2f& default_velocity);
+	MovementComponent(const sf::Vector2f& default_velocity, const std::string& brain_file_path);
+	MovementComponent(const MovementComponent& rhs);
 
-	void copyConstructor(const MovementComponent& movement_component);
+	MovementComponent& operator=(const MovementComponent& rhs);
 
-	// mutators:
-	void set_x(float x);
-	void set_y(float y);
-	
-	void set_vx(float vx);
-	void set_vy(float vy);
-	
-	void set_ax(float ax);
-	void set_ay(float ay);
+	// public methods:
+	void saveBrainToFile(const std::string& file_path) const;
+	void loadBrainFromFile(const std::string& file_path);
 
-	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
+	void update(float dt, float speed_factor, const std::vector<double>& brain_inputs);
 
 	// accessors:
-	const CrappyNeuralNets::NeuralNet& getBrain() const;
+	const CrappyNeuralNets::TempNet& getBrain() const;
 
-	const sf::Vector2f& getPosition() const;
-	
-	const sf::Vector2f& getVelocity() const;
-
-	// TODO: replace all of this with sf::Vectors:
-	float get_x() const;
-	float get_y() const;
+	const sf::Vector2f& getVelocityVector() const;
+	const sf::Vector2f& getAccelerationVector() const;
 
 	float get_vx() const;
 	float get_vy() const;
-	
+
 	float get_ax() const;
 	float get_ay() const;
 
-	// other public methods:
-	void update(float dt, float speed_factor, const std::vector<double>& brain_inputs);
+	float getValueOfVelocityVector() const;
+	float getValueOfAccelerationVector() const;
 
-	void saveToFolder(const std::string& folder_path) const;
-	void loadFromFolder(const std::string& folder_path);
+	// mutators:
+	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
+
+	void setVelocity(const sf::Vector2f& velocity);
+	void setVelocity(float x, float y);
+
+	void set_vx(float vx);
+	void set_vy(float vy);
 
 private:
-	CrappyNeuralNets::NeuralNet brain;
+	std::unique_ptr<CrappyNeuralNets::TempNet> brain;
 
-	// kinematics stuff:
-	sf::Vector2f position;
+	// kinematics things:
 	sf::Vector2f velocity;
 	sf::Vector2f acceleration;
 };

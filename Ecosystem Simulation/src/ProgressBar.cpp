@@ -3,13 +3,11 @@
 
 using namespace gui;
 
-// constructors:
 ProgressBar::ProgressBar()
-	: valuesRange(sf::Vector2f(0.0f, 0.0f)),
-	mOverRangeValuesAreCorrected(false),
-	value(0.0f)
+	: mOverRangeValuesAreCorrected(false),
+	  value(0.0f)
 {
-
+	
 }
 
 ProgressBar::ProgressBar(
@@ -20,11 +18,10 @@ ProgressBar::ProgressBar(
 	const sf::Vector2f& size,
 	const sf::Color& background_color,
 	const sf::Color& progress_rect_color)
+	: valuesRange(values_range),
+	  mOverRangeValuesAreCorrected(correct_over_range_values),
+	  value(default_value)
 {
-	this->valuesRange = values_range;
-	this->mOverRangeValuesAreCorrected = correct_over_range_values;
-	this->value = default_value;
-
 	if (correct_over_range_values)
 		this->avoidOverRangeValue();
 

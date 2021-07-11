@@ -22,11 +22,11 @@ private:
 	sf::RectangleShape background;
 
 	std::unordered_map<std::string, sf::Font> fonts;
-	
+
 	std::unordered_map<std::string, gui::Button*> buttons;
 
 	std::unordered_map<std::string, gui::InputField*> inputFields;
-	
+
 	std::unordered_map<std::string, sf::Text*> texts;
 
 	// initialization:
@@ -54,16 +54,12 @@ private:
 
 	void createEcosystem();
 
-	void loadEcosystem();
-
 	// other private methods:
 	virtual void updateInput();
-	
+
 	void updateGui(float dt);
 
 	void getUpdatesFromGui();
-	void getUpdatesFromEcosystemsTemplatesButtons();
-	void getUpdatesFromButtons();
 
 	void renderGui(sf::RenderTarget& target);
 };

@@ -7,95 +7,114 @@
 class Animal
 {
 public:
-	// public static methods:
-	static void setUpAnimalFolder(const std::string& folder_path);
+	Animal(
+		const sf::Vector2f& position,
+		float radius,
+		const sf::Color& body_color,
+		const sf::Color& hp_bar_background_color,
+		const sf::Color& hp_bar_progress_rect_color,
+		float default_hp,
+		float max_hp
+	);
+	Animal(const std::string& folder_path);
+	Animal(const Animal& rhs);
 
-	// constructor/destructor:
-	Animal(float max_hp, float default_hp, bool hp_bar_is_rendered = true, bool brain_is_rendered = true);
-	~Animal();
+	Animal& operator=(const Animal& rhs);
 
-	void copyConstructor(const Animal& animal);
-
-	// initialization:
+	// public methods:
+	void saveToFolder(const std::string& folder_path) const;
 	void loadFromFolder(const std::string& folder_path);
 
-	// accessors:
-	const sf::Vector2f& getPosition() const;
-	const sf::Vector2f& getVelocity() const;
-
-	float getRadius() const;
-	
-	bool isHpBarRendered() const;
-
-	bool isBrainRendered() const;
-	
-	bool isAlive() const;
-
-	const MovementComponent& getMovementComponent() const;
-
-	float getMaxHp() const;
-
-	float getHp() const;
-
-	const sf::Color& getColor() const;
-
-	const CrappyNeuralNets::NeuralNet& getBrain() const;
-
-	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
-
-	float getValueOfVelocityVector() const;
-
-	float getKineticEnergy() const;
-
-	// mutators:
-	void setPosition(const sf::Vector2f& new_position);
-	void setVelocity(const sf::Vector2f& new_velocity);
-
-	void setHpBarIsRendered(bool hp_bar_is_rendered);
-
-	void setBrainIsRendered(bool brain_is_rendered);
-
-	void setHp(float hp);
-
-	void increaseHp(float hp_increase);
-
-	void setColor(const sf::Color& new_color);
-
-	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
-
-	// other public methods:
-	void update(float dt, float speed_factor, const std::vector<double>& brain_inputs);
+	void update(
+		float dt,
+		float simulation_speed_factor,
+		const std::vector<double>& brain_inputs
+	);
 
 	void renderBody(sf::RenderTarget& target) const;
 	void renderHpBar(sf::RenderTarget& target) const;
 	void renderBrainPreview(sf::RenderTarget& target) const;
 
-	// TODO: rmv later!:
-	std::string copied;
+	// accessors:
+	const sf::Vector2f& getPosition() const;
+
+	float getRadius() const;
+
+	const sf::Color& getColor() const;
+	
+	float getHp() const;
+	float getMaxHp() const;
+
+	const MovementComponent& getMovementComponent() const;
+
+	const CrappyNeuralNets::TempNet& getBrain() const;
+
+	const sf::Vector2f& getVelocityVector() const;
+	const sf::Vector2f& getAccelerationVector() const;
+
+	bool isAlive() const;
+
+	bool isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const;
+
+	float getValueOfVelocityVector() const;
+
+	float getValueOfAccelerationVector() const;
+
+	float getKineticEnergy() const;
+
+	float getTotalEnergy() const;
+
+	// mutators:
+	void setPosition(const sf::Vector2f& position);
+
+	void setRandomPosition(const sf::Vector2f& worldSize, float bordersThickness);
+
+	void setRadius(float radius);
+
+	void setColor(const sf::Color& color);
+
+	void setHp(float hp);
+
+	void increaseHp(float hp_increase);
+
+	void decreaseHp(float hp_decrease);
+
+	void setMaxHp(float max_hp);
+
+	void setVelocity(const sf::Vector2f& velocity);
+
+	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
 
 private:
-	bool alive;
-	
 	sf::CircleShape body;
 
-	MovementComponent* movementComponent;
-
 	float maxHp;
-	float hp;
 
-	bool hpBarIsRendered;
-	bool brainIsRendered;
+	std::unique_ptr<MovementComponent> movementComponent;
 
-	gui::ProgressBar* hpBar;
-	NeuralNetPreview* brainPreview;
+	bool alive;
 
-	// private initialization:
-	void initBody();
-	void initMovementComponent();
-	void initHpBar();
+	std::unique_ptr<gui::ProgressBar> hpBar;
+	std::unique_ptr<gui::NeuralNetPreview> brainPreview;
+
+	// private methods:
+	// initialization:
+	void initBody(
+		const sf::Vector2f& position,
+		float radius,
+		const sf::Color& color
+	);
+	void initHpBar(
+		float default_hp,
+		float max_hp,
+		const sf::Color& hp_bar_background_color,
+		const sf::Color& hp_bar_progress_rect_color
+	);
 	void initBrainPreview();
 
 	// private utilities:
-	void updateHp(float dt, float speed_factor = 1.f);
-	void updateHpBar();
+	void updateBody(float dt);
+	void updateHp(float dt);
+	void updateHpBarPosition();
+	void updateBrainPreview();
 };

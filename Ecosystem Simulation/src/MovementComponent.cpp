@@ -1,86 +1,79 @@
 #include "stdafx.h"
 #include "MovementComponent.h"
 
-MovementComponent::MovementComponent()
-{
-	this->brain.initInputLayer(new CrappyNeuralNets::InputLayer(5U));
-			   
-	//this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(4U, "fast sigmoid"));
-	//this->brain.addHiddenLayer(new CrappyNeuralNets::HiddenLayer(3U, "relu"));
-			   
-	this->brain.initOutputLayer(new CrappyNeuralNets::OutputLayer(2U));
-			   
-	this->brain.compile();
+MovementComponent::MovementComponent(const sf::Vector2f& default_velocity)
+	: velocity(default_velocity)
+{	
+	this->brain = std::make_unique<CrappyNeuralNets::TempNet>(CrappyNeuralNets::TempNet(5U, 2U));
 }
 
-void MovementComponent::copyConstructor(const MovementComponent& movement_component)
+MovementComponent::MovementComponent(const sf::Vector2f& default_velocity, const std::string& brain_file_path)
+	: velocity(default_velocity)
 {
-	this->brain.copyConstructor(movement_component.getBrain());
-	this->position = movement_component.position;
-	this->velocity = movement_component.velocity;
-	this->acceleration = movement_component.acceleration;
+	this->loadBrainFromFile(brain_file_path);
 }
 
-// mutators:
-void MovementComponent::set_x(float x)
+MovementComponent::MovementComponent(const MovementComponent& rhs)
 {
-	this->position.x = x;
+	*this->brain = *rhs.brain;
+	this->velocity = rhs.velocity;
+	this->acceleration = rhs.acceleration;
 }
 
-void MovementComponent::set_y(float y)
+MovementComponent& MovementComponent::operator=(const MovementComponent& rhs)
 {
-	this->position.y = y;
+	if (this != &rhs)
+	{
+		*this->brain = *rhs.brain;
+		this->velocity = rhs.velocity;
+		this->acceleration = rhs.acceleration;
+	}
+
+	return *this;
 }
 
-void MovementComponent::set_vx(float vx)
+// public methods:
+void MovementComponent::saveBrainToFile(const std::string& file_path) const
 {
-	this->velocity.x = vx;
+	//this->brain->saveToFile(file_path);
 }
 
-void MovementComponent::set_vy(float vy)
+void MovementComponent::loadBrainFromFile(const std::string& file_path)
 {
-	this->velocity.y = vy;
+	//this->brain->loadFromFile(file_path);
 }
 
-void MovementComponent::set_ax(float ax)
+void MovementComponent::update(float dt, float speed_factor, const std::vector<double>& brain_inputs)
 {
-	this->acceleration.x = ax;
-}
+	// update acceleration:	
+	this->brain->input(brain_inputs);
+	const std::vector<double>& brainOutput = this->brain->output();
 
-void MovementComponent::set_ay(float ay)
-{
-	this->acceleration.y = ay;
-}
+	// TODO: implement slowing down using speed_factor:
 
-void MovementComponent::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
-{
-	this->brain.randomMutate(mutation_percentage);
+	// update acceleration:
+	this->acceleration.x = brainOutput[0];
+	this->acceleration.y = brainOutput[1];
+
+	// update velocity:
+	this->velocity.x += this->acceleration.x * dt;
+	this->velocity.y += this->acceleration.y * dt;
 }
 
 // accessors:
-const CrappyNeuralNets::NeuralNet& MovementComponent::getBrain() const
+const CrappyNeuralNets::TempNet& MovementComponent::getBrain() const
 {
-	return this->brain;
+	return *this->brain;
 }
 
-const sf::Vector2f& MovementComponent::getPosition() const
-{
-	return this->position;
-}
-
-const sf::Vector2f& MovementComponent::getVelocity() const
+const sf::Vector2f& MovementComponent::getVelocityVector() const
 {
 	return this->velocity;
 }
 
-float MovementComponent::get_x() const
+const sf::Vector2f& MovementComponent::getAccelerationVector() const
 {
-	return this->position.x;
-}
-
-float MovementComponent::get_y() const
-{
-	return this->position.y;
+	return this->acceleration;
 }
 
 float MovementComponent::get_vx() const
@@ -103,59 +96,39 @@ float MovementComponent::get_ay() const
 	return this->acceleration.y;
 }
 
-void MovementComponent::update(float dt, float speed_factor, const std::vector<double>& brain_inputs)
+float MovementComponent::getValueOfVelocityVector() const
 {
-	// update acceleration:
-	const std::vector<double>& brainOutput = this->brain.predict(brain_inputs);
-
-	this->acceleration.x = brainOutput[0];
-	this->acceleration.y = brainOutput[1];
-
-	// update velocity:
-	this->velocity.x += this->acceleration.x * dt;
-	this->velocity.y += this->acceleration.y * dt;
-
-	// update positions:
-	this->position.x += this->velocity.x * dt * speed_factor;
-	this->position.y += this->velocity.y * dt * speed_factor;
+	return sqrt(pow(this->velocity.x, 2) + pow(this->velocity.y, 2));
 }
 
-void MovementComponent::saveToFolder(const std::string& folder_path) const
+float MovementComponent::getValueOfAccelerationVector() const
 {
-	std::filesystem::create_directories(folder_path);
-
-	this->brain.saveToFile(folder_path + "/brain.ini");
-
-	// save kinematics stuff:
-	std::ofstream kinematicsFile(folder_path + "/kinematics stuff.ini");
-
-	if (!kinematicsFile.is_open())
-		throw("ERROR::MOVEMENTCOMPONENT::CANNOT OPEN A FILE: " + folder_path + "/kinematics stuff.ini");
-
-	std::stringstream ss;
-	
-	ss << this->position.x << ' ' << this->position.y << '\n';
-	ss << this->velocity.x << ' ' << this->velocity.y << '\n';
-	ss << this->acceleration.x << ' ' << this->acceleration.y << '\n';
-
-	kinematicsFile << ss.str();
-
-	kinematicsFile.close();
+	return sqrt(pow(this->acceleration.x, 2) + pow(this->acceleration.y, 2));
 }
 
-void MovementComponent::loadFromFolder(const std::string& folder_path)
+// mutators:
+void MovementComponent::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
 {
-	this->brain.loadFromFile(folder_path + "/brain.ini");
+	//this->brain->randomMutate(mutation_percentage);
+}
 
-	// load kinematics stuff:
-	std::ifstream kinematicsFile(folder_path + "/kinematics stuff.ini");
+void MovementComponent::setVelocity(const sf::Vector2f& velocity)
+{
+	this->velocity = velocity;
+}
 
-	if (!kinematicsFile.is_open())
-		throw("ERROR::MOVEMENTCOMPONENT::CANNOT OPEN A FILE: " + folder_path + "/kinematics stuff.ini");
+void MovementComponent::setVelocity(float x, float y)
+{
+	this->velocity.x = x;
+	this->velocity.y = y;
+}
 
-	kinematicsFile >> this->position.x >> this->position.y;
-	kinematicsFile >> this->velocity.x >> this->velocity.y;
-	kinematicsFile >> this->acceleration.x >> this->acceleration.y;
+void MovementComponent::set_vx(float vx)
+{
+	this->velocity.x = vx;
+}
 
-	kinematicsFile.close();
+void MovementComponent::set_vy(float vy)
+{
+	this->velocity.y = vy;
 }

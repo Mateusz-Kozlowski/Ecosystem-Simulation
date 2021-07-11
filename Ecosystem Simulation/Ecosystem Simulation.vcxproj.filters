@@ -97,6 +97,9 @@
     <ClCompile Include="src\EcosystemCreatorState.cpp">
       <Filter>states</Filter>
     </ClCompile>
+    <ClCompile Include="src\Crappy Neural Nets\TempNet.cpp">
+      <Filter>Crappy Neural Nets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="src\EcosystemCreatorState.h">
       <Filter>states</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crappy Neural Nets\TempNet.h">
+      <Filter>Crappy Neural Nets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

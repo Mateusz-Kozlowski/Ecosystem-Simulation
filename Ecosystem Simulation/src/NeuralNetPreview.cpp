@@ -3,14 +3,13 @@
 
 using namespace gui;
 
-// constructor:
 NeuralNetPreview::NeuralNetPreview(
 	const CrappyNeuralNets::TempNet& brain,
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
 	const sf::Color& background_color)
+	: brain(&brain)
 {
-	this->brain = &brain;
 	this->initBackground(position, size, background_color);
 	this->initNeurons();
 	this->initSynapses();
@@ -75,11 +74,13 @@ void NeuralNetPreview::setBackgroundColor(const sf::Color& color)
 }
 
 // private methods:
-
 // initialization:
-void NeuralNetPreview::initBackground(const sf::Vector2f& preview_pos, const sf::Vector2f& size, const sf::Color& background_color)
+void NeuralNetPreview::initBackground(
+	const sf::Vector2f& preview_position, 
+	const sf::Vector2f& size, 
+	const sf::Color& background_color)
 {
-	this->background.setPosition(preview_pos);
+	this->background.setPosition(preview_position);
 	this->background.setSize(size);
 	this->background.setFillColor(background_color);
 }
@@ -196,12 +197,14 @@ sf::Vector2f NeuralNetPreview::calcNeuronPosition(unsigned index1, unsigned inde
 
 float NeuralNetPreview::calcGapBetweenLayers() const
 {
+	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
 	unsigned hiddenLayersCount = this->brain->getHiddenLayers().size();
 	float diameter = 2.f * this->calcNeuronsRadius();
 
 	return (this->background.getSize().x - (4U + hiddenLayersCount) * diameter) / (hiddenLayersCount + 1U);
 	*/
+	return 0.0f;
 }
 
 float NeuralNetPreview::calcNeuronsRadius() const
@@ -220,6 +223,7 @@ float NeuralNetPreview::calcTopMargin(unsigned index1) const
 
 unsigned NeuralNetPreview::getTheBiggestLayerSize() const
 {
+	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
 	// input layer:
 	unsigned getTheBiggestLayerSize = this->brain->getInputLayer()->getSize();
@@ -233,6 +237,7 @@ unsigned NeuralNetPreview::getTheBiggestLayerSize() const
 
 	return getTheBiggestLayerSize;
 	*/
+	return 0U;
 }
 
 void NeuralNetPreview::setNeuronsSizes()
@@ -317,6 +322,7 @@ void NeuralNetPreview::setOutputNeuronsColors()
 
 CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestActivatedValue(unsigned layer_index)
 {
+	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
 	CrappyNeuralNets::Scalar theBiggestActVal = -INFINITY;
 
@@ -344,10 +350,12 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestActivatedValue(unsigned 
 
 	return theBiggestActVal;
 	*/
+	return 0.0;
 }
 
 CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestActivatedValue(unsigned layer_index)
 {
+	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
 	CrappyNeuralNets::Scalar theSmallestActVal = INFINITY;
 
@@ -375,6 +383,7 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestActivatedValue(unsigned
 
 	return theSmallestActVal;
 	*/
+	return 0.0;
 }
 
 void NeuralNetPreview::setSynapsesPositions()
@@ -443,6 +452,7 @@ void NeuralNetPreview::setSynapsesColors()
 
 CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestWeight()
 {
+	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
 	CrappyNeuralNets::Scalar theBiggestWeight = -INFINITY;
 
@@ -453,10 +463,12 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestWeight()
 
 	return theBiggestWeight;
 	*/
+	return 0.0;
 }
 
 CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestWeight()
 {
+	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
 	CrappyNeuralNets::Scalar theSmallestWeight = INFINITY;
 
@@ -467,6 +479,7 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestWeight()
 
 	return theSmallestWeight;
 	*/
+	return 0.0;
 }
 
 void NeuralNetPreview::updateNeurons()

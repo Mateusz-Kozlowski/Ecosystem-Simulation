@@ -7,7 +7,6 @@ namespace gui
 	class ProgressBar
 	{
 	public:
-		// constructors:
 		ProgressBar();
 		ProgressBar(
 			const sf::Vector2f& values_range,

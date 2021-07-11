@@ -5,18 +5,17 @@
 class Fruit
 {
 public:
-	// constructors:
-	Fruit();
 	Fruit(
 		float energy,
 		const sf::Vector2f& position,
 		float radius,
 		const sf::Color& color
 	);
+	Fruit(const std::string& file_path);
 
 	// public methods:
-	void saveToFile(const std::string& path) const;
-	void loadFromFile(const std::string& path);
+	void saveToFile(const std::string& file_path) const;
+	void loadFromFile(const std::string& file_path);
 
 	void render(sf::RenderTarget& target) const;
 

@@ -235,6 +235,8 @@ void MainMenuState::getUpdateFromButtons()
 
 	if (this->buttons["SIMULATE"]->isClicked())
 	{
+		// TODO: What about this?:
+		/*
 		if (this->stateData->ecosystem->isInitialized())
 		{
 			this->stateData->states->push(new SimulationState(this->stateData));
@@ -242,6 +244,9 @@ void MainMenuState::getUpdateFromButtons()
 		}
 		else
 			this->highlightEcosystemText();
+		*/
+		this->stateData->states->push(new SimulationState(this->stateData));
+		this->stateData->states->top()->freeze();
 	}
 
 	else if (this->buttons["NEW ECOSYSTEM"]->isClicked())
@@ -272,6 +277,8 @@ void MainMenuState::getUpdateFromButtons()
 
 void MainMenuState::updateEcosystemText(float dt)
 {
+	// TODO: ecosystem text is not updated at all! Change that!:
+	/*
 	if (!this->stateData->ecosystem->isInitialized())
 	{
 		this->ecosystemText.setString("CREATE A NEW ECOSYSTEM OR LOAD AN EXISTING ONE");
@@ -285,7 +292,9 @@ void MainMenuState::updateEcosystemText(float dt)
 		}
 	}
 
-	else this->ecosystemText.setString("CURRENT ECOSYSTEM FOLDER: " + this->stateData->ecosystem->getDirectoryPath());
+	else 
+		this->ecosystemText.setString("CURRENT ECOSYSTEM FOLDER: " + this->stateData->ecosystem->getDirectoryPath());
+	*/
 }
 
 void MainMenuState::renderButtons(sf::RenderTarget& target)

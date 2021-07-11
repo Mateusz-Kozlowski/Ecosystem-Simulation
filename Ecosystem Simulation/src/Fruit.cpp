@@ -1,13 +1,6 @@
 #include "stdafx.h"
 #include "Fruit.h"
 
-// constructors:
-Fruit::Fruit()
-	: energy(0.0f)
-{
-
-}
-
 Fruit::Fruit(
 	float energy,
 	const sf::Vector2f& position,
@@ -18,14 +11,19 @@ Fruit::Fruit(
 	this->initShape(position, radius, color);
 }
 
-// public methods:
-void Fruit::saveToFile(const std::string& path) const
+Fruit::Fruit(const std::string& file_path)
 {
-	std::ofstream ofs(path);
+	this->loadFromFile(file_path);
+}
+
+// public methods:
+void Fruit::saveToFile(const std::string& file_path) const
+{
+	std::ofstream ofs(file_path);
 
 	if (!ofs.is_open())
 	{
-		std::cerr << "ERROR::Fruit::saveToFile::CANNOT OPEN: " << path << '\n';
+		std::cerr << "ERROR::Fruit::saveToFile::CANNOT OPEN: " << file_path << '\n';
 		exit(-1);
 	}
 
@@ -40,13 +38,13 @@ void Fruit::saveToFile(const std::string& path) const
 	ofs.close();
 }
 
-void Fruit::loadFromFile(const std::string& path)
+void Fruit::loadFromFile(const std::string& file_path)
 {
-	std::ifstream ifs(path);
+	std::ifstream ifs(file_path);
 
 	if (!ifs.is_open())
 	{
-		std::cerr << "ERROR::Fruit::saveToFile::CANNOT OPEN: " << path << '\n';
+		std::cerr << "ERROR::Fruit::saveToFile::CANNOT OPEN: " << file_path << '\n';
 		exit(-1);
 	}
 

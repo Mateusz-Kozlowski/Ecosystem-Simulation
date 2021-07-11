@@ -1,224 +1,151 @@
 #include "stdafx.h"
 #include "Animal.h"
 
-// public static methods:
-void Animal::setUpAnimalFolder(const std::string& folder_path)
+Animal::Animal(
+	const sf::Vector2f& position,
+	float radius,
+	const sf::Color& body_color,
+	const sf::Color& hp_bar_background_color,
+	const sf::Color& hp_bar_progress_rect_color,
+	float default_hp,
+	float max_hp)
+	: maxHp(max_hp),
+	  alive(true)
 {
-	std::filesystem::create_directories(folder_path);
+	this->initBody(position, radius, body_color);
 
-	MovementComponent movementComponent;
-
-	movementComponent.set_x(1920.f);
-	movementComponent.set_y(1080.f);
-
-	movementComponent.saveToFolder(folder_path);
-}
-
-// constructor:
-Animal::Animal(float max_hp, float default_hp, bool hp_bar_is_rendered, bool brain_is_rendered)
-	: alive(true), 
-	  maxHp(max_hp), hp(default_hp),
-	  hpBarIsRendered(hp_bar_is_rendered), brainIsRendered(brain_is_rendered),
-	  copied("default")
-{
-	this->initBody();
-	this->initMovementComponent();
-	this->initHpBar();
+	this->movementComponent = std::make_unique<MovementComponent>(sf::Vector2f(0.0f, 0.0f));
+	
+	this->initHpBar(default_hp, max_hp, hp_bar_background_color, hp_bar_progress_rect_color);
+	
 	this->initBrainPreview();
 }
 
-Animal::~Animal()
+Animal::Animal(const std::string& folder_path)
+	: maxHp(0.0f),
+	  alive(true)
 {
-	delete this->movementComponent;
-	delete this->hpBar;
-	delete this->brainPreview;
+	this->loadFromFolder(folder_path);
 }
 
-void Animal::copyConstructor(const Animal& animal)
+Animal::Animal(const Animal& rhs)
+	: movementComponent(std::make_unique<MovementComponent>(sf::Vector2f(0.0f, 0.0f))),
+	  hpBar(std::make_unique<gui::ProgressBar>())
 {
-	this->alive = animal.alive;
-	this->body = animal.body;
-	this->movementComponent->copyConstructor(animal.getMovementComponent());	
-	this->maxHp = animal.maxHp;
-	this->hp = animal.hp;
-	this->hpBarIsRendered = animal.hpBarIsRendered;
-	this->brainIsRendered = animal.brainIsRendered;	
-	*this->hpBar = *animal.hpBar;	
-	this->brainPreview = new NeuralNetPreview(
-		this->movementComponent->getBrain(),
-		this->movementComponent->getPosition(),
-		sf::Vector2f(144.f, 144.f),
-		sf::Color(100, 100, 100)
-	);
+	this->body = rhs.body;
+	this->maxHp = rhs.maxHp;
+	*this->movementComponent = *rhs.movementComponent;
+	this->alive = rhs.alive;
+	*this->hpBar = *rhs.hpBar;
 
-	// TODO: rmv later!:
-	this->copied = "copied";
+	this->initBrainPreview();
 }
 
-// initialization:
+Animal& Animal::operator=(const Animal& rhs)
+{
+	if (this != &rhs)
+	{
+		this->body = rhs.body;
+		this->maxHp = rhs.maxHp;
+		*this->movementComponent = *rhs.movementComponent;
+		this->alive = rhs.alive;
+		*this->hpBar = *rhs.hpBar;
+
+		this->initBrainPreview();
+	}
+
+	return *this;
+}
+
+// public methods:
+void Animal::saveToFolder(const std::string& folder_path) const
+{
+	this->movementComponent->saveBrainToFile(folder_path + "/brain.ini");
+
+	std::string path = folder_path + "/animal.ini";
+
+	std::ofstream ofs(path);
+
+	if (!ofs.is_open())
+	{
+		std::cerr << "ERROR::Animal::saveToFolder::CANNOT OPEN: " << path << '\n';
+		exit(-1);
+	}
+
+	ofs << this->body.getPosition().x << this->body.getPosition().y << '\n';
+	ofs << this->body.getRadius() << '\n';
+	ofs << static_cast<int>(this->body.getFillColor().r) << '\n';
+	ofs << static_cast<int>(this->body.getFillColor().g) << '\n';
+	ofs << static_cast<int>(this->body.getFillColor().b) << '\n';
+	ofs << static_cast<int>(this->body.getFillColor().a) << '\n';
+	ofs << static_cast<int>(this->hpBar->getBackgroundColor().r) << '\n';
+	ofs << static_cast<int>(this->hpBar->getBackgroundColor().g) << '\n';
+	ofs << static_cast<int>(this->hpBar->getBackgroundColor().b) << '\n';
+	ofs << static_cast<int>(this->hpBar->getBackgroundColor().a) << '\n';
+	ofs << static_cast<int>(this->hpBar->getProgressRectColor().r) << '\n';
+	ofs << static_cast<int>(this->hpBar->getProgressRectColor().g) << '\n';
+	ofs << static_cast<int>(this->hpBar->getProgressRectColor().b) << '\n';
+	ofs << static_cast<int>(this->hpBar->getProgressRectColor().a) << '\n';
+	ofs << this->maxHp << '\n';
+	ofs << this->alive << '\n';
+	ofs << this->hpBar->getCurrentValue() << '\n';
+	ofs << this->movementComponent->get_vx() << '\n' << this->movementComponent->get_vy();
+
+	ofs.close();
+}
+
 void Animal::loadFromFolder(const std::string& folder_path)
-{	
-	this->movementComponent->loadFromFolder(folder_path);
-
-	this->body.setPosition(this->movementComponent->getPosition());
-
-	this->hpBar->setPosition(
-		sf::Vector2f(
-			this->movementComponent->getPosition().x - 4.f * this->body.getRadius(),
-			this->movementComponent->getPosition().y - 3.f * this->body.getRadius()
-		)
-	);
-
-	this->brainPreview->update(this->movementComponent->getPosition());
-}
-
-// accessors:
-const sf::Vector2f& Animal::getPosition() const
 {
-	return this->movementComponent->getPosition();
-}
+	this->movementComponent->loadBrainFromFile(folder_path + "/brain.ini");
 
-const sf::Vector2f& Animal::getVelocity() const
-{
-	return this->movementComponent->getVelocity();
-}
+	std::string path = folder_path + "/animal.ini";
 
-float Animal::getRadius() const
-{
-	return this->body.getRadius();
-}
+	std::ifstream ifs(path);
 
-bool Animal::isHpBarRendered() const
-{
-	return this->hpBarIsRendered;
-}
-
-bool Animal::isBrainRendered() const
-{
-	return this->brainIsRendered;
-}
-
-bool Animal::isAlive() const
-{
-	return this->alive;
-}
-
-const MovementComponent& Animal::getMovementComponent() const
-{
-	return *this->movementComponent;
-}
-
-float Animal::getMaxHp() const
-{
-	return this->maxHp;
-}
-
-float Animal::getHp() const
-{
-	return this->hp;
-}
-
-const sf::Color& Animal::getColor() const
-{
-	return this->body.getFillColor();
-}
-
-const CrappyNeuralNets::NeuralNet& Animal::getBrain() const
-{
-	return this->movementComponent->getBrain();
-}
-
-bool Animal::isCovered(const sf::Vector2f& mouse_pos_view) const
-{
-	float acceleration = this->movementComponent->get_x() - mouse_pos_view.x;
-	float b = this->movementComponent->get_y() - mouse_pos_view.y;
-
-	float distance = sqrt(pow(acceleration, 2) + pow(b, 2));
-
-	return this->getRadius() >= distance;
-}
-
-float Animal::getValueOfVelocityVector() const
-{
-	sf::Vector2f velocity = this->movementComponent->getVelocity();
-
-	return sqrt(pow(velocity.x, 2) + pow(velocity.y, 2));
-}
-
-float Animal::getKineticEnergy() const
-{
-	return 0.5f * pow(this->getValueOfVelocityVector(), 2.0);
-}
-
-// mutators:
-void Animal::setPosition(const sf::Vector2f& new_position)
-{
-	this->movementComponent->set_x(new_position.x);
-	this->movementComponent->set_y(new_position.y);
-}
-
-void Animal::setVelocity(const sf::Vector2f& new_velocity)
-{
-	this->movementComponent->set_vx(new_velocity.x);
-	this->movementComponent->set_vy(new_velocity.y);
-}
-
-void Animal::setHpBarIsRendered(bool hp_bar_is_rendered)
-{
-	this->hpBarIsRendered = hp_bar_is_rendered;
-}
-
-void Animal::setBrainIsRendered(bool brain_is_rendered)
-{
-	this->brainIsRendered = brain_is_rendered;
-}
-
-void Animal::setHp(float hp)
-{
-	if (hp > this->maxHp)
+	if (!ifs.is_open())
 	{
-		std::cerr << "ERROR::Animal::setHp::hp ARGUMENT CANNOT BE GREATER THAN THE MAX ANIMAL HP\n";
+		std::cerr << "ERROR::Animal::loadFromFolder::CANNOT OPEN: " << path << '\n';
 		exit(-1);
 	}
 
-	this->hp = hp;
+	sf::Vector2f position;
+	float radius;
+	sf::Color bodyColor;
+	sf::Color hpBarBgColor;
+	sf::Color hpBarProgressColor;
+	float hp;
+	sf::Vector2f velocity;
+
+	ifs >> position.x >> position.y;
+	ifs >> radius;
+	ifs >> bodyColor.r >> bodyColor.g >> bodyColor.b >> bodyColor.a;
+	ifs >> hpBarBgColor.r >> hpBarBgColor.g >> hpBarBgColor.b >> hpBarBgColor.a;
+	ifs >> hpBarProgressColor.r >> hpBarProgressColor.g >> hpBarProgressColor.b >> hpBarProgressColor.a;
+	ifs >> this->maxHp;
+	ifs >> this->alive;
+	ifs >> hp;
+	ifs >> velocity.x >> velocity.y;
+
+	this->initBody(position, radius, bodyColor);
+	this->initHpBar(hp, this->maxHp, hpBarBgColor, hpBarProgressColor);
+	this->initBrainPreview();
+
+	this->movementComponent->setVelocity(velocity);
+
+	ifs.close();
 }
 
-void Animal::increaseHp(float hp_increase)
+void Animal::update(float dt, float simulation_speed_factor, const std::vector<double>& brain_inputs)
 {
-	if (this->hp + hp_increase > this->maxHp)
-	{
-		std::cerr << "ERROR::Animal::setHp::hp CANNOT BE INCREASED TO A VALUE GREATER THAN THE MAX ANIMAL HP\n";
-		exit(-1);
-	}
+	this->movementComponent->update(dt, simulation_speed_factor, brain_inputs);
 
-	this->hp += hp_increase;
-}
+	this->updateBody(dt);
+	this->updateHp(dt);
 
-void Animal::setColor(const sf::Color& color)
-{
-	this->body.setFillColor(color);
-}
+	this->alive = this->hpBar->getCurrentValue() > 0.f;
 
-void Animal::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
-{
-	this->movementComponent->randomMutate(mutation_percentage);
-}
-
-// other public methods:
-void Animal::update(float dt, float speed_factor, const std::vector<double>& brain_inputs)
-{
-	this->movementComponent->update(dt, speed_factor, brain_inputs);
-
-	this->body.setPosition(this->movementComponent->get_x(), this->movementComponent->get_y());
-
-	this->updateHp(dt, speed_factor);
-
-	this->alive = this->hp > 0.f;
-
-	this->updateHpBar();
-
-	this->brainPreview->update(this->movementComponent->getPosition());
+	this->updateHpBarPosition();
+	this->updateBrainPreview();
 }
 
 void Animal::renderBody(sf::RenderTarget& target) const
@@ -236,95 +163,285 @@ void Animal::renderBrainPreview(sf::RenderTarget& target) const
 	this->brainPreview->render(target);
 }
 
-// private initialization:
-void Animal::initBody()
+// accessors:
+const sf::Vector2f& Animal::getPosition() const
 {
-	this->body.setFillColor(sf::Color::Red);
-	this->body.setPointCount(16);
-	this->body.setRadius(8.f);
-	this->body.setOrigin(this->body.getRadius(), this->body.getRadius());
+	return this->body.getPosition();
 }
 
-void Animal::initMovementComponent()
+float Animal::getRadius() const
 {
-	this->movementComponent = new MovementComponent();
+	return this->body.getRadius();
 }
 
-void Animal::initHpBar()
+const sf::Color& Animal::getColor() const
 {
-	// TODO: rmv that hardcoded variable!:
-	this->hpBar = new gui::ProgressBar(
+	return this->body.getFillColor();
+}
+
+float Animal::getHp() const
+{
+	return this->hpBar->getCurrentValue();
+}
+
+float Animal::getMaxHp() const
+{
+	return this->maxHp;
+}
+
+const MovementComponent& Animal::getMovementComponent() const
+{
+	return *this->movementComponent;
+}
+
+const CrappyNeuralNets::TempNet& Animal::getBrain() const
+{
+	return this->movementComponent->getBrain();
+}
+
+const sf::Vector2f& Animal::getVelocityVector() const
+{
+	return this->movementComponent->getVelocityVector();
+}
+
+const sf::Vector2f& Animal::getAccelerationVector() const
+{
+	return this->movementComponent->getAccelerationVector();
+}
+
+bool Animal::isAlive() const
+{
+	return this->alive;
+}
+
+bool Animal::isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const
+{
+	float x = this->body.getPosition().x - mouse_pos_view.x;
+	float y = this->body.getPosition().y - mouse_pos_view.y;
+
+	return sqrt(pow(x, 2) + pow(y, 2)) <= this->body.getRadius();
+}
+
+float Animal::getValueOfVelocityVector() const
+{
+	return this->movementComponent->getValueOfVelocityVector();
+}
+
+float Animal::getValueOfAccelerationVector() const
+{
+	return this->movementComponent->getValueOfAccelerationVector();
+}
+
+float Animal::getKineticEnergy() const
+{
+	return 0.5f * pow(this->getValueOfVelocityVector(), 2);
+}
+
+float Animal::getTotalEnergy() const
+{
+	return this->hpBar->getCurrentValue() + this->getKineticEnergy();
+}
+
+// mutators:
+void Animal::setPosition(const sf::Vector2f& position)
+{
+	this->body.setPosition(position);
+
+	this->updateHpBarPosition();
+	this->brainPreview->setPosition(this->body.getPosition());
+}
+
+void Animal::setRandomPosition(const sf::Vector2f& worldSize, float bordersThickness)
+{
+	std::pair<unsigned, unsigned> px = { bordersThickness, worldSize.x - bordersThickness };
+	std::pair<unsigned, unsigned> py = { bordersThickness, worldSize.y - bordersThickness };
+
+	float x = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(px);
+	float y = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(py);
+
+	this->body.setPosition(x, y);
+
+	this->updateHpBarPosition();
+	this->brainPreview->setPosition(this->body.getPosition());
+}
+
+void Animal::setRadius(float radius)
+{
+	this->body.setRadius(radius);
+}
+
+void Animal::setColor(const sf::Color& color)
+{
+	this->body.setFillColor(color);
+}
+
+void Animal::setHp(float hp)
+{
+	if (hp > this->maxHp)
+	{
+		std::cerr << "ERROR::Animal::setHp::CANNOT SET HP GREATER THAN THE MAX HP\n";
+		exit(-1);
+	}
+
+	this->hpBar->setValue(hp);
+
+	this->alive = this->hpBar->getCurrentValue() > 0.0f;
+}
+
+void Animal::increaseHp(float hp_increase)
+{
+	if (this->hpBar->getCurrentValue() + hp_increase > this->maxHp)
+	{
+		std::cerr << "ERROR::Animal::increaseHp::CANNOT SET HP GREATER THAN THE MAX HP\n";
+		exit(-1);
+	}
+
+	this->hpBar->increaseValue(hp_increase);
+
+	this->alive = this->hpBar->getCurrentValue() > 0.0f;
+}
+
+void Animal::decreaseHp(float hp_decrease)
+{
+	if (this->hpBar->getCurrentValue() - hp_decrease > this->maxHp)
+	{
+		std::cerr << "ERROR::Animal::decreaseHp::CANNOT SET HP GREATER THAN THE MAX HP\n";
+		exit(-1);
+	}
+
+	this->hpBar->decreaseValue(hp_decrease);
+
+	this->alive = this->hpBar->getCurrentValue() > 0.0f;
+}
+
+void Animal::setMaxHp(float max_hp)
+{
+	if (this->hpBar->getCurrentValue() > max_hp)
+	{
+		std::cerr << "ERROR::Animal::setMaxHp::CANNOT SET MAX HP SMALLER THAT THE CURRENT HP\n";
+		exit(-1);
+	}
+
+	this->maxHp = max_hp;
+}
+
+void Animal::setVelocity(const sf::Vector2f& velocity)
+{
+	this->movementComponent->setVelocity(velocity);
+}
+
+void Animal::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
+{
+	this->movementComponent->randomMutate(mutation_percentage);
+}
+
+// private methods:
+
+// initialization:
+void Animal::initBody(
+	const sf::Vector2f& position,
+	float radius,
+	const sf::Color& color)
+{
+	this->body.setPosition(position);
+	this->body.setRadius(radius);
+	this->body.setOrigin(radius, radius);
+	this->body.setFillColor(color);
+}
+
+void Animal::initHpBar(
+	float default_hp,
+	float max_hp,
+	const sf::Color& hp_bar_background_color,
+	const sf::Color& hp_bar_progress_rect_color)
+{
+	this->hpBar = std::make_unique<gui::ProgressBar>(
 		sf::Vector2f(
-			0.f, 
-			this->maxHp
+			0.0f,
+			max_hp
 		),
 		false,
-		this->maxHp,		
+		default_hp,
 		sf::Vector2f(
-			this->movementComponent->getPosition().x - 4.f * this->body.getRadius(),
-			this->movementComponent->getPosition().y - 3.f * this->body.getRadius()
+			this->body.getPosition().x - 3.f * this->body.getRadius(),
+			this->body.getPosition().y - 4.f * this->body.getRadius()
 		),
 		sf::Vector2f(
-			8.f * this->body.getRadius(),
+			6.f * this->body.getRadius(),
 			this->body.getRadius()
 		),
-		sf::Color(100, 100, 100),
-		this->getColor()
+		hp_bar_background_color,
+		hp_bar_progress_rect_color
 	);
 }
 
 void Animal::initBrainPreview()
 {
-	this->brainPreview = new NeuralNetPreview(
+	// TODO: do sth with these hard-coded arguments:
+	this->brainPreview = std::make_unique<gui::NeuralNetPreview>(
 		this->movementComponent->getBrain(),
-		this->movementComponent->getPosition(),
-		sf::Vector2f(144.f, 144.f),
+		this->body.getPosition(),
+		sf::Vector2f(
+			16.0f * this->body.getRadius(),
+			16.0f * this->body.getRadius()
+		),
 		sf::Color(100, 100, 100)
 	);
 }
 
 // private utilities:
-void Animal::updateHp(float dt, float speed_factor)
+void Animal::updateBody(float dt)
 {
-	// some physics stuff: 
+	this->body.setPosition(
+		this->body.getPosition().x + this->movementComponent->get_vx() * dt,
+		this->body.getPosition().y + this->movementComponent->get_vy() * dt
+	);
+}
 
-	// Pythagorean theorem for acceleration and velocity vectors:
-	float acceleration = sqrt(pow(this->movementComponent->get_ax(), 2) + pow(this->movementComponent->get_ay(), 2));
-	float velocity = this->getValueOfVelocityVector();
-	velocity *= speed_factor;
+void Animal::updateHp(float dt)
+{
+	this->hpBar->decreaseValue(this->getValueOfAccelerationVector() * this->getValueOfVelocityVector() * dt);
 
-	// calculate energy delta (where does it come from is explaneid at the bottom of the function)
-	float dE = acceleration * velocity * dt;
-
-	this->hp -= dE;
+	// Are u wondering where this formula come from? Check those physics stuff out:
 
 	/*
+	dE = W
+	   = F * ds
+	   = F * v * dt
+	   = m * a * v * dt
+
+	In the project animals movement is not considered dynamically.
+	It is only considered kinematically, so the mass is not taken into account.
+
+	In other words, it is assumed that the mass of all animals is equal so it can be ignored.
+
+	So the final version of the formula looks like this:
+
+	de = a * v * dt
+
 	dE <==> energy delta [J]
-	P <==> power [W]
-	dt <==> detla time [s]
 	W <==> work [J]
 	F <==> force [N]
 	ds <==> delta displacement [m]
 	v <==> velocity [m/s]
+	dt <==> detla time [s]
 	m <==> mass [kg]
 	a <==> acceleration [m/s^2]
-
-	= dE
-	= P(t) * dt
-	= (W / dt) * dt
-	= (F(t) * ds / dt) * dt
-	= F(t) * v(t) * dt
-	= m * a(t) * v(t) * dt
 	*/
 }
 
-void Animal::updateHpBar()
+void Animal::updateHpBarPosition()
 {
 	this->hpBar->setPosition(
 		sf::Vector2f(
-			this->movementComponent->getPosition().x - 4.f * this->body.getRadius(),
-			this->movementComponent->getPosition().y - 3.f * this->body.getRadius()
+			this->body.getPosition().x - 3.f * this->body.getRadius(),
+			this->body.getPosition().y - 3.f * this->body.getRadius()
 		)
 	);
-	this->hpBar->setValue(this->hp);
+}
+
+void Animal::updateBrainPreview()
+{
+	this->brainPreview->setPosition(this->body.getPosition());
+	this->brainPreview->update();
 }

@@ -164,7 +164,10 @@ void LoadingState::updateInput()
 void LoadingState::getUpdateFromButtons()
 {
 	if (this->buttons["LOAD"]->isClicked())
-		this->stateData->ecosystem->loadFromFolder(this->inputField->getInput());
+	{
+		delete this->stateData->ecosystem;
+		this->stateData->ecosystem = new Ecosystem(this->inputField->getInput());
+	}
 
 	else if (this->buttons["QUIT"]->isClicked())
 		this->endState();

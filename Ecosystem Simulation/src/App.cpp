@@ -101,7 +101,7 @@ void App::initKeys()
 
 void App::initEcosystem()
 {
-	this->ecosystem = new Ecosystem();
+	this->ecosystem = nullptr;
 }
 
 void App::initStateData()

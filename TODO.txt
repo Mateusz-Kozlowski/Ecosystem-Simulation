@@ -4,7 +4,7 @@ The smaller number the greater priority (the sooner that thing should be impleme
 better nearest food searching algo (with complexity better than the current one (O(f*a)))
 	or maybe even different inputs
 
-rebuild the program structure at ecosystem and animals level (rewrite Ecosystem && Animal classes)
+clean up Ecosystem and Animal classes
 
 side menu should be able to be opened not only using Esc key but also using a gui widget which doesn't even exist yet
 
@@ -26,24 +26,23 @@ avoid drawing things that are outside the window
 
 rename neural net preview to sequential preview or sth like that
 
-ALL functions that takes pointer have to check if they are nullptrs
+change all pointers to references (except where nullptr may be desired)
 
 after loading ecosystem side menu panel should be updated (e.g. speed scaler)
 
 crappy neural nets should have a method that allows to set inputs before calling predict/train methods
 
-private methods should use references, public should use pointers, in all classes! Even in Crappy Neural Nets
-
-there is a bug with energy conservation law - animals can reach negative hp
+there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
 
 if there is no animals the simulation crashes, which is not surprising
 
-ANIMALS CAN HAVE NEGATIVE HP! AVOID THAT; MAKE SURE THAT NEW FRUITS ENERGY IS CORRECT
+replace std::string with const char*
+
+replace std::vector with std::array when u deal with fixed size memory
 
 2:
 DEBUG:
 	debug showing brain while a simulation is paused (brain renders probably in the previous position)
-	tunneling
 	update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
 
 STATES:

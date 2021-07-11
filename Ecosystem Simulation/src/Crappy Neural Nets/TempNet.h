@@ -7,16 +7,19 @@ namespace CrappyNeuralNets
 	class TempNet
 	{
 	public:
-		TempNet(unsigned inputs_count);
+		TempNet(unsigned inputs_count, unsigned outputs_count);
 
-		void input(const std::vector<CrappyNeuralNets::Scalar>& input);
+		void input(const std::vector<Scalar>& input);
 
-		const std::vector<CrappyNeuralNets::Scalar>& output();
+		const std::vector<Scalar>& output();
+
+		void printWeights() const;
 
 	private:
-		std::vector<CrappyNeuralNets::Scalar> v;
+		std::vector<Scalar> m_input;
+		std::vector<Scalar> m_output;
 
-		std::vector<CrappyNeuralNets::Scalar> weights;
+		std::vector<std::vector<Scalar>> weights;
 
 		// private methods:
 		// initialization:

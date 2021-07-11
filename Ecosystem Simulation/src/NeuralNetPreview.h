@@ -7,7 +7,6 @@ namespace gui
 	class NeuralNetPreview
 	{
 	public:
-		// constructor:
 		NeuralNetPreview(
 			const CrappyNeuralNets::TempNet& brain,
 			const sf::Vector2f& position,
@@ -45,7 +44,7 @@ namespace gui
 
 		std::vector<std::vector<std::vector<std::vector<sf::Vertex>>>> synapses;
 
-		// private methods:
+		// private methods:		
 		// initialization:
 		void initBackground(
 			const sf::Vector2f& preview_pos, 

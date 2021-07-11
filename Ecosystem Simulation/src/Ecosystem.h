@@ -3,45 +3,89 @@
 #include "Animal.h"
 #include "Fruit.h"
 #include "EventsAccessor.h"
-#include "ProgressBar.h"
-#include "NeuralNetPreview.h"
 
 class Ecosystem
 {
-public:	
-	// public static methods:
-	static void createConfigFile(const std::string& folder_path);
-	static void setUpEcosystemFolder(const std::string& folder_path);
-	
-	// constructor/destructor:
-	Ecosystem();
-	~Ecosystem();
+public:
+	Ecosystem(
+		const std::string& name,
+		const sf::Vector2f& world_size,
+		unsigned borders_thickness,
+		const sf::Color& background_color,
+		const sf::Color& borders_color,
+		unsigned animals_count,
+		unsigned fruits_count,
+		float animals_radius,
+		float fruits_radius,
+		float default_animals_hp,
+		float default_fruits_energy,
+		float mutation_percentage,
+		const sf::Color& animals_color,
+		const sf::Color& fruits_color,
+		const sf::Color& tracked_animal_color,
+		float simulation_speed_factor = 1.0f,
+		bool simulation_is_paused = false,
+		const std::string& god_tool = "none",
+		bool render_hp_bars_by_default = true,
+		bool render_brains_by_default = true
+	);
+	Ecosystem(const std::string& folder_path);
 
-	// initialization:
+	// public methods:
+	void saveToFolder(const std::string& folder_path) const;
 	void loadFromFolder(const std::string& folder_path);
 
+	void update(
+		float dt,
+		const std::vector<sf::Event>& events,
+		const sf::Vector2f& mouse_pos_view
+	);
+	void render(sf::RenderTarget& target) const;
+
 	// accessors:
-	const sf::Vector2f& getWorldSize() const;
+	const std::string& getName() const;
 
-	const std::string& getDirectoryPath() const;
+	sf::Vector2f getWorldSize() const;
 
-	unsigned getBorderThickness() const;
+	unsigned getBordersThickness() const;
+	unsigned getAnimalsCount() const;
 
-	void printAnimalsPositions() const;
+	const std::vector<std::shared_ptr<Animal>>& getAnimals() const;
 
-	const sf::Vector2f* getTrackedAnimalPosition() const;
+	unsigned getFruitsCount() const;
 
-	float getTotalTimeElapsed() const;
+	float getMutationPercentage() const;
 
-	bool isInitialized() const;
+	const sf::Color& getBackgroundColor() const;
+	const sf::Color& getBordersColor() const;
+	const sf::Color& getAnimalsColor() const;
+	const sf::Color& getFruitsColor() const;
+	const sf::Color& getTrackedAnimalColor() const;
 
 	const Animal* getTrackedAnimal() const;
 
 	float getSimulationSpeedFactor() const;
 
-	const std::string& getGodTool() const;
+	bool isSimulationPaused() const;
+
+	const std::string& getCurrentGodTool() const;
+
+	float getTotalTimeElapsed() const;
+
+	void printAllAnimalsPositions() const;
 
 	// mutators:
+	void setName(const std::string& name);
+
+	void setMutationPercentage(float mutation_percentage);
+
+	void setBackgroundColor(const sf::Color& background_color);
+
+	void setBordersColor(const sf::Color& borders_color);
+	void setAnimalsColor(const sf::Color& animals_color);
+	void setFruitsColor(const sf::Color& fruits_color);
+	void setTrackedAnimalColor(const sf::Color& tracked_animal_color);
+
 	void setSimulationSpeedFactor(float simulation_speed_factor);
 
 	void pauseSimulation();
@@ -49,103 +93,149 @@ public:
 
 	void setGodTool(const std::string& god_tool);
 
-	// other public methods:
-	void update(
-		float dt,
-		const std::vector<sf::Event>& events,
-		const sf::Vector2f& mouse_pos_view
-	);
-	void render(sf::RenderTarget& target);
-
 private:
-	// private static variables:
-	static std::string templateConfigFilePath;
-	static std::string configFileName;
-	static std::string fruitsFileName;
+	std::string name;
 
-	// other private variables:
-	std::string directoryPath;
-
-	sf::Vector2f worldSize;
-
-	unsigned borderThickness;
-
-	sf::RectangleShape border;
 	sf::RectangleShape background;
 
-	unsigned animalsCount;
-	unsigned fruitsCount;
+	// animals vector contains shared pointers 
+	// (in contrast to fruits vector which contains unique pointers)
+	// to make cloning animals possible
+	// (cloning occurs by calling a copy constructor of Animal class)
+	std::vector<std::shared_ptr<Animal>> animals;
+	std::vector<std::unique_ptr<Fruit>> fruits;
 
-	std::vector<Animal*> animals;
-	std::vector<Fruit*> fruits;
+	float mutationPercentage;
+	
+	// TODO: add a multiline comment that:
+	// - explains why those variables are useful in those situations
+	// - describes those situation (when they appear and how they disappear)
+	
+	// useful when there are temporarily no animals in an ecosystem:
+	float animalsRadius; 
+	
+	// useful when there are temporarily no fruits in an ecosystem:
+	float fruitsRadius;
+
+	// useful when there are temporarily no animals in an ecosystem:
+	sf::Color animalsColor;
+	
+	// useful when there are temporarily no fruits in an ecosystem:
+	sf::Color fruitsColor;
+	
+	// useful when there is temporarily no tracked animal in an ecosystem
+	sf::Color trackedAnimalColor;
 
 	Animal* trackedAnimal;
 
-	float totalTimeElapsed;
-	float dtSinceLastWorldUpdate;
-
-	bool initialized;
-
 	float simulationSpeedFactor;
 
-	bool m_simulationIsPaused;
+	bool simulationIsPaused;
 
 	std::string godTool;
 
-	// private initialization:
-	void readDataFromConfigFile(const std::string& folder_path);
-	void initBorders();
-	void initBackground();
-	void initAnimals(const std::string& folder_path);
-	void initFruits(const std::string& folder_path);
+	std::unordered_map<Animal*, bool> hpBarsVisibility;
+	std::unordered_map<Animal*, bool> brainsPreviewsVisibility;
 
-	// private utilities:
-	std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;
+	float totalTimeElapsed;
 
-	Fruit* findTheNearestFruit(const Animal& animal) const;
-
-	void useGodTool(
-		const std::vector<sf::Event>& events,
-		const sf::Vector2f& mouse_pos_view
+	// private methods:
+	// initialization:
+	void initBackgroundAndBorders(
+		const sf::Vector2f& world_size,
+		unsigned borders_thickness,
+		const sf::Color& background_color,
+		const sf::Color& borders_color
 	);
 
+	void createNewAnimals(
+		unsigned animals_count,
+		float default_animals_hp,
+		float animals_radius,
+		const sf::Color& animals_color,
+		bool render_hp_bars_by_default,
+		bool render_brains_by_default
+	);
+	void createNewAnimal(
+		float default_animal_hp,
+		float animal_radius,
+		const sf::Color& animal_color,
+		bool render_hp_bar_by_default,
+		bool render_brain_by_default
+	);
+
+	void createNewFruits(
+		unsigned fruits_count,
+		float default_fruits_energy,
+		float fruits_radius,
+		const sf::Color& fruits_color
+	);
+	void createNewFruit(float energy, float radius, const sf::Color& fruit_color);
+
+	// private utilities:
+	void saveAnimals(const std::string& folder_path) const;
+	void saveFruits(const std::string& folder_path) const;
+	void saveEcosystem(const std::string& file_path) const;
+	void saveHpBarsVisibility(const std::string& file_path) const;
+	void saveBrainsPreviewsVisibility(const std::string& file_path) const;
+
+	void loadAnimals(const std::string& folder_path);
+	void loadAnimal(const std::string& folder_path);
+
+	void loadFruits(const std::string& folder_path);
+	void loadFruit(const std::string& file_path);
+
+	void loadEcosystem(const std::string& file_path);
+	void loadHpBarsVisibility(const std::string& file_path);
+	void loadBrainsPreviewsVisibility(const std::string& file_path);
+
+	int getTrackedAnimalIndex() const;
+
+	// god tools section:
+	void useGodTool(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
+
+	void trackingTool(const sf::Vector2f& mouse_pos_view);
+
+	void killingTool(const sf::Vector2f& mouse_pos_view);
+	void convertAnimalToFruit(std::shared_ptr<Animal>& animal);
+
+	void replacingTool(const sf::Vector2f& mouse_pos_view);
+
+	void brainTool(const sf::Vector2f& mouse_pos_view);
+
+	void stoppingTool(const sf::Vector2f& mouse_pos_view);
+	void convertKineticEnergyToFruit(Animal& animal, bool random_fruit_position);
+
+	void infoTool(const sf::Vector2f& mouse_pos_view) const;
+
+	// other private utilities:
 	void updateWorld(float dt);
 
+	void updatingWorldLogs() const;
+
+	void updateAnimals(float dt);
+	const std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;
+	const Fruit* getTheNearestFruit(const Animal& animal) const;
+	float calcDistance(const Animal& animal, const Fruit& fruit) const;
+
 	void removeDeadAnimals();
+	void removeAnimal(std::shared_ptr<Animal>& animal);
 
-	void convertKineticEnergyToFruit(Animal* animal, bool random_pos);
-
-	void removeAnimal(Animal*& animal);
-
-	void avoidGoingBeyondTheWorld();
+	void avoidTunneling();
+	void avoidTunnelingByVerticalBorders(Animal& animal);
+	void avoidTunnelingByHorizontalBorders(Animal& animal);
 
 	void feedAnimals();
-
-	static bool compareAnimalsYPositions(const Animal* a1, const Animal* a2);
-
-	bool animalIsToHigh(const Animal& animal, const Fruit& Fruit);
-
-	bool animalReachesFruitInY(const Animal& animal, const Fruit& Fruit);
-	bool animalReachesFruit(const Animal& animal, const Fruit& Fruit);
-
+	static bool compareAnimalsYPositions(
+		std::shared_ptr<Animal> a1, 
+		std::shared_ptr<Animal> a2
+	);
+	bool animalIsTooHigh(const Animal& animal, const Fruit& fruit) const;
 	int tryToFindConsumer(Fruit& fruit, unsigned start_animal_index);
-
+	bool animalReachesFruitInY(const Animal& animal, const Fruit& fruit) const;
+	bool animalReachesFruit(const Animal& animal, const Fruit& fruit) const;
 	void eat(Animal& animal, Fruit& fruit);
 
-	void removeEatenFruit();
-	
-	void convertAnimalToFruit(Animal*& animal);
-
-	// God tools:
-	void trackingTool(const sf::Vector2f& mouse_pos_view);
-	
-	void killingTool(const sf::Vector2f& mouse_pos_view);
-	
-	void replacingTool(const sf::Vector2f& mouse_pos_view);
-	
-	void brainTool(const sf::Vector2f& mouse_pos_view);
-	
-	void stoppingTool(const sf::Vector2f& mouse_pos_view);
-
-	void infoTool(const sf::Vector2f& mouse_pos_view);
+	void removeEatenFruits();
+	void removeFruit(std::unique_ptr<Fruit>& fruit);
 };
