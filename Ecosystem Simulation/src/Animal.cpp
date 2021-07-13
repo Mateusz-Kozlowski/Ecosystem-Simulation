@@ -280,6 +280,8 @@ void Animal::setRadius(float radius)
 void Animal::setColor(const sf::Color& color)
 {
 	this->body.setFillColor(color);
+
+	this->hpBar->setProgressRectColor(color);
 }
 
 void Animal::setHp(float hp)

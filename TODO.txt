@@ -41,10 +41,6 @@ different inputs for brains?
 
 don't allow to use God tools when a mouse cursor is over side menu
 
-hp bars of tracked animals should have the same color as tracked animals bodies
-
-there is a BUG in setting default positions - half of an animal can be in border
-
 2:
 DEBUG:
 	debug showing brain while a simulation is paused (brain renders probably in the previous position)
