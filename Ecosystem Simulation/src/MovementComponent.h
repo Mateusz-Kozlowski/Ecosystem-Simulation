@@ -5,7 +5,7 @@
 class MovementComponent
 {
 public:
-	MovementComponent(const sf::Vector2f& default_velocity);
+	MovementComponent();
 	MovementComponent(const sf::Vector2f& default_velocity, const std::string& brain_file_path);
 	MovementComponent(const MovementComponent& rhs);
 

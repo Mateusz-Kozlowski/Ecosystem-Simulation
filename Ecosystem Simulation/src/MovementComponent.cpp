@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "MovementComponent.h"
 
-MovementComponent::MovementComponent(const sf::Vector2f& default_velocity)
-	: velocity(default_velocity)
+MovementComponent::MovementComponent()
 {	
 	this->brain = std::make_unique<CrappyNeuralNets::TempNet>(CrappyNeuralNets::TempNet(5U, 2U));
 }

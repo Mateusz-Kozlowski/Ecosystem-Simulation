@@ -716,6 +716,9 @@ void Ecosystem::stoppingTool(const sf::Vector2f& mouse_pos_view)
 
 void Ecosystem::convertKineticEnergyToFruit(Animal& animal, bool random_fruit_position)
 {
+	if (animal.getKineticEnergy() <= 0.0f)
+		return;
+	
 	std::unique_ptr<Fruit> newFruit = std::make_unique<Fruit>(
 		animal.getKineticEnergy(),
 		animal.getPosition(),

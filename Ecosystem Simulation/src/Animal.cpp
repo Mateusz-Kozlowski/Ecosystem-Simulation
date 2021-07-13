@@ -14,7 +14,7 @@ Animal::Animal(
 {
 	this->initBody(position, radius, body_color);
 
-	this->movementComponent = std::make_unique<MovementComponent>(sf::Vector2f(0.0f, 0.0f));
+	this->movementComponent = std::make_unique<MovementComponent>();
 	
 	this->initHpBar(default_hp, max_hp, hp_bar_background_color, hp_bar_progress_rect_color);
 	
@@ -29,7 +29,7 @@ Animal::Animal(const std::string& folder_path)
 }
 
 Animal::Animal(const Animal& rhs)
-	: movementComponent(std::make_unique<MovementComponent>(sf::Vector2f(0.0f, 0.0f))),
+	: movementComponent(std::make_unique<MovementComponent>()),
 	  hpBar(std::make_unique<gui::ProgressBar>())
 {
 	this->body = rhs.body;
