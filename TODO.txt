@@ -33,8 +33,6 @@ crappy neural nets should have a method that allows to set inputs before calling
 
 there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
 
-if there is no animals the simulation crashes, which is not surprising
-
 replace std::string with const char*
 
 replace std::vector with std::array when u deal with fixed size memory
@@ -42,6 +40,10 @@ replace std::vector with std::array when u deal with fixed size memory
 different inputs for brains?
 
 don't allow to use God tools when a mouse cursor is over side menu
+
+hp bars of tracked animals should have the same color as tracked animals bodies
+
+there is a BUG in setting default positions - half of an animal can be in border
 
 2:
 DEBUG:

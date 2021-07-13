@@ -251,13 +251,20 @@ void Animal::setPosition(const sf::Vector2f& position)
 	this->brainPreview->setPosition(this->body.getPosition());
 }
 
-void Animal::setRandomPosition(const sf::Vector2f& worldSize, float bordersThickness)
+void Animal::setRandomPosition(const sf::Vector2f& world_size, float borders_thickness)
 {
-	std::pair<unsigned, unsigned> px = { bordersThickness, worldSize.x - bordersThickness };
-	std::pair<unsigned, unsigned> py = { bordersThickness, worldSize.y - bordersThickness };
+	std::pair<unsigned, unsigned> rangeX = {
+		borders_thickness + this->body.getRadius(),
+		world_size.x - borders_thickness - this->body.getRadius()
+	};
 
-	float x = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(px);
-	float y = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(py);
+	std::pair<unsigned, unsigned> rangeY = {
+		borders_thickness + this->body.getRadius(),
+		world_size.y - borders_thickness - this->body.getRadius()
+	};
+
+	float x = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(rangeX);
+	float y = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(rangeY);
 
 	this->body.setPosition(x, y);
 

@@ -67,7 +67,7 @@ public:
 	// mutators:
 	void setPosition(const sf::Vector2f& position);
 
-	void setRandomPosition(const sf::Vector2f& worldSize, float bordersThickness);
+	void setRandomPosition(const sf::Vector2f& world_size, float borders_thickness);
 
 	void setRadius(float radius);
 
