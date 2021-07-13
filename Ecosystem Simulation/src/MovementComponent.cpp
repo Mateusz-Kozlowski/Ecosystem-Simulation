@@ -35,12 +35,12 @@ MovementComponent& MovementComponent::operator=(const MovementComponent& rhs)
 // public methods:
 void MovementComponent::saveBrainToFile(const std::string& file_path) const
 {
-	//this->brain->saveToFile(file_path);
+	//this->BRAIN->saveToFile(file_path);
 }
 
 void MovementComponent::loadBrainFromFile(const std::string& file_path)
 {
-	//this->brain->loadFromFile(file_path);
+	//this->BRAIN->loadFromFile(file_path);
 }
 
 void MovementComponent::update(float dt, float speed_factor, const std::vector<double>& brain_inputs)
@@ -109,7 +109,7 @@ float MovementComponent::getValueOfAccelerationVector() const
 // mutators:
 void MovementComponent::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
 {
-	//this->brain->randomMutate(mutation_percentage);
+	//this->BRAIN->randomMutate(mutation_percentage);
 }
 
 void MovementComponent::setVelocity(const sf::Vector2f& velocity)

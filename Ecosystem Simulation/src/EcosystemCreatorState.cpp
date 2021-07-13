@@ -573,7 +573,7 @@ void EcosystemCreatorState::createEcosystem()
 		sf::Color(100, 0, 200), // TODO: do sth with that hard-coded thing
 		1.0f, // TODO: do sth with that hard-coded thing
 		true,
-		"none",
+		GodTool::NONE,
 		true,
 		false
 	);

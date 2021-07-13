@@ -167,6 +167,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\GodTools.cpp" />
     <ClCompile Include="src\EcosystemCreatorState.cpp" />
     <ClCompile Include="src\LoadingState.cpp" />
     <ClCompile Include="src\EventsAccessor.cpp" />
@@ -244,6 +245,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\GodTools.h" />
     <ClInclude Include="src\EcosystemCreatorState.h" />
     <ClInclude Include="src\LoadingState.h" />
     <ClInclude Include="src\EventsAccessor.h" />

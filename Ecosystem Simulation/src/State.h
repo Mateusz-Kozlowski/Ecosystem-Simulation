@@ -8,7 +8,6 @@ class State;
 class StateData
 {
 public:
-	// constructor:
 	StateData()
 	{
 		this->gfxSettings = nullptr;
@@ -30,9 +29,12 @@ public:
 class State
 {
 public:
-	// constructor/destructor:
 	State(StateData* state_data);
 	virtual ~State();
+
+	// public methods:
+	virtual void update(float dt) = 0;
+	virtual void render(sf::RenderTarget* target = nullptr) = 0;
 
 	// accessors:
 	bool getQuit() const;
@@ -41,11 +43,7 @@ public:
 	void endState();
 
 	virtual void freeze();
-
-	// other public methods:
-	virtual void update(float dt) = 0;
-	virtual void render(sf::RenderTarget* target = nullptr) = 0;
-
+	
 protected:
 	StateData* stateData;
 

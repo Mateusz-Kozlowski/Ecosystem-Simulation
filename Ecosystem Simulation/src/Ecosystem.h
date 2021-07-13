@@ -3,6 +3,7 @@
 #include "Animal.h"
 #include "Fruit.h"
 #include "EventsAccessor.h"
+#include "GodTools.h"
 
 class Ecosystem
 {
@@ -25,7 +26,7 @@ public:
 		const sf::Color& tracked_animal_color,
 		float simulation_speed_factor = 1.0f,
 		bool simulation_is_paused = false,
-		const std::string& god_tool = "none",
+		GodTool god_tool = GodTool::NONE,
 		bool render_hp_bars_by_default = true,
 		bool render_brains_by_default = true
 	);
@@ -68,7 +69,7 @@ public:
 
 	bool isSimulationPaused() const;
 
-	const std::string& getCurrentGodTool() const;
+	GodTool getCurrentGodTool() const;
 
 	float getTotalTimeElapsed() const;
 
@@ -91,7 +92,7 @@ public:
 	void pauseSimulation();
 	void unpauseSimulation();
 
-	void setGodTool(const std::string& god_tool);
+	void setGodTool(GodTool god_tool);
 
 private:
 	std::string name;
@@ -132,7 +133,7 @@ private:
 
 	bool simulationIsPaused;
 
-	std::string godTool;
+	GodTool godTool;
 
 	std::unordered_map<Animal*, bool> hpBarsVisibility;
 	std::unordered_map<Animal*, bool> brainsPreviewsVisibility;

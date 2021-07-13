@@ -6,19 +6,17 @@
 class SimulationState : public State
 {
 public:
-	// constructor/destructor:
 	SimulationState(StateData* state_data);
 	virtual ~SimulationState();
 
-	// mutators:
+	// public methods:
 	virtual void freeze();
-
-	// other public methods:
+	
 	virtual void update(float dt);
 	virtual void render(sf::RenderTarget* target = nullptr);
-
+	
 private:
-	bool paused;
+	bool m_isPaused;
 
 	std::unordered_map<std::string, sf::Font> fonts;
 
@@ -26,14 +24,14 @@ private:
 
 	sf::Vector2i previousMousePosWindow;
 
-	bool sideMenuIsRendered;
+	bool m_sideMenuIsRendered;
 
 	gui::SideMenu* sideMenu;
 
-	std::string currentTool;
-
 	sf::RenderTexture renderTexture;
 	sf::Sprite renderSprite;
+
+	// private methods:
 
 	// initialization:
 	virtual void initKeybinds();
@@ -47,13 +45,16 @@ private:
 
 	// other private methods:
 	virtual void updateInput();
-	void updateView();
-	virtual void updateMousePositions(const sf::View* view = nullptr);
-	void updateSideMenu();
-	void getUpdatesFromSideMenuGui();
-	void updateEcosystem(float dt);
 
-	// private utilities:
+	virtual void updateMousePositions(const sf::View* view = nullptr);
+	
+	void updateSideMenu();
 	void updateSideMenuGui();
 	void updateGodToolButton(const std::string& god_tool_btn_key);
+
+	void getUpdatesFromSideMenuGui();
+	
+	void updateView();
+	
+	void updateEcosystem(float dt);
 };

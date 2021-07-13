@@ -96,26 +96,26 @@ void NeuralNetPreview::initNeurons()
 void NeuralNetPreview::initNeuronsVector()
 {
 	/*
-	unsigned hiddenLayersCount = this->brain->getHiddenLayers().size();
+	unsigned hiddenLayersCount = this->BRAIN->getHiddenLayers().size();
 
 	this->neurons.resize(hiddenLayersCount + 2U);
 
 	// resize input layer:
 	this->neurons[0].resize(
-		this->brain->getInputLayer()->getSize(),
+		this->BRAIN->getInputLayer()->getSize(),
 		sf::CircleShape(0.0f, neurons_shapes_point_count)
 	);
 
 	// resize hidden layers:
 	for (int i = 0; i < hiddenLayersCount; i++)
 		this->neurons[i + 1].resize(
-			this->brain->getHiddenLayers()[i]->getNeuronsCount(),
+			this->BRAIN->getHiddenLayers()[i]->getNeuronsCount(),
 			sf::CircleShape(0.0f, neurons_shapes_point_count)
 		);
 
 	// resize output layer:
 	this->neurons.back().resize(
-		this->brain->getOutputLayer()->getNeuronsCount(),
+		this->BRAIN->getOutputLayer()->getNeuronsCount(),
 		sf::CircleShape(0.0f, neurons_shapes_point_count)
 	);
 	*/
@@ -131,33 +131,33 @@ void NeuralNetPreview::initSynapses()
 void NeuralNetPreview::initSynapsesVector()
 {
 	/*
-	unsigned hiddenLayersCount = this->brain->getHiddenLayers().size();
+	unsigned hiddenLayersCount = this->BRAIN->getHiddenLayers().size();
 
 	this->synapses.resize(hiddenLayersCount + 1U);
 
 	// resize each matrix in synapses vector (make synapses a 2D structure):
 	for (int i = 0; i < hiddenLayersCount; i++)
-		this->synapses[i].resize(this->brain->getHiddenLayers()[i]->getNeuronsCount());
+		this->synapses[i].resize(this->BRAIN->getHiddenLayers()[i]->getNeuronsCount());
 
-	this->synapses.back().resize(this->brain->getOutputLayer()->getNeuronsCount());
+	this->synapses.back().resize(this->BRAIN->getOutputLayer()->getNeuronsCount());
 
 	// make synapses a 3D structure:
 	if (hiddenLayersCount > 0)
 	{
-		for (int i = 0; i < this->brain->getHiddenLayers()[0]->getNeuronsCount(); i++)
-			this->synapses[0][i].resize(this->brain->getInputLayer()->getSize());
+		for (int i = 0; i < this->BRAIN->getHiddenLayers()[0]->getNeuronsCount(); i++)
+			this->synapses[0][i].resize(this->BRAIN->getInputLayer()->getSize());
 
 		for (int i = 0; i < hiddenLayersCount - 1; i++)
-			for (int j = 0; j < this->brain->getHiddenLayers()[i + 1]->getNeuronsCount(); j++)
-				this->synapses[i + 1][j].resize(this->brain->getHiddenLayers()[i]->getNeuronsCount());
+			for (int j = 0; j < this->BRAIN->getHiddenLayers()[i + 1]->getNeuronsCount(); j++)
+				this->synapses[i + 1][j].resize(this->BRAIN->getHiddenLayers()[i]->getNeuronsCount());
 
-		for (int i = 0; i < this->brain->getOutputLayer()->getNeuronsCount(); i++)
-			this->synapses.back()[i].resize(this->brain->getHiddenLayers().back()->getNeuronsCount());
+		for (int i = 0; i < this->BRAIN->getOutputLayer()->getNeuronsCount(); i++)
+			this->synapses.back()[i].resize(this->BRAIN->getHiddenLayers().back()->getNeuronsCount());
 	}
 	else
 	{
-		for (int i = 0; i < this->brain->getOutputLayer()->getNeuronsCount(); i++)
-			this->synapses.back()[i].resize(this->brain->getInputLayer()->output().size());
+		for (int i = 0; i < this->BRAIN->getOutputLayer()->getNeuronsCount(); i++)
+			this->synapses.back()[i].resize(this->BRAIN->getInputLayer()->output().size());
 	}
 
 	// each synapse consists of 2 vertices:
@@ -199,7 +199,7 @@ float NeuralNetPreview::calcGapBetweenLayers() const
 {
 	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
-	unsigned hiddenLayersCount = this->brain->getHiddenLayers().size();
+	unsigned hiddenLayersCount = this->BRAIN->getHiddenLayers().size();
 	float diameter = 2.f * this->calcNeuronsRadius();
 
 	return (this->background.getSize().x - (4U + hiddenLayersCount) * diameter) / (hiddenLayersCount + 1U);
@@ -226,14 +226,14 @@ unsigned NeuralNetPreview::getTheBiggestLayerSize() const
 	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
 	// input layer:
-	unsigned getTheBiggestLayerSize = this->brain->getInputLayer()->getSize();
+	unsigned getTheBiggestLayerSize = this->BRAIN->getInputLayer()->getSize();
 
 	// hidden layers:
-	for (const auto& hiddenLayer : this->brain->getHiddenLayers())
+	for (const auto& hiddenLayer : this->BRAIN->getHiddenLayers())
 		getTheBiggestLayerSize = std::max(getTheBiggestLayerSize, hiddenLayer->getNeuronsCount());
 
 	// output layer:
-	getTheBiggestLayerSize = std::max(getTheBiggestLayerSize, this->brain->getOutputLayer()->getNeuronsCount());
+	getTheBiggestLayerSize = std::max(getTheBiggestLayerSize, this->BRAIN->getOutputLayer()->getNeuronsCount());
 
 	return getTheBiggestLayerSize;
 	*/
@@ -267,7 +267,7 @@ void NeuralNetPreview::setInputNeuronsColors()
 
 	for (int i = 0; i < this->neurons[0].size(); i++)
 	{
-		CrappyNeuralNets::Scalar neuronActVal = this->brain->getInputLayer()->output()[i];
+		CrappyNeuralNets::Scalar neuronActVal = this->BRAIN->getInputLayer()->output()[i];
 
 		if (neuronActVal > 0.0)
 			this->neurons[0][i].setFillColor(sf::Color(0, 0, 255 * neuronActVal / theBiggestAbsActVal, 255));
@@ -280,7 +280,7 @@ void NeuralNetPreview::setInputNeuronsColors()
 void NeuralNetPreview::setHiddenNeuronsColors()
 {
 	/*
-	for (int i = 0; i < this->brain->getHiddenLayers().size(); i++)
+	for (int i = 0; i < this->BRAIN->getHiddenLayers().size(); i++)
 	{
 		CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(i + 1);
 		CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(i + 1);
@@ -289,7 +289,7 @@ void NeuralNetPreview::setHiddenNeuronsColors()
 
 		for (int j = 0; j < this->neurons[i + 1].size(); j++)
 		{
-			CrappyNeuralNets::Scalar actVal = this->brain->getHiddenLayers()[i]->getNeurons()[j]->getActivatedValue();
+			CrappyNeuralNets::Scalar actVal = this->BRAIN->getHiddenLayers()[i]->getNeurons()[j]->getActivatedValue();
 
 			if (actVal > 0.0)
 				this->neurons[i + 1][j].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsActVal));
@@ -303,14 +303,14 @@ void NeuralNetPreview::setHiddenNeuronsColors()
 void NeuralNetPreview::setOutputNeuronsColors()
 {
 	/*
-	CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(this->brain->getHiddenLayers().size() + 1);
-	CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(this->brain->getHiddenLayers().size() + 1);
+	CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(this->BRAIN->getHiddenLayers().size() + 1);
+	CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(this->BRAIN->getHiddenLayers().size() + 1);
 
 	CrappyNeuralNets::Scalar theBiggestAbsActVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
 
 	for (int i = 0; i < this->neurons.back().size(); i++)
 	{
-		CrappyNeuralNets::Scalar actVal = this->brain->getOutputLayer()->getNeurons()[i]->getActivatedValue();
+		CrappyNeuralNets::Scalar actVal = this->BRAIN->getOutputLayer()->getNeurons()[i]->getActivatedValue();
 
 		if (actVal > 0.0)
 			this->neurons.back()[i].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsActVal));
@@ -329,23 +329,23 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestActivatedValue(unsigned 
 	// layer_index == 0 <==> we're dealing with the input layer:
 	if (!layer_index)
 	{
-		for (const auto& it : this->brain->getInputLayer()->output())
+		for (const auto& it : this->BRAIN->getInputLayer()->output())
 			theBiggestActVal = std::max(theBiggestActVal, it);
 
 		return theBiggestActVal;
 	}
 
 	// layer_index == hidden layers count + 1 <==> we're dealing with the output layer:
-	if (layer_index == this->brain->getHiddenLayers().size() + 1)
+	if (layer_index == this->BRAIN->getHiddenLayers().size() + 1)
 	{
-		for (const auto& neuron : this->brain->getOutputLayer()->getNeurons())
+		for (const auto& neuron : this->BRAIN->getOutputLayer()->getNeurons())
 			theBiggestActVal = std::max(theBiggestActVal, neuron->getActivatedValue());
 
 		return theBiggestActVal;
 	}
 
 	// otherwise we're dealing with a hidden layer:
-	for (const auto& neuron : this->brain->getHiddenLayers()[layer_index - 1]->getNeurons())
+	for (const auto& neuron : this->BRAIN->getHiddenLayers()[layer_index - 1]->getNeurons())
 		theBiggestActVal = std::max(theBiggestActVal, neuron->getActivatedValue());
 
 	return theBiggestActVal;
@@ -362,23 +362,23 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestActivatedValue(unsigned
 	// layer_index == 0 <==> we're dealing with the input layer:
 	if (!layer_index)
 	{
-		for (const auto& it : this->brain->getInputLayer()->output())
+		for (const auto& it : this->BRAIN->getInputLayer()->output())
 			theSmallestActVal = std::min(theSmallestActVal, it);
 
 		return theSmallestActVal;
 	}
 
 	// layer_index == hidden layers count + 1 <==> we're dealing with the output layer:
-	if (layer_index == this->brain->getHiddenLayers().size() + 1)
+	if (layer_index == this->BRAIN->getHiddenLayers().size() + 1)
 	{
-		for (const auto& neuron : this->brain->getOutputLayer()->getNeurons())
+		for (const auto& neuron : this->BRAIN->getOutputLayer()->getNeurons())
 			theSmallestActVal = std::min(theSmallestActVal, neuron->getActivatedValue());
 
 		return theSmallestActVal;
 	}
 
 	// otherwise we're dealing with a hidden layer:
-	for (const auto& neuron : this->brain->getHiddenLayers()[layer_index - 1]->getNeurons())
+	for (const auto& neuron : this->BRAIN->getHiddenLayers()[layer_index - 1]->getNeurons())
 		theSmallestActVal = std::min(theSmallestActVal, neuron->getActivatedValue());
 
 	return theSmallestActVal;
@@ -390,7 +390,7 @@ void NeuralNetPreview::setSynapsesPositions()
 {
 	/*
 	// calculate useful variables:
-	unsigned hiddenLayersCount = this->brain->getHiddenLayers().size();
+	unsigned hiddenLayersCount = this->BRAIN->getHiddenLayers().size();
 	unsigned biggestLayerSize = this->getTheBiggestLayerSize();
 
 	float gapBetweenLayers = this->calcGapBetweenLayers();
@@ -434,7 +434,7 @@ void NeuralNetPreview::setSynapsesColors()
 		for (int j = 0; j < this->synapses[i].size(); j++)
 			for (int k = 0; k < this->synapses[i][j].size(); k++)
 			{
-				CrappyNeuralNets::Scalar weight = this->brain->getWeights()[i]->getValues()[j][k];
+				CrappyNeuralNets::Scalar weight = this->BRAIN->getWeights()[i]->getValues()[j][k];
 
 				if (weight > 0.0)
 				{
@@ -459,7 +459,7 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestWeight()
 	for (int i = 0; i < this->synapses.size(); i++)
 		for (int j = 0; j < this->synapses[i].size(); j++)
 			for (int k = 0; k < this->synapses[i][j].size(); k++)
-				theBiggestWeight = std::max(theBiggestWeight, this->brain->getWeights()[i]->getValues()[j][k]);
+				theBiggestWeight = std::max(theBiggestWeight, this->BRAIN->getWeights()[i]->getValues()[j][k]);
 
 	return theBiggestWeight;
 	*/
@@ -475,7 +475,7 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestWeight()
 	for (int i = 0; i < this->synapses.size(); i++)
 		for (int j = 0; j < this->synapses[i].size(); j++)
 			for (int k = 0; k < this->synapses[i][j].size(); k++)
-				theSmallestWeight = std::min(theSmallestWeight, this->brain->getWeights()[i]->getValues()[j][k]);
+				theSmallestWeight = std::min(theSmallestWeight, this->BRAIN->getWeights()[i]->getValues()[j][k]);
 
 	return theSmallestWeight;
 	*/

@@ -2,9 +2,8 @@ The smaller number the greater priority (the sooner that thing should be impleme
 
 1:
 better nearest food searching algo (with complexity better than the current one (O(f*a)))
-	or maybe even different inputs
 
-clean up Ecosystem and Animal classes
+clean up Ecosystem and its members classes
 
 side menu should be able to be opened not only using Esc key but also using a gui widget which doesn't even exist yet
 
@@ -40,28 +39,45 @@ replace std::string with const char*
 
 replace std::vector with std::array when u deal with fixed size memory
 
+different inputs for brains?
+
+don't allow to use God tools when a mouse cursor is over side menu
+
 2:
 DEBUG:
 	debug showing brain while a simulation is paused (brain renders probably in the previous position)
+	
 	update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
 
 STATES:
-	shortcuts/keys state
+	saving State
+
+	define states freezing
+
+	shortcuts/keys State
 
 GUI:
-	one convention for all gui widgets, meybe even polimorphizm
-	some GUI widgets positions are set relative to their centers and some are set relative to their 
-		upper-left corners... =>
-			=> fix that!
-			=> maybe allow to choose both ways of setting positions?...
+	one convention for all gui widgets, maybe even polimorphizm
+	
+	some GUI widgets positions are set relative to their centers and some are set relative to their
+		left-top corners; add an ability to control their positions in these two ways
+
+	NEAT-RT preview with ability to move neurons and save that changes
 	
 CONVENTION/NAMES/COMMENTS/CODE:
 	convention of names in tools (->replace is also called move and it shouldn't have 2 names)(->track and select also)
 		(rmv and delete? I used remove everywhere, but delete may be a better option)
+
 	add consts to renders where it is possible (and also to other places)
+	
 	use sf::Vector2<T> instead of 2 floats
-	smart pointers!
-	in initKeybinds functions (are maybe in others that contains reading from files) there are issues with if statements:
+
+	overload some functions that contains sf::Vector2<T> using 2 primitives
+
+	smart pointers should completly replace raw pointers
+
+	in initKeybinds functions (are maybe in others that contains reading from files) 
+		there are issues with if statements:
 		replace sth like this:
 			if(file.is_good())
 			{
@@ -72,22 +88,24 @@ CONVENTION/NAMES/COMMENTS/CODE:
 			if(!file.is_good()) error and exit(-1)
 			
 			reading from file...
-		change speed_factor to simulation_speed_factor
+	
+	change speed_factor to simulation_speed_factor everywhere
 
 OTHERS:
 	implement info tool (probably it'll be able to give info not only about the entire ecosystem
 		but also about particular animals if they are tracked at the moment or sth :) )
+	
 	use EventsAccessors class wherever possible (including GUI classes)
-	define states freezing
-	nn viewer should never beyond the world
+	
+	nn preview should never be beyond the world
+	
 	textures (different) and hitbox component
-	use real copy constructors (remember about the rule of three!)
+	
 	more/better ecosystems templates?	
+
 	sexual reproduction...
 
-3:
-Crappy Neural Nets! =>
-	=> NEAT REAL TIME
-	since using NEAT:
-		brains preview also in side panel/menu and next to the animals
-	=> <random> library? Check it out!
+Crappy Neural Nets!:
+	NEAT REAL TIME
+	
+	<random> library? Check it out! Not C style of generating pseudorandom numbers

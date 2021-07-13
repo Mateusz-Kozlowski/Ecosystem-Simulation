@@ -19,7 +19,7 @@ Ecosystem::Ecosystem(
 	const sf::Color& tracked_animal_color,
 	float simulation_speed_factor,
 	bool simulation_is_paused,
-	const std::string& god_tool,
+	GodTool god_tool,
 	bool render_hp_bars_by_default,
 	bool render_brains_by_default)
 	: name(name),
@@ -182,7 +182,7 @@ bool Ecosystem::isSimulationPaused() const
 	return this->simulationIsPaused;
 }
 
-const std::string& Ecosystem::getCurrentGodTool() const
+GodTool Ecosystem::getCurrentGodTool() const
 {
 	return this->godTool;
 }
@@ -259,7 +259,7 @@ void Ecosystem::unpauseSimulation()
 	this->simulationIsPaused = false;
 }
 
-void Ecosystem::setGodTool(const std::string& god_tool)
+void Ecosystem::setGodTool(GodTool god_tool)
 {
 	this->godTool = god_tool;
 }
@@ -588,30 +588,41 @@ int Ecosystem::getTrackedAnimalIndex() const
 // god tools section:
 void Ecosystem::useGodTool(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
 {
-	// TODO: add info that if there is no God tool then this->godTool string should be equal to ""
-
-	if (!EventsAccessor::hasEventOccured(static_cast<sf::Event::EventType>(sf::Event::MouseButtonPressed), events))
+	if (!EventsAccessor::hasEventOccured(sf::Event::MouseButtonPressed, events))
 		return;
 
 	// now use God tool:
-	if (this->godTool == "") return;
-
-	else if (this->godTool == "TRACK") this->trackingTool(mouse_pos_view);
-
-	else if (this->godTool == "KILL") this->killingTool(mouse_pos_view);
-
-	else if (this->godTool == "REPLACE") this->replacingTool(mouse_pos_view);
-
-	else if (this->godTool == "BRAIN") this->brainTool(mouse_pos_view);
-
-	else if (this->godTool == "STOP") this->stoppingTool(mouse_pos_view);
-
-	else if (this->godTool == "INFO") this->infoTool(mouse_pos_view);
-
-	else
+	switch (this->godTool)
 	{
-		std::cerr << "INCORRECT GOD TOOL: " << this->godTool << '\n';
-		exit(-1);
+	case GodTool::NONE:
+		return;
+
+	case GodTool::TRACK:
+		this->trackingTool(mouse_pos_view);
+		return;
+
+	case GodTool::KILL:
+		this->killingTool(mouse_pos_view);
+		return;
+
+	case GodTool::REPLACE:
+		this->replacingTool(mouse_pos_view);
+		return;
+
+	case GodTool::BRAIN:
+		this->brainTool(mouse_pos_view);
+		return;
+
+	case GodTool::STOP:
+		this->stoppingTool(mouse_pos_view);
+		return;
+
+	case GodTool::INFO:
+		this->infoTool(mouse_pos_view);
+		return;
+
+	default:
+		throw "ERROR::Ecosystem::useGodTool::ECOSYSTEM GOD TOOL IS NOT SUPPORTED BY THIS METHOD\n";
 	}
 }
 
@@ -753,7 +764,7 @@ void Ecosystem::updateAnimals(float dt)
 
 const std::vector<CrappyNeuralNets::Scalar> Ecosystem::getInputsForBrain(const Animal& animal) const
 {
-	// TODO: add set brain inputs methods in Animal class
+	// TODO: add set BRAIN inputs methods in Animal class
 	std::vector<CrappyNeuralNets::Scalar> inputsForBrain;
 
 	inputsForBrain.reserve(5);

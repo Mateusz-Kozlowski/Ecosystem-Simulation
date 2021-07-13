@@ -32,7 +32,7 @@ void SimulationState::update(float dt)
 
 	this->updateMousePositions(&this->view);
 
-	if (this->sideMenuIsRendered) 
+	if (this->m_sideMenuIsRendered) 
 		this->updateSideMenu();
 
 	this->getUpdatesFromSideMenuGui();
@@ -57,7 +57,7 @@ void SimulationState::render(sf::RenderTarget* target)
 	// render simulation menu:
 	this->renderTexture.setView(this->renderTexture.getDefaultView());
 
-	if (this->sideMenuIsRendered)
+	if (this->m_sideMenuIsRendered)
 		this->sideMenu->render(this->renderTexture);
 
 	// final render:
@@ -89,10 +89,9 @@ void SimulationState::initKeybinds()
 void SimulationState::initVariables()
 {
 	this->sideMenu = nullptr;
-	this->sideMenuIsRendered = false;
-	this->paused = true;
+	this->m_sideMenuIsRendered = false;
+	this->m_isPaused = true;
 	this->previousMousePosWindow = sf::Vector2i(0, 0);
-	this->currentTool = "";
 }
 
 void SimulationState::initFonts()
@@ -443,14 +442,14 @@ void SimulationState::updateInput()
 		{
 			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("CLOSE")))
 			{
-				this->sideMenuIsRendered = !this->sideMenuIsRendered;
+				this->m_sideMenuIsRendered = !this->m_sideMenuIsRendered;
 				break;
 			}
 			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("PAUSE")))
 			{
-				this->paused = !this->paused;
+				this->m_isPaused = !this->m_isPaused;
 
-				if (this->paused)
+				if (this->m_isPaused)
 					this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
 				else
 					this->sideMenu->setTextureOfTextureButton("PAUSE", "STOP");
@@ -459,57 +458,6 @@ void SimulationState::updateInput()
 			}
 		}
 	}
-}
-
-void SimulationState::updateView()
-{
-	// TODO: move that to updateInput method? And put into a separate function?:
-	// zoom view:
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) this->view.zoom(0.95f);
-
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) this->view.zoom(1.0f / 0.95f);
-
-	// move view:
-	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
-
-	if (
-		sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
-		!this->sideMenu->getBackground().getGlobalBounds().contains(static_cast<sf::Vector2f>(this->mousePosWindow)))
-	{
-		int offsetX = this->previousMousePosWindow.x - this->mousePosWindow.x;
-		int offsetY = this->previousMousePosWindow.y - this->mousePosWindow.y;
-
-		this->view.move(
-			offsetX * this->view.getSize().x / this->stateData->gfxSettings->resolution.width,
-			offsetY * this->view.getSize().y / this->stateData->gfxSettings->resolution.height
-		);
-	}
-
-	// change the center of view if an animal is tracked:
-	if (this->stateData->ecosystem->getTrackedAnimal())
-		this->view.setCenter(this->stateData->ecosystem->getTrackedAnimal()->getPosition());
-
-	// correct zoom:
-	float worldWidth = static_cast<float>(this->stateData->ecosystem->getWorldSize().x);
-	float worldHeight = static_cast<float>(this->stateData->ecosystem->getWorldSize().y);
-
-	this->view.setSize(
-		std::min(this->view.getSize().x, worldWidth),
-		std::min(this->view.getSize().y, worldHeight)
-	);
-
-	// correct view moving:
-	if (this->view.getCenter().x - this->view.getSize().x / 2.f < 0.f)
-		this->view.setCenter(this->view.getSize().x / 2.f, this->view.getCenter().y);
-
-	if (this->view.getCenter().x + this->view.getSize().x / 2.f > worldWidth)
-		this->view.setCenter(worldWidth - this->view.getSize().x / 2.f, this->view.getCenter().y);
-
-	if (this->view.getCenter().y - this->view.getSize().y / 2.f < 0.f)
-		this->view.setCenter(this->view.getCenter().x, this->view.getSize().y / 2.f);
-
-	if (this->view.getCenter().y + this->view.getSize().y / 2.f > worldHeight)
-		this->view.setCenter(this->view.getCenter().x, worldHeight - this->view.getSize().y / 2.f);
 }
 
 void SimulationState::updateMousePositions(const sf::View* view)
@@ -539,81 +487,6 @@ void SimulationState::updateSideMenu()
 	this->updateSideMenuGui();
 }
 
-void SimulationState::getUpdatesFromSideMenuGui()
-{
-	// get update from side menu texture buttons:
-	if (this->sideMenu->getTextureButtons().at("PAUSE")->hasBeenClicked())
-	{
-		this->paused = !this->paused;
-
-		std::string currentTextureKey = this->sideMenu->getTextureButtons().at("PAUSE")->getCurrentTextureKey();
-
-		if (currentTextureKey.substr(0, 4) == "PLAY")
-			this->sideMenu->setTextureOfTextureButton("PAUSE", currentTextureKey.replace(0, 4, "STOP"));
-
-		else
-			this->sideMenu->setTextureOfTextureButton("PAUSE", currentTextureKey.replace(0, 4, "PLAY"));
-	}
-
-	if (this->sideMenu->getTextureButtons().at("ARROW")->hasBeenClicked())
-	{
-		std::string currentTextureKey = this->sideMenu->getTextureButtons().at("ARROW")->getCurrentTextureKey();
-
-		if (currentTextureKey.substr(0, 5) == "RIGHT")
-		{
-			this->sideMenu->setPosition(
-				sf::Vector2f(
-					this->stateData->gfxSettings->resolution.width - this->sideMenu->getSize().x,
-					0.f
-				)
-			);
-
-			this->sideMenu->setTextureOfTextureButton("ARROW", currentTextureKey.replace(0, 5, "LEFT"));
-		}
-		else
-		{
-			this->sideMenu->setPosition(
-				sf::Vector2f(
-					0.f,
-					0.f
-				)
-			);
-
-			this->sideMenu->setTextureOfTextureButton("ARROW", currentTextureKey.replace(0, 4, "RIGHT"));
-		}
-	}
-
-	if (this->sideMenu->getTextureButtons().at("ZOOM IN")->isPressed())
-		this->view.zoom(0.95f);
-
-	if (this->sideMenu->getTextureButtons().at("ZOOM OUT")->isPressed())
-		this->view.zoom(1.0f / 0.95f);
-
-	// get update from side menu buttons:
-	if (this->sideMenu->getButtons().at("QUIT")->isClicked()) this->endState();
-}
-
-void SimulationState::updateEcosystem(float dt)
-{
-	this->stateData->ecosystem->setSimulationSpeedFactor(
-		this->sideMenu->getScaleSliders().at("SPEED")->getCurrentValue()
-	);
-
-	if (this->paused)
-		this->stateData->ecosystem->pauseSimulation();
-	else
-		this->stateData->ecosystem->unpauseSimulation();
-
-	this->stateData->ecosystem->setGodTool(this->currentTool);
-
-	this->stateData->ecosystem->update(
-		dt,
-		*this->stateData->events,
-		this->mousePosView
-	);
-}
-
-// private utilities:
 void SimulationState::updateSideMenuGui()
 {
 	// change themes of texture buttons:
@@ -687,7 +560,9 @@ void SimulationState::updateSideMenuGui()
 
 void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
 {
-	if (god_tool_btn_key == this->currentTool) // the argument is the current tool:
+	std::string currentGodToolStr = getGodToolStr(this->stateData->ecosystem->getCurrentGodTool());
+
+	if (god_tool_btn_key == currentGodToolStr)
 	{
 		// if the current tool has been clicked, it is no longer the current tool:
 		if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->hasBeenClicked())
@@ -695,7 +570,7 @@ void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
 			// the button is hovered, because u can't click a button without hovering it with a mouse cursor:
 			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
 
-			this->currentTool = "";
+			this->stateData->ecosystem->setGodTool(GodTool::NONE);
 		}
 
 		// pretty straight forward, it's pressed so it's dark:
@@ -722,9 +597,10 @@ void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
 		if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->hasBeenClicked())
 		{
 			// old tool (if it exists at all) ceases to be the current tool:
-			if (this->currentTool != "") this->sideMenu->setTextureOfTextureButton(this->currentTool, "IDLE");
+			if (this->stateData->ecosystem->getCurrentGodTool() != GodTool::NONE) 
+				this->sideMenu->setTextureOfTextureButton(currentGodToolStr, "IDLE");
 
-			this->currentTool = god_tool_btn_key;
+			this->stateData->ecosystem->setGodTool(getGodTool(god_tool_btn_key.c_str()));
 
 			// we brighten it up,
 			// because a mouse cursor is still covering it (because it has just been clicked and a mouse hasn't go away yet):
@@ -743,4 +619,127 @@ void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
 			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "IDLE");
 		}
 	}
+}
+
+void SimulationState::getUpdatesFromSideMenuGui()
+{
+	// get update from side menu texture buttons:
+	if (this->sideMenu->getTextureButtons().at("PAUSE")->hasBeenClicked())
+	{
+		this->m_isPaused = !this->m_isPaused;
+
+		std::string currentTextureKey = this->sideMenu->getTextureButtons().at("PAUSE")->getCurrentTextureKey();
+
+		if (currentTextureKey.substr(0, 4) == "PLAY")
+			this->sideMenu->setTextureOfTextureButton("PAUSE", currentTextureKey.replace(0, 4, "STOP"));
+
+		else
+			this->sideMenu->setTextureOfTextureButton("PAUSE", currentTextureKey.replace(0, 4, "PLAY"));
+	}
+
+	if (this->sideMenu->getTextureButtons().at("ARROW")->hasBeenClicked())
+	{
+		std::string currentTextureKey = this->sideMenu->getTextureButtons().at("ARROW")->getCurrentTextureKey();
+
+		if (currentTextureKey.substr(0, 5) == "RIGHT")
+		{
+			this->sideMenu->setPosition(
+				sf::Vector2f(
+					this->stateData->gfxSettings->resolution.width - this->sideMenu->getSize().x,
+					0.f
+				)
+			);
+
+			this->sideMenu->setTextureOfTextureButton("ARROW", currentTextureKey.replace(0, 5, "LEFT"));
+		}
+		else
+		{
+			this->sideMenu->setPosition(
+				sf::Vector2f(
+					0.f,
+					0.f
+				)
+			);
+
+			this->sideMenu->setTextureOfTextureButton("ARROW", currentTextureKey.replace(0, 4, "RIGHT"));
+		}
+	}
+
+	if (this->sideMenu->getTextureButtons().at("ZOOM IN")->isPressed())
+		this->view.zoom(0.95f);
+
+	if (this->sideMenu->getTextureButtons().at("ZOOM OUT")->isPressed())
+		this->view.zoom(1.0f / 0.95f);
+
+	// get update from side menu buttons:
+	if (this->sideMenu->getButtons().at("QUIT")->isClicked()) this->endState();
+}
+
+void SimulationState::updateView()
+{
+	// TODO: move that to updateInput method? And put into a separate function?:
+	// zoom view:
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) this->view.zoom(0.95f);
+
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) this->view.zoom(1.0f / 0.95f);
+
+	// move view:
+	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
+
+	if (
+		sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
+		!this->sideMenu->getBackground().getGlobalBounds().contains(static_cast<sf::Vector2f>(this->mousePosWindow)))
+	{
+		int offsetX = this->previousMousePosWindow.x - this->mousePosWindow.x;
+		int offsetY = this->previousMousePosWindow.y - this->mousePosWindow.y;
+
+		this->view.move(
+			offsetX * this->view.getSize().x / this->stateData->gfxSettings->resolution.width,
+			offsetY * this->view.getSize().y / this->stateData->gfxSettings->resolution.height
+		);
+	}
+
+	// change the center of view if an animal is tracked:
+	if (this->stateData->ecosystem->getTrackedAnimal())
+		this->view.setCenter(this->stateData->ecosystem->getTrackedAnimal()->getPosition());
+
+	// correct zoom:
+	float worldWidth = static_cast<float>(this->stateData->ecosystem->getWorldSize().x);
+	float worldHeight = static_cast<float>(this->stateData->ecosystem->getWorldSize().y);
+
+	this->view.setSize(
+		std::min(this->view.getSize().x, worldWidth),
+		std::min(this->view.getSize().y, worldHeight)
+	);
+
+	// correct view moving:
+	if (this->view.getCenter().x - this->view.getSize().x / 2.f < 0.f)
+		this->view.setCenter(this->view.getSize().x / 2.f, this->view.getCenter().y);
+
+	if (this->view.getCenter().x + this->view.getSize().x / 2.f > worldWidth)
+		this->view.setCenter(worldWidth - this->view.getSize().x / 2.f, this->view.getCenter().y);
+
+	if (this->view.getCenter().y - this->view.getSize().y / 2.f < 0.f)
+		this->view.setCenter(this->view.getCenter().x, this->view.getSize().y / 2.f);
+
+	if (this->view.getCenter().y + this->view.getSize().y / 2.f > worldHeight)
+		this->view.setCenter(this->view.getCenter().x, worldHeight - this->view.getSize().y / 2.f);
+}
+
+void SimulationState::updateEcosystem(float dt)
+{
+	this->stateData->ecosystem->setSimulationSpeedFactor(
+		this->sideMenu->getScaleSliders().at("SPEED")->getCurrentValue()
+	);
+
+	if (this->m_isPaused)
+		this->stateData->ecosystem->pauseSimulation();
+	else
+		this->stateData->ecosystem->unpauseSimulation();
+
+	this->stateData->ecosystem->update(
+		dt,
+		*this->stateData->events,
+		this->mousePosView
+	);
 }

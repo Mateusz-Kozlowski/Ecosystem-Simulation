@@ -100,6 +100,9 @@
     <ClCompile Include="src\Crappy Neural Nets\TempNet.cpp">
       <Filter>Crappy Neural Nets</Filter>
     </ClCompile>
+    <ClCompile Include="src\GodTools.cpp">
+      <Filter>ecosystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -283,6 +286,9 @@
     </ClInclude>
     <ClInclude Include="src\Crappy Neural Nets\TempNet.h">
       <Filter>Crappy Neural Nets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GodTools.h">
+      <Filter>ecosystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

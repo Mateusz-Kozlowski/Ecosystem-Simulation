@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "State.h"
 
-// constructor/destructor:
 State::State(StateData* state_data)
 {
 	this->stateData = state_data;
@@ -11,6 +10,8 @@ State::State(StateData* state_data)
 State::~State()
 {
 }
+
+// public methods:
 
 // accessors:
 bool State::getQuit() const
