@@ -1,69 +1,75 @@
-The smaller number the greater priority (the sooner that thing should be implemented)
+BRAIN INPUTS:
+	better nearest food searching algo (with complexity better than the current one (O(f*a)))
+		(that algo will likely be applicable to looking for food-animal collisions)
 
-1:
-better nearest food searching algo (with complexity better than the current one (O(f*a)))
+	different inputs for brains?
 
-clean up Ecosystem and its members classes
+	remove log from input with hp?
 
-side menu should be able to be opened not only using Esc key but also using a gui widget which doesn't even exist yet
+CRAPPY NEURAL NETS:
+	crappy neural nets should have a method that allows to set inputs before calling predict/train methods
 
-dt can be extremelly big if a window lost the focus
+	NEAT REAL TIME
 
-shortcuts:
-	speeding up and slowing down
-	moving side panel
-	God tools
+SIDE MENU:
+	side menu should be able to be opened not only using Esc key 
+		but also using a gui widget which doesn't even exist yet
 
-saving zoom/world camera can be useful
+	after loading ecosystem side menu panel should be updated (e.g. speed scaler)
 
-"fake async loading" - before loading render some text with information about loading and after the process is complited
-	stop rendering that text
+	don't allow to use God tools when a mouse cursor is over side menu
 
-avoid unnecessarily updates
+APP:
+	dt can be extremelly big if a window lost the focus
 
-avoid drawing things that are outside the window
-
-rename neural net preview to sequential preview or sth like that
-
-change all pointers to references (except where nullptr may be desired)
-
-after loading ecosystem side menu panel should be updated (e.g. speed scaler)
-
-crappy neural nets should have a method that allows to set inputs before calling predict/train methods
-
-there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
-
-replace std::string with const char*
-
-replace std::vector with std::array when u deal with fixed size memory
-
-different inputs for brains?
-
-don't allow to use God tools when a mouse cursor is over side menu
-
-2:
-DEBUG:
-	debug showing brain while a simulation is paused (brain renders probably in the previous position)
-	
-	update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
-
-STATES:
-	saving State
+	saving State?
 
 	define states freezing
 
-	shortcuts/keys State
+	<random> library? Check it out! Not C style of generating pseudorandom numbers
+
+SIMULATION STATE:
+	saving zoom/world camera can be useful
+
+	avoid drawing things that are outside the window
+
+CREATOR STATE:
+	more/better ecosystems templates?
+
+LOADING STATE:
+	"fake async loading" - before loading render some text with information about loading and 
+		after the process is complited stop rendering that text
 
 GUI:
+	rename neural net preview to sequential preview or sth like that
+
 	one convention for all gui widgets, maybe even polimorphizm
-	
+
 	some GUI widgets positions are set relative to their centers and some are set relative to their
 		left-top corners; add an ability to control their positions in these two ways
 
 	NEAT-RT preview with ability to move neurons and save that changes
-	
-CONVENTION/NAMES/COMMENTS/CODE:
-	convention of names in tools (->replace is also called move and it shouldn't have 2 names)(->track and select also)
+
+SIMULATION/ECOSYSTEM:
+	there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
+
+	add mass? (mass can be equal to HP)
+
+	update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
+
+	implement info tool (probably it'll be able to give info not only about the entire ecosystem
+		but also about particular animals if they are tracked at the moment or sth :) )
+
+	nn preview should never be beyond the world
+
+SHORTCUTS:
+	speeding up and slowing down
+	moving side panel
+	God tools
+
+CODE/CONVENTIONS:
+	convention of names in tools 
+		(->replace is also called move and it shouldn't have 2 names)(->track and select also)
 		(rmv and delete? I used remove everywhere, but delete may be a better option)
 
 	add consts to renders where it is possible (and also to other places)
@@ -71,6 +77,12 @@ CONVENTION/NAMES/COMMENTS/CODE:
 	use sf::Vector2<T> instead of 2 floats
 
 	overload some functions that contains sf::Vector2<T> using 2 primitives
+
+	change all pointers to references (except where nullptr may be desired)
+
+	replace std::string with const char* where possible
+
+	replace std::vector with std::array when u deal with fixed size memory
 
 	smart pointers should completly replace raw pointers
 
@@ -86,24 +98,7 @@ CONVENTION/NAMES/COMMENTS/CODE:
 			if(!file.is_good()) error and exit(-1)
 			
 			reading from file...
-	
+
 	change speed_factor to simulation_speed_factor everywhere
-
-OTHERS:
-	implement info tool (probably it'll be able to give info not only about the entire ecosystem
-		but also about particular animals if they are tracked at the moment or sth :) )
-	
+		
 	use EventsAccessors class wherever possible (including GUI classes)
-	
-	nn preview should never be beyond the world
-	
-	textures (different) and hitbox component
-	
-	more/better ecosystems templates?	
-
-	sexual reproduction...
-
-Crappy Neural Nets!:
-	NEAT REAL TIME
-	
-	<random> library? Check it out! Not C style of generating pseudorandom numbers

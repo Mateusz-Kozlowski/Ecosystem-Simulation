@@ -8,23 +8,21 @@
 class MainMenuState : public State
 {
 public:
-	// constructor/destructor:
 	MainMenuState(StateData* state_data);
-	virtual ~MainMenuState();
 
-	// mutators:
-	virtual void freeze();
-
-	// other public methods:
+	// public methods:
 	virtual void update(float dt);
 	virtual void render(sf::RenderTarget* target = nullptr);
+
+	// mutators:
+	virtual void freeze();	
 
 private:
 	sf::RectangleShape backgroundRect;
 	
 	std::unordered_map<std::string, sf::Font> fonts;
 
-	std::unordered_map<std::string, gui::Button*> buttons;
+	std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
 
 	sf::Text ecosystemText;
 
@@ -34,6 +32,7 @@ private:
 	float ecosystemTextStopwatch;
 	float highlightningTime;
 
+	// private methods:
 	// initialization:
 	void initVariables();
 	virtual void initKeybinds();
@@ -42,11 +41,10 @@ private:
 	void initButtons();
 	void initEcosystemText();
 
-	// private utilities:
+	// other private methods:
 	void highlightEcosystemText();
 	void saveEcosystem(const Ecosystem& ecosystem);
-
-	// other private methods:
+	
 	virtual void updateInput();
 	void getUpdateFromButtons();
 	void updateEcosystemText(float dt);

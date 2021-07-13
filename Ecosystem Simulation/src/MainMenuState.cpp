@@ -13,11 +13,6 @@ MainMenuState::MainMenuState(StateData* state_data)
 	this->initEcosystemText();
 }
 
-MainMenuState::~MainMenuState()
-{
-	for (auto it = this->buttons.begin(); it != this->buttons.end(); ++it) delete it->second;
-}
-
 // mutators:
 void MainMenuState::freeze()
 {
@@ -35,7 +30,8 @@ void MainMenuState::update(float dt)
 
 void MainMenuState::render(sf::RenderTarget* target)
 {
-	if (!target) target = this->stateData->window;
+	if (!target) 
+		target = this->stateData->window;
 
 	target->draw(this->backgroundRect);
 
@@ -56,7 +52,7 @@ void MainMenuState::initVariables()
 
 void MainMenuState::initKeybinds()
 {
-	std::string path = "config/main_menu_keybinds.ini";
+	const char* path = "config/main_menu_keybinds.ini";
 
 	std::ifstream ifs(path);
 
@@ -65,22 +61,24 @@ void MainMenuState::initKeybinds()
 		std::string key = "";
 		std::string key2 = "";
 
-		while (ifs >> key >> key2) this->keybinds[key] = this->stateData->supportedKeys->at(key2);
+		while (ifs >> key >> key2)
+			this->keybinds[key] = this->stateData->supportedKeys->at(key2);
 	}
-	else throw("ERROR::MAINMENUSTATE::COULD NOT OPEN: " + path);
+	else
+		throw("ERROR::MAINMENUSTATE::COULD NOT OPEN: " + std::string(path));
 
 	ifs.close();
 }
 
 void MainMenuState::initBackground()
 {
-	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
 	this->backgroundRect.setSize(
 		sf::Vector2f
 		(
-			static_cast<float>(vm.width),
-			static_cast<float>(vm.height)
+			static_cast<float>(resolution.width),
+			static_cast<float>(resolution.height)
 		)
 	);
 
@@ -100,7 +98,7 @@ void MainMenuState::initButtons()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
-	this->buttons["SIMULATE"] = new gui::Button(
+	this->buttons["SIMULATE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
 			gui::p2pY(19.f, resolution)
@@ -116,7 +114,7 @@ void MainMenuState::initButtons()
 		gui::p2pY(0.8f, resolution)
 	);
 
-	this->buttons["NEW ECOSYSTEM"] = new gui::Button(
+	this->buttons["NEW ECOSYSTEM"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
 			gui::p2pY(31.f, resolution)
@@ -132,7 +130,7 @@ void MainMenuState::initButtons()
 		gui::p2pY(0.8f, resolution)
 	);
 
-	this->buttons["EDIT"] = new gui::Button(
+	this->buttons["EDIT"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
 			gui::p2pY(43.f, resolution)
@@ -148,7 +146,7 @@ void MainMenuState::initButtons()
 		gui::p2pY(0.8f, resolution)
 	);
 
-	this->buttons["SAVE"] = new gui::Button(
+	this->buttons["SAVE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
 			gui::p2pY(55.f, resolution)
@@ -164,7 +162,7 @@ void MainMenuState::initButtons()
 		gui::p2pY(0.8f, resolution)
 	);
 
-	this->buttons["LOAD"] = new gui::Button(
+	this->buttons["LOAD"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
 			gui::p2pY(67.f, resolution)
@@ -180,7 +178,7 @@ void MainMenuState::initButtons()
 		gui::p2pY(0.8f, resolution)
 	);
 
-	this->buttons["QUIT"] = new gui::Button(
+	this->buttons["QUIT"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
 			gui::p2pY(79.f, resolution)
@@ -226,12 +224,14 @@ void MainMenuState::updateInput()
 		this->endState();
 	*/
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"]))) this->endState();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"])))
+		this->endState();
 }
 
 void MainMenuState::getUpdateFromButtons()
 {
-	for (auto& it : this->buttons) it.second->update(this->mousePosWindow);
+	for (auto& it : this->buttons)
+		it.second->update(this->mousePosWindow);
 
 	if (this->buttons["SIMULATE"]->isClicked())
 	{
@@ -299,5 +299,6 @@ void MainMenuState::updateEcosystemText(float dt)
 
 void MainMenuState::renderButtons(sf::RenderTarget& target)
 {
-	for (auto& it : this->buttons) it.second->render(target);
+	for (auto& it : this->buttons)
+		it.second->render(target);
 }
