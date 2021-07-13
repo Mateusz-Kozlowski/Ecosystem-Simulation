@@ -90,11 +90,18 @@ void Fruit::setPosition(const sf::Vector2f& new_position)
 
 void Fruit::setRandomPosition(const sf::Vector2f& world_size, float borders_thickness)
 {
-	std::pair<unsigned, unsigned> px = { borders_thickness, world_size.x - borders_thickness };
-	std::pair<unsigned, unsigned> py = { borders_thickness, world_size.y - borders_thickness };
+	std::pair<unsigned, unsigned> rangeX = {
+		borders_thickness + this->shape.getRadius(),
+		world_size.x - borders_thickness - this->shape.getRadius()
+	};
+	
+	std::pair<unsigned, unsigned> rangeY = {
+		borders_thickness + this->shape.getRadius(),
+		world_size.y - borders_thickness - this->shape.getRadius()
+	};
 
-	float x = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(px);
-	float y = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(py);
+	float x = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(rangeX);
+	float y = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(rangeY);
 
 	this->shape.setPosition(x, y);
 }
