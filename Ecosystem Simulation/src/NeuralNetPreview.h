@@ -29,6 +29,7 @@ namespace gui
 
 		// mutators:
 		void setPosition(const sf::Vector2f& position);
+		void setPosition(float x, float y);
 
 		void setSize(const sf::Vector2f& size);
 

@@ -59,6 +59,14 @@ void NeuralNetPreview::setPosition(const sf::Vector2f& position)
 	this->setSynapsesPositions();
 }
 
+void gui::NeuralNetPreview::setPosition(float x, float y)
+{
+	this->background.setPosition(x, y);
+
+	this->setNeuronsPositions();
+	this->setSynapsesPositions();
+}
+
 void NeuralNetPreview::setSize(const sf::Vector2f& size)
 {
 	this->background.setSize(size);

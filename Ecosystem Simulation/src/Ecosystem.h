@@ -237,6 +237,10 @@ private:
 	bool animalReachesFruit(const Animal& animal, const Fruit& fruit) const;
 	void eat(Animal& animal, Fruit& fruit);
 
+	void correctBrainPreviewsPositions();
+	bool brainPreviewProtrudesWorldRightBorder(const gui::NeuralNetPreview& brain_preview);
+	bool brainPreviewProtrudesWorldBottomBorder(const gui::NeuralNetPreview& brain_preview);
+
 	void removeEatenFruits();
 	void removeFruit(std::unique_ptr<Fruit>& fruit);
 };

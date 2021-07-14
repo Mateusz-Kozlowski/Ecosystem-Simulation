@@ -747,6 +747,7 @@ void Ecosystem::updateWorld(float dt)
 	this->removeDeadAnimals();
 	this->avoidTunneling();
 	this->feedAnimals();
+	this->correctBrainPreviewsPositions();
 	this->removeEatenFruits();
 }
 
@@ -1046,6 +1047,62 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 		animal.increaseHp(fruit.getEnergy());
 
 	fruit.setEnergy(0.0f);
+}
+
+void Ecosystem::correctBrainPreviewsPositions()
+{
+	for (auto& animal : this->animals)
+	{
+		// put an interation into a methods?:
+		const gui::NeuralNetPreview& brainPreview = animal->getBrainPreview();
+
+		bool protrudesWorldRightBorder = this->brainPreviewProtrudesWorldRightBorder(brainPreview);
+		bool protrudesWorldBottomBorder = this->brainPreviewProtrudesWorldBottomBorder(brainPreview);
+
+		if (protrudesWorldRightBorder)
+		{
+			animal->setBrainPreviewPosition(
+				animal->getPosition().x - animal->getBrainPreview().getSize().x,
+				animal->getBrainPreview().getPosition().y
+			);
+		}
+		else
+		{
+			animal->setBrainPreviewPosition(
+				animal->getPosition().x,
+				animal->getBrainPreview().getPosition().y
+			);
+		}
+
+		if (protrudesWorldBottomBorder)
+		{
+			animal->setBrainPreviewPosition(
+				animal->getBrainPreview().getPosition().x,
+				animal->getPosition().y - animal->getBrainPreview().getSize().y
+			);
+		}
+		else
+		{
+			animal->setBrainPreviewPosition(
+				animal->getBrainPreview().getPosition().x,
+				animal->getPosition().y
+			);
+		}
+	}
+}
+
+bool Ecosystem::brainPreviewProtrudesWorldRightBorder(const gui::NeuralNetPreview& brain_preview)
+{
+	float rightBorderPosition = brain_preview.getPosition().x + brain_preview.getSize().x;
+
+	return rightBorderPosition > this->getWorldSize().x;
+}
+
+bool Ecosystem::brainPreviewProtrudesWorldBottomBorder(const gui::NeuralNetPreview& brain_preview)
+{
+	float bottomBorderPosition = brain_preview.getPosition().y + brain_preview.getSize().y;
+
+	return bottomBorderPosition > this->getWorldSize().y;
 }
 
 void Ecosystem::removeEatenFruits()

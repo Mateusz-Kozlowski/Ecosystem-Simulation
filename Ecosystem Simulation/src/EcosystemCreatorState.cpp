@@ -575,7 +575,7 @@ void EcosystemCreatorState::createEcosystem()
 		true,
 		GodTool::NONE,
 		true,
-		false
+		true
 	);
 }
 

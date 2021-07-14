@@ -179,11 +179,6 @@ const sf::Color& Animal::getColor() const
 	return this->body.getFillColor();
 }
 
-float Animal::getHp() const
-{
-	return this->hpBar->getCurrentValue();
-}
-
 float Animal::getMaxHp() const
 {
 	return this->maxHp;
@@ -209,19 +204,6 @@ const sf::Vector2f& Animal::getAccelerationVector() const
 	return this->movementComponent->getAccelerationVector();
 }
 
-bool Animal::isAlive() const
-{
-	return this->alive;
-}
-
-bool Animal::isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const
-{
-	float x = this->body.getPosition().x - mouse_pos_view.x;
-	float y = this->body.getPosition().y - mouse_pos_view.y;
-
-	return sqrt(pow(x, 2) + pow(y, 2)) <= this->body.getRadius();
-}
-
 float Animal::getValueOfVelocityVector() const
 {
 	return this->movementComponent->getValueOfVelocityVector();
@@ -237,9 +219,32 @@ float Animal::getKineticEnergy() const
 	return 0.5f * pow(this->getValueOfVelocityVector(), 2);
 }
 
+bool Animal::isAlive() const
+{
+	return this->alive;
+}
+
+float Animal::getHp() const
+{
+	return this->hpBar->getCurrentValue();
+}
+
 float Animal::getTotalEnergy() const
 {
 	return this->hpBar->getCurrentValue() + this->getKineticEnergy();
+}
+
+const gui::NeuralNetPreview& Animal::getBrainPreview() const
+{
+	return *this->brainPreview;
+}
+
+bool Animal::isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const
+{
+	float x = this->body.getPosition().x - mouse_pos_view.x;
+	float y = this->body.getPosition().y - mouse_pos_view.y;
+
+	return sqrt(pow(x, 2) + pow(y, 2)) <= this->body.getRadius();
 }
 
 // mutators:
@@ -284,6 +289,27 @@ void Animal::setColor(const sf::Color& color)
 	this->hpBar->setProgressRectColor(color);
 }
 
+void Animal::setMaxHp(float max_hp)
+{
+	if (this->hpBar->getCurrentValue() > max_hp)
+	{
+		std::cerr << "ERROR::Animal::setMaxHp::CANNOT SET MAX HP SMALLER THAT THE CURRENT HP\n";
+		exit(-1);
+	}
+
+	this->maxHp = max_hp;
+}
+
+void Animal::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
+{
+	this->movementComponent->randomMutate(mutation_percentage);
+}
+
+void Animal::setVelocity(const sf::Vector2f& velocity)
+{
+	this->movementComponent->setVelocity(velocity);
+}
+
 void Animal::setHp(float hp)
 {
 	if (hp > this->maxHp)
@@ -323,25 +349,14 @@ void Animal::decreaseHp(float hp_decrease)
 	this->alive = this->hpBar->getCurrentValue() > 0.0f;
 }
 
-void Animal::setMaxHp(float max_hp)
+void Animal::setBrainPreviewPosition(const sf::Vector2f& position)
 {
-	if (this->hpBar->getCurrentValue() > max_hp)
-	{
-		std::cerr << "ERROR::Animal::setMaxHp::CANNOT SET MAX HP SMALLER THAT THE CURRENT HP\n";
-		exit(-1);
-	}
-
-	this->maxHp = max_hp;
+	this->brainPreview->setPosition(position);
 }
 
-void Animal::setVelocity(const sf::Vector2f& velocity)
+void Animal::setBrainPreviewPosition(float x, float y)
 {
-	this->movementComponent->setVelocity(velocity);
-}
-
-void Animal::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
-{
-	this->movementComponent->randomMutate(mutation_percentage);
+	this->brainPreview->setPosition(x, y);
 }
 
 // private methods:

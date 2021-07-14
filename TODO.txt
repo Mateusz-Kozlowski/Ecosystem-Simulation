@@ -102,3 +102,11 @@ CODE/CONVENTIONS:
 	change speed_factor to simulation_speed_factor everywhere
 		
 	use EventsAccessors class wherever possible (including GUI classes)
+
+	every mutator that changes more that one variable 
+		(i mean change a variable but that change has further implications)
+		should at the very start check if its arguments really changes sth
+		(its argument can has the same value as a member that is about to be changed)
+
+	in Ecosystem class there should be 2 different methods: getAreaSize and getWholeWorldSize - 
+		the second one should include borders

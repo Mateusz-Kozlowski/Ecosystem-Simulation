@@ -42,7 +42,6 @@ public:
 
 	const sf::Color& getColor() const;
 	
-	float getHp() const;
 	float getMaxHp() const;
 
 	const MovementComponent& getMovementComponent() const;
@@ -51,39 +50,47 @@ public:
 
 	const sf::Vector2f& getVelocityVector() const;
 	const sf::Vector2f& getAccelerationVector() const;
-
-	bool isAlive() const;
-
-	bool isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const;
-
+	
 	float getValueOfVelocityVector() const;
 
 	float getValueOfAccelerationVector() const;
 
 	float getKineticEnergy() const;
+	
+	bool isAlive() const;
+
+	float getHp() const;
 
 	float getTotalEnergy() const;
+
+	const gui::NeuralNetPreview& getBrainPreview() const;
+
+	bool isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const;
 
 	// mutators:
 	void setPosition(const sf::Vector2f& position);
 
+	// TODO: Animal class shouldn't know about sth like world, change arguments to range:
 	void setRandomPosition(const sf::Vector2f& world_size, float borders_thickness);
 
 	void setRadius(float radius);
 
 	void setColor(const sf::Color& color);
 
+	void setMaxHp(float max_hp);
+
+	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
+
+	void setVelocity(const sf::Vector2f& velocity);
+
 	void setHp(float hp);
 
 	void increaseHp(float hp_increase);
 
-	void decreaseHp(float hp_decrease);
+	void decreaseHp(float hp_decrease);	
 
-	void setMaxHp(float max_hp);
-
-	void setVelocity(const sf::Vector2f& velocity);
-
-	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
+	void setBrainPreviewPosition(const sf::Vector2f& position);
+	void setBrainPreviewPosition(float x, float y);
 
 private:
 	sf::CircleShape body;
