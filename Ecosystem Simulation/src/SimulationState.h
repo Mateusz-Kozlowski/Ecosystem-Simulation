@@ -15,8 +15,6 @@ public:
 	virtual void render(sf::RenderTarget* target = nullptr);
 	
 private:
-	bool m_isPaused;
-
 	std::unordered_map<std::string, sf::Font> fonts;
 
 	sf::View view;

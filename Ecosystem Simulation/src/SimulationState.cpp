@@ -90,7 +90,6 @@ void SimulationState::initVariables()
 {
 	this->sideMenu = nullptr;
 	this->m_sideMenuIsRendered = false;
-	this->m_isPaused = true;
 	this->previousMousePosWindow = sf::Vector2i(0, 0);
 }
 
@@ -447,13 +446,16 @@ void SimulationState::updateInput()
 			}
 			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("PAUSE")))
 			{
-				this->m_isPaused = !this->m_isPaused;
-
-				if (this->m_isPaused)
-					this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
-				else
+				if (this->stateData->ecosystem->isSimulationPaused())
+				{
+					this->stateData->ecosystem->unpauseSimulation();
 					this->sideMenu->setTextureOfTextureButton("PAUSE", "STOP");
-
+				}
+				else
+				{
+					this->stateData->ecosystem->pauseSimulation();
+					this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
+				}
 				break;
 			}
 		}
@@ -626,7 +628,10 @@ void SimulationState::getUpdatesFromSideMenuGui()
 	// get update from side menu texture buttons:
 	if (this->sideMenu->getTextureButtons().at("PAUSE")->hasBeenClicked())
 	{
-		this->m_isPaused = !this->m_isPaused;
+		if (this->stateData->ecosystem->isSimulationPaused())
+			this->stateData->ecosystem->unpauseSimulation();
+		else
+			this->stateData->ecosystem->pauseSimulation();
 
 		std::string currentTextureKey = this->sideMenu->getTextureButtons().at("PAUSE")->getCurrentTextureKey();
 
@@ -731,11 +736,6 @@ void SimulationState::updateEcosystem(float dt)
 	this->stateData->ecosystem->setSimulationSpeedFactor(
 		this->sideMenu->getScaleSliders().at("SPEED")->getCurrentValue()
 	);
-
-	if (this->m_isPaused)
-		this->stateData->ecosystem->pauseSimulation();
-	else
-		this->stateData->ecosystem->unpauseSimulation();
 
 	this->useEcosystemGodTools();
 

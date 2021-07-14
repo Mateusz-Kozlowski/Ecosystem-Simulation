@@ -749,7 +749,7 @@ void Ecosystem::updateWorld(float dt)
 	this->removeDeadAnimals();
 	this->avoidTunneling();
 	this->feedAnimals();
-	this->correctBrainPreviewsPositions();
+	this->correctBrainPreviewsPositions();	
 	this->removeEatenFruits();
 }
 
@@ -834,7 +834,7 @@ void Ecosystem::removeDeadAnimals()
 		{
 			this->createNewFruit(
 				this->animals[i]->getTotalEnergy(),
-				this->fruits[0]->getRadius(),
+				this->fruitsRadius,
 				this->fruitsColor
 			);
 

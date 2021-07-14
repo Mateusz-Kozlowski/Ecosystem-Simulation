@@ -64,7 +64,17 @@ SHORTCUTS:
 
 	moving side panel
 	
-	God tools
+	every God tool:
+		track (T)
+		kill (K)
+		replace (R)
+		brain (B)
+		stop (S)
+		info (i)
+
+	saving (Crtl+S)
+
+	saving as (Crtl+Shift+S)
 
 CODE/CONVENTIONS:
 	convention of names in tools 
