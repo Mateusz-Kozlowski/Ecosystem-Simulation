@@ -136,7 +136,7 @@ private:
 
 	float simulationSpeedFactor;
 
-	bool simulationIsPaused;
+	bool m_simulationIsPaused;
 
 	GodTool godTool;
 
@@ -211,6 +211,9 @@ private:
 	void convertKineticEnergyToFruit(Animal& animal, bool random_fruit_position);
 
 	void infoTool(const sf::Vector2f& mouse_pos_view) const;
+	void printInfoAboutAnimal(const Animal& animal) const;
+	void printInfoAboutFruit(const Fruit& fruit) const;
+	void printInfoAboutEcosystem() const;
 
 	// other private utilities:
 	void updateWorld(float dt);

@@ -19,7 +19,16 @@ public:
 
 	void render(sf::RenderTarget& target) const;
 
-	bool isCovered(const sf::Vector2f& mouse_pos_view) const;
+	bool isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const;
+
+	// accessors:
+	float getEnergy() const;
+
+	const sf::Vector2f& getPosition() const;
+
+	float getRadius() const;
+
+	const sf::Color& getColor() const;
 
 	// mutators:
 	void setEnergy(float energy);
@@ -32,15 +41,6 @@ public:
 	void setRadius(float radius);
 
 	void setColor(const sf::Color& color);
-
-	// accessors:
-	float getEnergy() const;
-
-	const sf::Vector2f& getPosition() const;
-
-	float getRadius() const;
-
-	const sf::Color& getColor() const;
 
 private:
 	float energy;

@@ -49,6 +49,8 @@ GUI:
 	NEAT-RT preview with ability to move neurons and save that changes
 
 SIMULATION/ECOSYSTEM:
+	carefully test saving and loading ecosystems
+
 	there are 2 isPaused variables - in Ecosystem class and in Simulation state class
 		get rid of one of them
 
@@ -77,6 +79,8 @@ SHORTCUTS:
 	saving as (Crtl+Shift+S)
 
 CODE/CONVENTIONS:
+	mutation rate vs mutation percentage - unify that (probably mutation rate percentage)
+
 	convention of names in tools 
 		(->replace is also called move and it shouldn't have 2 names)(->track and select also)
 		(rmv and delete? I used remove everywhere, but delete may be a better option)
@@ -117,7 +121,7 @@ CODE/CONVENTIONS:
 		should at the very start check if its arguments really changes sth
 		(its argument can has the same value as a member that is about to be changed)
 
-	in Ecosystem class there should be 2 different methods: getAreaSize and getWholeWorldSize - 
+	in Ecosystem class there should be 2 different methods: getArenaSize and getWholeWorldSize - 
 		the second one should include borders
 
 	add to all methods info about which things do that method check 

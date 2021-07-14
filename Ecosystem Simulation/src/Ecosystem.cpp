@@ -31,6 +31,7 @@ Ecosystem::Ecosystem(
 	  trackedAnimalColor(tracked_animal_color),
 	  trackedAnimal(nullptr),
 	  simulationSpeedFactor(simulation_speed_factor),
+	  m_simulationIsPaused(simulation_is_paused),
 	  godTool(god_tool),
 	  totalTimeElapsed(0.0f)
 {
@@ -118,10 +119,11 @@ void Ecosystem::update(
 	float dt, 
 	const std::vector<sf::Event>& events)
 {
- 	this->totalTimeElapsed += dt;
-
-	if (!this->simulationIsPaused)
+	if (!this->m_simulationIsPaused)
+	{
+		this->totalTimeElapsed += dt;
 		this->updateWorld(dt);
+	}
 }
 
 void Ecosystem::render(sf::RenderTarget& target) const
@@ -221,7 +223,7 @@ float Ecosystem::getSimulationSpeedFactor() const
 
 bool Ecosystem::isSimulationPaused() const
 {
-	return this->simulationIsPaused;
+	return this->m_simulationIsPaused;
 }
 
 GodTool Ecosystem::getCurrentGodTool() const
@@ -293,12 +295,12 @@ void Ecosystem::setSimulationSpeedFactor(float simulation_speed_factor)
 
 void Ecosystem::pauseSimulation()
 {
-	this->simulationIsPaused = true;
+	this->m_simulationIsPaused = true;
 }
 
 void Ecosystem::unpauseSimulation()
 {
-	this->simulationIsPaused = false;
+	this->m_simulationIsPaused = false;
 }
 
 void Ecosystem::setGodTool(GodTool god_tool)
@@ -462,7 +464,7 @@ void Ecosystem::saveEcosystem(const std::string& file_path) const
 	ofs << this->getTrackedAnimalIndex() << '\n';
 
 	ofs << this->simulationSpeedFactor << '\n';
-	ofs << this->simulationIsPaused << '\n';
+	ofs << this->m_simulationIsPaused << '\n';
 	ofs << this->godTool << '\n';
 	ofs << this->totalTimeElapsed;
 
@@ -561,7 +563,7 @@ void Ecosystem::loadEcosystem(const std::string& file_path)
 	ifs >> this->trackedAnimalColor.r >> this->trackedAnimalColor.g >> this->trackedAnimalColor.b >> this->trackedAnimalColor.a;
 
 	ifs >> this->simulationSpeedFactor;
-	ifs >> this->simulationIsPaused;
+	ifs >> this->m_simulationIsPaused;
 	ifs >> this->godTool;
 	ifs >> this->totalTimeElapsed;
 
@@ -738,7 +740,61 @@ void Ecosystem::convertKineticEnergyToFruit(Animal& animal, bool random_fruit_po
 
 void Ecosystem::infoTool(const sf::Vector2f& mouse_pos_view) const
 {
-	std::cout << "INFO TOOL ISN'T DEFINED YET!\n";
+	bool noInfoPrinted = true;
+
+	for (const auto& animal : this->animals)
+		if (animal->isCoveredByMouse(mouse_pos_view))
+		{
+			noInfoPrinted = false;
+			this->printInfoAboutAnimal(*animal);
+		}		
+
+	for (const auto& fruit : this->fruits)
+		if (fruit->isCoveredByMouse(mouse_pos_view))
+		{
+			noInfoPrinted = false;
+			this->printInfoAboutFruit(*fruit);
+		}
+
+	if (noInfoPrinted)
+		this->printInfoAboutEcosystem();
+}
+
+void Ecosystem::printInfoAboutAnimal(const Animal& animal) const
+{
+	std::cout << "Info about a clicked animal:\n";
+	std::cout << "max hp: " << animal.getMaxHp() << '\n';
+	std::cout << "position: " << animal.getPosition().x << ' ' << animal.getPosition().y << '\n';
+	std::cout << "velocity: " << animal.getVelocityVector().x << ' ' << animal.getVelocityVector().y << '\n';
+	std::cout << "acceleration: " << animal.getAccelerationVector().x << ' ' << animal.getAccelerationVector().y << '\n';
+	std::cout << "kinetic energy: " << animal.getKineticEnergy() << '\n';
+	std::cout << "HP: " << animal.getHp() << '\n';
+	std::cout << "total energy: " << animal.getTotalEnergy() << '\n';
+}
+
+void Ecosystem::printInfoAboutFruit(const Fruit& fruit) const
+{
+	std::cout << "Info about a clicked fruit:\n";
+	std::cout << "energy: " << fruit.getEnergy() << '\n';
+	std::cout << "position: " << fruit.getPosition().x << ' ' << fruit.getPosition().y << '\n';
+}
+
+void Ecosystem::printInfoAboutEcosystem() const
+{
+	std::cout << "Info about the ecosystem:\n";
+	std::cout << "name: " << this->name << '\n';
+	std::cout << "arena size: "
+		<< this->getWorldSize().x - 2U * this->getBordersThickness() << ' '
+		<< this->getWorldSize().y - 2U * this->getBordersThickness() << '\n';
+	std::cout << "borders thickness: " << this->getBordersThickness() << '\n';
+	std::cout << "world size: " << this->getWorldSize().x << ' ' << this->getWorldSize().y << '\n';
+	std::cout << "animals count: " << this->animals.size() << '\n';
+	std::cout << "fruits count: " << this->fruits.size() << '\n';
+	std::cout << "mutation rate percentage: " << this->mutationPercentage << '\n';
+	std::cout << "simulation speed factor: " << this->simulationSpeedFactor << '\n';
+	std::cout << "simulation is paused: " << this->m_simulationIsPaused << '\n';
+	std::cout << "god tool: " << getGodToolStr(this->godTool) << '\n';
+	std::cout << "total time elapsed [sec]: " << this->totalTimeElapsed << '\n';
 }
 
 // other private utilities:
