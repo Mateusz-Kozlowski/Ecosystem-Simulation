@@ -1,7 +1,6 @@
 #pragma once
 
 #include "State.h"
-#include "SideMenu.h"
 
 class SimulationState : public State
 {
@@ -57,4 +56,6 @@ private:
 	void updateView();
 	
 	void updateEcosystem(float dt);
+
+	void useEcosystemGodTools();
 };

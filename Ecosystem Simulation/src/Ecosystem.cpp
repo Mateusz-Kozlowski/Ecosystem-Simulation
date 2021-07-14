@@ -72,11 +72,53 @@ void Ecosystem::loadFromFolder(const std::string& folder_path)
 	this->loadBrainsPreviewsVisibility(folder_path + "/brains previews visibility.ini");
 }
 
-void Ecosystem::update(float dt, const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
+void Ecosystem::useGodTools(
+	const std::vector<sf::Event>& events,
+	const sf::Vector2f& mouse_pos_view)
+{
+	if (!EventsAccessor::hasEventOccured(sf::Event::MouseButtonPressed, events))
+		return;
+	
+	// now use God tool:
+	switch (this->godTool)
+	{
+	case GodTool::NONE:
+		return;
+
+	case GodTool::TRACK:
+		this->trackingTool(mouse_pos_view);
+		return;
+
+	case GodTool::KILL:
+		this->killingTool(mouse_pos_view);
+		return;
+
+	case GodTool::REPLACE:
+		this->replacingTool(mouse_pos_view);
+		return;
+
+	case GodTool::BRAIN:
+		this->brainTool(mouse_pos_view);
+		return;
+
+	case GodTool::STOP:
+		this->stoppingTool(mouse_pos_view);
+		return;
+
+	case GodTool::INFO:
+		this->infoTool(mouse_pos_view);
+		return;
+
+	default:
+		throw "ERROR::Ecosystem::useGodTool::ECOSYSTEM GOD TOOL IS NOT SUPPORTED BY THIS METHOD\n";
+	}
+}
+
+void Ecosystem::update(
+	float dt, 
+	const std::vector<sf::Event>& events)
 {
  	this->totalTimeElapsed += dt;
-
-	this->useGodTool(events, mouse_pos_view);
 
 	if (!this->simulationIsPaused)
 		this->updateWorld(dt);
@@ -585,47 +627,7 @@ int Ecosystem::getTrackedAnimalIndex() const
 	return -1;
 }
 
-// god tools section:
-void Ecosystem::useGodTool(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view)
-{
-	if (!EventsAccessor::hasEventOccured(sf::Event::MouseButtonPressed, events))
-		return;
-
-	// now use God tool:
-	switch (this->godTool)
-	{
-	case GodTool::NONE:
-		return;
-
-	case GodTool::TRACK:
-		this->trackingTool(mouse_pos_view);
-		return;
-
-	case GodTool::KILL:
-		this->killingTool(mouse_pos_view);
-		return;
-
-	case GodTool::REPLACE:
-		this->replacingTool(mouse_pos_view);
-		return;
-
-	case GodTool::BRAIN:
-		this->brainTool(mouse_pos_view);
-		return;
-
-	case GodTool::STOP:
-		this->stoppingTool(mouse_pos_view);
-		return;
-
-	case GodTool::INFO:
-		this->infoTool(mouse_pos_view);
-		return;
-
-	default:
-		throw "ERROR::Ecosystem::useGodTool::ECOSYSTEM GOD TOOL IS NOT SUPPORTED BY THIS METHOD\n";
-	}
-}
-
+// god tools:
 void Ecosystem::trackingTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)

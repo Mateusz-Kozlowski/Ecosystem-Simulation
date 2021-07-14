@@ -17,8 +17,6 @@ SIDE MENU:
 
 	after loading ecosystem side menu panel should be updated (e.g. speed scaler)
 
-	don't allow to use God tools when a mouse cursor is over side menu
-
 APP:
 	dt can be extremelly big if a window lost the focus
 
@@ -51,20 +49,21 @@ GUI:
 	NEAT-RT preview with ability to move neurons and save that changes
 
 SIMULATION/ECOSYSTEM:
-	there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
+	there are 2 isPaused variables - in Ecosystem class and in Simulation state class
+		get rid of one of them
 
-	add mass? (mass can be equal to HP)
+	there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
 
 	update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
 
 	implement info tool (probably it'll be able to give info not only about the entire ecosystem
 		but also about particular animals if they are tracked at the moment or sth :) )
 
-	nn preview should never be beyond the world
-
 SHORTCUTS:
 	speeding up and slowing down
+
 	moving side panel
+	
 	God tools
 
 CODE/CONVENTIONS:
@@ -110,3 +109,6 @@ CODE/CONVENTIONS:
 
 	in Ecosystem class there should be 2 different methods: getAreaSize and getWholeWorldSize - 
 		the second one should include borders
+
+	add to all methods info about which things do that method check 
+		(so before calling user don't need to check them)

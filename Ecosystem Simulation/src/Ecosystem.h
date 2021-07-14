@@ -4,6 +4,7 @@
 #include "Fruit.h"
 #include "EventsAccessor.h"
 #include "GodTools.h"
+#include "SideMenu.h"
 
 class Ecosystem
 {
@@ -36,10 +37,14 @@ public:
 	void saveToFolder(const std::string& folder_path) const;
 	void loadFromFolder(const std::string& folder_path);
 
-	void update(
-		float dt,
+	void useGodTools(
 		const std::vector<sf::Event>& events,
 		const sf::Vector2f& mouse_pos_view
+	);
+
+	void update(
+		float dt,
+		const std::vector<sf::Event>& events
 	);
 	void render(sf::RenderTarget& target) const;
 
@@ -192,9 +197,7 @@ private:
 
 	int getTrackedAnimalIndex() const;
 
-	// god tools section:
-	void useGodTool(const std::vector<sf::Event>& events, const sf::Vector2f& mouse_pos_view);
-
+	// god tools:
 	void trackingTool(const sf::Vector2f& mouse_pos_view);
 
 	void killingTool(const sf::Vector2f& mouse_pos_view);

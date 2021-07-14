@@ -737,9 +737,22 @@ void SimulationState::updateEcosystem(float dt)
 	else
 		this->stateData->ecosystem->unpauseSimulation();
 
+	this->useEcosystemGodTools();
+
 	this->stateData->ecosystem->update(
 		dt,
-		*this->stateData->events,
-		this->mousePosView
+		*this->stateData->events
 	);
+}
+
+void SimulationState::useEcosystemGodTools()
+{
+	sf::FloatRect sideMenuGlobalBounds = this->sideMenu->getBackground().getGlobalBounds();
+
+	sf::Vector2f mousePosWindow = static_cast<sf::Vector2f>(this->mousePosWindow);
+	
+	if (this->m_sideMenuIsRendered && sideMenuGlobalBounds.contains(mousePosWindow))
+		return;
+
+	this->stateData->ecosystem->useGodTools(*this->stateData->events, this->mousePosView);
 }
