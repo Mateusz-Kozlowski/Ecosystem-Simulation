@@ -883,10 +883,13 @@ void Ecosystem::removeDeadAnimals()
 	{
 		if (!this->animals[i]->isAlive())
 		{
-			this->createNewFruit(
-				this->animals[i]->getTotalEnergy(),
-				this->fruitsRadius,
-				this->fruitsColor
+			this->fruits.push_back(
+				std::make_unique<Fruit>(
+					this->animals[i]->getTotalEnergy(),
+					this->animals[i]->getPosition(),
+					this->fruitsRadius,
+					this->fruitsColor
+				)
 			);
 
 			this->removeAnimal(this->animals[i]);
