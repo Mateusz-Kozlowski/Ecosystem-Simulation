@@ -9,6 +9,9 @@ Crappy Neural Nets:
 - NEAT REAL TIME
 
 side menu:
+- rmv all texts
+- add save and save as button
+- rmv continue btn
 - side menu should be able to be opened not only using Esc key 
   but also using a gui widget which doesn't even exist yet
 - after loading ecosystem side menu panel should be updated (e.g. speed scaler)
@@ -20,16 +23,20 @@ app:
 - <random> library? Check it out! Not C style of generating pseudorandom numbers
 
 simulation state:
+- move that thing controling simulation speed factor from updateEcosystem method to getUpdatesFromGui
 - saving zoom/world camera can be useful
 - avoid drawing things that are outside the window
 - creator state:
   more/better ecosystems templates?
+- add texture buttons in the top-right corners of all brain previews that will allow to move neurons,
+  save that changes and maybe other things
 
 loading state:
 - "fake async loading" - before loading render some text with information about loading and 
   after the process is complited stop rendering that text
 
 GUI:
+- add NEAT-RT preview class
 - rename neural net preview to sequential preview or sth like that
 - one convention for all gui widgets, maybe even polimorphizm
 - some GUI widgets positions are set relative to their centers and some are set relative to their
@@ -60,6 +67,7 @@ shortcuts:
 
 code:
 - mutation rate vs mutation percentage - unify that (probably mutation rate percentage)
+- rename ScaleSlider class to just Slider
 - convention of names in tools 
   (->replace is also called move and it shouldn't have 2 names)(->track and select also)
   (rmv and delete? I used remove everywhere, but delete may be a better option)

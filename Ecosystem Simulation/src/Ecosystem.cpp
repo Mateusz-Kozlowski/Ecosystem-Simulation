@@ -358,20 +358,20 @@ void Ecosystem::createNewAnimal(
 	bool render_hp_bar_by_default,
 	bool render_brain_by_default)
 {
-	std::unique_ptr<Animal> newAnimal = std::make_unique<Animal>(
-		sf::Vector2f(
-			this->getWorldSize().x / 2.0f,
-			this->getWorldSize().y / 2.0f
-		),
-		animal_radius,
-		animal_color,
-		sf::Color(100, 100, 100),
-		sf::Color::Red,
-		default_animal_hp,
-		default_animal_hp
+	this->animals.push_back(
+		std::make_unique<Animal>(
+			sf::Vector2f(
+				this->getWorldSize().x / 2.0f,
+				this->getWorldSize().y / 2.0f
+			),
+			animal_radius,
+			animal_color,
+			sf::Color(100, 100, 100),
+			sf::Color::Red,
+			default_animal_hp,
+			default_animal_hp
+		)
 	);
-	
-	this->animals.push_back(std::move(newAnimal));
 	this->animals.back()->setRandomPosition(this->getWorldSize(), this->getBordersThickness());
 
 	this->hpBarsVisibility[this->animals.back().get()] = render_hp_bar_by_default;
@@ -392,18 +392,17 @@ void Ecosystem::createNewFruits(
 
 void Ecosystem::createNewFruit(float energy, float radius, const sf::Color& fruit_color)
 {
-	std::unique_ptr<Fruit> newFruit = std::make_unique<Fruit>(
-		energy,
-		sf::Vector2f(
-			0.0f,
-			0.0f
-		),
-		radius,
-		fruit_color
+	this->fruits.push_back(
+		std::make_unique<Fruit>(
+			energy,
+			sf::Vector2f(
+				0.0f,
+				0.0f
+			),
+			radius,
+			fruit_color
+		)
 	);
-
-	// TODO: check this out without std::move:
-	this->fruits.push_back(std::move(newFruit));
 	this->fruits.back()->setRandomPosition(this->getWorldSize(), this->getBordersThickness());
 }
 
@@ -513,9 +512,7 @@ void Ecosystem::loadAnimals(const std::string& folder_path)
 
 void Ecosystem::loadAnimal(const std::string& folder_path)
 {
-	std::unique_ptr<Animal> newAnimal = std::make_unique<Animal>(folder_path);
-
-	this->animals.push_back(std::move(newAnimal));
+	this->animals.push_back(std::make_unique<Animal>(folder_path));
 }
 
 void Ecosystem::loadFruits(const std::string& folder_path)
@@ -528,9 +525,7 @@ void Ecosystem::loadFruits(const std::string& folder_path)
 
 void Ecosystem::loadFruit(const std::string& file_path)
 {
-	std::unique_ptr<Fruit> newFruit = std::make_unique<Fruit>(file_path);
-
-	this->fruits.push_back(std::move(newFruit));
+	this->fruits.push_back(std::make_unique<Fruit>(file_path));
 }
 
 void Ecosystem::loadEcosystem(const std::string& file_path)
@@ -674,14 +669,14 @@ void Ecosystem::killingTool(const sf::Vector2f& mouse_pos_view)
 
 void Ecosystem::convertAnimalToFruit(std::shared_ptr<Animal>& animal)
 {
-	std::unique_ptr<Fruit> newAnimal = std::make_unique<Fruit>(
-		animal->getTotalEnergy(),
-		animal->getPosition(),
-		this->fruitsRadius,
-		this->fruitsColor
+	this->fruits.push_back(
+		std::make_unique<Fruit>(
+			animal->getTotalEnergy(),
+			animal->getPosition(),
+			this->fruitsRadius,
+			this->fruitsColor
+		)
 	);
-
-	this->fruits.push_back(std::move(newAnimal));
 
 	if (animal.get() == this->trackedAnimal)
 		this->trackedAnimal = nullptr;
@@ -722,15 +717,15 @@ void Ecosystem::convertKineticEnergyToFruit(Animal& animal, bool random_fruit_po
 {
 	if (animal.getKineticEnergy() <= 0.0f)
 		return;
-	
-	std::unique_ptr<Fruit> newFruit = std::make_unique<Fruit>(
-		animal.getKineticEnergy(),
-		animal.getPosition(),
-		this->fruitsRadius,
-		this->fruitsColor
-	);
 
-	this->fruits.push_back(std::move(newFruit));
+	this->fruits.push_back(
+		std::make_unique<Fruit>(
+			animal.getKineticEnergy(),
+			animal.getPosition(),
+			this->fruitsRadius,
+			this->fruitsColor
+		)
+	);
 
 	if (random_fruit_position)
 		this->fruits.back()->setRandomPosition(this->getWorldSize(), this->getBordersThickness());
@@ -1078,9 +1073,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 		{
 			fruit.setEnergy(fruit.getEnergy() - animal.getMaxHp());
 			
-			std::shared_ptr<Animal> clone = std::make_shared<Animal>(animal);
-
-			this->animals.push_back(std::move(clone));
+			this->animals.push_back(std::make_shared<Animal>(animal));
 
 			this->animals.back()->setHp(animal.getMaxHp());
 			this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
@@ -1090,9 +1083,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 			this->brainsPreviewsVisibility[this->animals.back().get()] = this->brainsPreviewsVisibility[&animal];
 		}
 
-		std::shared_ptr<Animal> clone = std::make_shared<Animal>(animal);
-
-		this->animals.push_back(std::move(clone));
+		this->animals.push_back(std::make_shared<Animal>(animal));
 
 		this->animals.back()->setHp(fruit.getEnergy());
 		this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
