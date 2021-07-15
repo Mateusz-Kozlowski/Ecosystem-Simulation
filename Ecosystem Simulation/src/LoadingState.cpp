@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "LoadingState.h"
 
-// constructor/destructor:
 LoadingState::LoadingState(StateData* state_data)
 	: State(state_data)
 {
@@ -12,22 +11,7 @@ LoadingState::LoadingState(StateData* state_data)
 	this->initButtons();
 }
 
-LoadingState::~LoadingState()
-{
-	for (auto& it : this->buttons) delete it.second;
-
-	delete this->inputField;
-}
-
-// mutators:
-void LoadingState::freeze()
-{
-	std::cout << "FREEZING IS NOT DEFINED YET!\n";
-
-	for (auto& it : this->buttons) it.second->setClickBlockade(true);
-}
-
-// other public methods:
+// public methods:
 void LoadingState::update(float dt)
 {
 	this->updateMousePositions();
@@ -36,26 +20,38 @@ void LoadingState::update(float dt)
 
 	this->inputField->update(dt, *this->stateData->events, this->mousePosWindow);
 
-	for (auto& it : this->buttons) it.second->update(this->mousePosWindow);
+	for (auto& button : this->buttons)
+		button.second->update(this->mousePosWindow);
 
 	this->getUpdateFromButtons();
 }
 
 void LoadingState::render(sf::RenderTarget* target)
 {
-	if (!target) target = this->stateData->window;
+	if (!target)
+		target = this->stateData->window;
 
 	target->draw(this->background);
 
 	this->inputField->render(*target);
 
-	for (const auto& it : this->buttons) it.second->render(*target);
+	for (const auto& button : this->buttons)
+		button.second->render(*target);
+}
+
+// mutators:
+void LoadingState::freeze()
+{
+	std::cout << "FREEZING IS NOT DEFINED YET!\n";
+
+	for (auto& button : this->buttons) 
+		button.second->setClickBlockade(true);
 }
 
 // initialization:
 void LoadingState::initKeybinds()
 {
-	std::string path = "config/ecosystem_creator_keybinds.ini";
+	const char* path = "config/ecosystem_creator_keybinds.ini";
 
 	std::ifstream ifs(path);
 
@@ -64,22 +60,23 @@ void LoadingState::initKeybinds()
 		std::string key = "";
 		std::string key2 = "";
 
-		while (ifs >> key >> key2) this->keybinds[key] = this->stateData->supportedKeys->at(key2);
+		while (ifs >> key >> key2) 
+			this->keybinds[key] = this->stateData->supportedKeys->at(key2);
 	}
-	else throw("ERROR::ECOSYSTEMCREATORSTATE::COULD NOT OPEN: " + path);
+	else throw("ERROR::ECOSYSTEMCREATORSTATE::COULD NOT OPEN: " + std::string(path));
 
 	ifs.close();
 }
 
 void LoadingState::initBackground()
 {
-	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
 	this->background.setSize(
 		sf::Vector2f
 		(
-			static_cast<float>(vm.width),
-			static_cast<float>(vm.height)
+			static_cast<float>(resolution.width),
+			static_cast<float>(resolution.height)
 		)
 	);
 
@@ -96,7 +93,7 @@ void LoadingState::initInputField()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
-	this->inputField = new gui::InputField(
+	this->inputField = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(27.f, resolution),
 			gui::p2pY(37.9f, resolution)
@@ -117,7 +114,7 @@ void LoadingState::initButtons()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
-	this->buttons["LOAD"] = new gui::Button(
+	this->buttons["LOAD"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(27.f, resolution),
 			gui::p2pY(54.3f, resolution)
@@ -133,7 +130,7 @@ void LoadingState::initButtons()
 		gui::p2pY(0.8f, resolution), 0
 	);
 
-	this->buttons["QUIT"] = new gui::Button(
+	this->buttons["QUIT"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(53.f, resolution),
 			gui::p2pY(54.3f, resolution)
@@ -150,7 +147,7 @@ void LoadingState::initButtons()
 	);
 }
 
-// other public methods:
+// other private methods:
 void LoadingState::updateInput()
 {
 	/*
@@ -158,7 +155,8 @@ void LoadingState::updateInput()
 		this->endState();
 	*/
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"]))) this->endState();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"]))) 
+		this->endState();
 }
 
 void LoadingState::getUpdateFromButtons()

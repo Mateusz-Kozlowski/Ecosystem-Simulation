@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "MainMenuState.h"
 
-// constructor/destructor:
 MainMenuState::MainMenuState(StateData* state_data)
 	: State(state_data)
 {
@@ -13,16 +12,10 @@ MainMenuState::MainMenuState(StateData* state_data)
 	this->initEcosystemText();
 }
 
-// mutators:
-void MainMenuState::freeze()
-{
-	std::cerr << "FREEZING IS NOT DEFINED YET!\n";
-}
-
-// other public methods:
+// public methods:
 void MainMenuState::update(float dt)
 {
-	this->updateMousePositions();	
+	this->updateMousePositions();
 	this->updateInput();
 	this->getUpdateFromButtons();
 	this->updateEcosystemText(dt);
@@ -30,15 +23,23 @@ void MainMenuState::update(float dt)
 
 void MainMenuState::render(sf::RenderTarget* target)
 {
-	if (!target) 
+	if (!target)
 		target = this->stateData->window;
 
 	target->draw(this->backgroundRect);
 
 	this->renderButtons(*target);
-	
+
 	target->draw(this->ecosystemText);
 }
+
+// mutators:
+void MainMenuState::freeze()
+{
+	std::cerr << "FREEZING IS NOT DEFINED YET!\n";
+}
+
+// private methods:
 
 // initialization:
 void MainMenuState::initVariables()
@@ -257,6 +258,6 @@ void MainMenuState::updateEcosystemText(float dt)
 
 void MainMenuState::renderButtons(sf::RenderTarget& target)
 {
-	for (auto& it : this->buttons)
-		it.second->render(target);
+	for (auto& button : this->buttons)
+		button.second->render(target);
 }

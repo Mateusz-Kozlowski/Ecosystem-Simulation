@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "EcosystemCreatorState.h"
 
-// constructor/destructor:
 EcosystemCreatorState::EcosystemCreatorState(StateData* state_data)
 	: State(state_data)
 {
@@ -11,22 +10,7 @@ EcosystemCreatorState::EcosystemCreatorState(StateData* state_data)
 	this->initGui();
 }
 
-EcosystemCreatorState::~EcosystemCreatorState()
-{
-	for (auto& it : this->buttons) delete it.second;
-
-	for (auto& it : this->inputFields) delete it.second;
-
-	for (auto& it : this->texts) delete it.second;
-}
-
-// mutators:
-void EcosystemCreatorState::freeze()
-{
-	std::cout << "FREEZING IS NOT DEFINED YET!\n";
-}
-
-// other public methods:
+// public methods:
 void EcosystemCreatorState::update(float dt)
 {
 	this->updateMousePositions();
@@ -37,11 +21,18 @@ void EcosystemCreatorState::update(float dt)
 
 void EcosystemCreatorState::render(sf::RenderTarget* target)
 {
-	if (target == nullptr) target = this->stateData->window;
+	if (!target) 
+		target = this->stateData->window;
 
 	target->draw(this->background);
 
 	this->renderGui(*target);
+}
+
+// mutators:
+void EcosystemCreatorState::freeze()
+{
+	std::cout << "FREEZING IS NOT DEFINED YET!\n";
 }
 
 // private methods:
@@ -49,7 +40,7 @@ void EcosystemCreatorState::render(sf::RenderTarget* target)
 // initialization:
 void EcosystemCreatorState::initKeybinds()
 {
-	std::string path = "config/ecosystem_creator_keybinds.ini";
+	const char* path = "config/ecosystem_creator_keybinds.ini";
 
 	std::ifstream ifs(path);
 
@@ -58,22 +49,23 @@ void EcosystemCreatorState::initKeybinds()
 		std::string key = "";
 		std::string key2 = "";
 
-		while (ifs >> key >> key2) this->keybinds[key] = this->stateData->supportedKeys->at(key2);
+		while (ifs >> key >> key2) 
+			this->keybinds[key] = this->stateData->supportedKeys->at(key2);
 	}
-	else throw("ERROR::EcosystemCreatorState::initKeybinds::COULD NOT OPEN: " + path);
+	else throw("ERROR::EcosystemCreatorState::initKeybinds::COULD NOT OPEN: " + std::string(path));
 
 	ifs.close();
 }
 
 void EcosystemCreatorState::initBackground()
 {
-	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
 	this->background.setSize(
 		sf::Vector2f
 		(
-			static_cast<float>(vm.width),
-			static_cast<float>(vm.height)
+			static_cast<float>(resolution.width),
+			static_cast<float>(resolution.height)
 		)
 	);
 
@@ -83,16 +75,10 @@ void EcosystemCreatorState::initBackground()
 void EcosystemCreatorState::initFonts()
 {
 	if (!this->fonts["RETROICA"].loadFromFile("resources/fonts/Retroica.ttf"))
-	{
-		std::cerr << "ERROR::EcosystemCreatorState::initFonts::COULD NOT LOAD A FONT\n";
-		exit(-1);
-	}
+		throw("ERROR::EcosystemCreatorState::initFonts::COULD NOT LOAD A FONT\n");
 
 	if (!this->fonts["CONSOLAB"].loadFromFile("resources/fonts/consolab.ttf"))
-	{
-		std::cerr << "ERROR::EcosystemCreatorState::initFonts::COULD NOT LOAD A FONT\n";
-		exit(-1);
-	}
+		throw("ERROR::EcosystemCreatorState::initFonts::COULD NOT LOAD A FONT\n");
 }
 
 void EcosystemCreatorState::initGui()
@@ -106,7 +92,7 @@ void EcosystemCreatorState::initButtons()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
-	this->buttons["SMALL"] = new gui::Button(
+	this->buttons["SMALL"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(30.f, resolution),
 			gui::p2pY(7.f, resolution)
@@ -122,7 +108,7 @@ void EcosystemCreatorState::initButtons()
 		gui::p2pY(0.4f, resolution)
 	);
 
-	this->buttons["BIG"] = new gui::Button(
+	this->buttons["BIG"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(7.f, resolution)
@@ -138,7 +124,7 @@ void EcosystemCreatorState::initButtons()
 		gui::p2pY(0.4f, resolution)
 	);
 
-	this->buttons["HUGE"] = new gui::Button(
+	this->buttons["HUGE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(58.f, resolution),
 			gui::p2pY(7.f, resolution)
@@ -154,7 +140,7 @@ void EcosystemCreatorState::initButtons()
 		gui::p2pY(0.4f, resolution)
 	);
 
-	this->buttons["CREATE AND LOAD"] = new gui::Button(
+	this->buttons["CREATE AND LOAD"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(68.f, resolution),
 			gui::p2pY(92.f, resolution) - 213.7f // TODO: rmv later!
@@ -170,7 +156,7 @@ void EcosystemCreatorState::initButtons()
 		gui::p2pY(0.4f, resolution)
 	);
 
-	this->buttons["QUIT"] = new gui::Button(
+	this->buttons["QUIT"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(82.f, resolution),
 			gui::p2pY(92.f, resolution) - 213.7f // TODO: rmv later!
@@ -191,7 +177,7 @@ void EcosystemCreatorState::initInputFields()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
-	this->inputFields["WORLD WIDTH"] = new gui::InputField(
+	this->inputFields["WORLD WIDTH"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(21.f, resolution)
@@ -207,7 +193,7 @@ void EcosystemCreatorState::initInputFields()
 		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f
 	);
 
-	this->inputFields["WORLD HEIGHT"] = new gui::InputField(
+	this->inputFields["WORLD HEIGHT"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(28.f, resolution)
@@ -224,7 +210,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 1
 	);
 
-	this->inputFields["BORDERS THICKNESS"] = new gui::InputField(
+	this->inputFields["BORDERS THICKNESS"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(35.f, resolution)
@@ -241,7 +227,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 2
 	);
 
-	this->inputFields["ANIMALS COUNT"] = new gui::InputField(
+	this->inputFields["ANIMALS COUNT"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(42.f, resolution)
@@ -258,7 +244,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 3
 	);
 
-	this->inputFields["FRUITS COUNT"] = new gui::InputField(
+	this->inputFields["FRUITS COUNT"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(49.f, resolution)
@@ -275,7 +261,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 4
 	);
 
-	this->inputFields["DEFAULT HP"] = new gui::InputField(
+	this->inputFields["DEFAULT HP"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(56.f, resolution)
@@ -292,7 +278,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 5
 	);
 
-	this->inputFields["DEFAULT FRUIT ENERGY"] = new gui::InputField(
+	this->inputFields["DEFAULT FRUIT ENERGY"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(63.f, resolution)
@@ -309,7 +295,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 6
 	);
 
-	this->inputFields["MUTATION RATE"] = new gui::InputField(
+	this->inputFields["MUTATION RATE"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(70.f, resolution)
@@ -326,7 +312,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 7
 	);
 
-	this->inputFields["NAME"] = new gui::InputField(
+	this->inputFields["NAME"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
 			gui::p2pX(44.f, resolution),
 			gui::p2pY(77.f, resolution)
@@ -457,7 +443,7 @@ void EcosystemCreatorState::initTexts()
 	);
 }
 
-// private utilities:
+// other private methods:
 void EcosystemCreatorState::addText(
 	const std::string& str,
 	const std::string& hash_key,
@@ -466,22 +452,19 @@ void EcosystemCreatorState::addText(
 	const sf::Color& color,
 	const sf::Vector2f& position)
 {
-	this->texts[hash_key] = new sf::Text(str, font, char_size);
+	this->texts[hash_key] = std::make_unique<sf::Text>(str, font, char_size);
 	this->texts[hash_key]->setFillColor(color);
 	this->texts[hash_key]->setPosition(position);
 }
 
 void EcosystemCreatorState::loadEcosystemTemplate(const std::string& ecosystem_name)
 {
-	const std::string path = "resources/ecosystems templates/" + ecosystem_name + ".ini";
+	std::string path = "resources/ecosystems templates/" + ecosystem_name + ".ini";
 
 	std::ifstream file(path);
 
 	if (!file.is_open())
-	{
-		std::cerr << "ERROR::EcosystemCreatorState::useTemplate::COULD NOT OPEN: " << path << '\n';
-		exit(-1);
-	}
+		throw("ERROR::EcosystemCreatorState::useTemplate::COULD NOT OPEN: " + path + '\n');
 
 	// read some variables:
 	sf::Vector2f worldSize;
@@ -535,13 +518,16 @@ std::string EcosystemCreatorState::removeFloatTrailingZeros(const std::string& s
 			break;
 		}
 
-	if (!periodOccurs) return string;
+	if (!periodOccurs) 
+		return string;
 
 	unsigned index = string.size();
 
-	while (index > 0 && string[index - 1] == '0') index--;
+	while (index > 0 && string[index - 1] == '0') 
+		index--;
 
-	if (string[index - 1] == '.') index--;
+	if (string[index - 1] == '.') 
+		index--;
 
 	std::string temp = string;
 
@@ -579,7 +565,6 @@ void EcosystemCreatorState::createEcosystem()
 	);
 }
 
-// other private methods:
 void EcosystemCreatorState::updateInput()
 {
 	/*
@@ -593,11 +578,11 @@ void EcosystemCreatorState::updateInput()
 
 void EcosystemCreatorState::updateGui(float dt)
 {
-	for (auto& it : this->buttons)
-		it.second->update(this->mousePosWindow);
+	for (auto& button : this->buttons)
+		button.second->update(this->mousePosWindow);
 
-	for (auto& it : this->inputFields)
-		it.second->update(dt, *this->stateData->events, this->mousePosWindow);
+	for (auto& inputField : this->inputFields)
+		inputField.second->update(dt, *this->stateData->events, this->mousePosWindow);
 }
 
 void EcosystemCreatorState::getUpdatesFromGui()
@@ -620,12 +605,12 @@ void EcosystemCreatorState::getUpdatesFromGui()
 
 void EcosystemCreatorState::renderGui(sf::RenderTarget& target)
 {
-	for (const auto& it : this->buttons)
-		it.second->render(target);
+	for (const auto& button : this->buttons)
+		button.second->render(target);
 
-	for (const auto& it : this->inputFields)
-		it.second->render(target);
+	for (const auto& inputField : this->inputFields)
+		inputField.second->render(target);
 
-	for (const auto& it : this->texts)
-		target.draw(*it.second);
+	for (const auto& text : this->texts)
+		target.draw(*text.second);
 }

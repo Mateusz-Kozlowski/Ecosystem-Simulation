@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "SimulationState.h"
 
-// constructor/destructor:
 SimulationState::SimulationState(StateData* state_data)
 	: State(state_data)
 {
@@ -14,25 +13,14 @@ SimulationState::SimulationState(StateData* state_data)
 	this->initSideMenu();
 }
 
-SimulationState::~SimulationState()
-{
-	delete this->sideMenu;
-}
-
-// mutators:
-void SimulationState::freeze()
-{
-	std::cerr << "FREEZING IS NOT DEFINED YET!\n";
-}
-
-// other public methods:
+// public methods:
 void SimulationState::update(float dt)
 {
 	this->updateInput();
 
 	this->updateMousePositions(&this->view);
 
-	if (this->m_sideMenuIsRendered) 
+	if (this->m_sideMenuIsRendered)
 		this->updateSideMenu();
 
 	this->getUpdatesFromSideMenuGui();
@@ -66,10 +54,16 @@ void SimulationState::render(sf::RenderTarget* target)
 	target->draw(this->renderSprite);
 }
 
+// mutators:
+void SimulationState::freeze()
+{
+	std::cerr << "FREEZING IS NOT DEFINED YET!\n";
+}
+
 // initialization:
 void SimulationState::initKeybinds()
 {
-	const std::string path = "config/simulation_keybinds.ini";
+	const char* path = "config/simulation_keybinds.ini";
 
 	std::ifstream ifs(path);
 
@@ -81,7 +75,7 @@ void SimulationState::initKeybinds()
 		while (ifs >> key >> key2)
 			this->keybinds[key] = this->stateData->supportedKeys->at(key2);
 	}
-	else throw("ERROR::SIMULATIONSTATE::COULD NOT OPEN: " + path + '\n');
+	else throw("ERROR::SIMULATIONSTATE::COULD NOT OPEN: " + std::string(path) + '\n');
 
 	ifs.close();
 }
@@ -140,12 +134,12 @@ void SimulationState::initDeferredRender()
 void SimulationState::initSideMenu()
 {
 	// temporary variables:
-	const std::string& guiPath = "resources/textures/GUI";
+	const std::string guiPath = "resources/textures/GUI";
 
 	const sf::VideoMode resolution = this->stateData->gfxSettings->resolution;
 
 	// create new SideMenu:
-	this->sideMenu = new gui::SideMenu(
+	this->sideMenu = std::make_unique<gui::SideMenu>(
 		sf::Vector2f(0.f, 0.f),
 		sf::Vector2f(gui::p2pX(24, resolution), gui::p2pY(100, resolution)),
 		sf::Color(48, 48, 48)

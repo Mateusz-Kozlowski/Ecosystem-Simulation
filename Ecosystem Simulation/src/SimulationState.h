@@ -6,13 +6,13 @@ class SimulationState : public State
 {
 public:
 	SimulationState(StateData* state_data);
-	virtual ~SimulationState();
 
 	// public methods:
-	virtual void freeze();
-	
 	virtual void update(float dt);
 	virtual void render(sf::RenderTarget* target = nullptr);
+
+	// mutators:
+	virtual void freeze();
 	
 private:
 	std::unordered_map<std::string, sf::Font> fonts;
@@ -23,13 +23,12 @@ private:
 
 	bool m_sideMenuIsRendered;
 
-	gui::SideMenu* sideMenu;
+	std::unique_ptr<gui::SideMenu> sideMenu;
 
 	sf::RenderTexture renderTexture;
 	sf::Sprite renderSprite;
 
 	// private methods:
-
 	// initialization:
 	virtual void initKeybinds();
 	void initVariables();

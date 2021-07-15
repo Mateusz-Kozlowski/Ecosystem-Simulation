@@ -7,28 +7,27 @@
 class EcosystemCreatorState : public State
 {
 public:
-	// constructor/destructor:
 	EcosystemCreatorState(StateData* state_data);
-	virtual ~EcosystemCreatorState();
+
+	// public methods:
+	virtual void update(float dt);
+	virtual void render(sf::RenderTarget* target = nullptr);
 
 	// mutators:
 	virtual void freeze();
-
-	// other public methods:
-	virtual void update(float dt);
-	virtual void render(sf::RenderTarget* target = nullptr);
 
 private:
 	sf::RectangleShape background;
 
 	std::unordered_map<std::string, sf::Font> fonts;
 
-	std::unordered_map<std::string, gui::Button*> buttons;
+	std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
 
-	std::unordered_map<std::string, gui::InputField*> inputFields;
+	std::unordered_map<std::string, std::unique_ptr<gui::InputField>> inputFields;
 
-	std::unordered_map<std::string, sf::Text*> texts;
+	std::unordered_map<std::string, std::unique_ptr<sf::Text>> texts;
 
+	// private methods:
 	// initialization:
 	virtual void initKeybinds();
 	void initBackground();
@@ -38,7 +37,7 @@ private:
 	void initInputFields();
 	void initTexts();
 
-	// private utilities:
+	// other private methods:
 	void addText(
 		const std::string& str,
 		const std::string& hash_key,
@@ -53,8 +52,7 @@ private:
 	static std::string removeFloatTrailingZeros(const std::string& string);
 
 	void createEcosystem();
-
-	// other private methods:
+	
 	virtual void updateInput();
 
 	void updateGui(float dt);
