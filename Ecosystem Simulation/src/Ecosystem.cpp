@@ -236,6 +236,41 @@ float Ecosystem::getTotalTimeElapsed() const
 	return this->totalTimeElapsed;
 }
 
+float Ecosystem::getTotalAnimalsHpEnergy() const
+{
+	float totalHpEnergy = 0.0f;
+
+	for (const auto& animal : this->animals)
+		totalHpEnergy += animal->getHp();
+
+	return totalHpEnergy;
+}
+
+float Ecosystem::getTotalAnimalsKineticEnergy() const
+{
+	float totalKineticEnergy = 0.0f;
+
+	for (const auto& animal : this->animals)
+		totalKineticEnergy += animal->getKineticEnergy();
+
+	return totalKineticEnergy;
+}
+
+float Ecosystem::getTotalFruitsEnergy() const
+{
+	float totalFruitsEnergy = 0.0f;
+
+	for (const auto& fruit : this->fruits)
+		totalFruitsEnergy += fruit->getEnergy();
+
+	return totalFruitsEnergy;
+}
+
+float Ecosystem::getTotalEnergy() const
+{
+	return this->getTotalAnimalsHpEnergy() + this->getTotalAnimalsKineticEnergy() + this->getTotalFruitsEnergy();
+}
+
 void Ecosystem::printAllAnimalsPositions() const
 {
 	for (const auto& animal : this->animals)
@@ -790,6 +825,10 @@ void Ecosystem::printInfoAboutEcosystem() const
 	std::cout << "simulation is paused: " << this->m_simulationIsPaused << '\n';
 	std::cout << "god tool: " << getGodToolStr(this->godTool) << '\n';
 	std::cout << "total time elapsed [sec]: " << this->totalTimeElapsed << '\n';
+	std::cout << "total animals hp energy: " << this->getTotalAnimalsHpEnergy() << '\n';
+	std::cout << "total animals kinetic energy: " << this->getTotalAnimalsKineticEnergy() << '\n';
+	std::cout << "total fruits energy: " << this->getTotalFruitsEnergy() << '\n';
+	std::cout << "total energy: " << this->getTotalEnergy() << '\n';
 }
 
 // other private utilities:

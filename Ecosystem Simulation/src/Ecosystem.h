@@ -78,6 +78,11 @@ public:
 
 	float getTotalTimeElapsed() const;
 
+	float getTotalAnimalsHpEnergy() const;
+	float getTotalAnimalsKineticEnergy() const;
+	float getTotalFruitsEnergy() const;
+	float getTotalEnergy() const;
+
 	void printAllAnimalsPositions() const;
 
 	// mutators:
