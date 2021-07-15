@@ -41,7 +41,7 @@ GUI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
-- add total energy method
+- total energy is not conservate - fix that!
 - do sth with that animals that stick to the borders
 - carefully test saving and loading ecosystems
 - there are 2 isPaused variables - in Ecosystem class and in Simulation state class

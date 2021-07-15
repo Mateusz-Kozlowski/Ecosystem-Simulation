@@ -836,8 +836,8 @@ void Ecosystem::updateWorld(float dt)
 {
 	this->updatingWorldLogs();
 	this->updateAnimals(dt);
-	this->removeDeadAnimals();
 	this->avoidTunneling();
+	this->removeDeadAnimals();
 	this->feedAnimals();
 	this->correctBrainPreviewsPositions();	
 	this->removeEatenFruits();
