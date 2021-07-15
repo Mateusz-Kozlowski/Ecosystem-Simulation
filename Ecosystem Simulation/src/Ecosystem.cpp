@@ -792,6 +792,7 @@ void Ecosystem::infoTool(const sf::Vector2f& mouse_pos_view) const
 
 void Ecosystem::printInfoAboutAnimal(const Animal& animal) const
 {
+	std::cout << '\n';
 	std::cout << "Info about a clicked animal:\n";
 	std::cout << "max hp: " << animal.getMaxHp() << '\n';
 	std::cout << "position: " << animal.getPosition().x << ' ' << animal.getPosition().y << '\n';
@@ -804,6 +805,7 @@ void Ecosystem::printInfoAboutAnimal(const Animal& animal) const
 
 void Ecosystem::printInfoAboutFruit(const Fruit& fruit) const
 {
+	std::cout << '\n';
 	std::cout << "Info about a clicked fruit:\n";
 	std::cout << "energy: " << fruit.getEnergy() << '\n';
 	std::cout << "position: " << fruit.getPosition().x << ' ' << fruit.getPosition().y << '\n';
@@ -811,6 +813,7 @@ void Ecosystem::printInfoAboutFruit(const Fruit& fruit) const
 
 void Ecosystem::printInfoAboutEcosystem() const
 {
+	std::cout << '\n';
 	std::cout << "Info about the ecosystem:\n";
 	std::cout << "name: " << this->name << '\n';
 	std::cout << "arena size: "

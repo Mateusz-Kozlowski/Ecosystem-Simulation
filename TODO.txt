@@ -42,7 +42,8 @@ GUI:
 
 simulation/ecosystem:
 - total energy is not conservate - fix that!
-- do sth with that animals that stick to the borders
+- do sth with that animals that stick to the borders; I even know what:
+  if an animal is touching a border and it accelerates towards that border it should be converted into a fruit
 - carefully test saving and loading ecosystems
 - there are 2 isPaused variables - in Ecosystem class and in Simulation state class
   get rid of one of them
