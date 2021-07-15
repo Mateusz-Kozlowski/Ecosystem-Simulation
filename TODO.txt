@@ -9,9 +9,6 @@ Crappy Neural Nets:
 - NEAT REAL TIME
 
 side menu:
-- rmv all texts
-- add save and save as button
-- rmv continue btn
 - side menu should be able to be opened not only using Esc key 
   but also using a gui widget which doesn't even exist yet
 - after loading ecosystem side menu panel should be updated (e.g. speed scaler)
@@ -44,6 +41,7 @@ GUI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- bug: when a tracked animal clones its clone also has a special color
 - add total energy method
 - do sth with that animals that stick to the borders
 - carefully test saving and loading ecosystems

@@ -146,13 +146,6 @@ void SimulationState::initSideMenu()
 	);
 
 	// add widgets:
-	this->sideMenu->addCenteredText(
-		gui::p2pY(4.f, resolution),
-		gui::calcCharSize(26.0f, resolution),
-		this->fonts["CONSOLAB"],
-		"PLAY/STOP:",
-		sf::Color(225, 225, 225)
-	);
 	this->sideMenu->addTextureButton(
 		"PAUSE",
 		{
@@ -168,31 +161,24 @@ void SimulationState::initSideMenu()
 		"PLAY IDLE",
 		sf::Vector2f(
 			gui::p2pX(10.33f, resolution),
-			gui::p2pY(8.8f, resolution)
+			gui::p2pY(4.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(100.f * 64.f / 1920.f, resolution),
-			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
+			gui::p2pY(100.0f * 64.0f / 1080.0f, resolution)
 		)
 	);
-
-	this->sideMenu->addCenteredText(
-		gui::p2pY(19.5f, resolution),
-		gui::calcCharSize(26.0f, resolution),
-		this->fonts["CONSOLAB"],
-		"SPEED:",
-		sf::Color(225, 225, 225)
-	);
+	
 	this->sideMenu->addScaleSlider(
 		"SPEED",
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(26.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(14.0f, resolution)
 		),
-		256.f / 1840.f,
+		256.0f / 1840.0f,
 		{ 0.0f, 1.0f },
 		{ 0.01f, 0.81f },
-		1.f,
+		1.0f,
 		guiPath + "/scale sliders/axes/axis.png",
 		guiPath + "/scale sliders/handles/handle.png",
 
@@ -202,14 +188,6 @@ void SimulationState::initSideMenu()
 		guiPath + "/scale sliders/axes/axis dark.png",
 		guiPath + "/scale sliders/handles/handle dark.png",
 		"quadratic"
-	);
-
-	this->sideMenu->addCenteredText(
-		gui::p2pY(34.f, resolution),
-		gui::calcCharSize(26.0f, resolution),
-		this->fonts["CONSOLAB"],
-		"MOVE THIS PANEL:",
-		sf::Color(225, 225, 225)
 	);
 
 	this->sideMenu->addTextureButton(
@@ -227,23 +205,15 @@ void SimulationState::initSideMenu()
 		"RIGHT IDLE",
 		sf::Vector2f(
 			gui::p2pX(10.33f, resolution),
-			gui::p2pY(39.f, resolution)
+			gui::p2pY(19.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(100.f * 64.f / 1920.f, resolution),
-			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
+			gui::p2pY(100.0f * 64.0f / 1080.0f, resolution)
 		)
 	);
 
 	this->initGodToolsGui();
-
-	this->sideMenu->addCenteredText(
-		gui::p2pY(72.f, resolution),
-		gui::calcCharSize(26.0f, resolution),
-		this->fonts["CONSOLAB"],
-		"ZOOM:",
-		sf::Color(225, 225, 225)
-	);
 
 	this->sideMenu->addTextureButton(
 		"ZOOM IN",
@@ -254,12 +224,12 @@ void SimulationState::initSideMenu()
 		},
 		"IDLE",
 		sf::Vector2f(
-			gui::p2pX(8.f + 1.f / 3.f, resolution),
-			gui::p2pY(76.5f, resolution)
+			gui::p2pX(8.0f + 1.0f / 3.0f, resolution),
+			gui::p2pY(64.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(100.f * 64.f / 1920.f, resolution),
-			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
+			gui::p2pY(100.0f * 64.0f / 1080.0f, resolution)
 		)
 	);
 
@@ -272,26 +242,64 @@ void SimulationState::initSideMenu()
 		},
 		"IDLE",
 		sf::Vector2f(
-			gui::p2pX(12.f + 1.f / 3.f, resolution),
-			gui::p2pY(76.5f, resolution)
+			gui::p2pX(12.0f + 1.0f / 3.0f, resolution),
+			gui::p2pY(64.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(100.f * 64.f / 1920.f, resolution),
-			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
+			gui::p2pY(100.0f * 64.0f / 1080.0f, resolution)
 		)
+	);
+
+	this->sideMenu->addButton(
+		"SAVE",
+		sf::Vector2f(
+			gui::p2pX(6.0f, resolution),
+			gui::p2pY(74.0f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(4.5f, resolution)
+		),
+		gui::calcCharSize(24.0f, resolution),
+		this->fonts["CONSOLAB"],
+		"SAVE",
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.6f, resolution)
+	);
+
+	this->sideMenu->addButton(
+		"SAVE AS",
+		sf::Vector2f(
+			gui::p2pX(6.f, resolution),
+			gui::p2pY(82.0f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(4.5f, resolution)
+		),
+		gui::calcCharSize(24.0f, resolution),
+		this->fonts["CONSOLAB"],
+		"SAVE AS",
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.6f, resolution)
 	);
 
 	this->sideMenu->addButton(
 		"QUIT",
 		sf::Vector2f(
-			gui::p2pX(3.f, resolution),
-			gui::p2pY(87.f, resolution)
+			gui::p2pX(6.f, resolution),
+			gui::p2pY(90.f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(18.f, resolution),
-			gui::p2pY(3.f * 7.f / 4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(4.5f, resolution)
 		),
-		gui::calcCharSize(28.0f, resolution),
+		gui::calcCharSize(24.0f, resolution),
 		this->fonts["CONSOLAB"],
 		"QUIT",
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
@@ -308,15 +316,9 @@ void SimulationState::initGodToolsGui()
 
 	const sf::VideoMode resolution = this->stateData->gfxSettings->resolution;
 
-	// init God tools GUI:
-	this->sideMenu->addCenteredText(
-		gui::p2pY(50.f, resolution),
-		gui::calcCharSize(26.0f, resolution),
-		this->fonts["CONSOLAB"],
-		"GOD TOOLS:",
-		sf::Color(225, 225, 225)
-	);
+	float posYpercentage = 29.0f;
 
+	// init God tools GUI:
 	this->sideMenu->addTextureButton(
 		"TRACK",
 		{
@@ -326,12 +328,12 @@ void SimulationState::initGodToolsGui()
 		},
 		"IDLE",
 		sf::Vector2f(
-			gui::p2pX(6.f + 1.f / 3.f, resolution),
-			gui::p2pY(55.f, resolution)
+			gui::p2pX(6.0f + 1.0f / 3.0f, resolution),
+			gui::p2pY(posYpercentage, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(100.f * 64.f / 1920.f, resolution),
-			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
+			gui::p2pY(100.0f * 64.0f / 1080.0f, resolution)
 		)
 	);
 
@@ -345,7 +347,7 @@ void SimulationState::initGodToolsGui()
 		"IDLE",
 		sf::Vector2f(
 			gui::p2pX(10.f + 1.f / 3.f, resolution),
-			gui::p2pY(55.f, resolution)
+			gui::p2pY(posYpercentage, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(100.f * 64.f / 1920.f, resolution),
@@ -362,8 +364,8 @@ void SimulationState::initGodToolsGui()
 		},
 		"IDLE",
 		sf::Vector2f(
-			gui::p2pX(14.f + 1.f / 3.f, resolution),
-			gui::p2pY(55.f, resolution)
+			gui::p2pX(14.0f + 1.0f / 3.0f, resolution),
+			gui::p2pY(posYpercentage, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(100.f * 64.f / 1920.f, resolution),
@@ -380,12 +382,12 @@ void SimulationState::initGodToolsGui()
 		},
 		"IDLE",
 		sf::Vector2f(
-			gui::p2pX(6.f + 1.f / 3.f, resolution),
-			gui::p2pY(55.f, resolution) + gui::p2pX(4.f, resolution)
+			gui::p2pX(6.0f + 1.0f / 3.0f, resolution),
+			gui::p2pY(posYpercentage, resolution) + gui::p2pX(4.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(100.f * 64.f / 1920.f, resolution),
-			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
+			gui::p2pY(100.0f * 64.0f / 1080.0f, resolution)
 		)
 	);
 
@@ -399,11 +401,11 @@ void SimulationState::initGodToolsGui()
 		"IDLE",
 		sf::Vector2f(
 			gui::p2pX(10.f + 1.f / 3.f, resolution),
-			gui::p2pY(55.f, resolution) + gui::p2pX(4.f, resolution)
+			gui::p2pY(posYpercentage, resolution) + gui::p2pX(4.f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(100.f * 64.f / 1920.f, resolution),
-			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
+			gui::p2pY(100.0f * 64.0f / 1080.0f, resolution)
 		)
 	);
 
@@ -416,12 +418,12 @@ void SimulationState::initGodToolsGui()
 		},
 		"IDLE",
 		sf::Vector2f(
-			gui::p2pX(14.f + 1.f / 3.f, resolution),
-			gui::p2pY(55.f, resolution) + gui::p2pX(4.f, resolution)
+			gui::p2pX(14.0f + 1.0f / 3.0f, resolution),
+			gui::p2pY(posYpercentage, resolution) + gui::p2pX(4.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(100.f * 64.f / 1920.f, resolution),
-			gui::p2pY(100.f * 64.f / 1080.f, resolution)
+			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
+			gui::p2pY(100.0f * 64.0f / 1080.0f, resolution)
 		)
 	);
 }
