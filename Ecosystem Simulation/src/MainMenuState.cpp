@@ -100,8 +100,8 @@ void MainMenuState::initButtons()
 
 	this->buttons["SIMULATE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
-			gui::p2pX(38.f, resolution), 
-			gui::p2pY(19.f, resolution)
+			gui::p2pX(38.f, resolution),
+			gui::p2pY(31.f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution), 
@@ -117,7 +117,7 @@ void MainMenuState::initButtons()
 	this->buttons["NEW ECOSYSTEM"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
-			gui::p2pY(31.f, resolution)
+			gui::p2pY(43.f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution), 
@@ -130,42 +130,10 @@ void MainMenuState::initButtons()
 		gui::p2pY(0.8f, resolution)
 	);
 
-	this->buttons["EDIT"] = std::make_unique<gui::Button>(
-		sf::Vector2f(
-			gui::p2pX(38.f, resolution), 
-			gui::p2pY(43.f, resolution)
-		),
-		sf::Vector2f(
-			gui::p2pX(24.f, resolution), 
-			gui::p2pY(7.f, resolution)
-		),
-		this->fonts["Retroica"], "EDIT", gui::calcCharSize(32.0f, resolution),
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.8f, resolution)
-	);
-
-	this->buttons["SAVE"] = std::make_unique<gui::Button>(
-		sf::Vector2f(
-			gui::p2pX(38.f, resolution), 
-			gui::p2pY(55.f, resolution)
-		),
-		sf::Vector2f(
-			gui::p2pX(24.f, resolution), 
-			gui::p2pY(7.f, resolution)
-		),
-		this->fonts["Retroica"], "SAVE", gui::calcCharSize(32.0f, resolution),
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.8f, resolution)
-	);
-
 	this->buttons["LOAD"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
-			gui::p2pY(67.f, resolution)
+			gui::p2pY(55.f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution), 
@@ -181,7 +149,7 @@ void MainMenuState::initButtons()
 	this->buttons["QUIT"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
-			gui::p2pY(79.f, resolution)
+			gui::p2pY(67.f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution), 
@@ -255,20 +223,10 @@ void MainMenuState::getUpdateFromButtons()
 		this->stateData->states->top()->freeze();
 	}
 
-	else if (this->buttons["SAVE"]->isClicked())
-		this->saveEcosystem(*this->stateData->ecosystem);
-
 	else if (this->buttons["LOAD"]->isClicked())
 	{
 		this->stateData->states->push(new LoadingState(this->stateData));
 		this->stateData->states->top()->freeze();
-	}
-
-	else if (this->buttons["EDIT"]->isClicked())
-	{
-		//this->stateData->states->push(new EditorState(this->stateData));
-		//this->stateData->states->top()->freeze();
-		std::cout << "EDIT IS NOT DEFINET\n";
 	}
 
 	else if (this->buttons["QUIT"]->isClicked()) 
