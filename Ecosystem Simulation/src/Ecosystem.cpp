@@ -1079,6 +1079,9 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 			this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
 			this->animals.back()->randomMutate(this->mutationPercentage);
 
+			if (&animal == this->trackedAnimal)
+				this->animals.back()->setColor(this->animalsColor);
+
 			this->hpBarsVisibility[this->animals.back().get()] = this->hpBarsVisibility[&animal];
 			this->brainsPreviewsVisibility[this->animals.back().get()] = this->brainsPreviewsVisibility[&animal];
 		}
@@ -1088,6 +1091,9 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 		this->animals.back()->setHp(fruit.getEnergy());
 		this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
 		this->animals.back()->randomMutate(this->mutationPercentage);
+
+		if (&animal == this->trackedAnimal)
+			this->animals.back()->setColor(this->animalsColor);
 
 		this->hpBarsVisibility[this->animals.back().get()] = this->hpBarsVisibility[&animal];
 		this->brainsPreviewsVisibility[this->animals.back().get()] = this->brainsPreviewsVisibility[&animal];

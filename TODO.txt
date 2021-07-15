@@ -41,7 +41,6 @@ GUI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
-- bug: when a tracked animal clones its clone also has a special color
 - add total energy method
 - do sth with that animals that stick to the borders
 - carefully test saving and loading ecosystems
