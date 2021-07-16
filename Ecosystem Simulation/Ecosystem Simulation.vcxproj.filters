@@ -76,7 +76,7 @@
     <ClCompile Include="src\MovementComponent.cpp">
       <Filter>ecosystem\components</Filter>
     </ClCompile>
-    <ClCompile Include="src\ScaleSlider.cpp">
+    <ClCompile Include="src\Slider.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\ProgressBar.cpp">
@@ -263,7 +263,7 @@
     <ClInclude Include="src\MovementComponent.h">
       <Filter>ecosystem\components</Filter>
     </ClInclude>
-    <ClInclude Include="src\ScaleSlider.h">
+    <ClInclude Include="src\Slider.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\ProgressBar.h">

@@ -2,7 +2,7 @@
 
 #include "TextureButton.h"
 #include "Button.h"
-#include "ScaleSlider.h"
+#include "Slider.h"
 
 namespace gui
 {
@@ -26,7 +26,7 @@ namespace gui
 
 		const std::unordered_map<std::string, std::unique_ptr<gui::TextureButton>>& getTextureButtons() const;
 		const std::unordered_map<std::string, std::unique_ptr<gui::Button>>& getButtons() const;
-		const std::unordered_map<std::string, std::unique_ptr<gui::ScaleSlider>>& getScaleSliders() const;
+		const std::unordered_map<std::string, std::unique_ptr<gui::Slider>>& getSliders() const;
 
 		bool hasTextureButtonBeenClicked(const std::string& key);
 
@@ -60,7 +60,7 @@ namespace gui
 			float outline_thickness = 1.f, short unsigned id = 0
 		);
 
-		void addScaleSlider(
+		void addSlider(
 			const std::string& key,
 			const sf::Vector2f& position,
 			float textures_scale,
@@ -86,7 +86,7 @@ namespace gui
 
 		std::unordered_map<std::string, std::unique_ptr<gui::TextureButton>> textureButtons;
 		std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
-		std::unordered_map<std::string, std::unique_ptr<gui::ScaleSlider>> scaleSliders;
+		std::unordered_map<std::string, std::unique_ptr<gui::Slider>> scaleSliders;
 
 		std::vector<sf::Text> texts;
 

@@ -62,7 +62,7 @@ const std::unordered_map<std::string, std::unique_ptr<gui::Button>>& gui::SideMe
 	return this->buttons;
 }
 
-const std::unordered_map<std::string, std::unique_ptr<gui::ScaleSlider>>& gui::SideMenu::getScaleSliders() const
+const std::unordered_map<std::string, std::unique_ptr<gui::Slider>>& gui::SideMenu::getSliders() const
 {
 	return this->scaleSliders;
 }
@@ -158,7 +158,7 @@ void gui::SideMenu::addButton(
 	);
 }
 
-void gui::SideMenu::addScaleSlider(
+void gui::SideMenu::addSlider(
 	const std::string& key,
 	const sf::Vector2f& position, 
 	float textures_scale, 
@@ -170,7 +170,7 @@ void gui::SideMenu::addScaleSlider(
 	const std::string& axis_pressed_path, const std::string& handle_pressed_path,
 	const std::string& scale_function)
 {
-	this->scaleSliders[key] = std::make_unique<gui::ScaleSlider>(
+	this->scaleSliders[key] = std::make_unique<gui::Slider>(
 		position,
 		textures_scale,
 		range,

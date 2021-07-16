@@ -221,7 +221,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../stdafx.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\ScaleSlider.cpp" />
+    <ClCompile Include="src\Slider.cpp" />
     <ClCompile Include="src\SimulationState.cpp" />
     <ClCompile Include="src\Ecosystem.cpp" />
     <ClCompile Include="src\GraphicsSettings.cpp" />
@@ -265,7 +265,7 @@
     <ClInclude Include="src\Crappy Neural Nets\Neuron.h" />
     <ClInclude Include="src\Crappy Neural Nets\OutputLayer.h" />
     <ClInclude Include="src\Crappy Neural Nets\RandomNumbersGenerator.h" />
-    <ClInclude Include="src\ScaleSlider.h" />
+    <ClInclude Include="src\Slider.h" />
     <ClInclude Include="src\SimulationState.h" />
     <ClInclude Include="src\Ecosystem.h" />
     <ClInclude Include="src\GraphicsSettings.h" />

@@ -169,7 +169,7 @@ void SimulationState::initSideMenu()
 		)
 	);
 	
-	this->sideMenu->addScaleSlider(
+	this->sideMenu->addSlider(
 		"SPEED",
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
@@ -730,7 +730,7 @@ void SimulationState::updateView()
 void SimulationState::updateEcosystem(float dt)
 {
 	this->stateData->ecosystem->setSimulationSpeedFactor(
-		this->sideMenu->getScaleSliders().at("SPEED")->getCurrentValue()
+		this->sideMenu->getSliders().at("SPEED")->getCurrentValue()
 	);
 
 	this->useEcosystemGodTools();

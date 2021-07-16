@@ -4,11 +4,11 @@
 
 namespace gui
 {
-	class ScaleSlider
+	class Slider
 	{
 	public:
 		// constructor:
-		ScaleSlider(
+		Slider(
 			const sf::Vector2f& position,
 			float textures_scale,
 			const std::pair<float, float>& range,
