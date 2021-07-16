@@ -693,16 +693,14 @@ void Ecosystem::trackingTool(const sf::Vector2f& mouse_pos_view)
 void Ecosystem::killingTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
-	{
 		if (animal->isCoveredByMouse(mouse_pos_view))
 		{
-			this->convertAnimalToFruit(animal);
+			this->convertAnimalToFruit(animal, false);
 			return;
 		}
-	}
 }
 
-void Ecosystem::convertAnimalToFruit(std::shared_ptr<Animal>& animal)
+void Ecosystem::convertAnimalToFruit(std::shared_ptr<Animal>& animal, bool random_fruit_position)
 {
 	this->fruits.push_back(
 		std::make_unique<Fruit>(
@@ -712,6 +710,9 @@ void Ecosystem::convertAnimalToFruit(std::shared_ptr<Animal>& animal)
 			this->fruitsColor
 		)
 	);
+
+	if (random_fruit_position)
+		this->fruits.back()->setRandomPosition(this->getWorldSize(), this->getBordersThickness());
 
 	if (animal.get() == this->trackedAnimal)
 		this->trackedAnimal = nullptr;
@@ -840,6 +841,7 @@ void Ecosystem::updateWorld(float dt)
 	this->updatingWorldLogs();
 	this->updateAnimals(dt);
 	this->avoidTunneling();
+	this->killAnimalsStickingToBorders();
 	this->removeDeadAnimals();
 	this->feedAnimals();
 	this->correctBrainPreviewsPositions();	
@@ -917,37 +919,6 @@ float Ecosystem::calcDistance(const Animal& animal, const Fruit& fruit) const
 	float y = animal.getPosition().y - fruit.getPosition().y;
 
 	return sqrt(pow(x, 2) + pow(y, 2));
-}
-
-void Ecosystem::removeDeadAnimals()
-{
-	for (int i = 0; i < this->animals.size();)
-	{
-		if (!this->animals[i]->isAlive())
-		{
-			this->fruits.push_back(
-				std::make_unique<Fruit>(
-					this->animals[i]->getTotalEnergy(),
-					this->animals[i]->getPosition(),
-					this->fruitsRadius,
-					this->fruitsColor
-				)
-			);
-
-			this->removeAnimal(this->animals[i]);
-		}
-
-		else i++;
-	}
-}
-
-void Ecosystem::removeAnimal(std::shared_ptr<Animal>& animal)
-{
-	if (animal.get() == this->trackedAnimal)
-		this->trackedAnimal = nullptr;
-	
-	std::swap(animal, this->animals.back());
-	this->animals.pop_back();
 }
 
 void Ecosystem::avoidTunneling()
@@ -1031,6 +1002,109 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 			)
 		);
 	}
+}
+
+void Ecosystem::killAnimalsStickingToBorders()
+{
+	for (int i = 0; i < this->animals.size();)
+	{
+		if (this->sticksToBorder(*this->animals[i]))
+			this->convertAnimalToFruit(this->animals[i], true);
+		else
+			i++;
+	}
+}
+
+bool Ecosystem::sticksToBorder(const Animal& animal)
+{
+	if (this->sticksToLeftBorder(animal))
+		return true;
+	
+	if (this->sticksToRightBorder(animal))
+		return true;
+	 
+	if (this->sticksToTopBorder(animal))
+		return true;
+	
+	if (this->sticksToBottomBorder(animal))
+		return true;
+
+	return false;
+}
+
+bool Ecosystem::sticksToLeftBorder(const Animal& animal)
+{
+	if (animal.getAccelerationVector().x > 0.0f)
+		return false;
+
+	if (animal.getPosition().x != this->getBordersThickness() + animal.getRadius())
+		return false;
+
+	return true;
+}
+
+bool Ecosystem::sticksToRightBorder(const Animal& animal)
+{
+	if (animal.getAccelerationVector().x < 0.0f)
+		return false;
+
+	if (animal.getPosition().x != this->getWorldSize().x - this->getBordersThickness() - animal.getRadius())
+		return false;
+
+	return true;
+}
+
+bool Ecosystem::sticksToTopBorder(const Animal& animal)
+{
+	if (animal.getAccelerationVector().y > 0.0f)
+		return false;
+
+	if (animal.getPosition().y != this->getBordersThickness() + animal.getRadius())
+		return false;
+
+	return true;
+}
+
+bool Ecosystem::sticksToBottomBorder(const Animal& animal)
+{
+	if (animal.getAccelerationVector().y < 0.0f)
+		return false;
+
+	if (animal.getPosition().y != this->getWorldSize().y - this->getBordersThickness() - animal.getRadius())
+		return false;
+
+	return true;
+}
+
+void Ecosystem::removeDeadAnimals()
+{
+	for (int i = 0; i < this->animals.size();)
+	{
+		if (!this->animals[i]->isAlive())
+		{
+			this->fruits.push_back(
+				std::make_unique<Fruit>(
+					this->animals[i]->getTotalEnergy(),
+					this->animals[i]->getPosition(),
+					this->fruitsRadius,
+					this->fruitsColor
+					)
+			);
+
+			this->removeAnimal(this->animals[i]);
+		}
+		else
+			i++;
+	}
+}
+
+void Ecosystem::removeAnimal(std::shared_ptr<Animal>& animal)
+{
+	if (animal.get() == this->trackedAnimal)
+		this->trackedAnimal = nullptr;
+	
+	std::swap(animal, this->animals.back());
+	this->animals.pop_back();
 }
 
 void Ecosystem::feedAnimals()

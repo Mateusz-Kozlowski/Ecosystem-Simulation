@@ -310,6 +310,11 @@ void Animal::setVelocity(const sf::Vector2f& velocity)
 	this->movementComponent->setVelocity(velocity);
 }
 
+void Animal::setAlive(bool alive)
+{
+	this->alive = alive;
+}
+
 void Animal::setHp(float hp)
 {
 	if (hp > this->maxHp)

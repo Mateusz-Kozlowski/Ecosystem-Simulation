@@ -206,7 +206,7 @@ private:
 	void trackingTool(const sf::Vector2f& mouse_pos_view);
 
 	void killingTool(const sf::Vector2f& mouse_pos_view);
-	void convertAnimalToFruit(std::shared_ptr<Animal>& animal);
+	void convertAnimalToFruit(std::shared_ptr<Animal>& animal, bool random_fruit_position);
 
 	void replacingTool(const sf::Vector2f& mouse_pos_view);
 
@@ -230,12 +230,19 @@ private:
 	const Fruit* getTheNearestFruit(const Animal& animal) const;
 	float calcDistance(const Animal& animal, const Fruit& fruit) const;
 
-	void removeDeadAnimals();
-	void removeAnimal(std::shared_ptr<Animal>& animal);
-
 	void avoidTunneling();
 	void avoidTunnelingByVerticalBorders(Animal& animal);
 	void avoidTunnelingByHorizontalBorders(Animal& animal);
+
+	void killAnimalsStickingToBorders();
+	bool sticksToBorder(const Animal& animal);
+	bool sticksToLeftBorder(const Animal& animal);
+	bool sticksToRightBorder(const Animal& animal);
+	bool sticksToTopBorder(const Animal& animal);
+	bool sticksToBottomBorder(const Animal& animal);
+
+	void removeDeadAnimals();
+	void removeAnimal(std::shared_ptr<Animal>& animal);
 
 	void feedAnimals();
 	static bool compareAnimalsYPositions(

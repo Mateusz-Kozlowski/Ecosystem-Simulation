@@ -83,6 +83,8 @@ public:
 
 	void setVelocity(const sf::Vector2f& velocity);
 
+	void setAlive(bool alive);
+
 	void setHp(float hp);
 
 	void increaseHp(float hp_increase);
