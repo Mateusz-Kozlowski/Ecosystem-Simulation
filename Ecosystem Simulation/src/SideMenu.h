@@ -9,22 +9,24 @@ namespace gui
 	class SideMenu
 	{
 	public:
-		// constructor/destructor:
 		SideMenu(
 			const sf::Vector2f& position, 
 			const sf::Vector2f& size,
 			const sf::Color& background_color
 		);
-		~SideMenu();
 
+		// public methods:
+		void update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events);
+		void render(sf::RenderTarget& target);
+		
 		// accessors:
 		const sf::Vector2f& getPosition() const;
 
 		const sf::Vector2f& getSize() const;
 
-		const std::unordered_map<std::string, gui::TextureButton*>& getTextureButtons() const;
-		const std::unordered_map<std::string, gui::Button*>& getButtons() const;
-		const std::unordered_map<std::string, gui::ScaleSlider*>& getScaleSliders() const;
+		const std::unordered_map<std::string, std::unique_ptr<gui::TextureButton>>& getTextureButtons() const;
+		const std::unordered_map<std::string, std::unique_ptr<gui::Button>>& getButtons() const;
+		const std::unordered_map<std::string, std::unique_ptr<gui::ScaleSlider>>& getScaleSliders() const;
 
 		bool hasTextureButtonBeenClicked(const std::string& key);
 
@@ -79,16 +81,12 @@ namespace gui
 			sf::Color color
 		);
 
-		// other public methods:
-		void update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events);
-		void render(sf::RenderTarget& target);
-
 	private:
 		sf::RectangleShape background;
 
-		std::unordered_map<std::string, gui::TextureButton*> textureButtons;
-		std::unordered_map<std::string, gui::Button*> buttons;
-		std::unordered_map<std::string, gui::ScaleSlider*> scaleSliders;
+		std::unordered_map<std::string, std::unique_ptr<gui::TextureButton>> textureButtons;
+		std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
+		std::unordered_map<std::string, std::unique_ptr<gui::ScaleSlider>> scaleSliders;
 
 		std::vector<sf::Text> texts;
 

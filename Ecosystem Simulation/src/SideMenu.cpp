@@ -3,7 +3,6 @@
 
 using namespace gui;
 
-// constructor/destructor:
 SideMenu::SideMenu(
 	const sf::Vector2f& position, 
 	const sf::Vector2f& size,
@@ -12,10 +11,34 @@ SideMenu::SideMenu(
 	this->initBackground(position, size, background_color);
 }
 
-SideMenu::~SideMenu()
+// public methods:
+void SideMenu::update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events)
 {
-	for (auto textureButton = this->textureButtons.begin(); textureButton != this->textureButtons.end(); ++textureButton)
-		delete textureButton->second;
+	for (auto& textureButton : this->textureButtons)
+		textureButton.second->update(mouse_pos_window, events);
+
+	for (auto& button : this->buttons)
+		button.second->update(mouse_pos_window);
+
+	for (auto& scaleSlider : this->scaleSliders)
+		scaleSlider.second->update(mouse_pos_window);
+}
+
+void SideMenu::render(sf::RenderTarget& target)
+{
+	target.draw(this->background);
+
+	for (const auto& textureButton : this->textureButtons) 
+		textureButton.second->render(target);
+
+	for (const auto& button : this->buttons) 
+		button.second->render(target);
+
+	for (const auto& scaleSlider : this->scaleSliders) 
+		scaleSlider.second->render(target);
+
+	for (const auto& text : this->texts) 
+		target.draw(text);
 }
 
 // accessors:
@@ -29,17 +52,17 @@ const sf::Vector2f& gui::SideMenu::getSize() const
 	return this->background.getSize();
 }
 
-const std::unordered_map<std::string, gui::TextureButton*>& gui::SideMenu::getTextureButtons() const
+const std::unordered_map<std::string, std::unique_ptr<gui::TextureButton>>& gui::SideMenu::getTextureButtons() const
 {
 	return this->textureButtons;
 }
 
-const std::unordered_map<std::string, gui::Button*>& gui::SideMenu::getButtons() const
+const std::unordered_map<std::string, std::unique_ptr<gui::Button>>& gui::SideMenu::getButtons() const
 {
 	return this->buttons;
 }
 
-const std::unordered_map<std::string, gui::ScaleSlider*>& gui::SideMenu::getScaleSliders() const
+const std::unordered_map<std::string, std::unique_ptr<gui::ScaleSlider>>& gui::SideMenu::getScaleSliders() const
 {
 	return this->scaleSliders;
 }
@@ -104,7 +127,7 @@ void gui::SideMenu::addTextureButton(
 	const sf::Vector2f& size,
 	int id)
 {
-	this->textureButtons[key] = new gui::TextureButton(
+	this->textureButtons[key] = std::make_unique<gui::TextureButton>(
 		textures_path_and_keys,
 		key_of_default_texture,
 		position,
@@ -123,7 +146,7 @@ void gui::SideMenu::addButton(
 	float outlineThickness, 
 	short unsigned id)
 {
-	this->buttons[key] = new gui::Button(
+	this->buttons[key] = std::make_unique<gui::Button>(
 		position,
 		size,
 		font, text, char_size,
@@ -147,7 +170,7 @@ void gui::SideMenu::addScaleSlider(
 	const std::string& axis_pressed_path, const std::string& handle_pressed_path,
 	const std::string& scale_function)
 {
-	this->scaleSliders[key] = new gui::ScaleSlider(
+	this->scaleSliders[key] = std::make_unique<gui::ScaleSlider>(
 		position,
 		textures_scale,
 		range,
@@ -187,33 +210,8 @@ void gui::SideMenu::setTextureOfTextureButton(const std::string& button_key, con
 	this->textureButtons[button_key]->setTexture(texture_key);
 }
 
-// other public methods:
-void SideMenu::update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events)
-{
-	for (auto& textureButton : this->textureButtons) 
-		textureButton.second->update(mouse_pos_window, events);
-
-	for (auto& button : this->buttons)
-		button.second->update(mouse_pos_window);
-
-	for (auto& scaleSlider : this->scaleSliders)
-		scaleSlider.second->update(mouse_pos_window);
-}
-
-void SideMenu::render(sf::RenderTarget& target)
-{
-	target.draw(this->background);
-
-	for (const auto& textureButton : this->textureButtons) textureButton.second->render(target);
-	
-	for (const auto& button : this->buttons) button.second->render(target);
-
-	for (const auto& scaleSlider : this->scaleSliders) scaleSlider.second->render(target);
-
-	for (const auto& text : this->texts) target.draw(text);
-}
-
 // private methods:
+ 
 // initialization:
 void gui::SideMenu::initBackground(const sf::Vector2f& position, const sf::Vector2f& size, const sf::Color& color)
 {
