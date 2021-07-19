@@ -42,6 +42,8 @@ GUI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- there is another issue with energy conservation law - animals can have a negative total energy
+  (if they slow down)
 - change the rules of killing animals sticking to borders
 - transfer energy from animals to fruits sometimes need to create a new fruit 
   if there are no fruits in a ecosystem
