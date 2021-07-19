@@ -138,6 +138,8 @@ void SimulationState::initSideMenu()
 
 	const sf::VideoMode resolution = this->stateData->gfxSettings->resolution;
 
+	unsigned charSize = gui::calcCharSize(24.0f, resolution);
+
 	// create new SideMenu:
 	this->sideMenu = std::make_unique<gui::SideMenu>(
 		sf::Vector2f(0.f, 0.f),
@@ -146,6 +148,13 @@ void SimulationState::initSideMenu()
 	);
 
 	// add widgets:
+	this->sideMenu->addCenteredText(
+		gui::p2pY(4.f, resolution),
+		charSize,
+		this->fonts["CONSOLAB"],
+		"PLAY/STOP:",
+		sf::Color(225, 225, 225)
+	);
 	this->sideMenu->addTextureButton(
 		"PAUSE",
 		{
@@ -161,7 +170,7 @@ void SimulationState::initSideMenu()
 		"PLAY IDLE",
 		sf::Vector2f(
 			gui::p2pX(10.33f, resolution),
-			gui::p2pY(4.0f, resolution)
+			gui::p2pY(8.0f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
@@ -169,11 +178,18 @@ void SimulationState::initSideMenu()
 		)
 	);
 	
+	this->sideMenu->addCenteredText(
+		gui::p2pY(17.5f, resolution),
+		charSize,
+		this->fonts["CONSOLAB"],
+		"SPEED:",
+		sf::Color(225, 225, 225)
+	);
 	this->sideMenu->addSlider(
 		"SPEED",
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
-			gui::p2pY(14.0f, resolution)
+			gui::p2pY(23.0f, resolution)
 		),
 		256.0f / 1840.0f,
 		{ 0.0f, 1.0f },
@@ -190,6 +206,13 @@ void SimulationState::initSideMenu()
 		"quadratic"
 	);
 
+	this->sideMenu->addCenteredText(
+		gui::p2pY(28.5f, resolution),
+		charSize,
+		this->fonts["CONSOLAB"],
+		"MOVE THIS PANEL:",
+		sf::Color(225, 225, 225)
+	);
 	this->sideMenu->addTextureButton(
 		"ARROW",
 		{
@@ -205,7 +228,7 @@ void SimulationState::initSideMenu()
 		"RIGHT IDLE",
 		sf::Vector2f(
 			gui::p2pX(10.33f, resolution),
-			gui::p2pY(19.0f, resolution)
+			gui::p2pY(32.5f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
@@ -215,6 +238,13 @@ void SimulationState::initSideMenu()
 
 	this->initGodToolsGui();
 
+	this->sideMenu->addCenteredText(
+		gui::p2pY(61.0f, resolution),
+		charSize,
+		this->fonts["CONSOLAB"],
+		"ZOOM:",
+		sf::Color(225, 225, 225)
+	);
 	this->sideMenu->addTextureButton(
 		"ZOOM IN",
 		{
@@ -225,7 +255,7 @@ void SimulationState::initSideMenu()
 		"IDLE",
 		sf::Vector2f(
 			gui::p2pX(8.0f + 1.0f / 3.0f, resolution),
-			gui::p2pY(64.0f, resolution)
+			gui::p2pY(65.0f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
@@ -243,7 +273,7 @@ void SimulationState::initSideMenu()
 		"IDLE",
 		sf::Vector2f(
 			gui::p2pX(12.0f + 1.0f / 3.0f, resolution),
-			gui::p2pY(64.0f, resolution)
+			gui::p2pY(65.0f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
@@ -255,13 +285,13 @@ void SimulationState::initSideMenu()
 		"SAVE",
 		sf::Vector2f(
 			gui::p2pX(6.0f, resolution),
-			gui::p2pY(74.0f, resolution)
+			gui::p2pY(75.0f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(4.5f, resolution)
 		),
-		gui::calcCharSize(24.0f, resolution),
+		charSize,
 		this->fonts["CONSOLAB"],
 		"SAVE",
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
@@ -274,13 +304,13 @@ void SimulationState::initSideMenu()
 		"SAVE AS",
 		sf::Vector2f(
 			gui::p2pX(6.f, resolution),
-			gui::p2pY(82.0f, resolution)
+			gui::p2pY(83.0f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(4.5f, resolution)
 		),
-		gui::calcCharSize(24.0f, resolution),
+		charSize,
 		this->fonts["CONSOLAB"],
 		"SAVE AS",
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
@@ -293,13 +323,13 @@ void SimulationState::initSideMenu()
 		"QUIT",
 		sf::Vector2f(
 			gui::p2pX(6.f, resolution),
-			gui::p2pY(90.f, resolution)
+			gui::p2pY(91.f, resolution)
 		),
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(4.5f, resolution)
 		),
-		gui::calcCharSize(24.0f, resolution),
+		charSize,
 		this->fonts["CONSOLAB"],
 		"QUIT",
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
@@ -316,9 +346,17 @@ void SimulationState::initGodToolsGui()
 
 	const sf::VideoMode resolution = this->stateData->gfxSettings->resolution;
 
-	float posYpercentage = 29.0f;
+	float posYpercentage = 45.5f;
 
 	// init God tools GUI:
+	this->sideMenu->addCenteredText(
+		gui::p2pY(41.5f, resolution),
+		gui::calcCharSize(24.0f, resolution),
+		this->fonts["CONSOLAB"],
+		"GOD TOOLS:",
+		sf::Color(225, 225, 225)
+	);
+
 	this->sideMenu->addTextureButton(
 		"TRACK",
 		{
