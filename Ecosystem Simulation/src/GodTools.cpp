@@ -55,7 +55,7 @@ GodTool getGodTool(const std::string& key)
         return GodTool::INFO;
 
     else
-        throw "ERROR::getGodTool::THE FUNCTION SEEMS TO BE OUT OF DATE - IT DOESN'T TAKE INTO ACCOUNT ALL GOD TOOLS\n";
+        throw("ERROR::getGodTool::THE FUNCTION SEEMS TO BE OUT OF DATE - IT DOESN'T TAKE INTO ACCOUNT ALL GOD TOOLS\n");
 }
 
 std::ostream& operator<<(std::ostream& os, const GodTool& rhs)

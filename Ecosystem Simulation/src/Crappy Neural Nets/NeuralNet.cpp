@@ -517,6 +517,34 @@ void NeuralNet::randomMutate(const Scalar& mutation_percentage)
 	}
 }
 
+std::string NeuralNet::extractDirectoryPath(const std::string& file_path)
+{
+	// TODO: explain actually why this function is neccessairly
+	// TODO: add also info about / (\ does not work)
+	// TODO: add info that it returns an empty string ("") when file_path doesn;t contain any directory
+
+	// find the last '/' char:
+	int lastSlachIndex = -1;
+
+	for (int i = file_path.size() - 1; i >= 0; i--)
+	{
+		if (file_path[i] == '/')
+		{
+			lastSlachIndex = i;
+			break;
+		}
+	}
+
+	// there is no diretory in file_path:
+	if (lastSlachIndex == -1) return "";
+
+	// '/' can be Scalard or even appear a few times (for example "dir1/dir2///file.txt"):
+	while (file_path[lastSlachIndex - 1] == '/') lastSlachIndex--;
+
+	// extract the directory path from file_path:
+	return file_path.substr(0, lastSlachIndex);
+}
+
 // architecture accessors:
 const InputLayer* NeuralNet::getInputLayer() const
 {
@@ -968,32 +996,4 @@ void NeuralNet::setDropouts(const std::vector<double>& dropout_rates)
 	this->inputLayer->setDropoutRate(dropout_rates[0]);
 
 	for (int i = 0; i < this->hiddenLayers.size(); i++) this->hiddenLayers[i]->setDropoutRate(dropout_rates[i + 1]);
-}
-
-std::string NeuralNet::extractDirectoryPath(const std::string& file_path) const
-{
-	// TODO: explain actually why this function is neccessairly
-	// TODO: add also info about / (\ does not work)
-	// TODO: add info that it returns an empty string ("") when file_path doesn;t contain any directory
-
-	// find the last '/' char:
-	int lastSlachIndex = -1;
-
-	for (int i = file_path.size() - 1; i >= 0; i--)
-	{
-		if (file_path[i] == '/')
-		{
-			lastSlachIndex = i;
-			break;
-		}
-	}
-
-	// there is no diretory in file_path:
-	if (lastSlachIndex == -1) return "";
-
-	// '/' can be Scalard or even appear a few times (for example "dir1/dir2///file.txt"):
-	while (file_path[lastSlachIndex - 1] == '/') lastSlachIndex--;
-
-	// extract the directory path from file_path:
-	return file_path.substr(0, lastSlachIndex);
 }

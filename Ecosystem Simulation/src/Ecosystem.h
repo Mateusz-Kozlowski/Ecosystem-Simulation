@@ -194,13 +194,17 @@ private:
 	void loadFruit(const std::string& file_path);
 
 	void loadEcosystem(const std::string& file_path);
+	void makeTracked(Animal& animal);
+
 	void loadHpBarsVisibility(const std::string& file_path);
+	
 	void loadBrainsPreviewsVisibility(const std::string& file_path);
 
 	int getTrackedAnimalIndex() const;
 
 	// god tools:
 	void trackingTool(const sf::Vector2f& mouse_pos_view);
+	void stopTracking();
 
 	void killingTool(const sf::Vector2f& mouse_pos_view);
 	void convertAnimalToFruit(std::shared_ptr<Animal>& animal, bool random_fruit_position);

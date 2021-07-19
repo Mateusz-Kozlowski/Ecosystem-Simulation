@@ -102,7 +102,7 @@ void LoadingState::initInputField()
 			gui::p2pX(50.f, resolution),
 			gui::p2pY(7.f, resolution)
 		),
-		this->font, "ecosystems/1024a 1024f", gui::calcCharSize(32.0f, resolution),
+		this->font, "ecosystems/big", gui::calcCharSize(32.0f, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),

@@ -58,6 +58,8 @@ namespace CrappyNeuralNets
 
 		void randomMutate(const Scalar& mutation_percentage = 10.0);
 
+		static std::string extractDirectoryPath(const std::string& file_path);
+
 		// architecture accessors:
 		const InputLayer* getInputLayer() const;
 		const std::vector<HiddenLayer*>& getHiddenLayers() const;
@@ -138,7 +140,5 @@ namespace CrappyNeuralNets
 		void setAllDropoutRatesToOne();
 
 		void setDropouts(const std::vector<double>& dropout_rates);
-
-		std::string extractDirectoryPath(const std::string& file_path) const;
 	};
 }

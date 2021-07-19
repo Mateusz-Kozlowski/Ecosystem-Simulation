@@ -3,7 +3,7 @@
 
 MovementComponent::MovementComponent()
 {	
-	this->brain = std::make_unique<CrappyNeuralNets::TempNet>(CrappyNeuralNets::TempNet(5U, 2U));
+	this->brain = std::make_unique<CrappyNeuralNets::TempNet>(5U, 2U);
 }
 
 MovementComponent::MovementComponent(const sf::Vector2f& default_velocity, const std::string& brain_file_path)
@@ -39,7 +39,8 @@ void MovementComponent::saveBrainToFile(const std::string& file_path) const
 
 void MovementComponent::loadBrainFromFile(const std::string& file_path)
 {
-	//this->BRAIN->loadFromFile(file_path);
+	// TODO: add loading from folder after implementing a new version of Crappy Neural Nets:
+	this->brain = std::make_unique<CrappyNeuralNets::TempNet>(5U, 2U);
 }
 
 void MovementComponent::update(

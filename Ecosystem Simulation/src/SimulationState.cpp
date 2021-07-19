@@ -98,7 +98,7 @@ void SimulationState::initFonts()
 
 void SimulationState::initEcosystem()
 {
-
+	
 }
 
 void SimulationState::initView()
@@ -673,7 +673,11 @@ void SimulationState::getUpdatesFromSideMenuGui()
 		this->view.zoom(1.0f / 0.95f);
 
 	// get update from side menu buttons:
-	if (this->sideMenu->getButtons().at("QUIT")->isClicked()) this->endState();
+	if (this->sideMenu->getButtons().at("SAVE")->isClicked())
+		this->stateData->ecosystem->saveToFolder("ecosystems/" + this->stateData->ecosystem->getName());
+
+	else if (this->sideMenu->getButtons().at("QUIT")->isClicked()) 
+		this->endState();
 }
 
 void SimulationState::updateView()

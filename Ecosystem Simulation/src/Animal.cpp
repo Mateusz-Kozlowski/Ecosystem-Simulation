@@ -11,21 +11,19 @@ Animal::Animal(
 	float max_hp)
 	: maxHp(max_hp),
 	  kineticEnergyFromPreviousFrame(0.0f),
-	  alive(true)
+	  alive(true),
+	  movementComponent(std::make_unique<MovementComponent>())
 {
-	this->initBody(position, radius, body_color);
-
-	this->movementComponent = std::make_unique<MovementComponent>();
-	
+	this->initBody(position, radius, body_color);	
 	this->initHpBar(default_hp, max_hp, hp_bar_background_color, hp_bar_progress_rect_color);
-	
 	this->initBrainPreview();
 }
 
 Animal::Animal(const std::string& folder_path)
 	: maxHp(0.0f),
 	  kineticEnergyFromPreviousFrame(0.0f),
-	  alive(true)
+	  alive(true),
+	  movementComponent(std::make_unique<MovementComponent>())
 {
 	this->loadFromFolder(folder_path);
 }
@@ -64,6 +62,8 @@ Animal& Animal::operator=(const Animal& rhs)
 // public methods:
 void Animal::saveToFolder(const std::string& folder_path) const
 {
+	std::filesystem::create_directories(folder_path);
+
 	this->movementComponent->saveBrainToFile(folder_path + "/brain.ini");
 
 	std::string path = folder_path + "/animal.ini";
@@ -76,20 +76,24 @@ void Animal::saveToFolder(const std::string& folder_path) const
 		exit(-1);
 	}
 
-	ofs << this->body.getPosition().x << this->body.getPosition().y << '\n';
+	ofs << this->body.getPosition().x << ' ' << this->body.getPosition().y << '\n';
 	ofs << this->body.getRadius() << '\n';
-	ofs << static_cast<int>(this->body.getFillColor().r) << '\n';
-	ofs << static_cast<int>(this->body.getFillColor().g) << '\n';
-	ofs << static_cast<int>(this->body.getFillColor().b) << '\n';
+	
+	ofs << static_cast<int>(this->body.getFillColor().r) << ' ';
+	ofs << static_cast<int>(this->body.getFillColor().g) << ' ';
+	ofs << static_cast<int>(this->body.getFillColor().b) << ' ';
 	ofs << static_cast<int>(this->body.getFillColor().a) << '\n';
-	ofs << static_cast<int>(this->hpBar->getBackgroundColor().r) << '\n';
-	ofs << static_cast<int>(this->hpBar->getBackgroundColor().g) << '\n';
-	ofs << static_cast<int>(this->hpBar->getBackgroundColor().b) << '\n';
+
+	ofs << static_cast<int>(this->hpBar->getBackgroundColor().r) << ' ';
+	ofs << static_cast<int>(this->hpBar->getBackgroundColor().g) << ' ';
+	ofs << static_cast<int>(this->hpBar->getBackgroundColor().b) << ' ';
 	ofs << static_cast<int>(this->hpBar->getBackgroundColor().a) << '\n';
-	ofs << static_cast<int>(this->hpBar->getProgressRectColor().r) << '\n';
-	ofs << static_cast<int>(this->hpBar->getProgressRectColor().g) << '\n';
-	ofs << static_cast<int>(this->hpBar->getProgressRectColor().b) << '\n';
+	
+	ofs << static_cast<int>(this->hpBar->getProgressRectColor().r) << ' ';
+	ofs << static_cast<int>(this->hpBar->getProgressRectColor().g) << ' ';
+	ofs << static_cast<int>(this->hpBar->getProgressRectColor().b) << ' ';
 	ofs << static_cast<int>(this->hpBar->getProgressRectColor().a) << '\n';
+	
 	ofs << this->maxHp << '\n';
 	ofs << this->kineticEnergyFromPreviousFrame << '\n';
 	ofs << this->alive << '\n';
@@ -115,30 +119,45 @@ void Animal::loadFromFolder(const std::string& folder_path)
 
 	sf::Vector2f position;
 	float radius;
-	sf::Color bodyColor;
-	sf::Color hpBarBgColor;
-	sf::Color hpBarProgressColor;
+	unsigned bodyColorR, bodyColorG, bodyColorB, bodyColorA;
+	unsigned hpBarBgColorR, hpBarBgColorG, hpBarBgColorB, hpBarBgColorA;
+	unsigned hpBarProgressColorR, hpBarProgressColorG, hpBarProgressColorB, hpBarProgressColorA;
 	float hp;
 	sf::Vector2f velocity;
 
 	ifs >> position.x >> position.y;
 	ifs >> radius;
-	ifs >> bodyColor.r >> bodyColor.g >> bodyColor.b >> bodyColor.a;
-	ifs >> hpBarBgColor.r >> hpBarBgColor.g >> hpBarBgColor.b >> hpBarBgColor.a;
-	ifs >> hpBarProgressColor.r >> hpBarProgressColor.g >> hpBarProgressColor.b >> hpBarProgressColor.a;
+	ifs >> bodyColorR >> bodyColorG >> bodyColorB >> bodyColorA;
+	ifs >> hpBarBgColorR >> hpBarBgColorG >> hpBarBgColorB >> hpBarBgColorA;
+	ifs >> hpBarProgressColorR >> hpBarProgressColorG >> hpBarProgressColorB >> hpBarProgressColorA;
 	ifs >> this->maxHp;
 	ifs >> this->kineticEnergyFromPreviousFrame;
 	ifs >> this->alive;
 	ifs >> hp;
 	ifs >> velocity.x >> velocity.y;
 
-	this->initBody(position, radius, bodyColor);
-	this->initHpBar(hp, this->maxHp, hpBarBgColor, hpBarProgressColor);
+	ifs.close();
+
+	this->initBody(position, radius, sf::Color(bodyColorR, bodyColorG, bodyColorB, bodyColorA));
+	this->initHpBar(
+		hp, 
+		this->maxHp, 
+		sf::Color(
+			hpBarBgColorR,
+			hpBarBgColorG,
+			hpBarBgColorB,
+			hpBarBgColorA
+		), 
+		sf::Color(
+			hpBarProgressColorR,
+			hpBarProgressColorG,
+			hpBarProgressColorB,
+			hpBarProgressColorA
+		)
+	);
 	this->initBrainPreview();
 
 	this->movementComponent->setVelocity(velocity);
-
-	ifs.close();
 }
 
 void Animal::update(float dt, float simulation_speed_factor, const std::vector<double>& brain_inputs)
@@ -414,7 +433,7 @@ void Animal::initHpBar(
 		default_hp,
 		sf::Vector2f(
 			this->body.getPosition().x - 3.f * this->body.getRadius(),
-			this->body.getPosition().y - 4.f * this->body.getRadius()
+			this->body.getPosition().y - 3.f * this->body.getRadius()
 		),
 		sf::Vector2f(
 			6.f * this->body.getRadius(),

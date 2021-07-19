@@ -55,6 +55,8 @@ Ecosystem::Ecosystem(const std::string& folder_path)
 // public methods:
 void Ecosystem::saveToFolder(const std::string& folder_path) const
 {
+	std::filesystem::create_directories(folder_path);
+
 	// TODO: add static private (or sth even better) methods that returns those paths:
 	this->saveAnimals(folder_path + "/animals");
 	this->saveFruits(folder_path + "/fruits");
@@ -443,13 +445,15 @@ void Ecosystem::createNewFruit(float energy, float radius, const sf::Color& frui
 void Ecosystem::saveAnimals(const std::string& folder_path) const
 {
 	for (int i = 0; i < this->animals.size(); i++)
-		this->animals[i]->saveToFolder(folder_path + "/animals/animal" + std::to_string(i));
+		this->animals[i]->saveToFolder(folder_path + "/animal" + std::to_string(i));
 }
 
 void Ecosystem::saveFruits(const std::string& folder_path) const
 {
+	std::filesystem::create_directories(folder_path);
+
 	for (int i = 0; i < this->fruits.size(); i++)
-		this->fruits[i]->saveToFile(folder_path + "/fruits/fruit" + std::to_string(i) + ".ini");
+		this->fruits[i]->saveToFile(folder_path + "/fruit" + std::to_string(i) + ".ini");
 }
 
 void Ecosystem::saveEcosystem(const std::string& file_path) const
@@ -466,31 +470,31 @@ void Ecosystem::saveEcosystem(const std::string& file_path) const
 	ofs << this->getWorldSize().x << ' ' << this->getWorldSize().y << '\n';
 	ofs << this->background.getOutlineThickness() << '\n';
 
-	ofs << static_cast<int>(this->background.getFillColor().r) << '\n';
-	ofs << static_cast<int>(this->background.getFillColor().g) << '\n';
-	ofs << static_cast<int>(this->background.getFillColor().b) << '\n';
+	ofs << static_cast<int>(this->background.getFillColor().r) << ' ';
+	ofs << static_cast<int>(this->background.getFillColor().g) << ' ';
+	ofs << static_cast<int>(this->background.getFillColor().b) << ' ';
 	ofs << static_cast<int>(this->background.getFillColor().a) << '\n';
 
-	ofs << static_cast<int>(this->background.getOutlineColor().r) << '\n';
-	ofs << static_cast<int>(this->background.getOutlineColor().g) << '\n';
-	ofs << static_cast<int>(this->background.getOutlineColor().b) << '\n';
+	ofs << static_cast<int>(this->background.getOutlineColor().r) << ' ';
+	ofs << static_cast<int>(this->background.getOutlineColor().g) << ' ';
+	ofs << static_cast<int>(this->background.getOutlineColor().b) << ' ';
 	ofs << static_cast<int>(this->background.getOutlineColor().a) << '\n';
 
 	ofs << this->mutationPercentage << '\n';
 
-	ofs << static_cast<int>(this->animalsColor.r) << '\n';
-	ofs << static_cast<int>(this->animalsColor.g) << '\n';
-	ofs << static_cast<int>(this->animalsColor.b) << '\n';
+	ofs << static_cast<int>(this->animalsColor.r) << ' ';
+	ofs << static_cast<int>(this->animalsColor.g) << ' ';
+	ofs << static_cast<int>(this->animalsColor.b) << ' ';
 	ofs << static_cast<int>(this->animalsColor.a) << '\n';
 
-	ofs << static_cast<int>(this->fruitsColor.r) << '\n';
-	ofs << static_cast<int>(this->fruitsColor.g) << '\n';
-	ofs << static_cast<int>(this->fruitsColor.b) << '\n';
+	ofs << static_cast<int>(this->fruitsColor.r) << ' ';
+	ofs << static_cast<int>(this->fruitsColor.g) << ' ';
+	ofs << static_cast<int>(this->fruitsColor.b) << ' ';
 	ofs << static_cast<int>(this->fruitsColor.a) << '\n';
 
-	ofs << static_cast<int>(this->trackedAnimalColor.r) << '\n';
-	ofs << static_cast<int>(this->trackedAnimalColor.g) << '\n';
-	ofs << static_cast<int>(this->trackedAnimalColor.b) << '\n';
+	ofs << static_cast<int>(this->trackedAnimalColor.r) << ' ';
+	ofs << static_cast<int>(this->trackedAnimalColor.g) << ' ';
+	ofs << static_cast<int>(this->trackedAnimalColor.b) << ' ';
 	ofs << static_cast<int>(this->trackedAnimalColor.a) << '\n';
 
 	ofs << this->getTrackedAnimalIndex() << '\n';
@@ -503,11 +507,24 @@ void Ecosystem::saveEcosystem(const std::string& file_path) const
 	ofs.close();
 }
 
+int Ecosystem::getTrackedAnimalIndex() const
+{
+	if (!this->trackedAnimal)
+		return -1;
+
+	for (int i = 0; i < this->animals.size(); i++)
+		if (this->animals[i].get() == this->trackedAnimal)
+			return i;
+
+	std::cerr << "ERROR::Ecosystem::getTrackedAnimalIndex::trackedAnimal POINTS TO A NONEXISTENT Animal CLASS OBJECT\n";
+	assert(false);
+}
+
 void Ecosystem::saveHpBarsVisibility(const std::string& file_path) const
 {
 	std::ofstream ofs(file_path);
 
-	if (ofs.is_open())
+	if (!ofs.is_open())
 	{
 		std::cerr << "ERROR::Ecosystem::saveHpBarsVisibility::CANNOT OPEN: " << file_path << '\n';
 		exit(-1);
@@ -523,7 +540,7 @@ void Ecosystem::saveBrainsPreviewsVisibility(const std::string& file_path) const
 {
 	std::ofstream ofs(file_path);
 
-	if (ofs.is_open())
+	if (!ofs.is_open())
 	{
 		std::cerr << "ERROR::Ecosystem::saveBrainsPreviewsVisibility::CANNOT OPEN: " << file_path << '\n';
 		exit(-1);
@@ -573,34 +590,85 @@ void Ecosystem::loadEcosystem(const std::string& file_path)
 
 	sf::Vector2f worldSize;
 	float bordersThickness;
-	sf::Color backgroundColor;
-	sf::Color bordersColor;
+	unsigned bgColorR, bgColorG, bgColorB, bgColorA;
+	unsigned bordersColorR, bordersColorG, bordersColorB, bordersColorA;
 	int trackedAnimalIndex;
+	unsigned animalsColorR, animalsColorG, animalsColorB, animalsColorA;
+	unsigned fruitsColorR, fruitsColorG, fruitsColorB, fruitsColorA;
+	unsigned trackedAnimalColorR, trackedAnimalColorG, trackedAnimalColorB, trackedAnimalColorA;
 
 	ifs >> this->name;
 	ifs >> worldSize.x >> worldSize.y;
 	ifs >> bordersThickness;
 
-	ifs >> backgroundColor.r >> backgroundColor.g >> backgroundColor.b >> backgroundColor.a;
-	ifs >> bordersColor.r >> bordersColor.g >> bordersColor.b >> bordersColor.a;
+	ifs >> bgColorR >> bgColorG >> bgColorB >> bgColorA;
+	ifs >> bordersColorR >> bordersColorG >> bordersColorB >> bordersColorA;
+
+	ifs >> this->mutationPercentage;
+
+	ifs >> animalsColorR >> animalsColorG >> animalsColorB >> animalsColorA;
+	ifs >> fruitsColorR >> fruitsColorG >> fruitsColorB >> fruitsColorA;
+	ifs >> trackedAnimalColorR >> trackedAnimalColorG >> trackedAnimalColorB >> trackedAnimalColorA;
 
 	ifs >> trackedAnimalIndex;
-
-	ifs >> this->animalsColor.r >> this->animalsColor.g >> this->animalsColor.b >> this->animalsColor.a;
-	ifs >> this->fruitsColor.r >> this->fruitsColor.g >> this->fruitsColor.b >> this->fruitsColor.a;
-	ifs >> this->trackedAnimalColor.r >> this->trackedAnimalColor.g >> this->trackedAnimalColor.b >> this->trackedAnimalColor.a;
 
 	ifs >> this->simulationSpeedFactor;
 	ifs >> this->m_simulationIsPaused;
 	ifs >> this->godTool;
 	ifs >> this->totalTimeElapsed;
 
-	this->initBackgroundAndBorders(worldSize, bordersThickness, backgroundColor, bordersColor);
-
-	this->trackedAnimal = this->animals[trackedAnimalIndex].get();
-	this->animals[trackedAnimalIndex]->setColor(this->trackedAnimalColor);
-
 	ifs.close();
+
+	this->initBackgroundAndBorders(
+		worldSize,
+		bordersThickness,
+		sf::Color(
+			bgColorR,
+			bgColorG,
+			bgColorB,
+			bgColorA
+		),
+		sf::Color(
+			bordersColorR,
+			bordersColorG,
+			bordersColorB,
+			bordersColorA
+		)
+	);
+
+	this->animalsColor = sf::Color(
+		animalsColorR, 
+		animalsColorG, 
+		animalsColorB, 
+		animalsColorA
+	);
+
+	this->fruitsColor = sf::Color(
+		fruitsColorR, 
+		fruitsColorG, 
+		fruitsColorB, 
+		fruitsColorA
+	);
+
+	this->trackedAnimalColor = sf::Color(
+		trackedAnimalColorR, 
+		trackedAnimalColorG, 
+		trackedAnimalColorB, 
+		trackedAnimalColorA
+	);
+
+	if (trackedAnimalIndex != -1)
+		this->makeTracked(*this->animals[trackedAnimalIndex]);
+}
+
+void Ecosystem::makeTracked(Animal& animal)
+{
+	if (this->trackedAnimal)
+		this->trackedAnimal->setColor(this->animalsColor);
+	
+	this->trackedAnimal = &animal;
+
+	animal.setColor(this->trackedAnimalColor);
 }
 
 void Ecosystem::loadHpBarsVisibility(const std::string& file_path)
@@ -618,7 +686,7 @@ void Ecosystem::loadHpBarsVisibility(const std::string& file_path)
 	for (int i = 0; i < this->animals.size(); i++)
 	{
 		ifs >> hpBarVisibility;
-		this->hpBarsVisibility.at(this->animals[i].get()) = hpBarVisibility;
+		this->hpBarsVisibility[this->animals[i].get()] = hpBarVisibility;
 	}
 
 	ifs.close();
@@ -639,22 +707,10 @@ void Ecosystem::loadBrainsPreviewsVisibility(const std::string& file_path)
 	for (int i = 0; i < this->animals.size(); i++)
 	{
 		ifs >> brainPreviewVisibility;
-		this->brainsPreviewsVisibility.at(this->animals[i].get()) = brainPreviewVisibility;
+		this->brainsPreviewsVisibility[this->animals[i].get()] = brainPreviewVisibility;
 	}
 
 	ifs.close();
-}
-
-int Ecosystem::getTrackedAnimalIndex() const
-{
-	if (!this->trackedAnimal)
-		return -1;
-
-	for (int i = 0; i < this->animals.size(); i++)
-		if (this->animals[i].get() == this->trackedAnimal)
-			return i;
-
-	return -1;
 }
 
 // god tools:
@@ -663,31 +719,24 @@ int Ecosystem::getTrackedAnimalIndex() const
 void Ecosystem::trackingTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
-	{
 		if (animal->isCoveredByMouse(mouse_pos_view))
 		{
-			// the tracked animal is no longer tracked:
 			if (animal.get() == this->trackedAnimal)
-			{
-				animal->setColor(this->animalsColor); // reset its color
-				this->trackedAnimal = nullptr;
-				return;
-			}
-
-			// a new animal is tracked:
-			// reset body color of the previous tracked animal:
-			if (this->trackedAnimal)
-				this->trackedAnimal->setColor(this->animalsColor);
-
-			// set new tracked animal:
-			this->trackedAnimal = animal.get();
-
-			// change color:
-			animal->setColor(this->trackedAnimalColor);
-
+				this->stopTracking();
+			else
+				this->makeTracked(*animal);
+			
 			return;
 		}
-	}
+}
+
+void Ecosystem::stopTracking()
+{
+	if (!this->trackedAnimal)
+		return;
+
+	this->trackedAnimal->setColor(this->animalsColor);
+	this->trackedAnimal = nullptr;
 }
 
 // killing tool:

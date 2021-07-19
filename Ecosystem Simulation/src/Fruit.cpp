@@ -30,9 +30,9 @@ void Fruit::saveToFile(const std::string& file_path) const
 	ofs << this->energy << '\n';
 	ofs << this->shape.getPosition().x << ' ' << this->shape.getPosition().y << '\n';
 	ofs << this->shape.getRadius() << '\n';
-	ofs << static_cast<int>(this->shape.getFillColor().r);
-	ofs << static_cast<int>(this->shape.getFillColor().g);
-	ofs << static_cast<int>(this->shape.getFillColor().b);
+	ofs << static_cast<int>(this->shape.getFillColor().r) << ' ';
+	ofs << static_cast<int>(this->shape.getFillColor().g) << ' ';
+	ofs << static_cast<int>(this->shape.getFillColor().b) << ' ';
 	ofs << static_cast<int>(this->shape.getFillColor().a);
 
 	ofs.close();
@@ -50,14 +50,14 @@ void Fruit::loadFromFile(const std::string& file_path)
 
 	sf::Vector2f position;
 	float radius;
-	sf::Color color;
+	unsigned red, green, blue, alfa;
 
 	ifs >> this->energy;
 	ifs >> position.x >> position.y;
 	ifs >> radius;
-	ifs >> color.r >> color.g >> color.b >> color.a;
+	ifs >> red >> green >> blue >> alfa;
 
-	this->initShape(position, radius, color);
+	this->initShape(position, radius, sf::Color(red, green, blue, alfa));
 
 	ifs.close();
 }
