@@ -130,7 +130,7 @@ void LoadingState::initButtons()
 		gui::p2pY(0.8f, resolution), 0
 	);
 
-	this->buttons["QUIT"] = std::make_unique<gui::Button>(
+	this->buttons["OK"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(53.f, resolution),
 			gui::p2pY(54.3f, resolution)
@@ -139,7 +139,7 @@ void LoadingState::initButtons()
 			gui::p2pX(24.f, resolution),
 			gui::p2pY(7.f, resolution)
 		),
-		this->font, "QUIT", gui::calcCharSize(32.0f, resolution),
+		this->font, "OK", gui::calcCharSize(32.0f, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -167,6 +167,6 @@ void LoadingState::getUpdateFromButtons()
 		this->stateData->ecosystem = new Ecosystem(this->inputField->getInput());
 	}
 
-	else if (this->buttons["QUIT"]->isClicked())
+	else if (this->buttons["OK"]->isClicked())
 		this->endState();
 }

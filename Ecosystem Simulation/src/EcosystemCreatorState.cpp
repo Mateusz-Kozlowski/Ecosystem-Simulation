@@ -156,7 +156,7 @@ void EcosystemCreatorState::initButtons()
 		gui::p2pY(0.4f, resolution)
 	);
 
-	this->buttons["QUIT"] = std::make_unique<gui::Button>(
+	this->buttons["OK"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(82.f, resolution),
 			gui::p2pY(92.f, resolution) - 213.7f // TODO: rmv later!
@@ -165,7 +165,7 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.f, resolution),
 			gui::p2pY(4.f, resolution)
 		),
-		this->fonts["RETROICA"], "QUIT", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "OK", gui::calcCharSize(16U, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -599,7 +599,7 @@ void EcosystemCreatorState::getUpdatesFromGui()
 	else if (this->buttons["CREATE AND LOAD"]->isClicked())
 		this->createEcosystem();
 
-	else if (this->buttons["QUIT"]->isClicked())
+	else if (this->buttons["OK"]->isClicked())
 		this->endState();
 }
 
