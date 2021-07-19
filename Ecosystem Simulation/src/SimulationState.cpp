@@ -735,10 +735,7 @@ void SimulationState::updateEcosystem(float dt)
 
 	this->useEcosystemGodTools();
 
-	this->stateData->ecosystem->update(
-		dt,
-		*this->stateData->events
-	);
+	this->stateData->ecosystem->update(dt);
 }
 
 void SimulationState::useEcosystemGodTools()

@@ -10,6 +10,7 @@ Animal::Animal(
 	float default_hp,
 	float max_hp)
 	: maxHp(max_hp),
+	  kineticEnergyFromPreviousFrame(0.0f),
 	  alive(true)
 {
 	this->initBody(position, radius, body_color);
@@ -23,6 +24,7 @@ Animal::Animal(
 
 Animal::Animal(const std::string& folder_path)
 	: maxHp(0.0f),
+	  kineticEnergyFromPreviousFrame(0.0f),
 	  alive(true)
 {
 	this->loadFromFolder(folder_path);
@@ -35,6 +37,7 @@ Animal::Animal(const Animal& rhs)
 	this->body = rhs.body;
 	this->maxHp = rhs.maxHp;
 	*this->movementComponent = *rhs.movementComponent;
+	this->kineticEnergyFromPreviousFrame = rhs.kineticEnergyFromPreviousFrame;
 	this->alive = rhs.alive;
 	*this->hpBar = *rhs.hpBar;
 
@@ -48,6 +51,7 @@ Animal& Animal::operator=(const Animal& rhs)
 		this->body = rhs.body;
 		this->maxHp = rhs.maxHp;
 		*this->movementComponent = *rhs.movementComponent;
+		this->kineticEnergyFromPreviousFrame = rhs.kineticEnergyFromPreviousFrame;
 		this->alive = rhs.alive;
 		*this->hpBar = *rhs.hpBar;
 
@@ -87,6 +91,7 @@ void Animal::saveToFolder(const std::string& folder_path) const
 	ofs << static_cast<int>(this->hpBar->getProgressRectColor().b) << '\n';
 	ofs << static_cast<int>(this->hpBar->getProgressRectColor().a) << '\n';
 	ofs << this->maxHp << '\n';
+	ofs << this->kineticEnergyFromPreviousFrame << '\n';
 	ofs << this->alive << '\n';
 	ofs << this->hpBar->getCurrentValue() << '\n';
 	ofs << this->movementComponent->get_vx() << '\n' << this->movementComponent->get_vy();
@@ -122,6 +127,7 @@ void Animal::loadFromFolder(const std::string& folder_path)
 	ifs >> hpBarBgColor.r >> hpBarBgColor.g >> hpBarBgColor.b >> hpBarBgColor.a;
 	ifs >> hpBarProgressColor.r >> hpBarProgressColor.g >> hpBarProgressColor.b >> hpBarProgressColor.a;
 	ifs >> this->maxHp;
+	ifs >> this->kineticEnergyFromPreviousFrame;
 	ifs >> this->alive;
 	ifs >> hp;
 	ifs >> velocity.x >> velocity.y;
@@ -137,6 +143,8 @@ void Animal::loadFromFolder(const std::string& folder_path)
 
 void Animal::update(float dt, float simulation_speed_factor, const std::vector<double>& brain_inputs)
 {
+	this->kineticEnergyFromPreviousFrame = this->getKineticEnergy();
+
 	this->movementComponent->update(dt, simulation_speed_factor, brain_inputs);
 
 	this->updateBody(dt);
@@ -204,19 +212,24 @@ const sf::Vector2f& Animal::getAccelerationVector() const
 	return this->movementComponent->getAccelerationVector();
 }
 
-float Animal::getValueOfVelocityVector() const
+float Animal::getVelocityVectorValue() const
 {
-	return this->movementComponent->getValueOfVelocityVector();
+	return this->movementComponent->getVelocityVectorValue();
 }
 
-float Animal::getValueOfAccelerationVector() const
+float Animal::getAccelerationVectorValue() const
 {
-	return this->movementComponent->getValueOfAccelerationVector();
+	return this->movementComponent->getAccelerationVectorValue();
 }
 
 float Animal::getKineticEnergy() const
 {
-	return 0.5f * pow(this->getValueOfVelocityVector(), 2);
+	return 0.5f * pow(this->getVelocityVectorValue(), 2);
+}
+
+float Animal::getKineticEnergyDelta() const
+{
+	return this->getKineticEnergy() - this->kineticEnergyFromPreviousFrame;
 }
 
 bool Animal::isAlive() const
@@ -429,34 +442,7 @@ void Animal::updateBody(float dt)
 
 void Animal::updateHp(float dt)
 {
-	this->hpBar->decreaseValue(this->getValueOfAccelerationVector() * this->getValueOfVelocityVector() * dt);
-
-	// Are u wondering where this formula come from? Check those physics stuff out:
-
-	/*
-	dE = W
-	   = F * ds
-	   = F * v * dt
-	   = m * a * v * dt
-
-	In the project animals movement is not considered dynamically.
-	It is only considered kinematically, so the mass is not taken into account.
-
-	In other words, it is assumed that the mass of all animals is equal so it can be ignored.
-
-	So the final version of the formula looks like this:
-
-	de = a * v * dt
-
-	dE <==> energy delta [J]
-	W <==> work [J]
-	F <==> force [N]
-	ds <==> delta displacement [m]
-	v <==> velocity [m/s]
-	dt <==> detla time [s]
-	m <==> mass [kg]
-	a <==> acceleration [m/s^2]
-	*/
+	this->hpBar->decreaseValue(abs(this->getKineticEnergyDelta()));
 }
 
 void Animal::updateHpBarPosition()

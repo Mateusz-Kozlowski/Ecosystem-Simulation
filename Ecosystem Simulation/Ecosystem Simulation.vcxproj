@@ -284,7 +284,9 @@
     <None Include="config\simulation_keybinds.ini" />
     <None Include="config\supported_keys.ini" />
     <None Include="openal32.dll" />
-    <None Include="resources\template files\ecosystem initializator.ini" />
+    <None Include="resources\ecosystems templates\big.ini" />
+    <None Include="resources\ecosystems templates\huge.ini" />
+    <None Include="resources\ecosystems templates\small.ini" />
     <None Include="resources\textures\GUI\arrows\left arrow.xcf" />
     <None Include="resources\textures\GUI\arrows\right arrow.xcf" />
     <None Include="resources\textures\GUI\God tools\brain\brain.xcf" />

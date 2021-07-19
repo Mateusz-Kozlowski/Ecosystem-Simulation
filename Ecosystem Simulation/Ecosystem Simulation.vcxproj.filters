@@ -147,9 +147,6 @@
     <Filter Include="ecosystem\components">
       <UniqueIdentifier>{50a56814-f21a-456a-a1ca-a211bfa880be}</UniqueIdentifier>
     </Filter>
-    <Filter Include="resources\template files">
-      <UniqueIdentifier>{b3b481b5-789f-408e-8ace-81b978afa1e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="resources\textures">
       <UniqueIdentifier>{28cee658-e54a-4a75-8385-a01aa9ec2dd9}</UniqueIdentifier>
     </Filter>
@@ -191,6 +188,9 @@
     </Filter>
     <Filter Include="resources\textures\GUI\scale sliders\handles">
       <UniqueIdentifier>{b1f2ba67-b714-4ba4-830b-67a86c21a81c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\ecosystem templates">
+      <UniqueIdentifier>{19c751eb-d517-484c-9018-34ad4406062c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -337,9 +337,6 @@
     <None Include="config\simulation_keybinds.ini">
       <Filter>config</Filter>
     </None>
-    <None Include="resources\template files\ecosystem initializator.ini">
-      <Filter>resources\template files</Filter>
-    </None>
     <None Include="config\ecosystem_creator_keybinds.ini">
       <Filter>config</Filter>
     </None>
@@ -375,6 +372,15 @@
     </None>
     <None Include="resources\textures\GUI\God tools\stop\stop.xcf">
       <Filter>resources\textures\GUI\God tools\stop</Filter>
+    </None>
+    <None Include="resources\ecosystems templates\big.ini">
+      <Filter>resources\ecosystem templates</Filter>
+    </None>
+    <None Include="resources\ecosystems templates\huge.ini">
+      <Filter>resources\ecosystem templates</Filter>
+    </None>
+    <None Include="resources\ecosystems templates\small.ini">
+      <Filter>resources\ecosystem templates</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

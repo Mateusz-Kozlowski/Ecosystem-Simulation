@@ -14,6 +14,7 @@ side menu:
 - after loading ecosystem side menu panel should be updated (e.g. speed scaler)
 
 app:
+- move getQuit to the top of update method, it will solve all issues with rendering unupdated states and so on
 - dt can be extremelly big if a window lost the focus
 - saving State?
 - define states freezing
@@ -41,6 +42,9 @@ GUI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- don't allow animals to have a negative hp
+- transfer energy from animals to fruits sometimes need to create a new fruit 
+  if there are no fruits in a ecosystem
 - total energy is not conservate - fix that!
 - carefully test saving and loading ecosystems
 - there are 2 isPaused variables - in Ecosystem class and in Simulation state class
@@ -64,9 +68,11 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
-- rename utilities to utils?
+- all objects should be initialized in 100% before first updates
+  e.g. neural net brain preview class should color its neurons in constructor 
+  and not wait with that till the first update
+- rename utilities to utils? Google it!
 - mutation rate vs mutation percentage - unify that (probably mutation rate percentage)
-- rename ScaleSlider class to just Slider
 - convention of names in tools 
   (->replace is also called move and it shouldn't have 2 names)(->track and select also)
   (rmv and delete? I used remove everywhere, but delete may be a better option)

@@ -42,10 +42,7 @@ public:
 		const sf::Vector2f& mouse_pos_view
 	);
 
-	void update(
-		float dt,
-		const std::vector<sf::Event>& events
-	);
+	void update(float dt);
 	void render(sf::RenderTarget& target) const;
 
 	// accessors:
@@ -220,10 +217,8 @@ private:
 	void printInfoAboutFruit(const Fruit& fruit) const;
 	void printInfoAboutEcosystem() const;
 
-	// other private utilities:
+	// other private methods:
 	void updateWorld(float dt);
-
-	void updatingWorldLogs() const;
 
 	void updateAnimals(float dt);
 	const std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;
@@ -254,11 +249,14 @@ private:
 	bool animalReachesFruitInY(const Animal& animal, const Fruit& fruit) const;
 	bool animalReachesFruit(const Animal& animal, const Fruit& fruit) const;
 	void eat(Animal& animal, Fruit& fruit);
+	
+	void removeEatenFruits();
+	void removeFruit(std::unique_ptr<Fruit>& fruit);
+
+	void transferEnergyFromAnimalsToFruits();
+	Fruit* getLowestEnergyFruit();
 
 	void correctBrainPreviewsPositions();
 	bool brainPreviewProtrudesWorldRightBorder(const gui::NeuralNetPreview& brain_preview);
 	bool brainPreviewProtrudesWorldBottomBorder(const gui::NeuralNetPreview& brain_preview);
-
-	void removeEatenFruits();
-	void removeFruit(std::unique_ptr<Fruit>& fruit);
 };

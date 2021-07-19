@@ -115,9 +115,7 @@ void Ecosystem::useGodTools(
 	}
 }
 
-void Ecosystem::update(
-	float dt, 
-	const std::vector<sf::Event>& events)
+void Ecosystem::update(float dt)
 {
 	if (!this->m_simulationIsPaused)
 	{
@@ -660,6 +658,8 @@ int Ecosystem::getTrackedAnimalIndex() const
 }
 
 // god tools:
+
+// tracking tool:
 void Ecosystem::trackingTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
@@ -690,6 +690,7 @@ void Ecosystem::trackingTool(const sf::Vector2f& mouse_pos_view)
 	}
 }
 
+// killing tool:
 void Ecosystem::killingTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
@@ -720,11 +721,13 @@ void Ecosystem::convertAnimalToFruit(std::shared_ptr<Animal>& animal, bool rando
 	this->removeAnimal(animal);
 }
 
+// replacing tool:
 void Ecosystem::replacingTool(const sf::Vector2f& mouse_pos_view)
 {
 	std::cout << "REPLACING TOOL IS NOT DEFINED YET!\n";
 }
 
+// brain tool:
 void Ecosystem::brainTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
@@ -737,6 +740,7 @@ void Ecosystem::brainTool(const sf::Vector2f& mouse_pos_view)
 	}
 }
 
+// stopping tool:
 void Ecosystem::stoppingTool(const sf::Vector2f& mouse_pos_view)
 {
 	for (auto& animal : this->animals)
@@ -769,6 +773,7 @@ void Ecosystem::convertKineticEnergyToFruit(Animal& animal, bool random_fruit_po
 	animal.setVelocity(sf::Vector2f(0.0f, 0.0f));
 }
 
+// info tool:
 void Ecosystem::infoTool(const sf::Vector2f& mouse_pos_view) const
 {
 	bool noInfoPrinted = true;
@@ -835,26 +840,17 @@ void Ecosystem::printInfoAboutEcosystem() const
 	std::cout << "total energy: " << this->getTotalEnergy() << '\n';
 }
 
-// other private utilities:
+// other private methods:
 void Ecosystem::updateWorld(float dt)
 {
-	this->updatingWorldLogs();
 	this->updateAnimals(dt);
 	this->avoidTunneling();
 	this->killAnimalsStickingToBorders();
+	this->transferEnergyFromAnimalsToFruits();
 	this->removeDeadAnimals();
 	this->feedAnimals();
-	this->correctBrainPreviewsPositions();	
 	this->removeEatenFruits();
-}
-
-void Ecosystem::updatingWorldLogs() const
-{
-	if (this->animals.empty())
-		std::cout << "There are no animals!\n";
-
-	if (this->fruits.empty())
-		std::cout << "There are no fruits\n";
+	this->correctBrainPreviewsPositions();
 }
 
 void Ecosystem::updateAnimals(float dt)
@@ -1223,6 +1219,46 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 	fruit.setEnergy(0.0f);
 }
 
+void Ecosystem::removeEatenFruits()
+{
+	for (int i = 0; i < this->fruits.size();)
+	{
+		if (this->fruits[i]->getEnergy() == 0.0f)
+			this->removeFruit(this->fruits[i]);
+		else
+			i++;
+	}
+}
+
+void Ecosystem::removeFruit(std::unique_ptr<Fruit>& fruit)
+{
+	std::swap(fruit, this->fruits.back());
+	this->fruits.pop_back();
+}
+
+void Ecosystem::transferEnergyFromAnimalsToFruits()
+{
+	Fruit* lowestEnergyFruit = this->getLowestEnergyFruit();
+
+	for (const auto& animal : this->animals)
+		if (animal->getKineticEnergyDelta() < 0.0f)
+			lowestEnergyFruit->increaseEnergy(2.0f * animal->getKineticEnergyDelta());
+}
+
+Fruit* Ecosystem::getLowestEnergyFruit()
+{
+	if (this->fruits.empty())
+		return nullptr;
+	
+	Fruit* lowestEnergyFruit = this->fruits[0].get();
+
+	for (const auto& fruit : this->fruits)
+		if (fruit->getEnergy() < lowestEnergyFruit->getEnergy())
+			lowestEnergyFruit = fruit.get();
+
+	return lowestEnergyFruit;
+}
+
 void Ecosystem::correctBrainPreviewsPositions()
 {
 	for (auto& animal : this->animals)
@@ -1277,23 +1313,4 @@ bool Ecosystem::brainPreviewProtrudesWorldBottomBorder(const gui::NeuralNetPrevi
 	float bottomBorderPosition = brain_preview.getPosition().y + brain_preview.getSize().y;
 
 	return bottomBorderPosition > this->getWorldSize().y;
-}
-
-void Ecosystem::removeEatenFruits()
-{
-	for (int i = 0; i < this->fruits.size();)
-	{
-		if (this->fruits[i]->getEnergy() == 0.0f)
-		{
-			this->removeFruit(this->fruits[i]);
-		}
-		else
-			i++;
-	}
-}
-
-void Ecosystem::removeFruit(std::unique_ptr<Fruit>& fruit)
-{
-	std::swap(fruit, this->fruits.back());
-	this->fruits.pop_back();
 }

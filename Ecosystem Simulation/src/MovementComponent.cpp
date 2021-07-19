@@ -95,12 +95,12 @@ float MovementComponent::get_ay() const
 	return this->acceleration.y;
 }
 
-float MovementComponent::getValueOfVelocityVector() const
+float MovementComponent::getVelocityVectorValue() const
 {
 	return sqrt(pow(this->velocity.x, 2) + pow(this->velocity.y, 2));
 }
 
-float MovementComponent::getValueOfAccelerationVector() const
+float MovementComponent::getAccelerationVectorValue() const
 {
 	return sqrt(pow(this->acceleration.x, 2) + pow(this->acceleration.y, 2));
 }

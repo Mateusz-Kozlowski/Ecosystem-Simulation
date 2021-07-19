@@ -137,6 +137,11 @@ void Fruit::setEnergy(float energy)
 	this->energy = energy;
 }
 
+void Fruit::increaseEnergy(float increase)
+{
+	this->energy += increase;
+}
+
 void Fruit::setColor(const sf::Color& color)
 {
 	this->shape.setFillColor(color);

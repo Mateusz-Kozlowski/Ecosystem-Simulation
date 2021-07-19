@@ -51,12 +51,14 @@ public:
 	const sf::Vector2f& getVelocityVector() const;
 	const sf::Vector2f& getAccelerationVector() const;
 	
-	float getValueOfVelocityVector() const;
+	float getVelocityVectorValue() const;
 
-	float getValueOfAccelerationVector() const;
+	float getAccelerationVectorValue() const;
 
 	float getKineticEnergy() const;
 	
+	float getKineticEnergyDelta() const;
+
 	bool isAlive() const;
 
 	float getHp() const;
@@ -100,6 +102,8 @@ private:
 	float maxHp;
 
 	std::unique_ptr<MovementComponent> movementComponent;
+	
+	float kineticEnergyFromPreviousFrame;
 
 	bool alive;
 

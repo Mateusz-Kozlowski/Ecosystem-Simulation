@@ -32,6 +32,7 @@ public:
 
 	// mutators:
 	void setEnergy(float energy);
+	void increaseEnergy(float increase);
 
 	void setPosition(float x, float y);
 	void setPosition(const sf::Vector2f& new_position);

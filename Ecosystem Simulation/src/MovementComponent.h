@@ -29,8 +29,8 @@ public:
 	float get_ax() const;
 	float get_ay() const;
 
-	float getValueOfVelocityVector() const;
-	float getValueOfAccelerationVector() const;
+	float getVelocityVectorValue() const;
+	float getAccelerationVectorValue() const;
 
 	// mutators:
 	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
