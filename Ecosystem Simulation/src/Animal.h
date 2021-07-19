@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 
 #include "MovementComponent.h"
 #include "ProgressBar.h"
@@ -58,6 +58,8 @@ public:
 	float getKineticEnergy() const;
 	
 	float getKineticEnergyDelta() const;
+
+	float getEnergyToExpel() const;
 
 	bool isAlive() const;
 

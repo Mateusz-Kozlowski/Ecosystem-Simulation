@@ -883,7 +883,7 @@ const std::vector<CrappyNeuralNets::Scalar> Ecosystem::getInputsForBrain(const A
 		inputsForBrain.push_back(0.0);
 		inputsForBrain.push_back(0.0);
 	}
-	
+
 	return inputsForBrain;
 }
 
@@ -1241,8 +1241,7 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 	Fruit* lowestEnergyFruit = this->getLowestEnergyFruit();
 
 	for (const auto& animal : this->animals)
-		if (animal->getKineticEnergyDelta() < 0.0f)
-			lowestEnergyFruit->increaseEnergy(2.0f * animal->getKineticEnergyDelta());
+		lowestEnergyFruit->increaseEnergy(animal->getEnergyToExpel());
 }
 
 Fruit* Ecosystem::getLowestEnergyFruit()

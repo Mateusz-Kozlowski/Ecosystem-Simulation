@@ -150,7 +150,7 @@ void Animal::update(float dt, float simulation_speed_factor, const std::vector<d
 	this->updateBody(dt);
 	this->updateHp(dt);
 
-	this->alive = this->hpBar->getCurrentValue() > 0.f;
+	this->alive = this->hpBar->getCurrentValue() > 0.0f;
 
 	this->updateHpBarPosition();
 	this->updateBrainPreview();
@@ -230,6 +230,14 @@ float Animal::getKineticEnergy() const
 float Animal::getKineticEnergyDelta() const
 {
 	return this->getKineticEnergy() - this->kineticEnergyFromPreviousFrame;
+}
+
+float Animal::getEnergyToExpel() const
+{
+	if (this->getKineticEnergyDelta() >= 0.0f)
+		return 0.0f;
+
+	return -2.0f * this->getKineticEnergyDelta();
 }
 
 bool Animal::isAlive() const

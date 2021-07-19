@@ -15,7 +15,11 @@ public:
 	void saveBrainToFile(const std::string& file_path) const;
 	void loadBrainFromFile(const std::string& file_path);
 
-	void update(float dt, float speed_factor, const std::vector<double>& brain_inputs);
+	void update(
+		float dt, 
+		float speed_factor, 
+		const std::vector<double>& brain_inputs
+	);
 
 	// accessors:
 	const CrappyNeuralNets::TempNet& getBrain() const;

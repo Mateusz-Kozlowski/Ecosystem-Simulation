@@ -42,7 +42,7 @@ GUI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
-- don't allow animals to have a negative hp
+- change the rules of killing animals sticking to borders
 - transfer energy from animals to fruits sometimes need to create a new fruit 
   if there are no fruits in a ecosystem
 - total energy is not conservate - fix that!

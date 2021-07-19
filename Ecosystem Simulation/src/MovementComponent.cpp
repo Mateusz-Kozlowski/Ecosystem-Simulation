@@ -42,7 +42,10 @@ void MovementComponent::loadBrainFromFile(const std::string& file_path)
 	//this->BRAIN->loadFromFile(file_path);
 }
 
-void MovementComponent::update(float dt, float speed_factor, const std::vector<double>& brain_inputs)
+void MovementComponent::update(
+	float dt, 
+	float speed_factor, 
+	const std::vector<double>& brain_inputs)
 {
 	// update acceleration:	
 	this->brain->input(brain_inputs);
