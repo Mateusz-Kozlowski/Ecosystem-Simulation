@@ -217,10 +217,12 @@ void LoadingState::getUpdateFromButtons()
 {
 	if (this->buttons["LOAD"]->isClicked())
 	{
+		std::string folderPath = "ecosystems/" + this->inputField->getInput();
+
 		if (this->stateData->ecosystem)
-			this->stateData->ecosystem->loadFromFolder(this->inputField->getInput());
+			this->stateData->ecosystem->loadFromFolder(folderPath);
 		else
-			this->stateData->ecosystem = new Ecosystem(this->inputField->getInput());
+			this->stateData->ecosystem = new Ecosystem(folderPath);
 	}
 
 	else if (this->buttons["OK"]->isClicked())

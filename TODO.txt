@@ -25,9 +25,6 @@ simulation state:
 - add texture buttons in the top-right corners of all brain previews that will allow to move neurons,
   save that changes and maybe other things
 
-loading state:
-- automatically add 'ecosystem/' to paths in loading state
-
 UI:
 - hold fonts in static way and as keys use UNMUTABLE and MUTABLE strings/const char* or sth like that
 - unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
