@@ -22,8 +22,6 @@ simulation state:
 - move that thing controling simulation speed factor from updateEcosystem method to getUpdatesFromGui
 - saving zoom/world camera can be useful
 - avoid drawing things that are outside the window
-- creator state:
-  more/better ecosystems templates?
 - add texture buttons in the top-right corners of all brain previews that will allow to move neurons,
   save that changes and maybe other things
 
