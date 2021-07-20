@@ -45,6 +45,8 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- in every function that loads something from a folder add is_directory function that checks if a folder exists at all;
+  u can change all that functions so that they return bool instead of void
 - every copy constructor and copy assigment operator should use its initializer list to initialize all its members
   like Animal class copy constructor (and the same thing with other constructors!)
 - there is another issue with energy conservation law - animals can have a negative total energy

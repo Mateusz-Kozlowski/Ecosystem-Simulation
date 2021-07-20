@@ -163,8 +163,10 @@ void LoadingState::getUpdateFromButtons()
 {
 	if (this->buttons["LOAD"]->isClicked())
 	{
-		delete this->stateData->ecosystem;
-		this->stateData->ecosystem = new Ecosystem(this->inputField->getInput());
+		if (this->stateData->ecosystem)
+			this->stateData->ecosystem->loadFromFolder(this->inputField->getInput());
+		else
+			this->stateData->ecosystem = new Ecosystem(this->inputField->getInput());
 	}
 
 	else if (this->buttons["OK"]->isClicked())

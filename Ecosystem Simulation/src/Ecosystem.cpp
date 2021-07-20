@@ -67,6 +67,9 @@ void Ecosystem::saveToFolder(const std::string& folder_path) const
 
 void Ecosystem::loadFromFolder(const std::string& folder_path)
 {
+	if (!std::filesystem::is_directory(folder_path))
+		return;
+
 	// TODO: add static private (or sth even better) methods that returns those paths:
 	this->loadAnimals(folder_path + "/animals");
 	this->loadFruits(folder_path + "/fruits");
