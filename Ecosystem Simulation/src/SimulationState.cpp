@@ -111,7 +111,7 @@ void SimulationState::initFonts()
 
 void SimulationState::initEcosystem()
 {
-	
+	this->stateData->ecosystem->pauseSimulation();
 }
 
 void SimulationState::initView()
