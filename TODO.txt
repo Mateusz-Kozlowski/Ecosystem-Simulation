@@ -30,6 +30,8 @@ loading state:
   after the process is complited stop rendering that text
 
 UI:
+- hold fonts in static way and as keys use UNMUTABLE and MUTABLE strings/const char* or sth like that
+- unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
 - input field text shouldn't dance up and down
 - there are 2 fonts; which should be used for what?
 - one convention of widgets size (input fields, buttons and so on from different states - 1 convention)

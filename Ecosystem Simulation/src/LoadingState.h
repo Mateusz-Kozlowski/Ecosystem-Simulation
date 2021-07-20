@@ -18,6 +18,7 @@ public:
 
 private:
 	sf::RectangleShape background;
+	sf::RectangleShape container;
 
 	sf::Font font;
 
@@ -30,6 +31,7 @@ private:
 	// initialization:
 	virtual void initKeybinds();
 	void initBackground();
+	void initContainer();
 	void initFonts();
 	void initTexts();
 	void initInputField();

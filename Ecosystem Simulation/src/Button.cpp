@@ -18,8 +18,18 @@ Button::Button(
 	this->state = ButtonState::BTN_IDLE;
 	this->id = id;
 
-	this->rect.setPosition(position);
-	this->rect.setSize(size);
+	this->rect.setPosition(
+		sf::Vector2f(
+			position.x + outline_thickness,
+			position.y + outline_thickness
+		)
+	);
+	this->rect.setSize(
+		sf::Vector2f(
+			size.x - 2.0f * outline_thickness,
+			size.y - 2.0f * outline_thickness
+		)
+	);
 	this->rect.setOutlineThickness(outline_thickness);
 	this->rect.setOutlineColor(outline_idle_color);
 	this->rect.setFillColor(idle_color);
@@ -113,7 +123,12 @@ void Button::setHovered()
 
 void Button::setPosition(const sf::Vector2f& new_pos)
 {
-	this->rect.setPosition(new_pos);
+	this->rect.setPosition(
+		sf::Vector2f(
+			new_pos.x + this->rect.getOutlineThickness(),
+			new_pos.y + this->rect.getOutlineThickness()
+		)
+	);
 
 	this->text.setPosition(
 		sf::Vector2f(

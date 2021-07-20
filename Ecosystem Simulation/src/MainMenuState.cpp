@@ -106,7 +106,7 @@ void MainMenuState::initButtons()
 		),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution), 
-			gui::p2pY(7.f, resolution)
+			gui::p2pY(8.f, resolution)
 		),
 		this->fonts["Retroica"], "SIMULATE", gui::calcCharSize(32.0f, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
@@ -122,7 +122,7 @@ void MainMenuState::initButtons()
 		),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution), 
-			gui::p2pY(7.f, resolution)
+			gui::p2pY(8.f, resolution)
 		),
 		this->fonts["Retroica"], "NEW ECOSYSTEM", gui::calcCharSize(32.0f, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
@@ -138,7 +138,7 @@ void MainMenuState::initButtons()
 		),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution), 
-			gui::p2pY(7.f, resolution)
+			gui::p2pY(8.f, resolution)
 		),
 		this->fonts["Retroica"], "LOAD", gui::calcCharSize(32.0f, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
@@ -154,7 +154,7 @@ void MainMenuState::initButtons()
 		),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution), 
-			gui::p2pY(7.f, resolution)
+			gui::p2pY(8.f, resolution)
 		),
 		this->fonts["Retroica"], "QUIT", gui::calcCharSize(32.0f, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),

@@ -113,8 +113,18 @@ void InputField::initRect(
     const sf::Color& outline_idle_color,
     float outline_thickness)
 {
-    this->rect.setPosition(position);
-    this->rect.setSize(size);
+    this->rect.setPosition(
+        sf::Vector2f(
+            position.x + outline_thickness,
+            position.y + outline_thickness
+        )
+    );
+    this->rect.setSize(
+        sf::Vector2f(
+            size.x - 2.0f * outline_thickness,
+            size.y - 2.0f * outline_thickness
+        )
+    );
     this->rect.setFillColor(idle_color);
 
     this->rect.setOutlineThickness(outline_thickness);

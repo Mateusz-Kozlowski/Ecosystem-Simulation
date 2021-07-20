@@ -92,84 +92,86 @@ void EcosystemCreatorState::initButtons()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
+	unsigned charSize = gui::calcCharSize(20.0f, resolution);
+
 	this->buttons["SMALL"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
-			gui::p2pX(30.f, resolution),
-			gui::p2pY(7.f, resolution)
+			gui::p2pX(30.0f, resolution),
+			gui::p2pY(7.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "SMALL", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "SMALL", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 
 	this->buttons["BIG"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(7.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(7.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "BIG", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "BIG", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 
 	this->buttons["HUGE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
-			gui::p2pX(58.f, resolution),
-			gui::p2pY(7.f, resolution)
+			gui::p2pX(58.0f, resolution),
+			gui::p2pY(7.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "HUGE", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "HUGE", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 
-	this->buttons["CREATE AND LOAD"] = std::make_unique<gui::Button>(
+	this->buttons["CREATE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
-			gui::p2pX(68.f, resolution),
-			gui::p2pY(92.f, resolution) - 213.7f // TODO: rmv later!
+			gui::p2pX(71.0f, resolution),
+			gui::p2pY(90.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "CREATE AND LOAD", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "CREATE", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 
 	this->buttons["OK"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
-			gui::p2pX(82.f, resolution),
-			gui::p2pY(92.f, resolution) - 213.7f // TODO: rmv later!
+			gui::p2pX(84.0f, resolution),
+			gui::p2pY(90.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "OK", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "OK", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 }
 
@@ -177,155 +179,157 @@ void EcosystemCreatorState::initInputFields()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
+	unsigned charSize = gui::calcCharSize(20.0f, resolution);
+
 	this->inputFields["WORLD WIDTH"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(21.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(21.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "3840", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "3840", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f
 	);
 
 	this->inputFields["WORLD HEIGHT"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(28.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(28.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "2160", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "2160", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f,
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
 		false, 1
 	);
 
 	this->inputFields["BORDERS THICKNESS"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(35.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(35.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "32", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "32", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f,
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
 		false, 2
 	);
 
 	this->inputFields["ANIMALS COUNT"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(42.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(42.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "4", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "4", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f,
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
 		false, 3
 	);
 
 	this->inputFields["FRUITS COUNT"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(49.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(49.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "1024", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "1024", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f,
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
 		false, 4
 	);
 
 	this->inputFields["DEFAULT HP"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(56.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(56.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "100000000", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "100000000", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f,
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
 		false, 5
 	);
 
 	this->inputFields["DEFAULT FRUIT ENERGY"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(63.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(63.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "100000000", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "100000000", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f,
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
 		false, 6
 	);
 
 	this->inputFields["MUTATION RATE"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(70.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(70.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "100", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "100", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f,
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
 		false, 7
 	);
 
 	this->inputFields["NAME"] = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(44.f, resolution),
-			gui::p2pY(77.f, resolution)
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(77.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(12.f, resolution),
-			gui::p2pY(4.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "Default name", gui::calcCharSize(16U, resolution),
+		this->fonts["RETROICA"], "Default name", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.4f, resolution), gui::p2pY(100.f * 1.f / 1080.f, resolution), 0.5f,
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
 		false, 8
 	);
 }
@@ -334,15 +338,17 @@ void EcosystemCreatorState::initTexts()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
+	unsigned charSize = gui::calcCharSize(20.0f, resolution);
+
 	this->addText(
 		"WORLD WIDTH",
 		"WORLD WIDTH",
 		this->fonts["RETROICA"],
-		gui::calcCharSize(20U, resolution),
+		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution),
-			gui::p2pY(21.f, resolution) + gui::p2pY(1.f, resolution)
+			gui::p2pY(22.1f, resolution)
 		)
 	);
 
@@ -350,11 +356,11 @@ void EcosystemCreatorState::initTexts()
 		"WORLD HEIGHT",
 		"WORLD HEIGHT",
 		this->fonts["RETROICA"],
-		gui::calcCharSize(20U, resolution),
+		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution),
-			gui::p2pY(28.f, resolution) + gui::p2pY(1.f, resolution)
+			gui::p2pY(29.1f, resolution)
 		)
 	);
 
@@ -362,11 +368,11 @@ void EcosystemCreatorState::initTexts()
 		"BORDERS THICKNESS",
 		"BORDERS THICKNESS",
 		this->fonts["RETROICA"],
-		gui::calcCharSize(20U, resolution),
+		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution),
-			gui::p2pY(35.f, resolution) + gui::p2pY(1.f, resolution)
+			gui::p2pY(36.1f, resolution)
 		)
 	);
 
@@ -374,11 +380,11 @@ void EcosystemCreatorState::initTexts()
 		"ANIMALS COUNT",
 		"ANIMALS COUNT",
 		this->fonts["RETROICA"],
-		gui::calcCharSize(20U, resolution),
+		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution),
-			gui::p2pY(42.f, resolution) + gui::p2pY(1.f, resolution)
+			gui::p2pY(43.1f, resolution)
 		)
 	);
 
@@ -386,11 +392,11 @@ void EcosystemCreatorState::initTexts()
 		"FRUITS COUNT",
 		"FRUITS COUNT",
 		this->fonts["RETROICA"],
-		gui::calcCharSize(20U, resolution),
+		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution),
-			gui::p2pY(49.f, resolution) + gui::p2pY(1.f, resolution)
+			gui::p2pY(50.1f, resolution)
 		)
 	);
 
@@ -398,11 +404,11 @@ void EcosystemCreatorState::initTexts()
 		"DEFAULT HP",
 		"DEFAULT HP",
 		this->fonts["RETROICA"],
-		gui::calcCharSize(20U, resolution),
+		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution),
-			gui::p2pY(56.f, resolution) + gui::p2pY(1.f, resolution)
+			gui::p2pY(57.1f, resolution)
 		)
 	);
 
@@ -410,11 +416,11 @@ void EcosystemCreatorState::initTexts()
 		"DEFAULT FRUITS ENERGY",
 		"DEFAULT FRUITS ENERGY",
 		this->fonts["RETROICA"],
-		gui::calcCharSize(20U, resolution),
+		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution),
-			gui::p2pY(63.f, resolution) + gui::p2pY(1.f, resolution)
+			gui::p2pY(64.1f, resolution)
 		)
 	);
 
@@ -422,11 +428,11 @@ void EcosystemCreatorState::initTexts()
 		"MUTATION RATE",
 		"MUTATION RATE",
 		this->fonts["RETROICA"],
-		gui::calcCharSize(20U, resolution),
+		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution),
-			gui::p2pY(70.f, resolution) + gui::p2pY(1.f, resolution)
+			gui::p2pY(71.1f, resolution)
 		)
 	);
 
@@ -434,11 +440,11 @@ void EcosystemCreatorState::initTexts()
 		"ECOSYSTEM NAME",
 		"ECOSYSTEM NAME",
 		this->fonts["RETROICA"],
-		gui::calcCharSize(20U, resolution),
+		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
 			gui::p2pX(24.f, resolution),
-			gui::p2pY(77.f, resolution) + gui::p2pY(1.f, resolution)
+			gui::p2pY(78.1f, resolution)
 		)
 	);
 }
@@ -596,7 +602,7 @@ void EcosystemCreatorState::getUpdatesFromGui()
 	else if (this->buttons["HUGE"]->isClicked())
 		this->loadEcosystemTemplate("huge");
 
-	else if (this->buttons["CREATE AND LOAD"]->isClicked())
+	else if (this->buttons["CREATE"]->isClicked())
 		this->createEcosystem();
 
 	else if (this->buttons["OK"]->isClicked())

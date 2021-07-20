@@ -302,7 +302,7 @@ void SimulationState::initSideMenu()
 		),
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
-			gui::p2pY(4.5f, resolution)
+			gui::p2pY(5.0f, resolution)
 		),
 		charSize,
 		this->fonts["CONSOLAB"],
@@ -310,7 +310,7 @@ void SimulationState::initSideMenu()
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.6f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 
 	this->sideMenu->addButton(
@@ -321,7 +321,7 @@ void SimulationState::initSideMenu()
 		),
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
-			gui::p2pY(4.5f, resolution)
+			gui::p2pY(5.0f, resolution)
 		),
 		charSize,
 		this->fonts["CONSOLAB"],
@@ -329,7 +329,7 @@ void SimulationState::initSideMenu()
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.6f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 
 	this->sideMenu->addButton(
@@ -340,7 +340,7 @@ void SimulationState::initSideMenu()
 		),
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
-			gui::p2pY(4.5f, resolution)
+			gui::p2pY(5.0f, resolution)
 		),
 		charSize,
 		this->fonts["CONSOLAB"],
@@ -348,7 +348,7 @@ void SimulationState::initSideMenu()
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.6f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 }
 
@@ -483,20 +483,22 @@ void SimulationState::initSaveAsPanel()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
+	unsigned charSize = gui::calcCharSize(26.0f, resolution);
+
 	this->saveAsPanel = std::make_unique<gui::SaveAsPanel>(
 		sf::Vector2f(
 			resolution.width,
 			resolution.height
 		),
-		gui::p2pX(32.0f, resolution),
-		sf::Color(0, 0, 0, 100)
+		gui::p2pX(34.0f, resolution),
+		sf::Color(0, 0, 0, 128)
 	);
 
 	this->saveAsPanel->initCenteredText(
-		gui::p2pY(37.0f, resolution),
-		"ECOSYSTEM NAME: ",
+		gui::p2pY(39.0f, resolution),
+		"ECOSYSTEM NAME:",
 		this->fonts["CONSOLAB"],
-		gui::calcCharSize(26U, resolution),
+		charSize,
 		sf::Color(225, 225, 255)
 	);
 
@@ -507,14 +509,13 @@ void SimulationState::initSaveAsPanel()
 		),
 		sf::Vector2f(
 			gui::p2pX(26.0f, resolution),
-			gui::p2pY(4.5f, resolution)
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["Retroica"], "",
-		gui::calcCharSize(24U, resolution),
+		this->fonts["CONSOLAB"], "", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.6f, resolution), gui::p2pY(100.f / 1080.f, resolution), 0.5f
+		gui::p2pY(0.5f, resolution), gui::p2pY(100.f / 1080.f, resolution), 0.5f
 	);
 
 	this->saveAsPanel->addButton(
@@ -525,13 +526,13 @@ void SimulationState::initSaveAsPanel()
 		),
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
-			gui::p2pY(4.5f, resolution)
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["CONSOLAB"], "SAVE", gui::calcCharSize(26U, resolution),
+		this->fonts["CONSOLAB"], "SAVE", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.6f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 
 	this->saveAsPanel->addButton(
@@ -542,13 +543,13 @@ void SimulationState::initSaveAsPanel()
 		),
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
-			gui::p2pY(4.5f, resolution)
+			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["CONSOLAB"], "OK", gui::calcCharSize(26U, resolution),
+		this->fonts["CONSOLAB"], "OK", charSize,
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.6f, resolution)
+		gui::p2pY(0.5f, resolution)
 	);
 }
 
