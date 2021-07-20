@@ -14,7 +14,6 @@ side menu:
 - after loading ecosystem side menu panel should be updated (e.g. speed scaler)
 
 app:
-- move getQuit to the top of update method, it will solve all issues with rendering unupdated states and so on
 - dt can be extremelly big if a window lost the focus
 - define states freezing
 - <random> library? Check it out! Not C style of generating pseudorandom numbers

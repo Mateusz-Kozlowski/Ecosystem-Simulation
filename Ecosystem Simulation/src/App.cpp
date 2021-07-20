@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "App.h"
 
-// constructor/destructor:
 App::App()
 {
 	this->initVariables();
@@ -25,18 +24,17 @@ App::~App()
 	}
 }
 
-// core:
 void App::run()
 {
 	while (this->window->isOpen())
 	{
-		// TODO: if a new state has been pushed on states stack then it will be rendered before updating
-
 		this->updateDt();
 		this->update();
 		this->render();
 	}
 }
+
+// private methods:
 
 // initialization:
 void App::initVariables()
@@ -85,16 +83,19 @@ void App::initWindow()
 
 void App::initKeys()
 {
-	std::ifstream ifs("Config/supported_keys.ini");
+	const char* path = "Config/supported_keys.ini";
+
+	std::ifstream ifs(path);
 
 	if (ifs.is_open())
 	{
 		std::string key = "";
 		int key_value = 0;
 
-		while (ifs >> key >> key_value) this->supportedKeys[key] = key_value;
+		while (ifs >> key >> key_value)
+			this->supportedKeys[key] = key_value;
 	}
-	else throw("ERROR: void App::initKeys: CANNOT OPEN: Config/supported_keys.ini\n");
+	else throw("ERROR::App::initKeys::CANNOT OPEN: " + std::string(path) + '\n');
 
 	ifs.close();
 }
@@ -133,8 +134,6 @@ void App::update()
 	{
 		if (this->window->hasFocus())
 		{
-			this->states.top()->update(this->dt);
-
 			if (this->states.top()->getQuit())
 			{
 				this->states.top()->endState();
@@ -142,16 +141,17 @@ void App::update()
 				this->states.pop();
 
 				if (!this->states.empty())
-				{
 					this->states.top()->freeze();
-					this->update(); // first update new top of states stack and then render it
-				}
-
-				else this->window->close();
+				else 
+					this->window->close();
 			}
+
+			if (!this->states.empty())
+				this->states.top()->update(this->dt);
 		}
 	}
-	else this->window->close();
+	else 
+		this->window->close();
 }
 
 void App::updateEvents()
@@ -160,7 +160,8 @@ void App::updateEvents()
 
 	while (this->window->pollEvent(this->event))
 	{
-		if (this->event.type == sf::Event::Closed) this->window->close();
+		if (this->event.type == sf::Event::Closed) 
+			this->window->close();
 
 		this->events.push_back(this->event);
 	}
@@ -170,7 +171,8 @@ void App::render()
 {
 	this->window->clear();
 
-	if (!this->states.empty()) this->states.top()->render();
+	if (!this->states.empty()) 
+		this->states.top()->render();
 
 	this->window->display();
 }

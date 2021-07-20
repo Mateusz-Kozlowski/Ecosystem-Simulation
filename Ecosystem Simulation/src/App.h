@@ -5,11 +5,9 @@
 class App
 {
 public:
-	// constructor/destructor:
 	App();
 	~App();
 	
-	// core:
 	void run();
 
 private:
@@ -27,6 +25,7 @@ private:
 
 	sf::Event event;
 
+	// private methods:
 	// initialization:
 	void initVariables();
 	void initGraphicsSettings();
