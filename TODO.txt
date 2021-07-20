@@ -16,7 +16,6 @@ side menu:
 app:
 - move getQuit to the top of update method, it will solve all issues with rendering unupdated states and so on
 - dt can be extremelly big if a window lost the focus
-- saving State?
 - define states freezing
 - <random> library? Check it out! Not C style of generating pseudorandom numbers
 
@@ -33,7 +32,12 @@ loading state:
 - "fake async loading" - before loading render some text with information about loading and 
   after the process is complited stop rendering that text
 
-GUI:
+UI:
+- input field text shouldn't dance up and down
+- there are 2 fonts; which should be used for what?
+- one convention of widgets size (input fields, buttons and so on from different states - 1 convention)
+- one convention of color:
+  borders color should be the same as a buttons color?
 - add NEAT-RT preview class
 - rename neural net preview to sequential preview or sth like that
 - one convention for all gui widgets, maybe even polimorphizm
@@ -72,6 +76,7 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
+- learn about inline functions and use them!
 - all objects should be initialized in 100% before first updates
   e.g. neural net brain preview class should color its neurons in constructor 
   and not wait with that till the first update

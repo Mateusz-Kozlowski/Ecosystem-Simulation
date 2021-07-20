@@ -153,8 +153,7 @@ void gui::SideMenu::addButton(
 		idle_color, hover_color, pressed_color,
 		outline_idle_color, outline_hover_color, outline_pressed_color,
 		text_idle_color, text_hover_color, text_pressed_color,
-		outlineThickness,
-		id
+		outlineThickness, id
 	);
 }
 

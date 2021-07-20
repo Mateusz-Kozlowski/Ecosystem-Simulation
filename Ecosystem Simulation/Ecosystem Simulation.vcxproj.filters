@@ -103,6 +103,9 @@
     <ClCompile Include="src\GodTools.cpp">
       <Filter>ecosystem</Filter>
     </ClCompile>
+    <ClCompile Include="src\SaveAsPanel.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -289,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="src\GodTools.h">
       <Filter>ecosystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SaveAsPanel.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

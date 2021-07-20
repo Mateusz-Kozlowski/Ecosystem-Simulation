@@ -1,6 +1,7 @@
 #pragma once
 
 #include "State.h"
+#include "SaveAsPanel.h"
 
 class SimulationState : public State
 {
@@ -28,6 +29,10 @@ private:
 	sf::RenderTexture renderTexture;
 	sf::Sprite renderSprite;
 
+	bool m_saveAsPanelIsRendered;
+
+	std::unique_ptr<gui::SaveAsPanel> saveAsPanel;
+
 	// private methods:
 	// initialization:
 	virtual void initKeybinds();
@@ -38,9 +43,11 @@ private:
 	void initDeferredRender();
 	void initSideMenu();
 	void initGodToolsGui();
+	void initSaveAsPanel();
 
 	// other private methods:
 	virtual void updateInput();
+	void updateInputWithPanelRendered();
 
 	virtual void updateMousePositions(const sf::View* view = nullptr);
 	
@@ -49,6 +56,8 @@ private:
 	void updateGodToolButton(const std::string& god_tool_btn_key);
 
 	void getUpdatesFromSideMenuGui();
+
+	void getUpdatesFromSaveAsPanel();
 	
 	void updateView();
 	

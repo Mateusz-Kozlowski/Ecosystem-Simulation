@@ -11,12 +11,16 @@ SimulationState::SimulationState(StateData* state_data)
 	this->initView();
 	this->initDeferredRender();
 	this->initSideMenu();
+	this->initSaveAsPanel();
 }
 
 // public methods:
 void SimulationState::update(float dt)
 {
-	this->updateInput();
+	if (!this->m_saveAsPanelIsRendered)
+		this->updateInput();
+	else
+		this->updateInputWithPanelRendered();
 
 	this->updateMousePositions(&this->view);
 
@@ -24,6 +28,11 @@ void SimulationState::update(float dt)
 		this->updateSideMenu();
 
 	this->getUpdatesFromSideMenuGui();
+
+	if (this->m_saveAsPanelIsRendered)
+		this->saveAsPanel->update(dt, *this->stateData->events, this->mousePosWindow);
+
+	this->getUpdatesFromSaveAsPanel();
 
 	this->updateView();
 
@@ -42,11 +51,14 @@ void SimulationState::render(sf::RenderTarget* target)
 
 	this->stateData->ecosystem->render(this->renderTexture);
 
-	// render simulation menu:
+	// render side menu and save as panel:
 	this->renderTexture.setView(this->renderTexture.getDefaultView());
 
 	if (this->m_sideMenuIsRendered)
 		this->sideMenu->render(this->renderTexture);
+
+	if (this->m_saveAsPanelIsRendered)
+		this->saveAsPanel->render(this->renderTexture);
 
 	// final render:
 	this->renderTexture.display();
@@ -84,6 +96,7 @@ void SimulationState::initVariables()
 {
 	this->sideMenu = nullptr;
 	this->m_sideMenuIsRendered = false;
+	this->m_saveAsPanelIsRendered = false;
 	this->previousMousePosWindow = sf::Vector2i(0, 0);
 }
 
@@ -142,14 +155,14 @@ void SimulationState::initSideMenu()
 
 	// create new SideMenu:
 	this->sideMenu = std::make_unique<gui::SideMenu>(
-		sf::Vector2f(0.f, 0.f),
-		sf::Vector2f(gui::p2pX(24, resolution), gui::p2pY(100, resolution)),
+		sf::Vector2f(0.0f, 0.0f),
+		sf::Vector2f(gui::p2pX(24.0f, resolution), gui::p2pY(100.0f, resolution)),
 		sf::Color(48, 48, 48)
 	);
 
 	// add widgets:
 	this->sideMenu->addCenteredText(
-		gui::p2pY(4.f, resolution),
+		gui::p2pY(4.0f, resolution),
 		charSize,
 		this->fonts["CONSOLAB"],
 		"PLAY/STOP:",
@@ -466,6 +479,79 @@ void SimulationState::initGodToolsGui()
 	);
 }
 
+void SimulationState::initSaveAsPanel()
+{
+	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+
+	this->saveAsPanel = std::make_unique<gui::SaveAsPanel>(
+		sf::Vector2f(
+			resolution.width,
+			resolution.height
+		),
+		gui::p2pX(32.0f, resolution),
+		sf::Color(0, 0, 0, 100)
+	);
+
+	this->saveAsPanel->initCenteredText(
+		gui::p2pY(37.0f, resolution),
+		"ECOSYSTEM NAME: ",
+		this->fonts["CONSOLAB"],
+		gui::calcCharSize(26U, resolution),
+		sf::Color(225, 225, 255)
+	);
+
+	this->saveAsPanel->initInputField(
+		sf::Vector2f(
+			gui::p2pX(37.0f, resolution),
+			gui::p2pY(45.0f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(26.0f, resolution),
+			gui::p2pY(4.5f, resolution)
+		),
+		this->fonts["Retroica"], "",
+		gui::calcCharSize(24U, resolution),
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.6f, resolution), gui::p2pY(100.f / 1080.f, resolution), 0.5f
+	);
+
+	this->saveAsPanel->addButton(
+		"SAVE",
+		sf::Vector2f(
+			gui::p2pX(37.0f, resolution),
+			gui::p2pY(54.2f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(4.5f, resolution)
+		),
+		this->fonts["CONSOLAB"], "SAVE", gui::calcCharSize(26U, resolution),
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.6f, resolution)
+	);
+
+	this->saveAsPanel->addButton(
+		"OK",
+		sf::Vector2f(
+			gui::p2pX(51.0f, resolution),
+			gui::p2pY(54.2f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(4.5f, resolution)
+		),
+		this->fonts["CONSOLAB"], "OK", gui::calcCharSize(26U, resolution),
+		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		gui::p2pY(0.6f, resolution)
+	);
+}
+
 // other private methods:
 void SimulationState::updateInput()
 {
@@ -476,7 +562,7 @@ void SimulationState::updateInput()
 			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("CLOSE")))
 			{
 				this->m_sideMenuIsRendered = !this->m_sideMenuIsRendered;
-				break;
+				return;
 			}
 			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("PAUSE")))
 			{
@@ -490,7 +576,22 @@ void SimulationState::updateInput()
 					this->stateData->ecosystem->pauseSimulation();
 					this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
 				}
-				break;
+				return;
+			}
+		}
+	}
+}
+
+void SimulationState::updateInputWithPanelRendered()
+{
+	for (const auto& event : *this->stateData->events)
+	{
+		if (event.type == sf::Event::KeyReleased)
+		{
+			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("CLOSE")))
+			{
+				this->m_sideMenuIsRendered = !this->m_sideMenuIsRendered;
+				return;
 			}
 		}
 	}
@@ -714,8 +815,22 @@ void SimulationState::getUpdatesFromSideMenuGui()
 	if (this->sideMenu->getButtons().at("SAVE")->isClicked())
 		this->stateData->ecosystem->saveToFolder("ecosystems/" + this->stateData->ecosystem->getName());
 
+	else if (this->sideMenu->getButtons().at("SAVE AS")->isClicked())
+		this->m_saveAsPanelIsRendered = true;
+
 	else if (this->sideMenu->getButtons().at("QUIT")->isClicked()) 
 		this->endState();
+}
+
+void SimulationState::getUpdatesFromSaveAsPanel()
+{
+	if (this->saveAsPanel->getButton("SAVE")->isClicked())
+		this->stateData->ecosystem->saveToFolder(
+			"ecosystems/" + this->saveAsPanel->getInputField()->getInput()
+		);
+
+	else if (this->saveAsPanel->getButton("OK")->isClicked())
+		this->m_saveAsPanelIsRendered = false;
 }
 
 void SimulationState::updateView()

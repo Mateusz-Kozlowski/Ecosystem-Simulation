@@ -3,7 +3,6 @@
 
 using namespace gui;
 
-// constructor:
 InputField::InputField(
     const sf::Vector2f& position,
     const sf::Vector2f& size,
@@ -13,11 +12,11 @@ InputField::InputField(
     const sf::Color& text_idle_color, const sf::Color& text_hovered_color, const sf::Color& text_pressed_color,
     float outline_thickness, float cursor_width, float cursor_frequency,
     bool turned_on, int id)
-    : font(font), char_size(char_size), input(default_str),
-    stopwatch(0.f), cursorFrequency(cursor_frequency), cursorIsRendered(false),
-    turnedOnBlockade(false), turnedOn(turned_on), mHasBeenTurnedOn(false), id(id),
-    state("IDLE"),
-    textHasChanged(false), stateHasChanged(false)
+    : font(font), charSize(char_size), input(default_str),
+      stopwatch(0.f), cursorFrequency(cursor_frequency), cursorIsRendered(false),
+      turnedOnBlockade(false), turnedOn(turned_on), m_HasBeenTurnedOn(false), id(id),
+      state("IDLE"),
+      textHasChanged(false), stateHasChanged(false)
 {
     this->initRect(position, size, idle_color, outline_idle_color, outline_thickness);
     this->initText(default_str, char_size, text_idle_color);
@@ -26,6 +25,40 @@ InputField::InputField(
         outline_idle_color, outline_hovered_color, outline_pressed_color,
         text_idle_color, text_hovered_color, text_pressed_color
     );
+}
+
+// public methods:
+void InputField::update(
+    float dt,
+    const std::vector<sf::Event>& events,
+    const sf::Vector2i& mouse_pos_window)
+{
+    this->updateState(events, mouse_pos_window);
+
+    if (this->stateHasChanged)
+        this->updateColors();
+
+    if (!this->turnedOn)
+        return;
+
+    this->handleTextEntering(events);
+
+    if (this->textHasChanged)
+    {
+        this->updateTextPosition();
+        this->updateCursorPosition();
+    }
+
+    this->updateCursorVisibility(dt);
+}
+
+void InputField::render(sf::RenderTarget& target)
+{
+    target.draw(this->rect);
+    target.draw(this->text);
+
+    if (this->cursorIsRendered)
+        target.draw(this->cursor);
 }
 
 // accessors:
@@ -46,7 +79,7 @@ bool InputField::isTurnedOn() const
 
 bool InputField::hasBeenTurnedOn() const
 {
-    return this->mHasBeenTurnedOn;
+    return this->m_HasBeenTurnedOn;
 }
 
 // mutators:
@@ -70,36 +103,7 @@ void InputField::setString(const std::string& string)
     this->input = string;
 }
 
-// other public methods:
-void InputField::update(
-    float dt,
-    const std::vector<sf::Event>& events,
-    const sf::Vector2i& mouse_pos_window)
-{
-    this->updateState(events, mouse_pos_window);
-
-    if (this->stateHasChanged) this->updateColors();
-
-    if (!this->turnedOn) return;
-
-    this->handleTextEntering(events);
-
-    if (this->textHasChanged)
-    {
-        this->updateTextPosition();
-        this->updateCursorPosition();
-    }
-
-    this->updateCursorVisibility(dt);
-}
-
-void InputField::render(sf::RenderTarget& target)
-{
-    target.draw(this->rect);
-    target.draw(this->text);
-
-    if (this->cursorIsRendered) target.draw(this->cursor);
-}
+// private methods:
 
 // initialization:
 void InputField::initRect(
@@ -138,8 +142,8 @@ void InputField::initText(
 
 void InputField::initCursor(float cursor_width, const sf::Color& text_idle_color)
 {
-    this->cursor.setOrigin(0.f, this->char_size / 2.f);
-    this->cursor.setSize(sf::Vector2f(cursor_width, char_size));
+    this->cursor.setOrigin(0.f, this->charSize / 2.f);
+    this->cursor.setSize(sf::Vector2f(cursor_width, charSize));
     this->cursor.setFillColor(text_idle_color);
     this->cursor.setPosition(
         this->text.getGlobalBounds().left + this->text.getGlobalBounds().width + this->cursor.getSize().x,
@@ -168,7 +172,7 @@ void InputField::initColors(
 // other private methods:
 void InputField::updateState(const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window)
 {
-    this->mHasBeenTurnedOn = false;
+    this->m_HasBeenTurnedOn = false;
     this->stateHasChanged = false;
 
     if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window)))
@@ -187,9 +191,10 @@ void InputField::updateState(const std::vector<sf::Event>& events, const sf::Vec
 
                 this->turnedOn = !this->turnedOn;
 
-                if (this->turnedOn) this->mHasBeenTurnedOn;
-
-                else this->cursorIsRendered = false;
+                if (this->turnedOn) 
+                    this->m_HasBeenTurnedOn;
+                else 
+                    this->cursorIsRendered = false;
             }
         }
         else
@@ -231,17 +236,20 @@ void InputField::handleTextEntering(const std::vector<sf::Event>& events)
     for (const auto& event : events)
         if (event.type == sf::Event::TextEntered)
         {
-            if (event.text.unicode != 8) // different than Backspace key
+            if (event.text.unicode == 8) // backspace
             {
-                this->textHasChanged = true;
-                this->input.push_back(event.text.unicode);
-                this->text.setString(this->input);
+                if (!this->input.empty())
+                {
+                    this->textHasChanged = true;
+                    this->input.pop_back();
+                    this->text.setString(this->input);
+                }
             }
-            else if (this->input.size())
+            if (event.text.unicode > 31)
             {
-                this->textHasChanged = true;
-                this->input.pop_back();
-                this->text.setString(this->input);
+                    this->textHasChanged = true;
+                    this->input.push_back(event.text.unicode);
+                    this->text.setString(this->input);
             }
         }
 }

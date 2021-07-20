@@ -7,7 +7,6 @@ namespace gui
 	class InputField
 	{
 	public:
-		// constructor:
 		InputField(
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
@@ -18,6 +17,10 @@ namespace gui
 			float outline_thickness, float cursor_width, float cursor_frequency,
 			bool turned_on = true, int id = 0
 		);
+
+		// public methods:
+		void update(float dt, const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window);
+		void render(sf::RenderTarget& target);
 
 		// accessors:
 		int getId() const;
@@ -33,17 +36,13 @@ namespace gui
 		void turnOff();
 
 		void setString(const std::string& string);
-	
-		// other public methods:
-		void update(float dt, const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window);
-		void render(sf::RenderTarget& target);
 
 	private:
 		sf::RectangleShape rect;
 		
 		const sf::Font& font;
 		
-		float char_size;
+		float charSize;
 		
 		sf::Text text;
 
@@ -61,7 +60,7 @@ namespace gui
 		bool turnedOnBlockade;
 
 		bool turnedOn;
-		bool mHasBeenTurnedOn;
+		bool m_HasBeenTurnedOn;
 
 		int id;
 
@@ -70,6 +69,7 @@ namespace gui
 		bool textHasChanged;
 		bool stateHasChanged;
 
+		// private methods:
 		// initialization:
 		void initRect(
 			const sf::Vector2f& position,
@@ -92,7 +92,7 @@ namespace gui
 		);
 
 		// other private methods:
-		void updateState(const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window);
+		void updateState(const std::vector<sf::Event>& events, const sf::Vector2i& mouse_position_window);
 		void updateColors();
 		void handleTextEntering(const std::vector<sf::Event>& events);
 		void updateTextPosition();
