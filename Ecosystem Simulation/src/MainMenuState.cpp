@@ -214,8 +214,11 @@ void MainMenuState::getUpdateFromButtons()
 		else
 			this->highlightEcosystemText();
 		*/
-		this->stateData->states->push(new SimulationState(this->stateData));
-		this->stateData->states->top()->freeze();
+		if (this->stateData->ecosystem)
+		{
+			this->stateData->states->push(new SimulationState(this->stateData));
+			this->stateData->states->top()->freeze();
+		}
 	}
 
 	else if (this->buttons["NEW ECOSYSTEM"]->isClicked())
