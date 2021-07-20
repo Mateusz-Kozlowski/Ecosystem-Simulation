@@ -26,22 +26,18 @@ simulation state:
   save that changes and maybe other things
 
 loading state:
-- "fake async loading" - before loading render some text with information about loading and 
-  after the process is complited stop rendering that text
+- automatically add 'ecosystem/' to paths in loading state
 
 UI:
 - hold fonts in static way and as keys use UNMUTABLE and MUTABLE strings/const char* or sth like that
 - unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
 - input field text shouldn't dance up and down
 - there are 2 fonts; which should be used for what?
-- one convention of widgets size (input fields, buttons and so on from different states - 1 convention)
-- one convention of color:
-  borders color should be the same as a buttons color?
 - add NEAT-RT preview class
 - rename neural net preview to sequential preview or sth like that
 - one convention for all gui widgets, maybe even polimorphizm
 - some GUI widgets positions are set relative to their centers and some are set relative to their
-- left-top corners; add an ability to control their positions in these two ways
+  left-top corners; add an ability to control their positions in these two ways
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
@@ -55,13 +51,8 @@ simulation/ecosystem:
 - transfer energy from animals to fruits sometimes need to create a new fruit 
   if there are no fruits in a ecosystem
 - total energy is not conservate - fix that!
-- carefully test saving and loading ecosystems
-- there are 2 isPaused variables - in Ecosystem class and in Simulation state class
-  get rid of one of them
 - there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
 - update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
-- implement info tool (probably it'll be able to give info not only about the entire ecosystem
-  but also about particular animals if they are tracked at the moment or sth :) )
 
 shortcuts:
 - speeding up and slowing down
