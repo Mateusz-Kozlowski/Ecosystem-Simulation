@@ -7,6 +7,7 @@ LoadingState::LoadingState(StateData* state_data)
 	this->initKeybinds();
 	this->initBackground();
 	this->initFonts();
+	this->initTexts();
 	this->initInputField();
 	this->initButtons();
 }
@@ -32,6 +33,9 @@ void LoadingState::render(sf::RenderTarget* target)
 		target = this->stateData->window;
 
 	target->draw(this->background);
+
+	for (const auto& text : this->texts)
+		target->draw(*text.second);
 
 	this->inputField->render(*target);
 
@@ -89,20 +93,45 @@ void LoadingState::initFonts()
 		throw("ERROR::EcosystemCreatorState::CANNOT LOAD A FONT!\n");
 }
 
+void LoadingState::initTexts()
+{
+	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+
+	this->texts["ECOSYSTEM NAME"] = std::make_unique<sf::Text>(
+		"ECOSYSTEM NAME:",
+		this->font,
+		gui::calcCharSize(32U, resolution)
+	);
+	this->texts["ECOSYSTEM NAME"]->setFillColor(sf::Color(225, 225, 225));
+	this->texts["ECOSYSTEM NAME"]->setOrigin(
+		sf::Vector2f(
+			this->texts["ECOSYSTEM NAME"]->getGlobalBounds().width / 2.0f,
+			0.0f
+		)
+	);
+	this->texts["ECOSYSTEM NAME"]->setPosition(
+		sf::Vector2f(
+			resolution.width / 2.0f,
+			gui::p2pY(37.0f, resolution)
+		)
+	);
+}
+
 void LoadingState::initInputField()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
 	this->inputField = std::make_unique<gui::InputField>(
 		sf::Vector2f(
-			gui::p2pX(27.f, resolution),
-			gui::p2pY(37.9f, resolution)
+			gui::p2pX(36.0f, resolution),
+			gui::p2pY(45.0f, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(50.f, resolution),
-			gui::p2pY(7.f, resolution)
+			gui::p2pX(28.0f, resolution),
+			gui::p2pY(4.5f, resolution)
 		),
-		this->font, "ecosystems/big", gui::calcCharSize(32.0f, resolution),
+		this->font, "",
+		gui::calcCharSize(26U, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
@@ -114,36 +143,38 @@ void LoadingState::initButtons()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
+	float positionYPercentage = 86.5f;
+
 	this->buttons["LOAD"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
-			gui::p2pX(27.f, resolution),
-			gui::p2pY(54.3f, resolution)
+			gui::p2pX(70.0f, resolution),
+			gui::p2pY(positionYPercentage, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
-			gui::p2pY(7.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(4.5f, resolution)
 		),
-		this->font, "LOAD", gui::calcCharSize(32.0f, resolution),
+		this->font, "LOAD", gui::calcCharSize(26U, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.8f, resolution), 0
+		gui::p2pY(0.6f, resolution)
 	);
 
 	this->buttons["OK"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
-			gui::p2pX(53.f, resolution),
-			gui::p2pY(54.3f, resolution)
+			gui::p2pX(84.0f, resolution),
+			gui::p2pY(positionYPercentage, resolution)
 		),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
-			gui::p2pY(7.f, resolution)
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(4.5f, resolution)
 		),
-		this->font, "OK", gui::calcCharSize(32.0f, resolution),
+		this->font, "OK", gui::calcCharSize(26U, resolution),
 		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
 		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
 		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.8f, resolution), 1
+		gui::p2pY(0.6f, resolution)
 	);
 }
 

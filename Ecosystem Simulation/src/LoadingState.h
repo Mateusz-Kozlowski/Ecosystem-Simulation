@@ -21,14 +21,17 @@ private:
 
 	sf::Font font;
 
-	std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
+	std::unordered_map<const char*, std::unique_ptr<sf::Text>> texts;
+
 	std::unique_ptr<gui::InputField> inputField;
+	std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
 
 	// private methods:
 	// initialization:
 	virtual void initKeybinds();
 	void initBackground();
 	void initFonts();
+	void initTexts();
 	void initInputField();
 	void initButtons();
 
