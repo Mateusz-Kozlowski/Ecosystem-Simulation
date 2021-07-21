@@ -904,7 +904,7 @@ void Ecosystem::updateWorld(float dt)
 {
 	this->updateAnimals(dt);
 	this->avoidTunneling();
-	this->killAnimalsStickingToBorders();
+	//this->killAnimalsStickingToBorders();
 	this->transferEnergyFromAnimalsToFruits();
 	this->removeDeadAnimals();
 	this->feedAnimals();
