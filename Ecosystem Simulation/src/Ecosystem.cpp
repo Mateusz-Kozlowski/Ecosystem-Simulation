@@ -600,7 +600,8 @@ void Ecosystem::loadEcosystem(const std::string& file_path)
 	unsigned fruitsColorR, fruitsColorG, fruitsColorB, fruitsColorA;
 	unsigned trackedAnimalColorR, trackedAnimalColorG, trackedAnimalColorB, trackedAnimalColorA;
 
-	ifs >> this->name;
+	std::getline(ifs, this->name);
+	
 	ifs >> worldSize.x >> worldSize.y;
 	ifs >> bordersThickness;
 
@@ -660,6 +661,8 @@ void Ecosystem::loadEcosystem(const std::string& file_path)
 		trackedAnimalColorA
 	);
 
+	this->trackedAnimal = nullptr;
+
 	if (trackedAnimalIndex != -1)
 		this->makeTracked(*this->animals[trackedAnimalIndex]);
 }
@@ -676,6 +679,8 @@ void Ecosystem::makeTracked(Animal& animal)
 
 void Ecosystem::loadHpBarsVisibility(const std::string& file_path)
 {
+	this->hpBarsVisibility.clear();
+
 	std::ifstream ifs(file_path);
 
 	if (!ifs.is_open())
@@ -697,6 +702,8 @@ void Ecosystem::loadHpBarsVisibility(const std::string& file_path)
 
 void Ecosystem::loadBrainsPreviewsVisibility(const std::string& file_path)
 {
+	this->brainsPreviewsVisibility.clear();
+
 	std::ifstream ifs(file_path);
 
 	if (!ifs.is_open())
