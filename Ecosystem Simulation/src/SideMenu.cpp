@@ -52,7 +52,7 @@ const sf::Vector2f& gui::SideMenu::getSize() const
 	return this->background.getSize();
 }
 
-const std::unordered_map<std::string, std::unique_ptr<gui::TextureButton>>& gui::SideMenu::getTextureButtons() const
+const std::unordered_map<std::string, std::unique_ptr<gui::ImageButton>>& gui::SideMenu::getImageButtons() const
 {
 	return this->textureButtons;
 }
@@ -67,7 +67,7 @@ const std::unordered_map<std::string, std::unique_ptr<gui::Slider>>& gui::SideMe
 	return this->scaleSliders;
 }
 
-bool SideMenu::hasTextureButtonBeenClicked(const std::string& key)
+bool SideMenu::hasImageButtonBeenClicked(const std::string& key)
 {
 	return this->textureButtons[key]->hasBeenClicked();
 }
@@ -119,7 +119,7 @@ void gui::SideMenu::setPosition(const sf::Vector2f& new_pos)
 		);
 }
 
-void gui::SideMenu::addTextureButton(
+void gui::SideMenu::addImageButton(
 	const std::string& key,
 	const std::vector<std::pair<std::string, std::string>>& textures_path_and_keys,
 	const std::string& key_of_default_texture,
@@ -127,7 +127,7 @@ void gui::SideMenu::addTextureButton(
 	const sf::Vector2f& size,
 	int id)
 {
-	this->textureButtons[key] = std::make_unique<gui::TextureButton>(
+	this->textureButtons[key] = std::make_unique<gui::ImageButton>(
 		textures_path_and_keys,
 		key_of_default_texture,
 		position,
@@ -204,7 +204,7 @@ void gui::SideMenu::addCenteredText(
 	);
 }
 
-void gui::SideMenu::setTextureOfTextureButton(const std::string& button_key, const std::string& texture_key)
+void gui::SideMenu::setTextureOfImageButton(const std::string& button_key, const std::string& texture_key)
 {
 	this->textureButtons[button_key]->setTexture(texture_key);
 }

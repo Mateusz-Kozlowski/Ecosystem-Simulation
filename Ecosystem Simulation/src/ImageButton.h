@@ -5,11 +5,11 @@
 
 namespace gui
 {
-	class TextureButton
+	class ImageButton
 	{
 	public:
 		// constructor:
-		TextureButton(
+		ImageButton(
 			const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths,
 			const std::string& key_of_default_texture,
 			const sf::Vector2f& position,

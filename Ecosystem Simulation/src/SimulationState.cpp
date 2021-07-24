@@ -168,7 +168,7 @@ void SimulationState::initSideMenu()
 		"PLAY/STOP:",
 		sf::Color(225, 225, 225)
 	);
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"PAUSE",
 		{
 			{"PLAY IDLE", guiPath + "/play and stop/play.png"},
@@ -226,7 +226,7 @@ void SimulationState::initSideMenu()
 		"MOVE THIS PANEL:",
 		sf::Color(225, 225, 225)
 	);
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"ARROW",
 		{
 			{"LEFT IDLE", guiPath + "/arrows/left arrow.png"},
@@ -258,7 +258,7 @@ void SimulationState::initSideMenu()
 		"ZOOM:",
 		sf::Color(225, 225, 225)
 	);
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"ZOOM IN",
 		{
 			{"IDLE", guiPath + "/zoom/zoom in.png"},
@@ -276,7 +276,7 @@ void SimulationState::initSideMenu()
 		)
 	);
 
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"ZOOM OUT",
 		{
 			{"IDLE", guiPath + "/zoom/zoom out.png"},
@@ -370,7 +370,7 @@ void SimulationState::initGodToolsGui()
 		sf::Color(225, 225, 225)
 	);
 
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"TRACK",
 		{
 			{"IDLE", guiPath + "/God tools/track/track.png"},
@@ -388,7 +388,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"KILL",
 		{
 			{"IDLE", guiPath + "/God tools/kill/kill.png"},
@@ -406,7 +406,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"REPLACE",
 		{
 			{"IDLE", guiPath + "/God tools/replace/replace.png"},
@@ -424,7 +424,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"BRAIN",
 		{
 			{"IDLE", guiPath + "/God tools/brain/brain.png"},
@@ -442,7 +442,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"STOP",
 		{
 			{"IDLE", guiPath + "/God tools/stop/stop.png"},
@@ -460,7 +460,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addTextureButton(
+	this->sideMenu->addImageButton(
 		"INFO",
 		{
 			{"IDLE", guiPath + "/God tools/info/info.png"},
@@ -570,12 +570,12 @@ void SimulationState::updateInput()
 				if (this->stateData->ecosystem->isSimulationPaused())
 				{
 					this->stateData->ecosystem->unpauseSimulation();
-					this->sideMenu->setTextureOfTextureButton("PAUSE", "STOP");
+					this->sideMenu->setTextureOfImageButton("PAUSE", "STOP");
 				}
 				else
 				{
 					this->stateData->ecosystem->pauseSimulation();
-					this->sideMenu->setTextureOfTextureButton("PAUSE", "PLAY");
+					this->sideMenu->setTextureOfImageButton("PAUSE", "PLAY");
 				}
 				return;
 			}
@@ -628,31 +628,31 @@ void SimulationState::updateSideMenu()
 void SimulationState::updateSideMenuGui()
 {
 	// change themes of texture buttons:
-	for (auto& it : this->sideMenu->getTextureButtons())
+	for (auto& it : this->sideMenu->getImageButtons())
 	{
 		if (it.first == "PAUSE") // pause button:
 		{
 			if (it.second->getCurrentTextureKey().substr(0, 4) == "PLAY")
 			{
 				if (it.second->isPressed())
-					this->sideMenu->setTextureOfTextureButton(it.first, "PLAY PRESSED");
+					this->sideMenu->setTextureOfImageButton(it.first, "PLAY PRESSED");
 
 				else if (it.second->isHovered())
-					this->sideMenu->setTextureOfTextureButton(it.first, "PLAY HOVERED");
+					this->sideMenu->setTextureOfImageButton(it.first, "PLAY HOVERED");
 
 				else
-					this->sideMenu->setTextureOfTextureButton(it.first, "PLAY IDLE");
+					this->sideMenu->setTextureOfImageButton(it.first, "PLAY IDLE");
 			}
 			else
 			{
 				if (it.second->isPressed())
-					this->sideMenu->setTextureOfTextureButton(it.first, "STOP PRESSED");
+					this->sideMenu->setTextureOfImageButton(it.first, "STOP PRESSED");
 
 				else if (it.second->isHovered())
-					this->sideMenu->setTextureOfTextureButton(it.first, "STOP HOVERED");
+					this->sideMenu->setTextureOfImageButton(it.first, "STOP HOVERED");
 
 				else
-					this->sideMenu->setTextureOfTextureButton(it.first, "STOP IDLE");
+					this->sideMenu->setTextureOfImageButton(it.first, "STOP IDLE");
 			}
 		}
 		else if (it.first == "ARROW") // arrow button:
@@ -660,36 +660,36 @@ void SimulationState::updateSideMenuGui()
 			if (it.second->getCurrentTextureKey().substr(0, 5) == "RIGHT")
 			{
 				if (it.second->isPressed())
-					this->sideMenu->setTextureOfTextureButton(it.first, "RIGHT PRESSED");
+					this->sideMenu->setTextureOfImageButton(it.first, "RIGHT PRESSED");
 
 				else if (it.second->isHovered())
-					this->sideMenu->setTextureOfTextureButton(it.first, "RIGHT HOVERED");
+					this->sideMenu->setTextureOfImageButton(it.first, "RIGHT HOVERED");
 
 				else
-					this->sideMenu->setTextureOfTextureButton(it.first, "RIGHT IDLE");
+					this->sideMenu->setTextureOfImageButton(it.first, "RIGHT IDLE");
 			}
 			else
 			{
 				if (it.second->isPressed())
-					this->sideMenu->setTextureOfTextureButton(it.first, "LEFT PRESSED");
+					this->sideMenu->setTextureOfImageButton(it.first, "LEFT PRESSED");
 
 				else if (it.second->isHovered())
-					this->sideMenu->setTextureOfTextureButton(it.first, "LEFT HOVERED");
+					this->sideMenu->setTextureOfImageButton(it.first, "LEFT HOVERED");
 
 				else
-					this->sideMenu->setTextureOfTextureButton(it.first, "LEFT IDLE");
+					this->sideMenu->setTextureOfImageButton(it.first, "LEFT IDLE");
 			}
 		}
 		else if (it.first.substr(0, 4) == "ZOOM")
 		{
 			if (it.second->isPressed())
-				this->sideMenu->setTextureOfTextureButton(it.first, "PRESSED");
+				this->sideMenu->setTextureOfImageButton(it.first, "PRESSED");
 
 			else if (it.second->isHovered())
-				this->sideMenu->setTextureOfTextureButton(it.first, "HOVERED");
+				this->sideMenu->setTextureOfImageButton(it.first, "HOVERED");
 
 			else
-				this->sideMenu->setTextureOfTextureButton(it.first, "IDLE");
+				this->sideMenu->setTextureOfImageButton(it.first, "IDLE");
 		}
 		else // God tools buttons: 
 			this->updateGodToolButton(it.first);
@@ -703,58 +703,58 @@ void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
 	if (god_tool_btn_key == currentGodToolStr)
 	{
 		// if the current tool has been clicked, it is no longer the current tool:
-		if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->hasBeenClicked())
+		if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->hasBeenClicked())
 		{
 			// the button is hovered, because u can't click a button without hovering it with a mouse cursor:
-			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
+			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "LIGHT");
 
 			this->stateData->ecosystem->setGodTool(GodTool::NONE);
 		}
 
 		// pretty straight forward, it's pressed so it's dark:
-		else if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->isPressed())
+		else if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->isPressed())
 		{
-			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "DARK");
+			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "DARK");
 		}
 
 		// is hovered so is light:
-		else if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->isHovered())
+		else if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->isHovered())
 		{
-			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
+			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "LIGHT");
 		}
 
 		// it is neither hovered nor pressed, but let me remind u, that it's still the current tool, so we darken it:
 		else
 		{
-			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "DARK");
+			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "DARK");
 		}
 	}
 	else // the argument isn't the current tool:
 	{
 		// the tool become the current one:
-		if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->hasBeenClicked())
+		if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->hasBeenClicked())
 		{
 			// old tool (if it exists at all) ceases to be the current tool:
 			if (this->stateData->ecosystem->getCurrentGodTool() != GodTool::NONE) 
-				this->sideMenu->setTextureOfTextureButton(currentGodToolStr, "IDLE");
+				this->sideMenu->setTextureOfImageButton(currentGodToolStr, "IDLE");
 
 			this->stateData->ecosystem->setGodTool(getGodTool(god_tool_btn_key.c_str()));
 
 			// we brighten it up,
 			// because a mouse cursor is still covering it (because it has just been clicked and a mouse hasn't go away yet):
-			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
+			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "LIGHT");
 		}
 
 		// next pretty straight forward line, it's hovered so it's light: 
-		else if (this->sideMenu->getTextureButtons().at(god_tool_btn_key)->isHovered())
+		else if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->isHovered())
 		{
-			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "LIGHT");
+			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "LIGHT");
 		}
 
 		// the most common case, ordinary idle tool:
 		else
 		{
-			this->sideMenu->setTextureOfTextureButton(god_tool_btn_key, "IDLE");
+			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "IDLE");
 		}
 	}
 }
@@ -762,25 +762,25 @@ void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
 void SimulationState::getUpdatesFromSideMenuGui()
 {
 	// get update from side menu texture buttons:
-	if (this->sideMenu->getTextureButtons().at("PAUSE")->hasBeenClicked())
+	if (this->sideMenu->getImageButtons().at("PAUSE")->hasBeenClicked())
 	{
 		if (this->stateData->ecosystem->isSimulationPaused())
 			this->stateData->ecosystem->unpauseSimulation();
 		else
 			this->stateData->ecosystem->pauseSimulation();
 
-		std::string currentTextureKey = this->sideMenu->getTextureButtons().at("PAUSE")->getCurrentTextureKey();
+		std::string currentTextureKey = this->sideMenu->getImageButtons().at("PAUSE")->getCurrentTextureKey();
 
 		if (currentTextureKey.substr(0, 4) == "PLAY")
-			this->sideMenu->setTextureOfTextureButton("PAUSE", currentTextureKey.replace(0, 4, "STOP"));
+			this->sideMenu->setTextureOfImageButton("PAUSE", currentTextureKey.replace(0, 4, "STOP"));
 
 		else
-			this->sideMenu->setTextureOfTextureButton("PAUSE", currentTextureKey.replace(0, 4, "PLAY"));
+			this->sideMenu->setTextureOfImageButton("PAUSE", currentTextureKey.replace(0, 4, "PLAY"));
 	}
 
-	if (this->sideMenu->getTextureButtons().at("ARROW")->hasBeenClicked())
+	if (this->sideMenu->getImageButtons().at("ARROW")->hasBeenClicked())
 	{
-		std::string currentTextureKey = this->sideMenu->getTextureButtons().at("ARROW")->getCurrentTextureKey();
+		std::string currentTextureKey = this->sideMenu->getImageButtons().at("ARROW")->getCurrentTextureKey();
 
 		if (currentTextureKey.substr(0, 5) == "RIGHT")
 		{
@@ -791,7 +791,7 @@ void SimulationState::getUpdatesFromSideMenuGui()
 				)
 			);
 
-			this->sideMenu->setTextureOfTextureButton("ARROW", currentTextureKey.replace(0, 5, "LEFT"));
+			this->sideMenu->setTextureOfImageButton("ARROW", currentTextureKey.replace(0, 5, "LEFT"));
 		}
 		else
 		{
@@ -802,14 +802,14 @@ void SimulationState::getUpdatesFromSideMenuGui()
 				)
 			);
 
-			this->sideMenu->setTextureOfTextureButton("ARROW", currentTextureKey.replace(0, 4, "RIGHT"));
+			this->sideMenu->setTextureOfImageButton("ARROW", currentTextureKey.replace(0, 4, "RIGHT"));
 		}
 	}
 
-	if (this->sideMenu->getTextureButtons().at("ZOOM IN")->isPressed())
+	if (this->sideMenu->getImageButtons().at("ZOOM IN")->isPressed())
 		this->view.zoom(0.95f);
 
-	if (this->sideMenu->getTextureButtons().at("ZOOM OUT")->isPressed())
+	if (this->sideMenu->getImageButtons().at("ZOOM OUT")->isPressed())
 		this->view.zoom(1.0f / 0.95f);
 
 	// get update from side menu buttons:

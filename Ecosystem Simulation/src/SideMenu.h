@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TextureButton.h"
+#include "ImageButton.h"
 #include "Button.h"
 #include "Slider.h"
 
@@ -24,18 +24,18 @@ namespace gui
 
 		const sf::Vector2f& getSize() const;
 
-		const std::unordered_map<std::string, std::unique_ptr<gui::TextureButton>>& getTextureButtons() const;
+		const std::unordered_map<std::string, std::unique_ptr<gui::ImageButton>>& getImageButtons() const;
 		const std::unordered_map<std::string, std::unique_ptr<gui::Button>>& getButtons() const;
 		const std::unordered_map<std::string, std::unique_ptr<gui::Slider>>& getSliders() const;
 
-		bool hasTextureButtonBeenClicked(const std::string& key);
+		bool hasImageButtonBeenClicked(const std::string& key);
 
 		const sf::RectangleShape& getBackground() const;
 			
 		// mutators:
 		void setPosition(const sf::Vector2f& new_pos);
 
-		void addTextureButton(
+		void addImageButton(
 			const std::string& key,
 			const std::vector<std::pair<std::string, std::string>>& textures_path_and_keys,
 			const std::string& key_of_default_texture,
@@ -44,7 +44,7 @@ namespace gui
 			int id = 0
 		);
 
-		void setTextureOfTextureButton(
+		void setTextureOfImageButton(
 			const std::string& button_key,
 			const std::string& texture_key
 		);
@@ -84,7 +84,7 @@ namespace gui
 	private:
 		sf::RectangleShape background;
 
-		std::unordered_map<std::string, std::unique_ptr<gui::TextureButton>> textureButtons;
+		std::unordered_map<std::string, std::unique_ptr<gui::ImageButton>> textureButtons;
 		std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
 		std::unordered_map<std::string, std::unique_ptr<gui::Slider>> scaleSliders;
 

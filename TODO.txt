@@ -38,6 +38,11 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- u can use store animals in std::unique_ptrs in Animal class;
+  in order to clone an animal just create an empty brand new animal and then do this:
+  *a1 = *a2
+  where a1 and a2 are std::unique_ptrs;
+  this line of code will call copy assigment operator of Animal class
 - if killing animals sticking to borders will be needed 
   uncomment it and maybe change the way how it works
 - in every function that loads something from a folder add is_directory function that checks if a folder exists at all;
@@ -66,6 +71,7 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
+- use override keyword
 - learn about inline functions and use them!
 - all objects should be initialized in 100% before first updates
   e.g. neural net brain preview class should color its neurons in constructor 

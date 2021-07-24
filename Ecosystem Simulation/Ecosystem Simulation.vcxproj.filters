@@ -85,7 +85,7 @@
     <ClCompile Include="src\NeuralNetPreview.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\TextureButton.cpp">
+    <ClCompile Include="src\ImageButton.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\EventsAccessor.cpp">
@@ -275,7 +275,7 @@
     <ClInclude Include="src\NeuralNetPreview.h">
       <Filter>GUI</Filter>
     </ClInclude>
-    <ClInclude Include="src\TextureButton.h">
+    <ClInclude Include="src\ImageButton.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\EventsAccessor.h">

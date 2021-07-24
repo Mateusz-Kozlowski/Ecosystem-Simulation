@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "TextureButton.h"
+#include "ImageButton.h"
 
 using namespace gui;
 
-TextureButton::TextureButton(
+ImageButton::ImageButton(
 	const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths,
 	const std::string& key_of_default_texture,
 	const sf::Vector2f& position,
@@ -16,51 +16,51 @@ TextureButton::TextureButton(
 }
 
 // accessors:
-bool TextureButton::hasBeenClicked() const
+bool ImageButton::hasBeenClicked() const
 {
 	return this->hasBeenClickedSinceLastFrame;
 }
 
-bool TextureButton::isPressed() const
+bool ImageButton::isPressed() const
 {
 	return this->pressed;
 }
 
-bool TextureButton::isHovered() const
+bool ImageButton::isHovered() const
 {
 	return this->hovered;
 }
 
-const std::string& TextureButton::getCurrentTextureKey() const
+const std::string& ImageButton::getCurrentTextureKey() const
 {
 	return this->currentTextureKey;
 }
 
-const sf::Vector2f& TextureButton::getPosition() const
+const sf::Vector2f& ImageButton::getPosition() const
 {
 	return this->sprite.getPosition();
 }
 
-const sf::Vector2f& TextureButton::getSize() const
+const sf::Vector2f& ImageButton::getSize() const
 {
 	return sf::Vector2f(this->sprite.getLocalBounds().width, this->sprite.getLocalBounds().height);
 }
 
 // mutators:
-void TextureButton::setTexture(const std::string& key)
+void ImageButton::setTexture(const std::string& key)
 {
 	this->sprite.setTexture(this->textures[key]);
 
 	this->currentTextureKey = key;
 }
 
-void TextureButton::setPosition(const sf::Vector2f& new_pos)
+void ImageButton::setPosition(const sf::Vector2f& new_pos)
 {
 	this->sprite.setPosition(new_pos);
 }
 
 // other public methods:
-void TextureButton::update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events)
+void ImageButton::update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events)
 {
 	this->hasBeenClickedSinceLastFrame = false;
 	this->pressed = false;
@@ -86,14 +86,14 @@ void TextureButton::update(const sf::Vector2i& mouse_pos_window, const std::vect
 	}
 }
 
-void TextureButton::render(sf::RenderTarget& target) const
+void ImageButton::render(sf::RenderTarget& target) const
 {
 	target.draw(this->sprite);
 }
 
 // private methods:
 // initialization:
-void TextureButton::initTextures(const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths)
+void ImageButton::initTextures(const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths)
 {
 	for (const auto& it : textures_keys_and_paths)
 	{
@@ -102,7 +102,7 @@ void TextureButton::initTextures(const std::vector<std::pair<std::string, std::s
 	}
 }
 
-void TextureButton::initSprite(
+void ImageButton::initSprite(
 	const std::string& key_of_default_texture,
 	const sf::Vector2f& position,
 	const sf::Vector2f& size)
