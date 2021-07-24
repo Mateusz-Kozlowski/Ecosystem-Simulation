@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "Gui.h"
 
 float gui::p2pX(float percent, const sf::VideoMode& resolution)

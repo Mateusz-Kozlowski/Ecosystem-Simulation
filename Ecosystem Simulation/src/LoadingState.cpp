@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "LoadingState.h"
 
 LoadingState::LoadingState(StateData* state_data)

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "GodTools.h"
 
 std::string getGodToolStr(GodTool god_tool)

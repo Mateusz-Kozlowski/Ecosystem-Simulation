@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "MainMenuState.h"
 
 MainMenuState::MainMenuState(StateData* state_data)

@@ -1,4 +1,4 @@
-#include "../stdafx.h"
+#include "../pch.h"
 #include "NeuralNet.h"
 
 using namespace CrappyNeuralNets;

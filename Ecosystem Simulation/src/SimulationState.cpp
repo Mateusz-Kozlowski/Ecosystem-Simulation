@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "SimulationState.h"
 
 SimulationState::SimulationState(StateData* state_data)

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "NeuralNetPreview.h"
 
 using namespace gui;

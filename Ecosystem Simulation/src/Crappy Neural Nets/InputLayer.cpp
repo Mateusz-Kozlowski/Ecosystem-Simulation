@@ -1,4 +1,4 @@
-#include "../stdafx.h"
+#include "../pch.h"
 #include "InputLayer.h"
 
 using namespace CrappyNeuralNets;

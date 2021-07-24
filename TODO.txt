@@ -71,6 +71,8 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
+- throw exceptions where errors are "expected" and use asserts where errors shouldn't occur
+- use Formatter from Blueberry library to throw exceptions
 - use override keyword
 - learn about inline functions and use them!
 - all objects should be initialized in 100% before first updates

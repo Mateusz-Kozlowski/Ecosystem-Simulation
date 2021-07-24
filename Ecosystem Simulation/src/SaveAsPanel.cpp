@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "SaveAsPanel.h"
 
 gui::SaveAsPanel::SaveAsPanel(const sf::Vector2f& resolution, float width, const sf::Color& background_color)
