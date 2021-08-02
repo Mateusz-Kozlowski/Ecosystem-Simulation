@@ -3,8 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Ecosystem Simulation folders
 ecosystems/
+bin-int/
 
 # User-specific files
 *.rsuser

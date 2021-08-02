@@ -52,7 +52,6 @@
     <ClCompile Include="src\SideMenu.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\stdafx.cpp" />
     <ClCompile Include="src\MainMenuState.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
     <ClCompile Include="src\Ecosystem.cpp" />
@@ -248,7 +247,6 @@
     <ClInclude Include="src\SideMenu.h">
       <Filter>GUI</Filter>
     </ClInclude>
-    <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\Button.h">

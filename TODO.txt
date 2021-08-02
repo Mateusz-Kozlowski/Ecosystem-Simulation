@@ -1,3 +1,6 @@
+Visual Studio:
+- change output directories (folder with binary files)
+
 brain inputs:
 - better nearest food searching algo (with complexity better than the current one (O(f*a)))
   (that algo will likely be applicable to looking for food-animal collisions)
@@ -14,6 +17,11 @@ side menu:
 - after loading ecosystem side menu panel should be updated (e.g. speed scaler)
 
 app:
+- add a static class called FPS counter which can draw FPS count
+- change the way of dealing with events:
+  call State class handleEvent method from App class updateEvents method;
+  states stack top will be feed with events; that state will do with those events whatever it wants,
+  we can call it blackbox
 - dt can be extremelly big if a window lost the focus
 - define states freezing
 - <random> library? Check it out! Not C style of generating pseudorandom numbers
@@ -26,6 +34,7 @@ simulation state:
   save that changes and maybe other things
 
 UI:
+- static ResourceManager class
 - hold fonts in static way and as keys use UNMUTABLE and MUTABLE strings/const char* or sth like that
 - unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
 - input field text shouldn't dance up and down
@@ -71,7 +80,13 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
+- go from snake_case to cammelCase in all arguments names in the entire project
+- new convention with parentheses
+- change arguments of all functions from std::strings to const char* where possible;
+  notice that u can extract a const char* from every string using c_str() function
+- get rid of all this that can be rmved and use "m_" prefix in all classes members names
 - throw exceptions where errors are "expected" and use asserts where errors shouldn't occur
+- add functions arguments to exceptions because of functions overloading
 - use Formatter from Blueberry library to throw exceptions
 - use override keyword
 - learn about inline functions and use them!
