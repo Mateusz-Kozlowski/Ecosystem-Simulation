@@ -34,6 +34,8 @@ simulation state:
   save that changes and maybe other things
 
 UI:
+- use move method in widgets
+- rename gui::InputField to gui::TextBox
 - static ResourceManager class
 - hold fonts in static way and as keys use UNMUTABLE and MUTABLE strings/const char* or sth like that
 - unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
@@ -80,6 +82,7 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
+- separate private methods from private variables using 2 "private"
 - go from snake_case to cammelCase in all arguments names in the entire project
 - new convention with parentheses
 - change arguments of all functions from std::strings to const char* where possible;
