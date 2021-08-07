@@ -308,8 +308,8 @@ void Animal::setRandomPosition(const sf::Vector2f& world_size, float borders_thi
 		world_size.y - borders_thickness - this->body.getRadius()
 	};
 
-	float x = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(rangeX);
-	float y = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(rangeY);
+	float x = Blueberry::RandomEngine::getScalarInRange(rangeX.first, rangeX.second);
+	float y = Blueberry::RandomEngine::getScalarInRange(rangeY.first, rangeY.second);
 
 	this->body.setPosition(x, y);
 

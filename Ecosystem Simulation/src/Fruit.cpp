@@ -121,8 +121,8 @@ void Fruit::setRandomPosition(const sf::Vector2f& world_size, float borders_thic
 		world_size.y - borders_thickness - this->shape.getRadius()
 	};
 
-	float x = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(rangeX);
-	float y = CrappyNeuralNets::RandomNumbersGenerator::getRandomNumber(rangeY);
+	float x = Blueberry::RandomEngine::getScalarInRange(rangeX.first, rangeX.second);
+	float y = Blueberry::RandomEngine::getScalarInRange(rangeY.first, rangeY.second);
 
 	this->shape.setPosition(x, y);
 }

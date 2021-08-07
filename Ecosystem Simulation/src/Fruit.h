@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Crappy Neural Nets/RandomNumbersGenerator.h"
-
 class Fruit
 {
 public:
