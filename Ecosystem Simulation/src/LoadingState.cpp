@@ -9,7 +9,7 @@ LoadingState::LoadingState(StateData* state_data)
 	this->initContainer();
 	this->initFonts();
 	this->initTexts();
-	this->initInputField();
+	this->initTextBox();
 	this->initButtons();
 }
 
@@ -20,7 +20,7 @@ void LoadingState::update(float dt)
 
 	this->updateInput();
 
-	this->inputField->update(dt, *this->stateData->events, this->mousePosWindow);
+	this->textBox->update(dt, *this->stateData->events, this->mousePosWindow);
 
 	for (auto& button : this->buttons)
 		button.second->update(this->mousePosWindow);
@@ -39,7 +39,7 @@ void LoadingState::render(sf::RenderTarget* target)
 	for (const auto& text : this->texts)
 		target->draw(*text.second);
 
-	this->inputField->render(*target);
+	this->textBox->render(*target);
 
 	for (const auto& button : this->buttons)
 		button.second->render(*target);
@@ -140,11 +140,11 @@ void LoadingState::initTexts()
 	);
 }
 
-void LoadingState::initInputField()
+void LoadingState::initTextBox()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
-	this->inputField = std::make_unique<gui::InputField>(
+	this->textBox = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(37.0f, resolution),
 			gui::p2pY(45.0f, resolution)
@@ -217,7 +217,7 @@ void LoadingState::getUpdateFromButtons()
 {
 	if (this->buttons["LOAD"]->isClicked())
 	{
-		std::string folderPath = "ecosystems/" + this->inputField->getInput();
+		std::string folderPath = "ecosystems/" + this->textBox->getInput();
 
 		if (this->stateData->ecosystem)
 			this->stateData->ecosystem->loadFromFolder(folderPath);

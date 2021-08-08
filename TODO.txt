@@ -1,15 +1,8 @@
-Visual Studio:
-- change output directories (folder with binary files)
-
 brain inputs:
 - better nearest food searching algo (with complexity better than the current one (O(f*a)))
   (that algo will likely be applicable to looking for food-animal collisions)
 - different inputs for brains?
 - remove log from input with hp?
-
-Crappy Neural Nets:
-- Crappy Neural Nets should have a method that allows to set inputs before calling predict/train methods
-- NEAT REAL TIME
 
 side menu:
 - side menu should be able to be opened not only using Esc key 
@@ -24,7 +17,6 @@ app:
   we can call it blackbox
 - dt can be extremelly big if a window lost the focus
 - define states freezing
-- <random> library? Check it out! Not C style of generating pseudorandom numbers
 
 simulation state:
 - move that thing controling simulation speed factor from updateEcosystem method to getUpdatesFromGui
@@ -35,9 +27,15 @@ simulation state:
 
 UI:
 - use move method in widgets
-- rename gui::InputField to gui::TextBox
 - static ResourceManager class
-- hold fonts in static way and as keys use UNMUTABLE and MUTABLE strings/const char* or sth like that
+- hold fonts in static way and as keys use UNMUTABLE for the first font 
+  and MUTABLE for the second font 
+  (
+    I don't remember their names...
+    actually I remeber their names, they are called CONSOLAB and Retroica
+    but I don't remeber which is which
+  );
+  keys can be represented as strings/const char* or maybe even sth different
 - unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
 - input field text shouldn't dance up and down
 - there are 2 fonts; which should be used for what?
@@ -84,7 +82,7 @@ shortcuts:
 code:
 - separate private methods from private variables using 2 "private"
 - go from snake_case to cammelCase in all arguments names in the entire project
-- new convention with parentheses
+- new convention with parentheses after if statements and so on... (for, while etc.)
 - change arguments of all functions from std::strings to const char* where possible;
   notice that u can extract a const char* from every string using c_str() function
 - get rid of all this that can be rmved and use "m_" prefix in all classes members names

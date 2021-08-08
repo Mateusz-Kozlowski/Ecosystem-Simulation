@@ -2,7 +2,7 @@
 
 #include "State.h"
 #include "Button.h"
-#include "InputField.h"
+#include "TextBox.h"
 
 class EcosystemCreatorState : public State
 {
@@ -23,7 +23,7 @@ private:
 
 	std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
 
-	std::unordered_map<std::string, std::unique_ptr<gui::InputField>> inputFields;
+	std::unordered_map<std::string, std::unique_ptr<gui::TextBox>> textBoxes;
 
 	std::unordered_map<std::string, std::unique_ptr<sf::Text>> texts;
 
@@ -34,7 +34,7 @@ private:
 	void initFonts();
 	void initGui();
 	void initButtons();
-	void initInputFields();
+	void initTextBoxes();
 	void initTexts();
 
 	// other private methods:

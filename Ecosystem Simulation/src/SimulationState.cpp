@@ -502,7 +502,7 @@ void SimulationState::initSaveAsPanel()
 		sf::Color(225, 225, 255)
 	);
 
-	this->saveAsPanel->initInputField(
+	this->saveAsPanel->initTextBox(
 		sf::Vector2f(
 			gui::p2pX(37.0f, resolution),
 			gui::p2pY(45.0f, resolution)
@@ -827,7 +827,7 @@ void SimulationState::getUpdatesFromSaveAsPanel()
 {
 	if (this->saveAsPanel->getButton("SAVE")->isClicked())
 		this->stateData->ecosystem->saveToFolder(
-			"ecosystems/" + this->saveAsPanel->getInputField()->getInput()
+			"ecosystems/" + this->saveAsPanel->getTextBox()->getInput()
 		);
 
 	else if (this->saveAsPanel->getButton("OK")->isClicked())

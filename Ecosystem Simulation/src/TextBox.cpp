@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "InputField.h"
+#include "TextBox.h"
 
 using namespace gui;
 
-InputField::InputField(
+TextBox::TextBox(
     const sf::Vector2f& position,
     const sf::Vector2f& size,
     const sf::Font& font, const std::string& default_str, float char_size,
@@ -28,7 +28,7 @@ InputField::InputField(
 }
 
 // public methods:
-void InputField::update(
+void TextBox::update(
     float dt,
     const std::vector<sf::Event>& events,
     const sf::Vector2i& mouse_pos_window)
@@ -52,7 +52,7 @@ void InputField::update(
     this->updateCursorVisibility(dt);
 }
 
-void InputField::render(sf::RenderTarget& target)
+void TextBox::render(sf::RenderTarget& target)
 {
     target.draw(this->rect);
     target.draw(this->text);
@@ -62,40 +62,40 @@ void InputField::render(sf::RenderTarget& target)
 }
 
 // accessors:
-int InputField::getId() const
+int TextBox::getId() const
 {
     return this->id;
 }
 
-const std::string& InputField::getInput() const
+const std::string& TextBox::getInput() const
 {
     return this->input;
 }
 
-bool InputField::isTurnedOn() const
+bool TextBox::isTurnedOn() const
 {
     return this->turnedOn;
 }
 
-bool InputField::hasBeenTurnedOn() const
+bool TextBox::hasBeenTurnedOn() const
 {
     return this->m_HasBeenTurnedOn;
 }
 
 // mutators:
-void InputField::turnOn()
+void TextBox::turnOn()
 {
     this->turnedOn = true;
 }
 
-void InputField::turnOff()
+void TextBox::turnOff()
 {
     this->turnedOn = false;
 
     this->cursor.setFillColor(sf::Color::Transparent);
 }
 
-void InputField::setString(const std::string& string)
+void TextBox::setString(const std::string& string)
 {
     this->text.setString(string);
     this->updateTextPosition();
@@ -106,7 +106,7 @@ void InputField::setString(const std::string& string)
 // private methods:
 
 // initialization:
-void InputField::initRect(
+void TextBox::initRect(
     const sf::Vector2f& position,
     const sf::Vector2f& size,
     const sf::Color& idle_color,
@@ -131,7 +131,7 @@ void InputField::initRect(
     this->rect.setOutlineColor(outline_idle_color);
 }
 
-void InputField::initText(
+void TextBox::initText(
     const std::string& default_str,
     unsigned char_size,
     const sf::Color& text_idle_color)
@@ -150,7 +150,7 @@ void InputField::initText(
     );
 }
 
-void InputField::initCursor(float cursor_width, const sf::Color& text_idle_color)
+void TextBox::initCursor(float cursor_width, const sf::Color& text_idle_color)
 {
     this->cursor.setOrigin(0.f, this->charSize / 2.f);
     this->cursor.setSize(sf::Vector2f(cursor_width, charSize));
@@ -161,7 +161,7 @@ void InputField::initCursor(float cursor_width, const sf::Color& text_idle_color
     );
 }
 
-void InputField::initColors(
+void TextBox::initColors(
     const sf::Color& idle_color, const sf::Color& hovered_color, const sf::Color& pressed_color,
     const sf::Color& outline_idle_color, const sf::Color& outline_hovered_color, const sf::Color& outline_pressed_color,
     const sf::Color& text_idle_color, const sf::Color& text_hovered_color, const sf::Color& text_pressed_color)
@@ -180,7 +180,7 @@ void InputField::initColors(
 }
 
 // other private methods:
-void InputField::updateState(const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window)
+void TextBox::updateState(const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window)
 {
     this->m_HasBeenTurnedOn = false;
     this->stateHasChanged = false;
@@ -228,7 +228,7 @@ void InputField::updateState(const std::vector<sf::Event>& events, const sf::Vec
     }
 }
 
-void InputField::updateColors()
+void TextBox::updateColors()
 {
     this->rect.setFillColor(this->colors["INPUT FIELD"][this->state]);
 
@@ -239,7 +239,7 @@ void InputField::updateColors()
     this->cursor.setFillColor(this->colors["TEXT"][this->state]);
 }
 
-void InputField::handleTextEntering(const std::vector<sf::Event>& events)
+void TextBox::handleTextEntering(const std::vector<sf::Event>& events)
 {
     this->textHasChanged = false;
 
@@ -264,7 +264,7 @@ void InputField::handleTextEntering(const std::vector<sf::Event>& events)
         }
 }
 
-void InputField::updateTextPosition()
+void TextBox::updateTextPosition()
 {
     this->text.setOrigin(
         this->text.getGlobalBounds().width / 2.f,
@@ -276,7 +276,7 @@ void InputField::updateTextPosition()
     );
 }
 
-void InputField::updateCursorPosition()
+void TextBox::updateCursorPosition()
 {
     this->cursor.setPosition(
         this->text.getGlobalBounds().left + this->text.getGlobalBounds().width + this->cursor.getSize().x,
@@ -284,7 +284,7 @@ void InputField::updateCursorPosition()
     );
 }
 
-void InputField::updateCursorVisibility(float dt)
+void TextBox::updateCursorVisibility(float dt)
 {
     this->stopwatch += dt;
 

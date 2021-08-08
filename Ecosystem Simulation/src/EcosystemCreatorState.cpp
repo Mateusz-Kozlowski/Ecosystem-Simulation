@@ -84,7 +84,7 @@ void EcosystemCreatorState::initFonts()
 void EcosystemCreatorState::initGui()
 {
 	this->initButtons();
-	this->initInputFields();
+	this->initTextBoxes();
 	this->initTexts();
 }
 
@@ -175,13 +175,13 @@ void EcosystemCreatorState::initButtons()
 	);
 }
 
-void EcosystemCreatorState::initInputFields()
+void EcosystemCreatorState::initTextBoxes()
 {
 	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
 
 	unsigned charSize = gui::calcCharSize(20.0f, resolution);
 
-	this->inputFields["WORLD WIDTH"] = std::make_unique<gui::InputField>(
+	this->textBoxes["WORLD WIDTH"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(21.0f, resolution)
@@ -197,7 +197,7 @@ void EcosystemCreatorState::initInputFields()
 		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f
 	);
 
-	this->inputFields["WORLD HEIGHT"] = std::make_unique<gui::InputField>(
+	this->textBoxes["WORLD HEIGHT"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(28.0f, resolution)
@@ -214,7 +214,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 1
 	);
 
-	this->inputFields["BORDERS THICKNESS"] = std::make_unique<gui::InputField>(
+	this->textBoxes["BORDERS THICKNESS"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(35.0f, resolution)
@@ -231,7 +231,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 2
 	);
 
-	this->inputFields["ANIMALS COUNT"] = std::make_unique<gui::InputField>(
+	this->textBoxes["ANIMALS COUNT"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(42.0f, resolution)
@@ -248,7 +248,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 3
 	);
 
-	this->inputFields["FRUITS COUNT"] = std::make_unique<gui::InputField>(
+	this->textBoxes["FRUITS COUNT"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(49.0f, resolution)
@@ -265,7 +265,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 4
 	);
 
-	this->inputFields["DEFAULT HP"] = std::make_unique<gui::InputField>(
+	this->textBoxes["DEFAULT HP"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(56.0f, resolution)
@@ -282,7 +282,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 5
 	);
 
-	this->inputFields["DEFAULT FRUIT ENERGY"] = std::make_unique<gui::InputField>(
+	this->textBoxes["DEFAULT FRUIT ENERGY"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(63.0f, resolution)
@@ -299,7 +299,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 6
 	);
 
-	this->inputFields["MUTATION RATE"] = std::make_unique<gui::InputField>(
+	this->textBoxes["MUTATION RATE"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(70.0f, resolution)
@@ -316,7 +316,7 @@ void EcosystemCreatorState::initInputFields()
 		false, 7
 	);
 
-	this->inputFields["NAME"] = std::make_unique<gui::InputField>(
+	this->textBoxes["NAME"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(77.0f, resolution)
@@ -492,23 +492,23 @@ void EcosystemCreatorState::loadEcosystemTemplate(const std::string& ecosystem_n
 	std::string strDefaultFruitEnergy = this->removeFloatTrailingZeros(std::to_string(defaultFruitEnergy));
 	std::string strMutationRate = this->removeFloatTrailingZeros(std::to_string(mutationRate));
 
-	this->inputFields["WORLD WIDTH"]->setString(strWorldWidth);
+	this->textBoxes["WORLD WIDTH"]->setString(strWorldWidth);
 
-	this->inputFields["WORLD HEIGHT"]->setString(strWorldHeight);
+	this->textBoxes["WORLD HEIGHT"]->setString(strWorldHeight);
 
-	this->inputFields["BORDERS THICKNESS"]->setString(strBordersThickness);
+	this->textBoxes["BORDERS THICKNESS"]->setString(strBordersThickness);
 
-	this->inputFields["ANIMALS COUNT"]->setString(strAnimalsCount);
+	this->textBoxes["ANIMALS COUNT"]->setString(strAnimalsCount);
 
-	this->inputFields["FRUITS COUNT"]->setString(strFruitsCount);
+	this->textBoxes["FRUITS COUNT"]->setString(strFruitsCount);
 
-	this->inputFields["DEFAULT HP"]->setString(strDefaultHp);
+	this->textBoxes["DEFAULT HP"]->setString(strDefaultHp);
 
-	this->inputFields["DEFAULT FRUIT ENERGY"]->setString(strDefaultFruitEnergy);
+	this->textBoxes["DEFAULT FRUIT ENERGY"]->setString(strDefaultFruitEnergy);
 
-	this->inputFields["MUTATION RATE"]->setString(strMutationRate);
+	this->textBoxes["MUTATION RATE"]->setString(strMutationRate);
 
-	this->inputFields["NAME"]->setString(ecosystem_name);
+	this->textBoxes["NAME"]->setString(ecosystem_name);
 
 	file.close();
 }
@@ -545,21 +545,21 @@ void EcosystemCreatorState::createEcosystem()
 	delete this->stateData->ecosystem;
 
 	this->stateData->ecosystem = new Ecosystem(
-		this->inputFields["NAME"]->getInput(),
+		this->textBoxes["NAME"]->getInput(),
 		sf::Vector2f(
-			std::stof(this->inputFields["WORLD WIDTH"]->getInput()),
-			std::stof(this->inputFields["WORLD HEIGHT"]->getInput())
+			std::stof(this->textBoxes["WORLD WIDTH"]->getInput()),
+			std::stof(this->textBoxes["WORLD HEIGHT"]->getInput())
 		),
-		std::stof(this->inputFields["BORDERS THICKNESS"]->getInput()),
+		std::stof(this->textBoxes["BORDERS THICKNESS"]->getInput()),
 		sf::Color(32, 32, 32),
 		sf::Color(48, 48, 48),
-		std::stoi(this->inputFields["ANIMALS COUNT"]->getInput()),
-		std::stoi(this->inputFields["FRUITS COUNT"]->getInput()),
+		std::stoi(this->textBoxes["ANIMALS COUNT"]->getInput()),
+		std::stoi(this->textBoxes["FRUITS COUNT"]->getInput()),
 		8.0f, // TODO: do sth with that hard-coded thing
 		4.0f, // TODO: do sth with that hard-coded thing
-		std::stof(this->inputFields["DEFAULT HP"]->getInput()),
-		std::stof(this->inputFields["DEFAULT FRUIT ENERGY"]->getInput()),
-		std::stof(this->inputFields["MUTATION RATE"]->getInput()),
+		std::stof(this->textBoxes["DEFAULT HP"]->getInput()),
+		std::stof(this->textBoxes["DEFAULT FRUIT ENERGY"]->getInput()),
+		std::stof(this->textBoxes["MUTATION RATE"]->getInput()),
 		sf::Color::Red, // TODO: do sth with that hard-coded thing
 		sf::Color::Green, // TODO: do sth with that hard-coded thing
 		sf::Color(100, 0, 200), // TODO: do sth with that hard-coded thing
@@ -587,8 +587,8 @@ void EcosystemCreatorState::updateGui(float dt)
 	for (auto& button : this->buttons)
 		button.second->update(this->mousePosWindow);
 
-	for (auto& inputField : this->inputFields)
-		inputField.second->update(dt, *this->stateData->events, this->mousePosWindow);
+	for (auto& textBox : this->textBoxes)
+		textBox.second->update(dt, *this->stateData->events, this->mousePosWindow);
 }
 
 void EcosystemCreatorState::getUpdatesFromGui()
@@ -614,8 +614,8 @@ void EcosystemCreatorState::renderGui(sf::RenderTarget& target)
 	for (const auto& button : this->buttons)
 		button.second->render(target);
 
-	for (const auto& inputField : this->inputFields)
-		inputField.second->render(target);
+	for (const auto& textBox : this->textBoxes)
+		textBox.second->render(target);
 
 	for (const auto& text : this->texts)
 		target.draw(*text.second);

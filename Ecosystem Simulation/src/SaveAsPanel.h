@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputField.h"
+#include "TextBox.h"
 #include "Button.h"
 
 namespace gui
@@ -19,7 +19,7 @@ namespace gui
 		void render(sf::RenderTarget& target);
 
 		// accessors:
-		const gui::InputField* getInputField() const;
+		const gui::TextBox* getTextBox() const;
 		const gui::Button* getButton(const std::string& key) const;
 
 		// mutators:
@@ -31,7 +31,7 @@ namespace gui
 			const sf::Color& color
 		);
 		
-		void initInputField(
+		void initTextBox(
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
 			const sf::Font& font, const std::string& default_str, float char_size,
@@ -59,7 +59,7 @@ namespace gui
 		sf::RectangleShape background;
 		sf::Text text;
 
-		std::unique_ptr<gui::InputField> inputField;
+		std::unique_ptr<gui::TextBox> textBox;
 		std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
 
 		// private methods:

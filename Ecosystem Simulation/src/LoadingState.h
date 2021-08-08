@@ -2,7 +2,7 @@
 
 #include "State.h"
 #include "Button.h"
-#include "InputField.h"
+#include "TextBox.h"
 
 class LoadingState : public State
 {
@@ -24,7 +24,7 @@ private:
 
 	std::unordered_map<const char*, std::unique_ptr<sf::Text>> texts;
 
-	std::unique_ptr<gui::InputField> inputField;
+	std::unique_ptr<gui::TextBox> textBox;
 	std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
 
 	// private methods:
@@ -34,7 +34,7 @@ private:
 	void initContainer();
 	void initFonts();
 	void initTexts();
-	void initInputField();
+	void initTextBox();
 	void initButtons();
 
 	// other private methods:

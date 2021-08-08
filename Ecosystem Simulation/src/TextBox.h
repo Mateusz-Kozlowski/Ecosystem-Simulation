@@ -4,10 +4,10 @@
 
 namespace gui
 {
-	class InputField
+	class TextBox
 	{
 	public:
-		InputField(
+		TextBox(
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
 			const sf::Font& font, const std::string& default_str, float char_size,

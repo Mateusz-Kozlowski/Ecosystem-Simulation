@@ -67,7 +67,7 @@
     <ClCompile Include="src\Animal.cpp">
       <Filter>ecosystem</Filter>
     </ClCompile>
-    <ClCompile Include="src\InputField.cpp">
+    <ClCompile Include="src\TextBox.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\MovementComponent.cpp">
@@ -254,7 +254,7 @@
     <ClInclude Include="src\Animal.h">
       <Filter>ecosystem</Filter>
     </ClInclude>
-    <ClInclude Include="src\InputField.h">
+    <ClInclude Include="src\TextBox.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\MovementComponent.h">

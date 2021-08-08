@@ -13,7 +13,7 @@ void gui::SaveAsPanel::update(
 	const std::vector<sf::Event>& events, 
 	const sf::Vector2i& mouse_position_window)
 {
-	this->inputField->update(dt, events, mouse_position_window);
+	this->textBox->update(dt, events, mouse_position_window);
 
 	for (auto& button : this->buttons)
 		button.second->update(mouse_position_window);
@@ -25,16 +25,16 @@ void gui::SaveAsPanel::render(sf::RenderTarget& target)
 
 	target.draw(this->text);
 
-	this->inputField->render(target);
+	this->textBox->render(target);
 
 	for (auto& button : this->buttons)
 		button.second->render(target);
 }
 
 // accessors:
-const gui::InputField* gui::SaveAsPanel::getInputField() const
+const gui::TextBox* gui::SaveAsPanel::getTextBox() const
 {
-	return this->inputField.get();
+	return this->textBox.get();
 }
 
 const gui::Button* gui::SaveAsPanel::getButton(const std::string& key) const
@@ -58,7 +58,7 @@ void gui::SaveAsPanel::initCenteredText(
 	this->text.setPosition(this->resolution.x / 2.0f, positionY);
 }
 
-void gui::SaveAsPanel::initInputField(
+void gui::SaveAsPanel::initTextBox(
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
 	const sf::Font& font, const std::string& default_str, float char_size,
@@ -68,7 +68,7 @@ void gui::SaveAsPanel::initInputField(
 	float outline_thickness, float cursor_width, float cursor_frequency,
 	bool turned_on, int id)
 {
-	this->inputField = std::make_unique<gui::InputField>(
+	this->textBox = std::make_unique<gui::TextBox>(
 		position, 
 		size,
 		font, default_str, char_size,
