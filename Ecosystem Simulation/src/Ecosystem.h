@@ -32,8 +32,7 @@ public:
 		bool render_brains_by_default = true
 	);
 	Ecosystem(const std::string& folder_path);
-
-	// public methods:
+	
 	void saveToFolder(const std::string& folder_path) const;
 	void loadFromFolder(const std::string& folder_path);
 
@@ -46,6 +45,7 @@ public:
 	void render(sf::RenderTarget& target) const;
 
 	// accessors:
+	
 	const std::string& getName() const;
 
 	sf::Vector2f getWorldSize() const;
@@ -83,6 +83,7 @@ public:
 	void printAllAnimalsPositions() const;
 
 	// mutators:
+	
 	void setName(const std::string& name);
 
 	void setMutationPercentage(float mutation_percentage);
@@ -102,53 +103,6 @@ public:
 	void setGodTool(GodTool god_tool);
 
 private:
-	std::string name;
-
-	sf::RectangleShape background;
-
-	// animals vector contains shared pointers 
-	// (in contrast to fruits vector which contains unique pointers)
-	// to make cloning animals possible
-	// (cloning occurs by calling a copy constructor of Animal class)
-	std::vector<std::shared_ptr<Animal>> animals;
-	std::vector<std::unique_ptr<Fruit>> fruits;
-
-	float mutationPercentage;
-	
-	// TODO: add a multiline comment that:
-	// - explains why those variables are useful in those situations
-	// - describes those situation (when they appear and how they disappear)
-	
-	// useful when there are temporarily no animals in an ecosystem:
-	float animalsRadius; 
-	
-	// useful when there are temporarily no fruits in an ecosystem:
-	float fruitsRadius;
-
-	// useful when there are temporarily no animals in an ecosystem:
-	sf::Color animalsColor;
-	
-	// useful when there are temporarily no fruits in an ecosystem:
-	sf::Color fruitsColor;
-	
-	// useful when there is temporarily no tracked animal in an ecosystem
-	sf::Color trackedAnimalColor;
-
-	Animal* trackedAnimal;
-
-	float simulationSpeedFactor;
-
-	bool m_simulationIsPaused;
-
-	GodTool godTool;
-
-	std::unordered_map<Animal*, bool> hpBarsVisibility;
-	std::unordered_map<Animal*, bool> brainsPreviewsVisibility;
-
-	float totalTimeElapsed;
-
-	// private methods:
-	// initialization:
 	void initBackgroundAndBorders(
 		const sf::Vector2f& world_size,
 		unsigned borders_thickness,
@@ -179,8 +133,7 @@ private:
 		const sf::Color& fruits_color
 	);
 	void createNewFruit(float energy, float radius, const sf::Color& fruit_color);
-
-	// private utilities:
+	
 	void saveAnimals(const std::string& folder_path) const;
 	void saveFruits(const std::string& folder_path) const;
 	void saveEcosystem(const std::string& file_path) const;
@@ -202,7 +155,6 @@ private:
 
 	int getTrackedAnimalIndex() const;
 
-	// god tools:
 	void trackingTool(const sf::Vector2f& mouse_pos_view);
 	void stopTracking();
 
@@ -220,12 +172,11 @@ private:
 	void printInfoAboutAnimal(const Animal& animal) const;
 	void printInfoAboutFruit(const Fruit& fruit) const;
 	void printInfoAboutEcosystem() const;
-
-	// other private methods:
+	
 	void updateWorld(float dt);
 
 	void updateAnimals(float dt);
-	const std::vector<CrappyNeuralNets::Scalar> getInputsForBrain(const Animal& animal) const;
+	const std::vector<Blueberry::Scalar> getInputsForBrain(const Animal& animal) const;
 	const Fruit* getTheNearestFruit(const Animal& animal) const;
 	float calcDistance(const Animal& animal, const Fruit& fruit) const;
 
@@ -263,4 +214,50 @@ private:
 	void correctBrainPreviewsPositions();
 	bool brainPreviewProtrudesWorldRightBorder(const gui::NeuralNetPreview& brain_preview);
 	bool brainPreviewProtrudesWorldBottomBorder(const gui::NeuralNetPreview& brain_preview);
+
+private:
+	std::string name;
+
+	sf::RectangleShape background;
+
+	// animals vector contains shared pointers 
+	// (in contrast to fruits vector which contains unique pointers)
+	// to make cloning animals possible
+	// (cloning occurs by calling a copy constructor of Animal class)
+	std::vector<std::shared_ptr<Animal>> animals;
+	std::vector<std::unique_ptr<Fruit>> fruits;
+
+	float mutationPercentage;
+
+	// TODO: add a multiline comment that:
+	// - explains why those variables are useful in those situations
+	// - describes those situation (when they appear and how they disappear)
+
+	// useful when there are temporarily no animals in an ecosystem:
+	float animalsRadius;
+
+	// useful when there are temporarily no fruits in an ecosystem:
+	float fruitsRadius;
+
+	// useful when there are temporarily no animals in an ecosystem:
+	sf::Color animalsColor;
+
+	// useful when there are temporarily no fruits in an ecosystem:
+	sf::Color fruitsColor;
+
+	// useful when there is temporarily no tracked animal in an ecosystem
+	sf::Color trackedAnimalColor;
+
+	Animal* trackedAnimal;
+
+	float simulationSpeedFactor;
+
+	bool m_simulationIsPaused;
+
+	GodTool godTool;
+
+	std::unordered_map<Animal*, bool> hpBarsVisibility;
+	std::unordered_map<Animal*, bool> brainsPreviewsVisibility;
+
+	float totalTimeElapsed;
 };

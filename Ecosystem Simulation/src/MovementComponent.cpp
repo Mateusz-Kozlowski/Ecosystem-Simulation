@@ -3,10 +3,13 @@
 
 MovementComponent::MovementComponent()
 {	
-	this->brain = std::make_unique<CrappyNeuralNets::TempNet>(5U, 2U);
+	this->brain = std::make_unique<Blueberry::Brain>(5U, 2U);
+	this->brain->mutate(4U);
 }
 
-MovementComponent::MovementComponent(const sf::Vector2f& default_velocity, const std::string& brain_file_path)
+MovementComponent::MovementComponent(
+	const sf::Vector2f& default_velocity, 
+	const char* brain_file_path)
 	: velocity(default_velocity)
 {
 	this->loadBrainFromFile(brain_file_path);
@@ -31,16 +34,14 @@ MovementComponent& MovementComponent::operator=(const MovementComponent& rhs)
 	return *this;
 }
 
-// public methods:
-void MovementComponent::saveBrainToFile(const std::string& file_path) const
+void MovementComponent::saveBrainToFile(const char* file_path) const
 {
-	//this->BRAIN->saveToFile(file_path);
+	this->brain->saveToFile(file_path);
 }
 
-void MovementComponent::loadBrainFromFile(const std::string& file_path)
+void MovementComponent::loadBrainFromFile(const char* file_path)
 {
-	// TODO: add loading from folder after implementing a new version of Crappy Neural Nets:
-	this->brain = std::make_unique<CrappyNeuralNets::TempNet>(5U, 2U);
+	this->brain->loadFromFile(file_path);
 }
 
 void MovementComponent::update(
@@ -49,8 +50,9 @@ void MovementComponent::update(
 	const std::vector<double>& brain_inputs)
 {
 	// update acceleration:	
-	this->brain->input(brain_inputs);
-	const std::vector<double>& brainOutput = this->brain->output();
+	this->brain->propagateForward(brain_inputs);
+	
+	auto brainOutput = this->brain->getOutput();
 
 	// TODO: implement slowing down using speed_factor:
 
@@ -64,7 +66,8 @@ void MovementComponent::update(
 }
 
 // accessors:
-const CrappyNeuralNets::TempNet& MovementComponent::getBrain() const
+
+const Blueberry::Brain& MovementComponent::getBrain() const
 {
 	return *this->brain;
 }
@@ -110,9 +113,10 @@ float MovementComponent::getAccelerationVectorValue() const
 }
 
 // mutators:
-void MovementComponent::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
+
+void MovementComponent::mutateBrain(unsigned brain_mutations_count)
 {
-	//this->BRAIN->randomMutate(mutation_percentage);
+	this->brain->mutate(brain_mutations_count);
 }
 
 void MovementComponent::setVelocity(const sf::Vector2f& velocity)

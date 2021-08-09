@@ -26,6 +26,7 @@ simulation state:
   save that changes and maybe other things
 
 UI:
+- Google professional names of GUI widgets
 - use move method in widgets
 - static ResourceManager class
 - hold fonts in static way and as keys use UNMUTABLE for the first font 

@@ -19,7 +19,7 @@ Animal::Animal(
 	this->initBrainPreview();
 }
 
-Animal::Animal(const std::string& folder_path)
+Animal::Animal(const char* folder_path)
 	: maxHp(0.0f),
 	  kineticEnergyFromPreviousFrame(0.0f),
 	  alive(true),
@@ -59,14 +59,17 @@ Animal& Animal::operator=(const Animal& rhs)
 	return *this;
 }
 
-// public methods:
-void Animal::saveToFolder(const std::string& folder_path) const
+void Animal::saveToFolder(const char* folder_path) const
 {
 	std::filesystem::create_directories(folder_path);
 
-	this->movementComponent->saveBrainToFile(folder_path + "/brain.ini");
+	std::string path = folder_path;
+	path += "/brain.ini";
 
-	std::string path = folder_path + "/animal.ini";
+	this->movementComponent->saveBrainToFile(path.c_str());
+
+	path = folder_path;
+	path += "/animal.ini";
 
 	std::ofstream ofs(path);
 
@@ -103,11 +106,15 @@ void Animal::saveToFolder(const std::string& folder_path) const
 	ofs.close();
 }
 
-void Animal::loadFromFolder(const std::string& folder_path)
+void Animal::loadFromFolder(const char* folder_path)
 {
-	this->movementComponent->loadBrainFromFile(folder_path + "/brain.ini");
+	std::string path = folder_path;
+	path += "/brain.ini";
 
-	std::string path = folder_path + "/animal.ini";
+	this->movementComponent->loadBrainFromFile(path.c_str());
+
+	path = folder_path;
+	path += "/animal.ini";
 
 	std::ifstream ifs(path);
 
@@ -160,7 +167,10 @@ void Animal::loadFromFolder(const std::string& folder_path)
 	this->movementComponent->setVelocity(velocity);
 }
 
-void Animal::update(float dt, float simulation_speed_factor, const std::vector<double>& brain_inputs)
+void Animal::update(
+	float dt, 
+	float simulation_speed_factor, 
+	const std::vector<double>& brain_inputs)
 {
 	this->kineticEnergyFromPreviousFrame = this->getKineticEnergy();
 
@@ -191,6 +201,7 @@ void Animal::renderBrainPreview(sf::RenderTarget& target) const
 }
 
 // accessors:
+
 const sf::Vector2f& Animal::getPosition() const
 {
 	return this->body.getPosition();
@@ -216,7 +227,7 @@ const MovementComponent& Animal::getMovementComponent() const
 	return *this->movementComponent;
 }
 
-const CrappyNeuralNets::TempNet& Animal::getBrain() const
+const Blueberry::Brain& Animal::getBrain() const
 {
 	return this->movementComponent->getBrain();
 }
@@ -288,6 +299,7 @@ bool Animal::isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const
 }
 
 // mutators:
+
 void Animal::setPosition(const sf::Vector2f& position)
 {
 	this->body.setPosition(position);
@@ -340,9 +352,9 @@ void Animal::setMaxHp(float max_hp)
 	this->maxHp = max_hp;
 }
 
-void Animal::randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage)
+void Animal::randomMutate(unsigned brain_mutations_count)
 {
-	this->movementComponent->randomMutate(mutation_percentage);
+	this->movementComponent->mutateBrain(brain_mutations_count);
 }
 
 void Animal::setVelocity(const sf::Vector2f& velocity)
@@ -406,7 +418,6 @@ void Animal::setBrainPreviewPosition(float x, float y)
 
 // private methods:
 
-// initialization:
 void Animal::initBody(
 	const sf::Vector2f& position,
 	float radius,
@@ -458,7 +469,6 @@ void Animal::initBrainPreview()
 	);
 }
 
-// private utilities:
 void Animal::updateBody(float dt)
 {
 	this->body.setPosition(

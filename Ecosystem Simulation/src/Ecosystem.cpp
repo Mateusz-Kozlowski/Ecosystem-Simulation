@@ -52,7 +52,6 @@ Ecosystem::Ecosystem(const std::string& folder_path)
 	this->loadFromFolder(folder_path);
 }
 
-// public methods:
 void Ecosystem::saveToFolder(const std::string& folder_path) const
 {
 	std::filesystem::create_directories(folder_path);
@@ -149,6 +148,7 @@ void Ecosystem::render(sf::RenderTarget& target) const
 }
 
 // accessors:
+
 const std::string& Ecosystem::getName() const
 {
 	return this->name;
@@ -281,6 +281,7 @@ void Ecosystem::printAllAnimalsPositions() const
 }
 
 // mutators:
+
 void Ecosystem::setName(const std::string& name)
 {
 	this->name = name;
@@ -348,7 +349,6 @@ void Ecosystem::setGodTool(GodTool god_tool)
 
 // private methods:
 
-// initialization:
 void Ecosystem::initBackgroundAndBorders(
 	const sf::Vector2f& world_size,
 	unsigned borders_thickness,
@@ -444,11 +444,16 @@ void Ecosystem::createNewFruit(float energy, float radius, const sf::Color& frui
 	this->fruits.back()->setRandomPosition(this->getWorldSize(), this->getBordersThickness());
 }
 
-// private utilities:
 void Ecosystem::saveAnimals(const std::string& folder_path) const
 {
 	for (int i = 0; i < this->animals.size(); i++)
-		this->animals[i]->saveToFolder(folder_path + "/animal" + std::to_string(i));
+	{
+		std::string path = folder_path;
+		path += "/animal";
+		path += std::to_string(i);
+
+		this->animals[i]->saveToFolder(path.c_str());
+	}
 }
 
 void Ecosystem::saveFruits(const std::string& folder_path) const
@@ -565,7 +570,7 @@ void Ecosystem::loadAnimals(const std::string& folder_path)
 
 void Ecosystem::loadAnimal(const std::string& folder_path)
 {
-	this->animals.push_back(std::make_unique<Animal>(folder_path));
+	this->animals.push_back(std::make_unique<Animal>(folder_path.c_str()));
 }
 
 void Ecosystem::loadFruits(const std::string& folder_path)
@@ -899,7 +904,6 @@ void Ecosystem::printInfoAboutEcosystem() const
 	std::cout << "total energy: " << this->getTotalEnergy() << '\n';
 }
 
-// other private methods:
 void Ecosystem::updateWorld(float dt)
 {
 	this->updateAnimals(dt);
@@ -918,10 +922,10 @@ void Ecosystem::updateAnimals(float dt)
 		animal->update(dt, this->simulationSpeedFactor, this->getInputsForBrain(*animal));
 }
 
-const std::vector<CrappyNeuralNets::Scalar> Ecosystem::getInputsForBrain(const Animal& animal) const
+const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(const Animal& animal) const
 {
 	// TODO: add set BRAIN inputs methods in Animal class
-	std::vector<CrappyNeuralNets::Scalar> inputsForBrain;
+	std::vector<Blueberry::Scalar> inputsForBrain;
 
 	inputsForBrain.reserve(5);
 
@@ -1251,7 +1255,9 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 
 			this->animals.back()->setHp(animal.getMaxHp());
 			this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
-			this->animals.back()->randomMutate(this->mutationPercentage);
+			// TODO: unhard code mutations count, use mutation percentage Ecosystem member
+			//this->animals.back()->randomMutate(this->mutationPercentage);
+			this->animals.back()->randomMutate(3U);
 
 			if (&animal == this->trackedAnimal)
 				this->animals.back()->setColor(this->animalsColor);
@@ -1264,7 +1270,9 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 
 		this->animals.back()->setHp(fruit.getEnergy());
 		this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
-		this->animals.back()->randomMutate(this->mutationPercentage);
+		// TODO: unhard code mutations count, use mutation percentage Ecosystem member
+		//this->animals.back()->randomMutate(this->mutationPercentage);
+		this->animals.back()->randomMutate(3U);
 
 		if (&animal == this->trackedAnimal)
 			this->animals.back()->setColor(this->animalsColor);

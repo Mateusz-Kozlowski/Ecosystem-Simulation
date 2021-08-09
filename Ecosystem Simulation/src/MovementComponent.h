@@ -1,19 +1,18 @@
 #pragma once
 
-#include "Crappy Neural Nets/TempNet.h"
-
 class MovementComponent
 {
 public:
 	MovementComponent();
-	MovementComponent(const sf::Vector2f& default_velocity, const std::string& brain_file_path);
+	MovementComponent(
+		const sf::Vector2f& default_velocity, 
+		const char* brain_file_path
+	);
 	MovementComponent(const MovementComponent& rhs);
-
 	MovementComponent& operator=(const MovementComponent& rhs);
-
-	// public methods:
-	void saveBrainToFile(const std::string& file_path) const;
-	void loadBrainFromFile(const std::string& file_path);
+	
+	void saveBrainToFile(const char* file_path) const;
+	void loadBrainFromFile(const char* file_path);
 
 	void update(
 		float dt, 
@@ -22,7 +21,8 @@ public:
 	);
 
 	// accessors:
-	const CrappyNeuralNets::TempNet& getBrain() const;
+
+	const Blueberry::Brain& getBrain() const;
 
 	const sf::Vector2f& getVelocityVector() const;
 	const sf::Vector2f& getAccelerationVector() const;
@@ -37,7 +37,8 @@ public:
 	float getAccelerationVectorValue() const;
 
 	// mutators:
-	void randomMutate(const CrappyNeuralNets::Scalar& mutation_percentage);
+
+	void mutateBrain(unsigned brain_mutations_count);
 
 	void setVelocity(const sf::Vector2f& velocity);
 	void setVelocity(float x, float y);
@@ -46,9 +47,10 @@ public:
 	void set_vy(float vy);
 
 private:
-	std::unique_ptr<CrappyNeuralNets::TempNet> brain;
+	std::unique_ptr<Blueberry::Brain> brain;
 
-	// kinematics things:
+	// kinematics:
+
 	sf::Vector2f velocity;
 	sf::Vector2f acceleration;
 };

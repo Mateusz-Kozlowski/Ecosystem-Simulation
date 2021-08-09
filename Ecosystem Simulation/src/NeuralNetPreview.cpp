@@ -4,7 +4,7 @@
 using namespace gui;
 
 NeuralNetPreview::NeuralNetPreview(
-	const CrappyNeuralNets::TempNet& brain,
+	const Blueberry::Brain& brain,
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
 	const sf::Color& background_color)
@@ -15,7 +15,6 @@ NeuralNetPreview::NeuralNetPreview(
 	this->initSynapses();
 }
 
-// public methods:
 void NeuralNetPreview::update()
 {
 	this->updateNeurons();
@@ -30,7 +29,8 @@ void NeuralNetPreview::render(sf::RenderTarget& target) const
 }
 
 // accessors:
-const CrappyNeuralNets::TempNet& NeuralNetPreview::getBrain() const
+
+const Blueberry::Brain& NeuralNetPreview::getBrain() const
 {
 	return *this->brain;
 }
@@ -51,6 +51,7 @@ const sf::Color& NeuralNetPreview::getBackgroundColor() const
 }
 
 // mutators:
+
 void NeuralNetPreview::setPosition(const sf::Vector2f& position)
 {
 	this->background.setPosition(position);
@@ -82,7 +83,7 @@ void NeuralNetPreview::setBackgroundColor(const sf::Color& color)
 }
 
 // private methods:
-// initialization:
+
 void NeuralNetPreview::initBackground(
 	const sf::Vector2f& preview_position, 
 	const sf::Vector2f& size, 
@@ -176,7 +177,6 @@ void NeuralNetPreview::initSynapsesVector()
 	*/
 }
 
-// private utilities:
 void NeuralNetPreview::setNeuronsPositions()
 {
 	for (int i = 0; i < this->neurons.size(); i++)
@@ -328,7 +328,7 @@ void NeuralNetPreview::setOutputNeuronsColors()
 	*/
 }
 
-CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestActivatedValue(unsigned layer_index)
+Blueberry::Scalar NeuralNetPreview::getTheBiggestActivatedValue(unsigned layer_index)
 {
 	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
@@ -361,7 +361,7 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestActivatedValue(unsigned 
 	return 0.0;
 }
 
-CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestActivatedValue(unsigned layer_index)
+Blueberry::Scalar NeuralNetPreview::getTheSmallestActivatedValue(unsigned layer_index)
 {
 	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
@@ -458,7 +458,7 @@ void NeuralNetPreview::setSynapsesColors()
 	*/
 }
 
-CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestWeight()
+Blueberry::Scalar NeuralNetPreview::getTheBiggestWeight()
 {
 	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
@@ -474,7 +474,7 @@ CrappyNeuralNets::Scalar NeuralNetPreview::getTheBiggestWeight()
 	return 0.0;
 }
 
-CrappyNeuralNets::Scalar NeuralNetPreview::getTheSmallestWeight()
+Blueberry::Scalar NeuralNetPreview::getTheSmallestWeight()
 {
 	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
 	/*
