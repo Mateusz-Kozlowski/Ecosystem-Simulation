@@ -2,7 +2,7 @@
 
 enum class GodTool { NONE, TRACK, KILL, REPLACE, BRAIN, STOP, INFO };
 
-std::string getGodToolStr(GodTool god_tool);
+std::string getGodToolStr(GodTool godTool);
 
 GodTool getGodTool(const std::string& key);
 

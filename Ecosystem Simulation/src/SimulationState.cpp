@@ -1,78 +1,102 @@
 #include "pch.h"
 #include "SimulationState.h"
 
-SimulationState::SimulationState(StateData* state_data)
-	: State(state_data)
+SimulationState::SimulationState(StateData* stateData)
+	: State(stateData)
+	, m_fonts()
+	, m_view()
+	, m_previousMousePosWindow()
+	, m_sideMenuIsRendered(false)
+	, m_sideMenu()
+	, m_renderTexture()
+	, m_renderSprite()
+	, m_saveAsPanelIsRendered(false)
+	, m_saveAsPanel()
 {
-	this->initKeybinds();
-	this->initVariables();
-	this->initFonts();
-	this->initEcosystem();
-	this->initView();
-	this->initDeferredRender();
-	this->initSideMenu();
-	this->initSaveAsPanel();
+	initKeybinds();
+	initVariables();
+	initFonts();
+	initEcosystem();
+	initView();
+	initDeferredRender();
+	initSideMenu();
+	initSaveAsPanel();
 }
 
-// public methods:
 void SimulationState::update(float dt)
 {
-	if (!this->m_saveAsPanelIsRendered)
-		this->updateInput();
+	if (!m_saveAsPanelIsRendered)
+	{
+		updateInput();
+	}
 	else
-		this->updateInputWithPanelRendered();
+	{
+		updateInputWithPanelRendered();
+	}
 
-	this->updateMousePositions(&this->view);
+	updateMousePositions(&m_view);
 
-	if (this->m_sideMenuIsRendered)
-		this->updateSideMenu();
+	if (m_sideMenuIsRendered)
+	{
+		updateSideMenu();
+	}
 
-	this->getUpdatesFromSideMenuGui();
+	getUpdatesFromSideMenuGui();
 
-	if (this->m_saveAsPanelIsRendered)
-		this->saveAsPanel->update(dt, *this->stateData->events, this->mousePosWindow);
+	if (m_saveAsPanelIsRendered)
+	{
+		m_saveAsPanel->update(dt, *m_stateData->m_events, m_mousePosWindow);
+	}
 
-	this->getUpdatesFromSaveAsPanel();
+	getUpdatesFromSaveAsPanel();
 
-	this->updateView();
+	updateView();
 
-	this->updateEcosystem(dt);
+	updateEcosystem(dt);
 }
 
 void SimulationState::render(sf::RenderTarget* target)
 {
 	if (!target)
-		target = this->stateData->window;
+	{
+		target = m_stateData->m_window;
+	}
 
-	this->renderTexture.clear();
+	m_renderTexture.clear();
 
 	// draw ecosystem:
-	this->renderTexture.setView(this->view);
+	m_renderTexture.setView(m_view);
 
-	this->stateData->ecosystem->render(this->renderTexture);
+	m_stateData->m_ecosystem->render(m_renderTexture);
 
 	// render side menu and save as panel:
-	this->renderTexture.setView(this->renderTexture.getDefaultView());
+	m_renderTexture.setView(m_renderTexture.getDefaultView());
 
-	if (this->m_sideMenuIsRendered)
-		this->sideMenu->render(this->renderTexture);
+	if (m_sideMenuIsRendered)
+	{
+		m_sideMenu->render(m_renderTexture);
+	}
 
-	if (this->m_saveAsPanelIsRendered)
-		this->saveAsPanel->render(this->renderTexture);
+	if (m_saveAsPanelIsRendered)
+	{
+		m_saveAsPanel->render(m_renderTexture);
+	}
 
 	// final render:
-	this->renderTexture.display();
+	m_renderTexture.display();
 
-	target->draw(this->renderSprite);
+	target->draw(m_renderSprite);
 }
 
 // mutators:
+
 void SimulationState::freeze()
 {
 	std::cerr << "FREEZING IS NOT DEFINED YET!\n";
 }
 
-// initialization:
+// private methods:
+
 void SimulationState::initKeybinds()
 {
 	const char* path = "config/simulation_keybinds.ini";
@@ -85,61 +109,75 @@ void SimulationState::initKeybinds()
 		std::string key2;
 
 		while (ifs >> key >> key2)
-			this->keybinds[key] = this->stateData->supportedKeys->at(key2);
+		{
+			m_keybinds[key] = m_stateData->m_supportedKeys->at(key2);
+		}
 	}
-	else throw("ERROR::SIMULATIONSTATE::COULD NOT OPEN: " + std::string(path) + '\n');
+	else
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::SimulationState::initKeybinds()::"
+			<< "could not open "
+			<< path + '\n'
+		);
+	}
 
 	ifs.close();
 }
 
 void SimulationState::initVariables()
 {
-	this->sideMenu = nullptr;
-	this->m_sideMenuIsRendered = false;
-	this->m_saveAsPanelIsRendered = false;
-	this->previousMousePosWindow = sf::Vector2i(0, 0);
+	m_sideMenu = nullptr;
+	m_sideMenuIsRendered = false;
+	m_saveAsPanelIsRendered = false;
+	m_previousMousePosWindow = sf::Vector2i(0, 0);
 }
 
 void SimulationState::initFonts()
 {
-	if (!this->fonts["Retroica"].loadFromFile("resources/fonts/Retroica.ttf"))
-		throw("ERROR::SIMULATIONSTATE::COULD NOT LOAD A FONT");
-
-	if (!this->fonts["CONSOLAB"].loadFromFile("resources/fonts/CONSOLAB.ttf"))
-		throw("ERROR::SIMULATIONSTATE::COULD NOT LOAD A FONT");
+	if (!m_fonts["Retroica"].loadFromFile("resources/fonts/Retroica.ttf")
+		|| !m_fonts["CONSOLAB"].loadFromFile("resources/fonts/CONSOLAB.ttf"))
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::SimulationState::initFonts()::"
+			<< "could not load a font\n"
+		);
+	}
 }
 
 void SimulationState::initEcosystem()
 {
-	this->stateData->ecosystem->pauseSimulation();
+	m_stateData->m_ecosystem->pauseSimulation();
 }
 
 void SimulationState::initView()
 {
-	this->view.setSize(this->stateData->ecosystem->getWorldSize());
+	m_view.setSize(m_stateData->m_ecosystem->getWorldSize());
 
-	this->view.setCenter(
+	m_view.setCenter(
 		sf::Vector2f(
-			this->stateData->ecosystem->getWorldSize().x / 2.f,
-			this->stateData->ecosystem->getWorldSize().y / 2.f
+			m_stateData->m_ecosystem->getWorldSize().x / 2.f,
+			m_stateData->m_ecosystem->getWorldSize().y / 2.f
 		)
 	);
 }
 
 void SimulationState::initDeferredRender()
 {
-	this->renderTexture.create(
-		this->stateData->gfxSettings->resolution.width,
-		this->stateData->gfxSettings->resolution.height
+	m_renderTexture.create(
+		m_stateData->m_gfxSettings->resolution.width,
+		m_stateData->m_gfxSettings->resolution.height
 	);
 
-	this->renderSprite.setTexture(this->renderTexture.getTexture());
-	this->renderSprite.setTextureRect(
+	m_renderSprite.setTexture(m_renderTexture.getTexture());
+	m_renderSprite.setTextureRect(
 		sf::IntRect(
 			0,
 			0,
-			this->stateData->gfxSettings->resolution.width,
-			this->stateData->gfxSettings->resolution.height
+			m_stateData->m_gfxSettings->resolution.width,
+			m_stateData->m_gfxSettings->resolution.height
 		)
 	);
 }
@@ -149,26 +187,32 @@ void SimulationState::initSideMenu()
 	// temporary variables:
 	const std::string guiPath = "resources/textures/GUI";
 
-	const sf::VideoMode resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode resolution = m_stateData->m_gfxSettings->resolution;
 
 	unsigned charSize = gui::calcCharSize(24.0f, resolution);
 
 	// create new SideMenu:
-	this->sideMenu = std::make_unique<gui::SideMenu>(
-		sf::Vector2f(0.0f, 0.0f),
-		sf::Vector2f(gui::p2pX(24.0f, resolution), gui::p2pY(100.0f, resolution)),
+	m_sideMenu = std::make_unique<gui::SideMenu>(
+		sf::Vector2f(
+			0.0f, 
+			0.0f
+		),
+		sf::Vector2f(
+			gui::p2pX(24.0f, resolution), 
+			gui::p2pY(100.0f, resolution)
+		),
 		sf::Color(48, 48, 48)
 	);
 
 	// add widgets:
-	this->sideMenu->addCenteredText(
+	m_sideMenu->addCenteredText(
 		gui::p2pY(4.0f, resolution),
 		charSize,
-		this->fonts["CONSOLAB"],
+		m_fonts["CONSOLAB"],
 		"PLAY/STOP:",
 		sf::Color(225, 225, 225)
 	);
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"PAUSE",
 		{
 			{"PLAY IDLE", guiPath + "/play and stop/play.png"},
@@ -191,14 +235,14 @@ void SimulationState::initSideMenu()
 		)
 	);
 	
-	this->sideMenu->addCenteredText(
+	m_sideMenu->addCenteredText(
 		gui::p2pY(17.5f, resolution),
 		charSize,
-		this->fonts["CONSOLAB"],
+		m_fonts["CONSOLAB"],
 		"SPEED:",
 		sf::Color(225, 225, 225)
 	);
-	this->sideMenu->addSlider(
+	m_sideMenu->addSlider(
 		"SPEED",
 		sf::Vector2f(
 			gui::p2pX(12.0f, resolution),
@@ -216,17 +260,18 @@ void SimulationState::initSideMenu()
 
 		guiPath + "/scale sliders/axes/axis dark.png",
 		guiPath + "/scale sliders/handles/handle dark.png",
+
 		"quadratic"
 	);
 
-	this->sideMenu->addCenteredText(
+	m_sideMenu->addCenteredText(
 		gui::p2pY(28.5f, resolution),
 		charSize,
-		this->fonts["CONSOLAB"],
+		m_fonts["CONSOLAB"],
 		"MOVE THIS PANEL:",
 		sf::Color(225, 225, 225)
 	);
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"ARROW",
 		{
 			{"LEFT IDLE", guiPath + "/arrows/left arrow.png"},
@@ -249,16 +294,16 @@ void SimulationState::initSideMenu()
 		)
 	);
 
-	this->initGodToolsGui();
+	initGodToolsGui();
 
-	this->sideMenu->addCenteredText(
+	m_sideMenu->addCenteredText(
 		gui::p2pY(61.0f, resolution),
 		charSize,
-		this->fonts["CONSOLAB"],
+		m_fonts["CONSOLAB"],
 		"ZOOM:",
 		sf::Color(225, 225, 225)
 	);
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"ZOOM IN",
 		{
 			{"IDLE", guiPath + "/zoom/zoom in.png"},
@@ -276,7 +321,7 @@ void SimulationState::initSideMenu()
 		)
 	);
 
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"ZOOM OUT",
 		{
 			{"IDLE", guiPath + "/zoom/zoom out.png"},
@@ -294,7 +339,7 @@ void SimulationState::initSideMenu()
 		)
 	);
 
-	this->sideMenu->addButton(
+	m_sideMenu->addButton(
 		"SAVE",
 		sf::Vector2f(
 			gui::p2pX(6.0f, resolution),
@@ -305,15 +350,21 @@ void SimulationState::initSideMenu()
 			gui::p2pY(5.0f, resolution)
 		),
 		charSize,
-		this->fonts["CONSOLAB"],
+		m_fonts["CONSOLAB"],
 		"SAVE",
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 
-	this->sideMenu->addButton(
+	m_sideMenu->addButton(
 		"SAVE AS",
 		sf::Vector2f(
 			gui::p2pX(6.f, resolution),
@@ -324,15 +375,21 @@ void SimulationState::initSideMenu()
 			gui::p2pY(5.0f, resolution)
 		),
 		charSize,
-		this->fonts["CONSOLAB"],
+		m_fonts["CONSOLAB"],
 		"SAVE AS",
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 
-	this->sideMenu->addButton(
+	m_sideMenu->addButton(
 		"QUIT",
 		sf::Vector2f(
 			gui::p2pX(6.f, resolution),
@@ -343,11 +400,17 @@ void SimulationState::initSideMenu()
 			gui::p2pY(5.0f, resolution)
 		),
 		charSize,
-		this->fonts["CONSOLAB"],
+		m_fonts["CONSOLAB"],
 		"QUIT",
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64),
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 }
@@ -357,20 +420,20 @@ void SimulationState::initGodToolsGui()
 	// temporary variables:
 	const std::string& guiPath = "resources/textures/GUI";
 
-	const sf::VideoMode resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode resolution = m_stateData->m_gfxSettings->resolution;
 
 	float posYpercentage = 45.5f;
 
 	// init God tools GUI:
-	this->sideMenu->addCenteredText(
+	m_sideMenu->addCenteredText(
 		gui::p2pY(41.5f, resolution),
 		gui::calcCharSize(24.0f, resolution),
-		this->fonts["CONSOLAB"],
+		m_fonts["CONSOLAB"],
 		"GOD TOOLS:",
 		sf::Color(225, 225, 225)
 	);
 
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"TRACK",
 		{
 			{"IDLE", guiPath + "/God tools/track/track.png"},
@@ -388,7 +451,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"KILL",
 		{
 			{"IDLE", guiPath + "/God tools/kill/kill.png"},
@@ -406,7 +469,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"REPLACE",
 		{
 			{"IDLE", guiPath + "/God tools/replace/replace.png"},
@@ -424,7 +487,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"BRAIN",
 		{
 			{"IDLE", guiPath + "/God tools/brain/brain.png"},
@@ -442,7 +505,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"STOP",
 		{
 			{"IDLE", guiPath + "/God tools/stop/stop.png"},
@@ -460,7 +523,7 @@ void SimulationState::initGodToolsGui()
 		)
 	);
 
-	this->sideMenu->addImageButton(
+	m_sideMenu->addImageButton(
 		"INFO",
 		{
 			{"IDLE", guiPath + "/God tools/info/info.png"},
@@ -481,11 +544,11 @@ void SimulationState::initGodToolsGui()
 
 void SimulationState::initSaveAsPanel()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
 	unsigned charSize = gui::calcCharSize(26.0f, resolution);
 
-	this->saveAsPanel = std::make_unique<gui::SaveAsPanel>(
+	m_saveAsPanel = std::make_unique<gui::SaveAsPanel>(
 		sf::Vector2f(
 			resolution.width,
 			resolution.height
@@ -494,15 +557,15 @@ void SimulationState::initSaveAsPanel()
 		sf::Color(0, 0, 0, 128)
 	);
 
-	this->saveAsPanel->initCenteredText(
+	m_saveAsPanel->initCenteredText(
 		gui::p2pY(39.0f, resolution),
 		"ECOSYSTEM NAME:",
-		this->fonts["CONSOLAB"],
+		m_fonts["CONSOLAB"],
 		charSize,
 		sf::Color(225, 225, 255)
 	);
 
-	this->saveAsPanel->initTextBox(
+	m_saveAsPanel->initTextBox(
 		sf::Vector2f(
 			gui::p2pX(37.0f, resolution),
 			gui::p2pY(45.0f, resolution)
@@ -511,14 +574,24 @@ void SimulationState::initSaveAsPanel()
 			gui::p2pX(26.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["CONSOLAB"], "", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.f / 1080.f, resolution), 0.5f
+		m_fonts["CONSOLAB"], 
+		"", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.f / 1080.f, resolution), 
+		0.5f
 	);
 
-	this->saveAsPanel->addButton(
+	m_saveAsPanel->addButton(
 		"SAVE",
 		sf::Vector2f(
 			gui::p2pX(37.0f, resolution),
@@ -528,14 +601,22 @@ void SimulationState::initSaveAsPanel()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["CONSOLAB"], "SAVE", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["CONSOLAB"], 
+		"SAVE", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 
-	this->saveAsPanel->addButton(
+	m_saveAsPanel->addButton(
 		"OK",
 		sf::Vector2f(
 			gui::p2pX(51.0f, resolution),
@@ -545,37 +626,44 @@ void SimulationState::initSaveAsPanel()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["CONSOLAB"], "OK", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["CONSOLAB"], 
+		"OK", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 }
 
-// other private methods:
 void SimulationState::updateInput()
 {
-	for (const auto& event : *this->stateData->events)
+	for (const auto& event : *m_stateData->m_events)
 	{
 		if (event.type == sf::Event::KeyReleased)
 		{
-			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("CLOSE")))
+			if (event.key.code == sf::Keyboard::Key(m_keybinds.at("CLOSE")))
 			{
-				this->m_sideMenuIsRendered = !this->m_sideMenuIsRendered;
+				m_sideMenuIsRendered = !m_sideMenuIsRendered;
 				return;
 			}
-			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("PAUSE")))
+			if (event.key.code == sf::Keyboard::Key(m_keybinds.at("PAUSE")))
 			{
-				if (this->stateData->ecosystem->isSimulationPaused())
+				if (m_stateData->m_ecosystem->isSimulationPaused())
 				{
-					this->stateData->ecosystem->unpauseSimulation();
-					this->sideMenu->setTextureOfImageButton("PAUSE", "STOP");
+					m_stateData->m_ecosystem->unpauseSimulation();
+					m_sideMenu->setTextureOfImageButton("PAUSE", "STOP");
 				}
 				else
 				{
-					this->stateData->ecosystem->pauseSimulation();
-					this->sideMenu->setTextureOfImageButton("PAUSE", "PLAY");
+					m_stateData->m_ecosystem->pauseSimulation();
+					m_sideMenu->setTextureOfImageButton("PAUSE", "PLAY");
 				}
 				return;
 			}
@@ -585,13 +673,13 @@ void SimulationState::updateInput()
 
 void SimulationState::updateInputWithPanelRendered()
 {
-	for (const auto& event : *this->stateData->events)
+	for (const auto& event : *m_stateData->m_events)
 	{
 		if (event.type == sf::Event::KeyReleased)
 		{
-			if (event.key.code == sf::Keyboard::Key(this->keybinds.at("CLOSE")))
+			if (event.key.code == sf::Keyboard::Key(m_keybinds.at("CLOSE")))
 			{
-				this->m_sideMenuIsRendered = !this->m_sideMenuIsRendered;
+				m_sideMenuIsRendered = !m_sideMenuIsRendered;
 				return;
 			}
 		}
@@ -600,310 +688,483 @@ void SimulationState::updateInputWithPanelRendered()
 
 void SimulationState::updateMousePositions(const sf::View* view)
 {
-	this->mousePosScreen = sf::Mouse::getPosition();
-	this->previousMousePosWindow = this->mousePosWindow;
-	this->mousePosWindow = sf::Mouse::getPosition(*this->stateData->window);
+	m_mousePosScreen = sf::Mouse::getPosition();
+	m_previousMousePosWindow = m_mousePosWindow;
+	m_mousePosWindow = sf::Mouse::getPosition(*m_stateData->m_window);
 
 	if (view)
 	{
-		sf::View temp = this->stateData->window->getView();
+		sf::View temp = m_stateData->m_window->getView();
 
-		this->stateData->window->setView(*view);
+		m_stateData->m_window->setView(*view);
 
-		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
+		m_mousePosView = m_stateData->m_window->mapPixelToCoords(
+			sf::Mouse::getPosition(*m_stateData->m_window)
+		);
 
-		this->stateData->window->setView(temp);
+		m_stateData->m_window->setView(temp);
 	}
 	else
-		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
+	{
+		m_mousePosView = m_stateData->m_window->mapPixelToCoords(
+			sf::Mouse::getPosition(*m_stateData->m_window)
+		);
+	}
 }
 
 void SimulationState::updateSideMenu()
 {
-	this->sideMenu->update(this->mousePosWindow, *this->stateData->events);
+	m_sideMenu->update(m_mousePosWindow, *m_stateData->m_events);
 
-	this->updateSideMenuGui();
+	updateSideMenuGui();
 }
 
 void SimulationState::updateSideMenuGui()
 {
 	// change themes of texture buttons:
-	for (auto& it : this->sideMenu->getImageButtons())
+	for (auto& imgBtn : m_sideMenu->getImageButtons())
 	{
-		if (it.first == "PAUSE") // pause button:
+		if (imgBtn.first == "PAUSE") // pause button:
 		{
-			if (it.second->getCurrentTextureKey().substr(0, 4) == "PLAY")
+			if (imgBtn.second->getCurrentTextureKey().substr(0, 4) == "PLAY")
 			{
-				if (it.second->isPressed())
-					this->sideMenu->setTextureOfImageButton(it.first, "PLAY PRESSED");
-
-				else if (it.second->isHovered())
-					this->sideMenu->setTextureOfImageButton(it.first, "PLAY HOVERED");
-
+				if (imgBtn.second->isPressed())
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"PLAY PRESSED"
+					);
+				}
+				else if (imgBtn.second->isHovered())
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"PLAY HOVERED"
+					);
+				}
 				else
-					this->sideMenu->setTextureOfImageButton(it.first, "PLAY IDLE");
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"PLAY IDLE"
+					);
+				}
 			}
 			else
 			{
-				if (it.second->isPressed())
-					this->sideMenu->setTextureOfImageButton(it.first, "STOP PRESSED");
-
-				else if (it.second->isHovered())
-					this->sideMenu->setTextureOfImageButton(it.first, "STOP HOVERED");
-
+				if (imgBtn.second->isPressed())
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"STOP PRESSED"
+					);
+				}
+				else if (imgBtn.second->isHovered())
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"STOP HOVERED"
+					);
+				}
 				else
-					this->sideMenu->setTextureOfImageButton(it.first, "STOP IDLE");
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"STOP IDLE"
+					);
+				}
 			}
 		}
-		else if (it.first == "ARROW") // arrow button:
+		else if (imgBtn.first == "ARROW") // arrow button:
 		{
-			if (it.second->getCurrentTextureKey().substr(0, 5) == "RIGHT")
+			if (imgBtn.second->getCurrentTextureKey().substr(0, 5) == "RIGHT")
 			{
-				if (it.second->isPressed())
-					this->sideMenu->setTextureOfImageButton(it.first, "RIGHT PRESSED");
-
-				else if (it.second->isHovered())
-					this->sideMenu->setTextureOfImageButton(it.first, "RIGHT HOVERED");
-
+				if (imgBtn.second->isPressed())
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"RIGHT PRESSED"
+					);
+				}
+				else if (imgBtn.second->isHovered())
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"RIGHT HOVERED"
+					);
+				}
 				else
-					this->sideMenu->setTextureOfImageButton(it.first, "RIGHT IDLE");
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"RIGHT IDLE"
+					);
+				}
 			}
 			else
 			{
-				if (it.second->isPressed())
-					this->sideMenu->setTextureOfImageButton(it.first, "LEFT PRESSED");
-
-				else if (it.second->isHovered())
-					this->sideMenu->setTextureOfImageButton(it.first, "LEFT HOVERED");
-
+				if (imgBtn.second->isPressed())
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"LEFT PRESSED"
+					);
+				}
+				else if (imgBtn.second->isHovered())
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"LEFT HOVERED"
+					);
+				}
 				else
-					this->sideMenu->setTextureOfImageButton(it.first, "LEFT IDLE");
+				{
+					m_sideMenu->setTextureOfImageButton(
+						imgBtn.first, 
+						"LEFT IDLE"
+					);
+				}
 			}
 		}
-		else if (it.first.substr(0, 4) == "ZOOM")
+		else if (imgBtn.first.substr(0, 4) == "ZOOM")
 		{
-			if (it.second->isPressed())
-				this->sideMenu->setTextureOfImageButton(it.first, "PRESSED");
-
-			else if (it.second->isHovered())
-				this->sideMenu->setTextureOfImageButton(it.first, "HOVERED");
-
+			if (imgBtn.second->isPressed())
+			{
+				m_sideMenu->setTextureOfImageButton(
+					imgBtn.first, 
+					"PRESSED"
+				);
+			}
+			else if (imgBtn.second->isHovered())
+			{
+				m_sideMenu->setTextureOfImageButton(
+					imgBtn.first, 
+					"HOVERED"
+				);
+			}
 			else
-				this->sideMenu->setTextureOfImageButton(it.first, "IDLE");
+			{
+				m_sideMenu->setTextureOfImageButton(
+					imgBtn.first, 
+					"IDLE"
+				);
+			}
 		}
 		else // God tools buttons: 
-			this->updateGodToolButton(it.first);
+		{
+			updateGodToolButton(imgBtn.first);
+		}
 	}
 }
 
-void SimulationState::updateGodToolButton(const std::string& god_tool_btn_key)
+void SimulationState::updateGodToolButton(const std::string& godToolBtnKey)
 {
-	std::string currentGodToolStr = getGodToolStr(this->stateData->ecosystem->getCurrentGodTool());
+	Ecosystem* ecosystem = m_stateData->m_ecosystem;
 
-	if (god_tool_btn_key == currentGodToolStr)
+	std::string currentGodToolStr = getGodToolStr(
+		ecosystem->getCurrentGodTool()
+	);
+
+	if (godToolBtnKey == currentGodToolStr)
 	{
-		// if the current tool has been clicked, it is no longer the current tool:
-		if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->hasBeenClicked())
+		// if the current tool has been clicked, 
+		// it is no longer the current tool:
+		if (m_sideMenu->getImageButtons().at(godToolBtnKey)->hasBeenClicked())
 		{
-			// the button is hovered, because u can't click a button without hovering it with a mouse cursor:
-			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "LIGHT");
+			// the button is hovered, 
+			// because u can't click a button 
+			// without hovering it with a mouse cursor:
+			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "LIGHT");
 
-			this->stateData->ecosystem->setGodTool(GodTool::NONE);
+			ecosystem->setGodTool(GodTool::NONE);
 		}
 
 		// pretty straight forward, it's pressed so it's dark:
-		else if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->isPressed())
+		else if (m_sideMenu->getImageButtons().at(godToolBtnKey)->isPressed())
 		{
-			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "DARK");
+			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "DARK");
 		}
 
 		// is hovered so is light:
-		else if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->isHovered())
+		else if (m_sideMenu->getImageButtons().at(godToolBtnKey)->isHovered())
 		{
-			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "LIGHT");
+			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "LIGHT");
 		}
 
-		// it is neither hovered nor pressed, but let me remind u, that it's still the current tool, so we darken it:
+		// it is neither hovered nor pressed, but let me remind u,
+		// that it's still the current tool, so we darken it:
 		else
 		{
-			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "DARK");
+			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "DARK");
 		}
 	}
 	else // the argument isn't the current tool:
 	{
 		// the tool become the current one:
-		if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->hasBeenClicked())
+		if (m_sideMenu->getImageButtons().at(godToolBtnKey)->hasBeenClicked())
 		{
 			// old tool (if it exists at all) ceases to be the current tool:
-			if (this->stateData->ecosystem->getCurrentGodTool() != GodTool::NONE) 
-				this->sideMenu->setTextureOfImageButton(currentGodToolStr, "IDLE");
+			if (ecosystem->getCurrentGodTool() != GodTool::NONE)
+			{
+				m_sideMenu->setTextureOfImageButton(
+					currentGodToolStr, 
+					"IDLE"
+				);
+			}
 
-			this->stateData->ecosystem->setGodTool(getGodTool(god_tool_btn_key.c_str()));
+			ecosystem->setGodTool(getGodTool(godToolBtnKey.c_str()));
 
 			// we brighten it up,
-			// because a mouse cursor is still covering it (because it has just been clicked and a mouse hasn't go away yet):
-			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "LIGHT");
+			// because a mouse cursor is still covering it 
+			// (because it has just been clicked 
+			// and a mouse hasn't go away yet):
+			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "LIGHT");
 		}
 
 		// next pretty straight forward line, it's hovered so it's light: 
-		else if (this->sideMenu->getImageButtons().at(god_tool_btn_key)->isHovered())
+		else if (m_sideMenu->getImageButtons().at(godToolBtnKey)->isHovered())
 		{
-			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "LIGHT");
+			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "LIGHT");
 		}
 
 		// the most common case, ordinary idle tool:
 		else
 		{
-			this->sideMenu->setTextureOfImageButton(god_tool_btn_key, "IDLE");
+			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "IDLE");
 		}
 	}
 }
 
 void SimulationState::getUpdatesFromSideMenuGui()
 {
-	// get update from side menu texture buttons:
-	if (this->sideMenu->getImageButtons().at("PAUSE")->hasBeenClicked())
-	{
-		if (this->stateData->ecosystem->isSimulationPaused())
-			this->stateData->ecosystem->unpauseSimulation();
-		else
-			this->stateData->ecosystem->pauseSimulation();
+	typedef std::unique_ptr<gui::ImageButton> ImgBtnUniquePtr;
+	typedef std::unordered_map<std::string, ImgBtnUniquePtr> ImgBtnsMap;
 
-		std::string currentTextureKey = this->sideMenu->getImageButtons().at("PAUSE")->getCurrentTextureKey();
+	const ImgBtnsMap& sideMenuImgBtns = m_sideMenu->getImageButtons();
+
+	// get update from side menu texture buttons:
+	if (sideMenuImgBtns.at("PAUSE")->hasBeenClicked())
+	{
+		if (m_stateData->m_ecosystem->isSimulationPaused())
+		{
+			m_stateData->m_ecosystem->unpauseSimulation();
+		}
+		else
+		{
+			m_stateData->m_ecosystem->pauseSimulation();
+		}
+
+		const ImgBtnUniquePtr& imgBtn = sideMenuImgBtns.at("PAUSE");
+		std::string currentTextureKey = imgBtn->getCurrentTextureKey();
 
 		if (currentTextureKey.substr(0, 4) == "PLAY")
-			this->sideMenu->setTextureOfImageButton("PAUSE", currentTextureKey.replace(0, 4, "STOP"));
-
+		{
+			m_sideMenu->setTextureOfImageButton(
+				"PAUSE",
+				currentTextureKey.replace(0, 4, "STOP")
+			);
+		}
 		else
-			this->sideMenu->setTextureOfImageButton("PAUSE", currentTextureKey.replace(0, 4, "PLAY"));
+		{
+			m_sideMenu->setTextureOfImageButton(
+				"PAUSE", 
+				currentTextureKey.replace(0, 4, "PLAY")
+			);
+		}
 	}
 
-	if (this->sideMenu->getImageButtons().at("ARROW")->hasBeenClicked())
+	if (sideMenuImgBtns.at("ARROW")->hasBeenClicked())
 	{
-		std::string currentTextureKey = this->sideMenu->getImageButtons().at("ARROW")->getCurrentTextureKey();
+		const ImgBtnUniquePtr& imgBtn = sideMenuImgBtns.at("ARROW");
+		std::string currentTextureKey = imgBtn->getCurrentTextureKey();
 
 		if (currentTextureKey.substr(0, 5) == "RIGHT")
 		{
-			this->sideMenu->setPosition(
+			const GraphicsSettings* gfxSettings = m_stateData->m_gfxSettings;
+
+			m_sideMenu->setPosition(
 				sf::Vector2f(
-					this->stateData->gfxSettings->resolution.width - this->sideMenu->getSize().x,
+					gfxSettings->resolution.width - m_sideMenu->getSize().x,
 					0.f
 				)
 			);
 
-			this->sideMenu->setTextureOfImageButton("ARROW", currentTextureKey.replace(0, 5, "LEFT"));
+			m_sideMenu->setTextureOfImageButton(
+				"ARROW", 
+				currentTextureKey.replace(0, 5, "LEFT")
+			);
 		}
 		else
 		{
-			this->sideMenu->setPosition(
+			m_sideMenu->setPosition(
 				sf::Vector2f(
 					0.f,
 					0.f
 				)
 			);
 
-			this->sideMenu->setTextureOfImageButton("ARROW", currentTextureKey.replace(0, 4, "RIGHT"));
+			m_sideMenu->setTextureOfImageButton(
+				"ARROW", 
+				currentTextureKey.replace(0, 4, "RIGHT")
+			);
 		}
 	}
 
-	if (this->sideMenu->getImageButtons().at("ZOOM IN")->isPressed())
-		this->view.zoom(0.95f);
+	if (sideMenuImgBtns.at("ZOOM IN")->isPressed())
+	{
+		m_view.zoom(0.95f); // TODO: "unhardcode" this
+	}
 
-	if (this->sideMenu->getImageButtons().at("ZOOM OUT")->isPressed())
-		this->view.zoom(1.0f / 0.95f);
+	if (sideMenuImgBtns.at("ZOOM OUT")->isPressed())
+	{
+		m_view.zoom(1.0f / 0.95f); // TODO: "unhardcode" this
+	}
 
 	// get update from side menu buttons:
-	if (this->sideMenu->getButtons().at("SAVE")->isClicked())
-		this->stateData->ecosystem->saveToFolder("ecosystems/" + this->stateData->ecosystem->getName());
-
-	else if (this->sideMenu->getButtons().at("SAVE AS")->isClicked())
-		this->m_saveAsPanelIsRendered = true;
-
-	else if (this->sideMenu->getButtons().at("QUIT")->isClicked()) 
-		this->endState();
+	if (m_sideMenu->getButtons().at("SAVE")->isClicked())
+	{
+		m_stateData->m_ecosystem->saveToFolder(
+			"ecosystems/" + m_stateData->m_ecosystem->getName()
+		);
+	}
+	else if (m_sideMenu->getButtons().at("SAVE AS")->isClicked())
+	{
+		m_saveAsPanelIsRendered = true;
+	}
+	else if (m_sideMenu->getButtons().at("QUIT")->isClicked())
+	{
+		endState();
+	}
 }
 
 void SimulationState::getUpdatesFromSaveAsPanel()
 {
-	if (this->saveAsPanel->getButton("SAVE")->isClicked())
-		this->stateData->ecosystem->saveToFolder(
-			"ecosystems/" + this->saveAsPanel->getTextBox()->getInput()
+	if (m_saveAsPanel->getButton("SAVE")->isClicked())
+	{
+		m_stateData->m_ecosystem->saveToFolder(
+			"ecosystems/" + m_saveAsPanel->getTextBox()->getInput()
 		);
-
-	else if (this->saveAsPanel->getButton("OK")->isClicked())
-		this->m_saveAsPanelIsRendered = false;
+	}
+	else if (m_saveAsPanel->getButton("OK")->isClicked())
+	{
+		m_saveAsPanelIsRendered = false;
+	}
 }
 
 void SimulationState::updateView()
 {
-	// TODO: move that to updateInput method? And put into a separate function?:
+	// TODO: move that to updateInput method? 
+	// TODO: And put into a separate function?:
+	
 	// zoom view:
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) this->view.zoom(0.95f);
-
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract)) this->view.zoom(1.0f / 0.95f);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add))
+	{
+		m_view.zoom(0.95f); // TODO: "unhardcode" this
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract))
+	{
+		m_view.zoom(1.0f / 0.95f); // TODO: "unhardcode" this
+	}
 
 	// move view:
-	const sf::VideoMode& vm = this->stateData->gfxSettings->resolution;
 
-	if (
-		sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
-		!this->sideMenu->getBackground().getGlobalBounds().contains(static_cast<sf::Vector2f>(this->mousePosWindow)))
+	sf::RectangleShape sideMenuBg = m_sideMenu->getBackground();
+	auto mousePosWindowF = static_cast<sf::Vector2f>(m_mousePosWindow);
+	
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) 
+		&& !sideMenuBg.getGlobalBounds().contains(mousePosWindowF))
 	{
-		int offsetX = this->previousMousePosWindow.x - this->mousePosWindow.x;
-		int offsetY = this->previousMousePosWindow.y - this->mousePosWindow.y;
+		int offsetX = m_previousMousePosWindow.x - m_mousePosWindow.x;
+		int offsetY = m_previousMousePosWindow.y - m_mousePosWindow.y;
 
-		this->view.move(
-			offsetX * this->view.getSize().x / this->stateData->gfxSettings->resolution.width,
-			offsetY * this->view.getSize().y / this->stateData->gfxSettings->resolution.height
+		sf::VideoMode resolution = m_stateData->m_gfxSettings->resolution;
+			
+		m_view.move(
+			offsetX * m_view.getSize().x / resolution.width,
+			offsetY * m_view.getSize().y / resolution.height
 		);
 	}
 
 	// change the center of view if an animal is tracked:
-	if (this->stateData->ecosystem->getTrackedAnimal())
-		this->view.setCenter(this->stateData->ecosystem->getTrackedAnimal()->getPosition());
+	if (m_stateData->m_ecosystem->getTrackedAnimal())
+	{
+		m_view.setCenter(
+			m_stateData->m_ecosystem->getTrackedAnimal()->getPosition()
+		);
+	}
 
 	// correct zoom:
-	float worldWidth = static_cast<float>(this->stateData->ecosystem->getWorldSize().x);
-	float worldHeight = static_cast<float>(this->stateData->ecosystem->getWorldSize().y);
 
-	this->view.setSize(
-		std::min(this->view.getSize().x, worldWidth),
-		std::min(this->view.getSize().y, worldHeight)
+	float worldWidth = static_cast<float>(
+		m_stateData->m_ecosystem->getWorldSize().x
+	);
+	float worldHeight = static_cast<float>(
+		m_stateData->m_ecosystem->getWorldSize().y
+	);
+
+	m_view.setSize(
+		std::min(
+			m_view.getSize().x, 
+			worldWidth
+		),
+		std::min(
+			m_view.getSize().y, 
+			worldHeight
+		)
 	);
 
 	// correct view moving:
-	if (this->view.getCenter().x - this->view.getSize().x / 2.f < 0.f)
-		this->view.setCenter(this->view.getSize().x / 2.f, this->view.getCenter().y);
-
-	if (this->view.getCenter().x + this->view.getSize().x / 2.f > worldWidth)
-		this->view.setCenter(worldWidth - this->view.getSize().x / 2.f, this->view.getCenter().y);
-
-	if (this->view.getCenter().y - this->view.getSize().y / 2.f < 0.f)
-		this->view.setCenter(this->view.getCenter().x, this->view.getSize().y / 2.f);
-
-	if (this->view.getCenter().y + this->view.getSize().y / 2.f > worldHeight)
-		this->view.setCenter(this->view.getCenter().x, worldHeight - this->view.getSize().y / 2.f);
+	if (m_view.getCenter().x - m_view.getSize().x / 2.f < 0.f)
+	{
+		m_view.setCenter(
+			m_view.getSize().x / 2.f, 
+			m_view.getCenter().y
+		);
+	}
+	if (m_view.getCenter().x + m_view.getSize().x / 2.f > worldWidth)
+	{
+		m_view.setCenter(
+			worldWidth - m_view.getSize().x / 2.f, 
+			m_view.getCenter().y
+		);
+	}
+	if (m_view.getCenter().y - m_view.getSize().y / 2.f < 0.f)
+	{
+		m_view.setCenter(
+			m_view.getCenter().x, 
+			m_view.getSize().y / 2.f
+		);
+	}
+	if (m_view.getCenter().y + m_view.getSize().y / 2.f > worldHeight)
+	{
+		m_view.setCenter(
+			m_view.getCenter().x, 
+			worldHeight - m_view.getSize().y / 2.f
+		);
+	}
 }
 
 void SimulationState::updateEcosystem(float dt)
 {
-	this->stateData->ecosystem->setSimulationSpeedFactor(
-		this->sideMenu->getSliders().at("SPEED")->getCurrentValue()
+	m_stateData->m_ecosystem->setSimulationSpeedFactor(
+		m_sideMenu->getSliders().at("SPEED")->getCurrentValue()
 	);
 
-	this->useEcosystemGodTools();
+	useEcosystemGodTools();
 
-	this->stateData->ecosystem->update(dt);
+	m_stateData->m_ecosystem->update(dt);
 }
 
 void SimulationState::useEcosystemGodTools()
 {
-	sf::FloatRect sideMenuGlobalBounds = this->sideMenu->getBackground().getGlobalBounds();
+	sf::RectangleShape sideMenuBg = m_sideMenu->getBackground();
+	auto mousePosWinF = static_cast<sf::Vector2f>(m_mousePosWindow);
 
-	sf::Vector2f mousePosWindow = static_cast<sf::Vector2f>(this->mousePosWindow);
-	
-	if (this->m_sideMenuIsRendered && sideMenuGlobalBounds.contains(mousePosWindow))
-		return;
+	if (m_sideMenuIsRendered
+		&& sideMenuBg.getGlobalBounds().contains(mousePosWinF)) return;
 
-	this->stateData->ecosystem->useGodTools(*this->stateData->events, this->mousePosView);
+	m_stateData->m_ecosystem->useGodTools(
+		*m_stateData->m_events, 
+		m_mousePosView
+	);
 }

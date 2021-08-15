@@ -2,140 +2,125 @@
 #include "MovementComponent.h"
 
 MovementComponent::MovementComponent()
-{	
-	this->brain = std::make_unique<Blueberry::Brain>(5U, 2U);
-	this->brain->mutate(4U);
+	: m_brain(std::make_unique<Blueberry::Brain>(5U, 2U))
+	, m_velocity(0.0f, 0.0f)
+	, m_acceleration(0.0f, 0.0f)
+{
+	m_brain->mutate(4U);
 }
 
 MovementComponent::MovementComponent(
-	const sf::Vector2f& default_velocity, 
-	const char* brain_file_path)
-	: velocity(default_velocity)
+	const sf::Vector2f& defaultVelocity,
+	const char* brainFilePath)
+	: m_brain(std::make_unique<Blueberry::Brain>(0U, 0U))
+	, m_velocity(defaultVelocity)
+	, m_acceleration(0.0f, 0.0f)
 {
-	this->loadBrainFromFile(brain_file_path);
+	loadBrainFromFile(brainFilePath);
 }
 
 MovementComponent::MovementComponent(const MovementComponent& rhs)
+	: m_brain(std::make_unique<Blueberry::Brain>(0U, 0U))
+	, m_velocity(rhs.m_velocity)
+	, m_acceleration(rhs.m_acceleration)
 {
-	*this->brain = *rhs.brain;
-	this->velocity = rhs.velocity;
-	this->acceleration = rhs.acceleration;
+	*m_brain = *rhs.m_brain;
 }
 
 MovementComponent& MovementComponent::operator=(const MovementComponent& rhs)
 {
 	if (this != &rhs)
 	{
-		*this->brain = *rhs.brain;
-		this->velocity = rhs.velocity;
-		this->acceleration = rhs.acceleration;
+		*m_brain = *rhs.m_brain;
+		m_velocity = rhs.m_velocity;
+		m_acceleration = rhs.m_acceleration;
 	}
 
 	return *this;
 }
 
-void MovementComponent::saveBrainToFile(const char* file_path) const
+void MovementComponent::saveBrainToFile(const char* filePath) const
 {
-	this->brain->saveToFile(file_path);
+	m_brain->saveToFile(filePath);
 }
 
-void MovementComponent::loadBrainFromFile(const char* file_path)
+void MovementComponent::loadBrainFromFile(const char* filePath)
 {
-	this->brain->loadFromFile(file_path);
+	m_brain->loadFromFile(filePath);
 }
 
 void MovementComponent::update(
-	float dt, 
-	float speed_factor, 
-	const std::vector<double>& brain_inputs)
+	float dt,
+	float speedFactor,
+	const std::vector<double>& brainInputs)
 {
 	// update acceleration:	
-	this->brain->propagateForward(brain_inputs);
-	
-	auto brainOutput = this->brain->getOutput();
+	m_brain->propagateForward(brainInputs);
+
+	auto brainOutput = m_brain->getOutput();
 
 	// TODO: implement slowing down using speed_factor:
 
 	// update acceleration:
-	this->acceleration.x = brainOutput[0];
-	this->acceleration.y = brainOutput[1];
+	m_acceleration.x = brainOutput[0];
+	m_acceleration.y = brainOutput[1];
 
 	// update velocity:
-	this->velocity.x += this->acceleration.x * dt;
-	this->velocity.y += this->acceleration.y * dt;
+	m_velocity.x += m_acceleration.x * dt;
+	m_velocity.y += m_acceleration.y * dt;
 }
 
 // accessors:
 
 const Blueberry::Brain& MovementComponent::getBrain() const
 {
-	return *this->brain;
+	return *m_brain;
 }
 
 const sf::Vector2f& MovementComponent::getVelocityVector() const
 {
-	return this->velocity;
+	return m_velocity;
 }
 
 const sf::Vector2f& MovementComponent::getAccelerationVector() const
 {
-	return this->acceleration;
-}
-
-float MovementComponent::get_vx() const
-{
-	return this->velocity.x;
-}
-
-float MovementComponent::get_vy() const
-{
-	return this->velocity.y;
-}
-
-float MovementComponent::get_ax() const
-{
-	return this->acceleration.x;
-}
-
-float MovementComponent::get_ay() const
-{
-	return this->acceleration.y;
+	return m_acceleration;
 }
 
 float MovementComponent::getVelocityVectorValue() const
 {
-	return sqrt(pow(this->velocity.x, 2) + pow(this->velocity.y, 2));
+	return sqrt(pow(m_velocity.x, 2) + pow(m_velocity.y, 2));
 }
 
 float MovementComponent::getAccelerationVectorValue() const
 {
-	return sqrt(pow(this->acceleration.x, 2) + pow(this->acceleration.y, 2));
+	return sqrt(pow(m_acceleration.x, 2) + pow(m_acceleration.y, 2));
 }
 
 // mutators:
 
-void MovementComponent::mutateBrain(unsigned brain_mutations_count)
+void MovementComponent::mutateBrain(unsigned brainMutationsCount)
 {
-	this->brain->mutate(brain_mutations_count);
+	m_brain->mutate(brainMutationsCount);
 }
 
 void MovementComponent::setVelocity(const sf::Vector2f& velocity)
 {
-	this->velocity = velocity;
+	m_velocity = velocity;
 }
 
 void MovementComponent::setVelocity(float x, float y)
 {
-	this->velocity.x = x;
-	this->velocity.y = y;
+	m_velocity.x = x;
+	m_velocity.y = y;
 }
 
-void MovementComponent::set_vx(float vx)
+void MovementComponent::setVelocityX(float vx)
 {
-	this->velocity.x = vx;
+	m_velocity.x = vx;
 }
 
-void MovementComponent::set_vy(float vy)
+void MovementComponent::setVelocityY(float vy)
 {
-	this->velocity.y = vy;
+	m_velocity.y = vy;
 }

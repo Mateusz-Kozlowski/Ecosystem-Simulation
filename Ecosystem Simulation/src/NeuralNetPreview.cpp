@@ -1,511 +1,715 @@
 #include "pch.h"
 #include "NeuralNetPreview.h"
 
-using namespace gui;
-
-NeuralNetPreview::NeuralNetPreview(
+gui::NeuralNetPreview::NeuralNetPreview(
 	const Blueberry::Brain& brain,
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
-	const sf::Color& background_color)
-	: brain(&brain)
+	const sf::Color& backgroundColor)
+	: m_brain(&brain)
+	, m_background(size)
+	, m_neurons()
+	, m_synapses()
 {
-	this->initBackground(position, size, background_color);
-	this->initNeurons();
-	this->initSynapses();
+	initBackground(position, backgroundColor);
+	initNeurons();
+	initSynapses();
 }
 
-void NeuralNetPreview::update()
+void gui::NeuralNetPreview::update()
 {
-	this->updateNeurons();
+	updateNeurons();
 }
 
-void NeuralNetPreview::render(sf::RenderTarget& target) const
+void gui::NeuralNetPreview::render(sf::RenderTarget& target) const
 {
-	target.draw(this->background);
+	target.draw(m_background);
 
-	this->renderNeurons(target);
-	this->renderSynapses(target);
+	renderNeurons(target);
+	renderSynapses(target);
 }
 
 // accessors:
 
-const Blueberry::Brain& NeuralNetPreview::getBrain() const
+const Blueberry::Brain& gui::NeuralNetPreview::getBrain() const
 {
-	return *this->brain;
+	return *m_brain;
 }
 
-const sf::Vector2f& NeuralNetPreview::getPosition() const
+const sf::Vector2f& gui::NeuralNetPreview::getPosition() const
 {
-	return this->background.getPosition();
+	return m_background.getPosition();
 }
 
-const sf::Vector2f& NeuralNetPreview::getSize() const
+const sf::Vector2f& gui::NeuralNetPreview::getSize() const
 {
-	return this->background.getSize();
+	return m_background.getSize();
 }
 
-const sf::Color& NeuralNetPreview::getBackgroundColor() const
+const sf::Color& gui::NeuralNetPreview::getBackgroundColor() const
 {
-	return this->background.getFillColor();
+	return m_background.getFillColor();
 }
 
 // mutators:
 
-void NeuralNetPreview::setPosition(const sf::Vector2f& position)
+void gui::NeuralNetPreview::setPosition(const sf::Vector2f& position)
 {
-	this->background.setPosition(position);
+	m_background.setPosition(position);
 
-	this->setNeuronsPositions();
-	this->setSynapsesPositions();
+	setNeuronsPositions();
+	setSynapsesPositions();
 }
 
 void gui::NeuralNetPreview::setPosition(float x, float y)
 {
-	this->background.setPosition(x, y);
+	m_background.setPosition(x, y);
 
-	this->setNeuronsPositions();
-	this->setSynapsesPositions();
+	setNeuronsPositions();
+	setSynapsesPositions();
 }
 
-void NeuralNetPreview::setSize(const sf::Vector2f& size)
+void gui::NeuralNetPreview::setSize(const sf::Vector2f& size)
 {
-	this->background.setSize(size);
+	m_background.setSize(size);
 
-	this->setNeuronsPositions();
-	this->setNeuronsSizes();
-	this->setSynapsesPositions();
+	setNeuronsPositions();
+	setNeuronsSizes();
+	setSynapsesPositions();
 }
 
-void NeuralNetPreview::setBackgroundColor(const sf::Color& color)
+void gui::NeuralNetPreview::setBackgroundColor(const sf::Color& color)
 {
-	this->background.setFillColor(color);
+	m_background.setFillColor(color);
 }
 
 // private methods:
 
-void NeuralNetPreview::initBackground(
-	const sf::Vector2f& preview_position, 
-	const sf::Vector2f& size, 
-	const sf::Color& background_color)
+void gui::NeuralNetPreview::initBackground(
+	const sf::Vector2f& previewPosition,
+	const sf::Color& backgroundColor)
 {
-	this->background.setPosition(preview_position);
-	this->background.setSize(size);
-	this->background.setFillColor(background_color);
+	m_background.setPosition(previewPosition);
+	m_background.setFillColor(backgroundColor);
 }
 
-void NeuralNetPreview::initNeurons()
+void gui::NeuralNetPreview::initNeurons()
 {
-	this->initNeuronsVector();
-	this->setNeuronsPositions();
-	this->setNeuronsSizes();
-	this->setNeuronsColors();
+	initNeuronsVector();
+	setNeuronsPositions();
+	setNeuronsSizes();
+	setNeuronsColors();
 }
 
-void NeuralNetPreview::initNeuronsVector()
+void gui::NeuralNetPreview::initNeuronsVector()
 {
-	/*
-	unsigned hiddenLayersCount = this->BRAIN->getHiddenLayers().size();
-
-	this->neurons.resize(hiddenLayersCount + 2U);
-
-	// resize input layer:
-	this->neurons[0].resize(
-		this->BRAIN->getInputLayer()->getSize(),
-		sf::CircleShape(0.0f, neurons_shapes_point_count)
-	);
-
-	// resize hidden layers:
-	for (int i = 0; i < hiddenLayersCount; i++)
-		this->neurons[i + 1].resize(
-			this->BRAIN->getHiddenLayers()[i]->getNeuronsCount(),
-			sf::CircleShape(0.0f, neurons_shapes_point_count)
-		);
-
-	// resize output layer:
-	this->neurons.back().resize(
-		this->BRAIN->getOutputLayer()->getNeuronsCount(),
-		sf::CircleShape(0.0f, neurons_shapes_point_count)
-	);
-	*/
+	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().size();
+	//
+	//m_neurons.resize(hiddenLayersCount + 2U);
+	//
+	//// resize input layer:
+	//m_neurons[0].resize(
+	//	m_brain->getInputLayer()->getSize(),
+	//	sf::CircleShape(0.0f, neurons_shapes_point_count)
+	//);
+	//
+	//// resize hidden layers:
+	//for (int i = 0; i < hiddenLayersCount; i++)
+	//{
+	//	m_neurons[i + 1].resize(
+	//		m_brain->getHiddenLayers()[i]->getNeuronsCount(),
+	//		sf::CircleShape(0.0f, neurons_shapes_point_count)
+	//	);
+	//}
+	//
+	//// resize output layer:
+	//m_neurons.back().resize(
+	//	m_brain->getOutputLayer()->getNeuronsCount(),
+	//	sf::CircleShape(0.0f, neurons_shapes_point_count)
+	//);
 }
 
-void NeuralNetPreview::initSynapses()
+void gui::NeuralNetPreview::initSynapses()
 {
-	this->initSynapsesVector();
-	this->setSynapsesPositions();
-	this->setSynapsesColors();
+	initSynapsesVector();
+	setSynapsesPositions();
+	setSynapsesColors();
 }
 
-void NeuralNetPreview::initSynapsesVector()
+void gui::NeuralNetPreview::initSynapsesVector()
 {
-	/*
-	unsigned hiddenLayersCount = this->BRAIN->getHiddenLayers().size();
+	//auto inputLayer = m_brain->inputLayer();
+	//auto hiddenLayers = m_brain->getHiddenLayers();
+	//unsigned hiddenLayersCount = hiddenLayers.size();
+	//auto outputLayer = m_brain->getOutputLayer();
+	//
+	//m_synapses.resize(hiddenLayersCount + 1U);
+	//
+	//// resize each matrix in m_synapses vector 
+	//// (make m_synapses a 2D structure):
+	//for (int i = 0; i < hiddenLayersCount; i++)
+	//{
+	//	m_synapses[i].resize(hiddenLayers[i]->getNeuronsCount());
+	//}	
+	//
+	//m_synapses.back().resize(outputLayer->getNeuronsCount());
+	//
+	//// make m_synapses a 3D structure:
+	//if (hiddenLayersCount > 0)
+	//{
+	//	for (int i = 0; i < hiddenLayers[0]->getNeuronsCount(); i++)
+	//	{
+	//		m_synapses[0][i].resize(inputLayer->getSize());
+	//	}
+	//
+	//	for (int i = 0; i < hiddenLayersCount - 1; i++)
+	//	{
+	//		for (int j = 0; j < hiddenLayers[i + 1]->getNeuronsCount(); j++)
+	//		{
+	//			m_synapses[i + 1][j].resize(
+	//				hiddenLayers[i]->getNeuronsCount()
+	//			);
+	//		}
+	//	}
+	//		
+	//	for (int i = 0; i < outputLayer->getNeuronsCount(); i++)
+	//	{
+	//		m_synapses.back()[i].resize(
+	//			hiddenLayers.back()->getNeuronsCount()
+	//		);
+	//	}
+	//}
+	//else
+	//{
+	//	for (int i = 0; i < outputLayer->getNeuronsCount(); i++)
+	//	{
+	//		m_synapses.back()[i].resize(inputLayer->output().size());
+	//	}
+	//}
+	//
+	//// each synapse consists of 2 vertices:
+	//for (auto& matrix : m_synapses)
+	//{
+	//	for (auto& vector : matrix)
+	//	{
+	//		for (auto& synapse : vector)
+	//		{
+	//			synapse.resize(2);
+	//		}
+	//	}
+	//}
+}
 
-	this->synapses.resize(hiddenLayersCount + 1U);
-
-	// resize each matrix in synapses vector (make synapses a 2D structure):
-	for (int i = 0; i < hiddenLayersCount; i++)
-		this->synapses[i].resize(this->BRAIN->getHiddenLayers()[i]->getNeuronsCount());
-
-	this->synapses.back().resize(this->BRAIN->getOutputLayer()->getNeuronsCount());
-
-	// make synapses a 3D structure:
-	if (hiddenLayersCount > 0)
+void gui::NeuralNetPreview::setNeuronsPositions()
+{
+	for (int i = 0; i < m_neurons.size(); i++)
 	{
-		for (int i = 0; i < this->BRAIN->getHiddenLayers()[0]->getNeuronsCount(); i++)
-			this->synapses[0][i].resize(this->BRAIN->getInputLayer()->getSize());
-
-		for (int i = 0; i < hiddenLayersCount - 1; i++)
-			for (int j = 0; j < this->BRAIN->getHiddenLayers()[i + 1]->getNeuronsCount(); j++)
-				this->synapses[i + 1][j].resize(this->BRAIN->getHiddenLayers()[i]->getNeuronsCount());
-
-		for (int i = 0; i < this->BRAIN->getOutputLayer()->getNeuronsCount(); i++)
-			this->synapses.back()[i].resize(this->BRAIN->getHiddenLayers().back()->getNeuronsCount());
-	}
-	else
-	{
-		for (int i = 0; i < this->BRAIN->getOutputLayer()->getNeuronsCount(); i++)
-			this->synapses.back()[i].resize(this->BRAIN->getInputLayer()->output().size());
-	}
-
-	// each synapse consists of 2 vertices:
-	for (auto& matrix : this->synapses)
-		for (auto& vector : matrix)
-			for (auto& synapse : vector)
-				synapse.resize(2);
-	*/
-}
-
-void NeuralNetPreview::setNeuronsPositions()
-{
-	for (int i = 0; i < this->neurons.size(); i++)
-	{
-		for (int j = 0; j < this->neurons[i].size(); j++)
+		for (int j = 0; j < m_neurons[i].size(); j++)
 		{
-			this->neurons[i][j].setPosition(this->calcNeuronPosition(i, j));
+			m_neurons[i][j].setPosition(calcNeuronPosition(i, j));
 		}
 	}
 
 }
 
-sf::Vector2f NeuralNetPreview::calcNeuronPosition(unsigned index1, unsigned index2) const
+sf::Vector2f gui::NeuralNetPreview::calcNeuronPosition(
+	unsigned index1, 
+	unsigned index2) const
 {
 	sf::Vector2f result;
 
-	float gapBetweenLayers = this->calcGapBetweenLayers();
-	float topMargin = this->calcTopMargin(index1);
-	float diameter = 2.f * this->calcNeuronsRadius();
+	float gapBetweenLayers = calcGapBetweenLayers();
+	float topMargin = calcTopMargin(index1);
+	float diameter = 2.f * calcNeuronsRadius();
 
-	result.x += this->background.getPosition().x + diameter + index1 * (diameter + gapBetweenLayers);
-	result.y += this->background.getPosition().y + topMargin + 2U * index2 * diameter;
+	result.x = m_background.getPosition().x 
+			   + diameter 
+			   + index1 * (diameter + gapBetweenLayers);
+	
+	result.y = m_background.getPosition().y 
+			   + topMargin 
+			   + 2U * index2 * diameter;
 
 	return result;
 }
 
-float NeuralNetPreview::calcGapBetweenLayers() const
+float gui::NeuralNetPreview::calcGapBetweenLayers() const
 {
-	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
-	/*
-	unsigned hiddenLayersCount = this->BRAIN->getHiddenLayers().size();
-	float diameter = 2.f * this->calcNeuronsRadius();
-
-	return (this->background.getSize().x - (4U + hiddenLayersCount) * diameter) / (hiddenLayersCount + 1U);
-	*/
+	// TODO: after implementing a new version of Blueberry
+	// TODO: uncomment and rewrite this!:
+	
+	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().size();
+	//float diameter = 2.f * calcNeuronsRadius();
+	//
+	//return (m_background.getSize().x - (4U + hiddenLayersCount) * diameter) 
+	//	   / (hiddenLayersCount + 1U);
+	
 	return 0.0f;
 }
 
-float NeuralNetPreview::calcNeuronsRadius() const
+float gui::NeuralNetPreview::calcNeuronsRadius() const
 {
-	float diameter = this->background.getSize().y / (2U * this->getTheBiggestLayerSize() + 1U);
+	float diameter = m_background.getSize().y 
+					 / (2U * getTheBiggestLayerSize() + 1U);
 
 	return diameter / 2.f;
 }
 
-float NeuralNetPreview::calcTopMargin(unsigned index1) const
+float gui::NeuralNetPreview::calcTopMargin(unsigned index1) const
 {
-	float diameter = 2.f * this->calcNeuronsRadius();
+	float diameter = 2.f * calcNeuronsRadius();
 
-	return (this->background.getSize().y - (2 * this->neurons[index1].size() - 1) * diameter) / 2.f;
+	float result = m_background.getSize().y
+				   - (2 * m_neurons[index1].size() - 1) * diameter;
+
+	return result / 2.f;
 }
 
-unsigned NeuralNetPreview::getTheBiggestLayerSize() const
+unsigned gui::NeuralNetPreview::getTheBiggestLayerSize() const
 {
-	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
-	/*
-	// input layer:
-	unsigned getTheBiggestLayerSize = this->BRAIN->getInputLayer()->getSize();
-
-	// hidden layers:
-	for (const auto& hiddenLayer : this->BRAIN->getHiddenLayers())
-		getTheBiggestLayerSize = std::max(getTheBiggestLayerSize, hiddenLayer->getNeuronsCount());
-
-	// output layer:
-	getTheBiggestLayerSize = std::max(getTheBiggestLayerSize, this->BRAIN->getOutputLayer()->getNeuronsCount());
-
-	return getTheBiggestLayerSize;
-	*/
+	// TODO: after implementing a new version of Blueberry
+	// TODO: uncomment and rewrite this!:
+	
+	//// input layer:
+	//unsigned theBiggestLayerSize = m_brain->getInputLayer()->getSize();
+	//
+	//// hidden layers:
+	//for (const auto& hiddenLayer : m_brain->getHiddenLayers())
+	//{
+	//	theBiggestLayerSize = std::max(
+	//		getTheBiggestLayerSize, 
+	//		hiddenLayer->getNeuronsCount()
+	//	);
+	//}
+	//// output layer:
+	//theBiggestLayerSize = std::max(
+	//	getTheBiggestLayerSize, 
+	//	m_brain->getOutputLayer()->getNeuronsCount()
+	//);
+	//
+	//return getTheBiggestLayerSize;
+	
 	return 0U;
 }
 
-void NeuralNetPreview::setNeuronsSizes()
+void gui::NeuralNetPreview::setNeuronsSizes()
 {
-	unsigned getTheBiggestLayerSize = this->getTheBiggestLayerSize();
-	float radius = this->calcNeuronsRadius();
+	unsigned theBiggestLayerSize = getTheBiggestLayerSize();
+	float radius = calcNeuronsRadius();
 
-	for (auto& it1 : this->neurons)
+	for (auto& it1 : m_neurons)
+	{
 		for (auto& it2 : it1)
+		{
 			it2.setRadius(radius);
-}
-
-void NeuralNetPreview::setNeuronsColors()
-{
-	this->setInputNeuronsColors();
-	this->setHiddenNeuronsColors();
-	this->setOutputNeuronsColors();
-}
-
-void NeuralNetPreview::setInputNeuronsColors()
-{
-	/*
-	CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(0U);
-	CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(0U);
-
-	CrappyNeuralNets::Scalar theBiggestAbsActVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
-
-	for (int i = 0; i < this->neurons[0].size(); i++)
-	{
-		CrappyNeuralNets::Scalar neuronActVal = this->BRAIN->getInputLayer()->output()[i];
-
-		if (neuronActVal > 0.0)
-			this->neurons[0][i].setFillColor(sf::Color(0, 0, 255 * neuronActVal / theBiggestAbsActVal, 255));
-		else
-			this->neurons[0][i].setFillColor(sf::Color(-255 * neuronActVal / theBiggestAbsActVal, 0, 0, 255));
-	}
-	*/
-}
-
-void NeuralNetPreview::setHiddenNeuronsColors()
-{
-	/*
-	for (int i = 0; i < this->BRAIN->getHiddenLayers().size(); i++)
-	{
-		CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(i + 1);
-		CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(i + 1);
-
-		CrappyNeuralNets::Scalar theBiggestAbsActVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
-
-		for (int j = 0; j < this->neurons[i + 1].size(); j++)
-		{
-			CrappyNeuralNets::Scalar actVal = this->BRAIN->getHiddenLayers()[i]->getNeurons()[j]->getActivatedValue();
-
-			if (actVal > 0.0)
-				this->neurons[i + 1][j].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsActVal));
-			else
-				this->neurons[i + 1][j].setFillColor(sf::Color(-255 * actVal / theBiggestAbsActVal, 0, 0));
 		}
 	}
-	*/
 }
 
-void NeuralNetPreview::setOutputNeuronsColors()
+void gui::NeuralNetPreview::setNeuronsColors()
 {
-	/*
-	CrappyNeuralNets::Scalar theBiggestActVal = this->getTheBiggestActivatedValue(this->BRAIN->getHiddenLayers().size() + 1);
-	CrappyNeuralNets::Scalar theSmallestActVal = this->getTheSmallestActivatedValue(this->BRAIN->getHiddenLayers().size() + 1);
-
-	CrappyNeuralNets::Scalar theBiggestAbsActVal = std::max(abs(theBiggestActVal), abs(theSmallestActVal));
-
-	for (int i = 0; i < this->neurons.back().size(); i++)
-	{
-		CrappyNeuralNets::Scalar actVal = this->BRAIN->getOutputLayer()->getNeurons()[i]->getActivatedValue();
-
-		if (actVal > 0.0)
-			this->neurons.back()[i].setFillColor(sf::Color(0, 0, 255 * actVal / theBiggestAbsActVal));
-		else
-			this->neurons.back()[i].setFillColor(sf::Color(-255 * actVal / theBiggestAbsActVal, 0, 0));
-	}
-	*/
+	setInputNeuronsColors();
+	setHiddenNeuronsColors();
+	setOutputNeuronsColors();
 }
 
-Blueberry::Scalar NeuralNetPreview::getTheBiggestActivatedValue(unsigned layer_index)
+void gui::NeuralNetPreview::setInputNeuronsColors()
 {
-	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
-	/*
-	CrappyNeuralNets::Scalar theBiggestActVal = -INFINITY;
+	//typedef Blueberry::Scalar Scalar;
+	//
+	//Scalar theBiggestActVal = getTheBiggestActivatedValue(0U);
+	//Scalar theSmallestActVal = getTheSmallestActivatedValue(0U);
+	//
+	//Scalar theBiggestAbsActVal = std::max(
+	//	abs(theBiggestActVal), 
+	//	abs(theSmallestActVal)
+	//);
+	//
+	//for (int i = 0; i < m_neurons[0].size(); i++)
+	//{
+	//	Scalar neuronActVal = m_brain->getInputLayer()->output()[i];
+	//
+	//	if (neuronActVal > 0.0)
+	//	{
+	//		m_neurons[0][i].setFillColor(
+	//			sf::Color(
+	//				0, 
+	//				0, 
+	//				255 * neuronActVal / theBiggestAbsActVal, 
+	//				255
+	//			)
+	//		);
+	//	}
+	//	else
+	//	{
+	//		m_neurons[0][i].setFillColor(
+	//			sf::Color(
+	//				-255 * neuronActVal / theBiggestAbsActVal, 
+	//				0, 
+	//				0, 
+	//				255
+	//			)
+	//		);
+	//	}
+	//}
+}
 
-	// layer_index == 0 <==> we're dealing with the input layer:
-	if (!layer_index)
-	{
-		for (const auto& it : this->BRAIN->getInputLayer()->output())
-			theBiggestActVal = std::max(theBiggestActVal, it);
+void gui::NeuralNetPreview::setHiddenNeuronsColors()
+{
+	//typedef Blueberry::Scalar Scalar;
+	//
+	//auto hiddenLayers = m_brain->getHiddenLayers();
+	//
+	//for (int i = 0; i < hiddenLayers.size(); i++)
+	//{
+	//	Scalar theBiggestActVal = getTheBiggestActivatedValue(i + 1);
+	//	Scalar theSmallestActVal = getTheSmallestActivatedValue(i + 1);
+	//
+	//	Scalar theBiggestAbsActVal = std::max(
+	//		abs(theBiggestActVal), 
+	//		abs(theSmallestActVal)
+	//	);
+	//
+	//	for (int j = 0; j < m_neurons[i + 1].size(); j++)
+	//	{
+	//		Scalar actVal = hiddenLayers[i]->getNeurons()[j]->getActivatedValue();
+	//
+	//		if (actVal > 0.0)
+	//		{
+	//			m_neurons[i + 1][j].setFillColor(
+	//				sf::Color(
+	//					0, 
+	//					0, 
+	//					255 * actVal / theBiggestAbsActVal
+	//				)
+	//			);
+	//		}
+	//		else
+	//		{
+	//			m_neurons[i + 1][j].setFillColor(
+	//				sf::Color(
+	//					-255 * actVal / theBiggestAbsActVal, 
+	//					0, 
+	//					0
+	//				)
+	//			);
+	//		}
+	//	}
+	//}
+}
 
-		return theBiggestActVal;
-	}
+void gui::NeuralNetPreview::setOutputNeuronsColors()
+{
+	//typedef Blueberry::Scalar Scalar;
+	//
+	//Scalar theBiggestActVal = getTheBiggestActivatedValue(
+	//	m_brain->getHiddenLayers().size() + 1
+	//);
+	//Scalar theSmallestActVal = getTheSmallestActivatedValue(
+	//	m_brain->getHiddenLayers().size() + 1
+	//);
+	//
+	//Scalar theBiggestAbsActVal = std::max(
+	//	abs(theBiggestActVal), 
+	//	abs(theSmallestActVal)
+	//);
+	//
+	//auto outputLayer = m_brain->getOutputLayer();
+	//
+	//for (int i = 0; i < m_neurons.back().size(); i++)
+	//{
+	//	Scalar actVal = outputLayer->getNeurons()[i]->getActivatedValue();
+	//
+	//	if (actVal > 0.0)
+	//	{
+	//		m_neurons.back()[i].setFillColor(
+	//			sf::Color(
+	//				0, 
+	//				0, 
+	//				255 * actVal / theBiggestAbsActVal
+	//			)
+	//		);
+	//	}
+	//	else
+	//	{
+	//		m_neurons.back()[i].setFillColor(
+	//			sf::Color(
+	//				-255 * actVal / theBiggestAbsActVal, 
+	//				0, 
+	//				0
+	//			)
+	//		);
+	//	}
+	//}
+}
 
-	// layer_index == hidden layers count + 1 <==> we're dealing with the output layer:
-	if (layer_index == this->BRAIN->getHiddenLayers().size() + 1)
-	{
-		for (const auto& neuron : this->BRAIN->getOutputLayer()->getNeurons())
-			theBiggestActVal = std::max(theBiggestActVal, neuron->getActivatedValue());
-
-		return theBiggestActVal;
-	}
-
-	// otherwise we're dealing with a hidden layer:
-	for (const auto& neuron : this->BRAIN->getHiddenLayers()[layer_index - 1]->getNeurons())
-		theBiggestActVal = std::max(theBiggestActVal, neuron->getActivatedValue());
-
-	return theBiggestActVal;
-	*/
+Blueberry::Scalar gui::NeuralNetPreview::getTheBiggestActivatedValue(
+	unsigned layerIndex)
+{
+	//// TODO: after implementing a new version of Bluebrry
+	//// TODO: uncomment and rewrite this!:
+	//
+	//Blueberry::Scalar theBiggestActVal = -INFINITY;
+	//
+	//// layerIndex == 0 <==> we're dealing with the input layer:
+	//if (!layerIndex)
+	//{
+	//	for (const auto& it : m_brain->getInputLayer()->output())
+	//	{
+	//		theBiggestActVal = std::max(theBiggestActVal, it);
+	//	}
+	//
+	//	return theBiggestActVal;
+	//}
+	//
+	//// layerIndex == hidden layers count + 1 
+	//// <==> we're dealing with the output layer:
+	//if (layerIndex == m_brain->getHiddenLayers().size() + 1)
+	//{
+	//	for (const auto& neuron : m_brain->getOutputLayer()->getNeurons())
+	//	{
+	//		theBiggestActVal = std::max(
+	//			theBiggestActVal, 
+	//			neuron->getActivatedValue()
+	//		);
+	//	}
+	//
+	//	return theBiggestActVal;
+	//}
+	//
+	//auto hiddenLayers = m_brain->getHiddenLayers();
+	//
+	//// otherwise we're dealing with a hidden layer:
+	//for (const auto& neuron : hiddenLayers[layerIndex - 1]->getNeurons())
+	//{
+	//	theBiggestActVal = std::max(
+	//		theBiggestActVal, 
+	//		neuron->getActivatedValue()
+	//	);
+	//}
+	//
+	//return theBiggestActVal;
+	
 	return 0.0;
 }
 
-Blueberry::Scalar NeuralNetPreview::getTheSmallestActivatedValue(unsigned layer_index)
+Blueberry::Scalar gui::NeuralNetPreview::getTheSmallestActivatedValue(
+	unsigned layerIndex)
 {
-	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
-	/*
-	CrappyNeuralNets::Scalar theSmallestActVal = INFINITY;
-
-	// layer_index == 0 <==> we're dealing with the input layer:
-	if (!layer_index)
-	{
-		for (const auto& it : this->BRAIN->getInputLayer()->output())
-			theSmallestActVal = std::min(theSmallestActVal, it);
-
-		return theSmallestActVal;
-	}
-
-	// layer_index == hidden layers count + 1 <==> we're dealing with the output layer:
-	if (layer_index == this->BRAIN->getHiddenLayers().size() + 1)
-	{
-		for (const auto& neuron : this->BRAIN->getOutputLayer()->getNeurons())
-			theSmallestActVal = std::min(theSmallestActVal, neuron->getActivatedValue());
-
-		return theSmallestActVal;
-	}
-
-	// otherwise we're dealing with a hidden layer:
-	for (const auto& neuron : this->BRAIN->getHiddenLayers()[layer_index - 1]->getNeurons())
-		theSmallestActVal = std::min(theSmallestActVal, neuron->getActivatedValue());
-
-	return theSmallestActVal;
-	*/
+	//// TODO: after implementing a new version of Blueberry
+	//// TODO: uncomment and rewrite this!:
+	//
+	//Blueberry::Scalar theSmallestActVal = INFINITY;
+	//
+	//// layerIndex == 0 <==> we're dealing with the input layer:
+	//if (!layerIndex)
+	//{
+	//	for (const auto& it : m_brain->getInputLayer()->output())
+	//	{
+	//		theSmallestActVal = std::min(theSmallestActVal, it);
+	//	}
+	//
+	//	return theSmallestActVal;
+	//}
+	//
+	//// layerIndex == hidden layers count + 1 <==> we're dealing with the output layer:
+	//if (layerIndex == m_brain->getHiddenLayers().size() + 1)
+	//{
+	//	for (const auto& neuron : m_brain->getOutputLayer()->getNeurons())
+	//	{
+	//		theSmallestActVal = std::min(
+	//			theSmallestActVal, 
+	//			neuron->getActivatedValue()
+	//		);
+	//	}
+	//
+	//	return theSmallestActVal;
+	//}
+	//
+	//auto hiddenLayers = m_brain->getHiddenLayers();
+	//
+	//// otherwise we're dealing with a hidden layer:
+	//for (const auto& neuron : hiddenLayers[layerIndex - 1]->getNeurons())
+	//{
+	//	theSmallestActVal = std::min(
+	//		theSmallestActVal, 
+	//		neuron->getActivatedValue()
+	//	);
+	//}
+	//
+	//return theSmallestActVal;
+	
 	return 0.0;
 }
 
-void NeuralNetPreview::setSynapsesPositions()
+void gui::NeuralNetPreview::setSynapsesPositions()
 {
-	/*
-	// calculate useful variables:
-	unsigned hiddenLayersCount = this->BRAIN->getHiddenLayers().size();
-	unsigned biggestLayerSize = this->getTheBiggestLayerSize();
+	//// calculate useful variables:
+	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().size();
+	//unsigned biggestLayerSize = getTheBiggestLayerSize();
+	//
+	//float gapBetweenLayers = calcGapBetweenLayers();
+	//float radius = calcNeuronsRadius();
+	//float diameter = 2.f * radius;
+	//
+	//// set positions:
+	//for (int i = 0; i < m_synapses.size(); i++)
+	//{
+	//	float topMargin2 = calcTopMargin(i);
+	//
+	//	for (int j = 0; j < m_synapses[i].size(); j++)
+	//	{
+	//		float topMargin1 = calcTopMargin(j);
+	//
+	//		for (int k = 0; k < m_synapses[i][j].size(); k++)
+	//		{
+	//			float y1 = m_neurons[i][k].getPosition().y + radius;
+	//			float y2 = m_neurons[i + 1][j].getPosition().y + radius;
+	//
+	//			float x1 = m_background.getPosition().x + 2 * diameter
+	//					   + i * (gapBetweenLayers + diameter);
+	//			float x2 = x1 + gapBetweenLayers;
+	//
+	//			m_synapses[i][j][k][0].position = sf::Vector2f(x1, y1);
+	//			m_synapses[i][j][k][1].position = sf::Vector2f(x2, y2);
+	//		}
+	//	}
+	//}
+}
 
-	float gapBetweenLayers = this->calcGapBetweenLayers();
-	float radius = this->calcNeuronsRadius();
-	float diameter = 2.f * radius;
+void gui::NeuralNetPreview::setSynapsesColors()
+{
+	//Blueberry::Scalar theBiggestWeight = getTheBiggestWeight();
+	//Blueberry::Scalar theSmallestWeight = getTheSmallestWeight();
+	//
+	//Blueberry::Scalar theBiggestAbsWeight = std::max(
+	//	abs(theBiggestWeight), 
+	//	abs(theSmallestWeight)
+	//);
+	//
+	//auto weights = m_brain->getWeights();
+	//
+	//for (int i = 0; i < m_synapses.size(); i++)
+	//{
+	//	for (int j = 0; j < m_synapses[i].size(); j++)
+	//	{
+	//		for (int k = 0; k < m_synapses[i][j].size(); k++)
+	//		{
+	//			Blueberry::Scalar weight = weights[i]->getValues()[j][k];
+	//
+	//			if (weight > 0.0)
+	//			{
+	//				m_synapses[i][j][k][0].color = sf::Color(
+	//					0, 
+	//					0, 
+	//					255, 
+	//					255 * weight / theBiggestAbsWeight
+	//				);
+	//				m_synapses[i][j][k][1].color = sf::Color(
+	//					0, 
+	//					0, 
+	//					255, 
+	//					255 * weight / theBiggestAbsWeight
+	//				);
+	//			}
+	//			else
+	//			{
+	//				m_synapses[i][j][k][0].color = sf::Color(
+	//					255, 
+	//					0, 
+	//					0, 
+	//					255 * weight / theBiggestAbsWeight
+	//				);
+	//				m_synapses[i][j][k][1].color = sf::Color(
+	//					255, 
+	//					0, 
+	//					0, 
+	//					255 * weight / theBiggestAbsWeight
+	//				);
+	//			}
+	//		}
+	//	}
+	//}
+}
 
-	// set positions:
-	for (int i = 0; i < this->synapses.size(); i++)
+Blueberry::Scalar gui::NeuralNetPreview::getTheBiggestWeight()
+{
+	//// TODO: after implementing a new version Blueberry
+	//// TODO: uncomment and rewrite this!:
+	//
+	//Blueberry::Scalar theBiggestWeight = -INFINITY;
+	//
+	//for (int i = 0; i < m_synapses.size(); i++)
+	//{
+	//	for (int j = 0; j < m_synapses[i].size(); j++)
+	//	{
+	//		for (int k = 0; k < m_synapses[i][j].size(); k++)
+	//		{
+	//			theBiggestWeight = std::max(
+	//				theBiggestWeight, 
+	//				m_brain->getWeights()[i]->getValues()[j][k]
+	//			);
+	//		}
+	//	}
+	//}
+	//
+	//return theBiggestWeight;
+	
+	return 0.0;
+}
+
+Blueberry::Scalar gui::NeuralNetPreview::getTheSmallestWeight()
+{
+	//// TODO: after implementing a new version of Blueberry
+	//// TODO: CrappyNeuralNets uncomment and rewrite this!:
+	//
+	//Blueberry::Scalar theSmallestWeight = INFINITY;
+	//
+	//for (int i = 0; i < m_synapses.size(); i++)
+	//{
+	//	for (int j = 0; j < m_synapses[i].size(); j++)
+	//	{
+	//		for (int k = 0; k < m_synapses[i][j].size(); k++)
+	//		{
+	//			theSmallestWeight = std::min(
+	//				theSmallestWeight, 
+	//				m_brain->getWeights()[i]->getValues()[j][k]
+	//			);
+	//		}
+	//	}
+	//}
+	//
+	//return theSmallestWeight;
+	
+	return 0.0;
+}
+
+void gui::NeuralNetPreview::updateNeurons()
+{
+	setNeuronsColors();
+}
+
+void gui::NeuralNetPreview::renderNeurons(sf::RenderTarget& target) const
+{
+	for (const auto& layer : m_neurons)
 	{
-		float topMargin2 = this->calcTopMargin(i);
-
-		for (int j = 0; j < this->synapses[i].size(); j++)
-		{
-			float topMargin1 = this->calcTopMargin(j);
-
-			for (int k = 0; k < this->synapses[i][j].size(); k++)
-			{
-				float y1 = this->neurons[i][k].getPosition().y + radius;
-				float y2 = this->neurons[i + 1][j].getPosition().y + radius;
-
-				float x1 = this->background.getPosition().x + 2 * diameter + i * (gapBetweenLayers + diameter);
-				float x2 = x1 + gapBetweenLayers;
-
-				this->synapses[i][j][k][0].position = sf::Vector2f(x1, y1);
-				this->synapses[i][j][k][1].position = sf::Vector2f(x2, y2);
-			}
-		}
-	}
-	*/
-}
-
-void NeuralNetPreview::setSynapsesColors()
-{
-	/*
-	CrappyNeuralNets::Scalar theBiggestWeight = this->getTheBiggestWeight();
-	CrappyNeuralNets::Scalar theSmallestWeight = this->getTheSmallestWeight();
-
-	CrappyNeuralNets::Scalar theBiggestAbsWeight = std::max(abs(theBiggestWeight), abs(theSmallestWeight));
-
-	for (int i = 0; i < this->synapses.size(); i++)
-		for (int j = 0; j < this->synapses[i].size(); j++)
-			for (int k = 0; k < this->synapses[i][j].size(); k++)
-			{
-				CrappyNeuralNets::Scalar weight = this->BRAIN->getWeights()[i]->getValues()[j][k];
-
-				if (weight > 0.0)
-				{
-					this->synapses[i][j][k][0].color = sf::Color(0, 0, 255, 255 * weight / theBiggestAbsWeight);
-					this->synapses[i][j][k][1].color = sf::Color(0, 0, 255, 255 * weight / theBiggestAbsWeight);
-				}
-				else
-				{
-					this->synapses[i][j][k][0].color = sf::Color(255, 0, 0, 255 * weight / theBiggestAbsWeight);
-					this->synapses[i][j][k][1].color = sf::Color(255, 0, 0, 255 * weight / theBiggestAbsWeight);
-				}
-			}
-	*/
-}
-
-Blueberry::Scalar NeuralNetPreview::getTheBiggestWeight()
-{
-	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
-	/*
-	CrappyNeuralNets::Scalar theBiggestWeight = -INFINITY;
-
-	for (int i = 0; i < this->synapses.size(); i++)
-		for (int j = 0; j < this->synapses[i].size(); j++)
-			for (int k = 0; k < this->synapses[i][j].size(); k++)
-				theBiggestWeight = std::max(theBiggestWeight, this->BRAIN->getWeights()[i]->getValues()[j][k]);
-
-	return theBiggestWeight;
-	*/
-	return 0.0;
-}
-
-Blueberry::Scalar NeuralNetPreview::getTheSmallestWeight()
-{
-	// TODO: after implementing new CrappyNeuralNets uncomment and rewrite this!:
-	/*
-	CrappyNeuralNets::Scalar theSmallestWeight = INFINITY;
-
-	for (int i = 0; i < this->synapses.size(); i++)
-		for (int j = 0; j < this->synapses[i].size(); j++)
-			for (int k = 0; k < this->synapses[i][j].size(); k++)
-				theSmallestWeight = std::min(theSmallestWeight, this->BRAIN->getWeights()[i]->getValues()[j][k]);
-
-	return theSmallestWeight;
-	*/
-	return 0.0;
-}
-
-void NeuralNetPreview::updateNeurons()
-{
-	this->setNeuronsColors();
-}
-
-void NeuralNetPreview::renderNeurons(sf::RenderTarget& target) const
-{
-	for (const auto& layer : this->neurons)
 		for (const auto& neuron : layer)
+		{
 			target.draw(neuron);
+		}
+	}
 }
 
-void NeuralNetPreview::renderSynapses(sf::RenderTarget& target) const
+void gui::NeuralNetPreview::renderSynapses(sf::RenderTarget& target) const
 {
-	for (const auto& matrix : synapses)
+	for (const auto& matrix : m_synapses)
+	{
 		for (const auto& vector : matrix)
+		{
 			for (const auto& synapse : vector)
+			{
 				target.draw(&synapse[0], synapse.size(), sf::Lines);
+			}
+		}
+	}
 }

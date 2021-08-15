@@ -1,62 +1,77 @@
 #include "pch.h"
 #include "LoadingState.h"
 
-LoadingState::LoadingState(StateData* state_data)
-	: State(state_data)
+LoadingState::LoadingState(StateData* stateData)
+	: State(stateData)
+	, m_background()
+	, m_container()
+	, m_font()
+	, m_texts()
+	, m_textBox()
+	, m_buttons()
 {
-	this->initKeybinds();
-	this->initBackground();
-	this->initContainer();
-	this->initFonts();
-	this->initTexts();
-	this->initTextBox();
-	this->initButtons();
+	initKeybinds();
+	initBackground();
+	initContainer();
+	initFonts();
+	initTexts();
+	initTextBox();
+	initButtons();
 }
 
-// public methods:
 void LoadingState::update(float dt)
 {
-	this->updateMousePositions();
+	updateMousePositions();
 
-	this->updateInput();
+	updateInput();
 
-	this->textBox->update(dt, *this->stateData->events, this->mousePosWindow);
+	m_textBox->update(dt, *m_stateData->m_events, m_mousePosWindow);
 
-	for (auto& button : this->buttons)
-		button.second->update(this->mousePosWindow);
+	for (auto& button : m_buttons)
+	{
+		button.second->update(m_mousePosWindow);
+	}
 
-	this->getUpdateFromButtons();
+	getUpdateFromButtons();
 }
 
 void LoadingState::render(sf::RenderTarget* target)
 {
 	if (!target)
-		target = this->stateData->window;
+	{
+		target = m_stateData->m_window;
+	}
 
-	target->draw(this->background);
-	target->draw(this->container);
+	target->draw(m_background);
+	target->draw(m_container);
 
-	for (const auto& text : this->texts)
+	for (const auto& text : m_texts)
+	{
 		target->draw(*text.second);
+	}
 
-	this->textBox->render(*target);
+	m_textBox->render(*target);
 
-	for (const auto& button : this->buttons)
+	for (const auto& button : m_buttons)
+	{
 		button.second->render(*target);
+	}
 }
 
 // mutators:
+
 void LoadingState::freeze()
 {
 	std::cout << "FREEZING IS NOT DEFINED YET!\n";
 
-	for (auto& button : this->buttons) 
+	for (auto& button : m_buttons)
+	{
 		button.second->setClickBlockade(true);
+	}
 }
 
 // private methods:
 
-// initialization:
 void LoadingState::initKeybinds()
 {
 	const char* path = "config/ecosystem_creator_keybinds.ini";
@@ -68,19 +83,29 @@ void LoadingState::initKeybinds()
 		std::string key = "";
 		std::string key2 = "";
 
-		while (ifs >> key >> key2) 
-			this->keybinds[key] = this->stateData->supportedKeys->at(key2);
+		while (ifs >> key >> key2)
+		{
+			m_keybinds[key] = m_stateData->m_supportedKeys->at(key2);
+		}
 	}
-	else throw("ERROR::ECOSYSTEMCREATORSTATE::COULD NOT OPEN: " + std::string(path));
+	else
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::LoadingState::initKeybinds()::"
+			<< "could not open "
+			<< path << '\n'
+		);
+	}
 
 	ifs.close();
 }
 
 void LoadingState::initBackground()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
-	this->background.setSize(
+	m_background.setSize(
 		sf::Vector2f
 		(
 			static_cast<float>(resolution.width),
@@ -88,23 +113,27 @@ void LoadingState::initBackground()
 		)
 	);
 
-	this->background.setFillColor(sf::Color(28, 28, 28));
+	m_background.setFillColor(sf::Color(28, 28, 28));
 }
 
 void LoadingState::initContainer()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
-	this->container = sf::RectangleShape(
+	m_container = sf::RectangleShape(
 		sf::Vector2f(
 			gui::p2pX(34.0f, resolution),
 			gui::p2pY(100.0f, resolution)
 		)
 	);
-	this->container.setFillColor(sf::Color(0, 0, 0, 128));
-	this->container.setPosition(
+
+	m_container.setFillColor(sf::Color(0, 0, 0, 128));
+	
+	sf::FloatRect containerBounds = m_container.getGlobalBounds();
+
+	m_container.setPosition(
 		sf::Vector2f(
-			resolution.width / 2.0f - this->container.getGlobalBounds().width / 2.0f,
+			resolution.width / 2.0f - containerBounds.width / 2.0f,
 			0.0f
 		)
 	);
@@ -112,27 +141,36 @@ void LoadingState::initContainer()
 
 void LoadingState::initFonts()
 {
-	if (!this->font.loadFromFile("resources/fonts/consolab.ttf"))
-		throw("ERROR::EcosystemCreatorState::CANNOT LOAD A FONT!\n");
+	if (!m_font.loadFromFile("resources/fonts/consolab.ttf"))
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::LoadingState::initFonts()::"
+			<< "cannot load a font\n"
+		);
+	}
 }
 
 void LoadingState::initTexts()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
-	this->texts["ECOSYSTEM NAME"] = std::make_unique<sf::Text>(
+	m_texts["ECOSYSTEM NAME"] = std::make_unique<sf::Text>(
 		"ECOSYSTEM NAME:",
-		this->font,
+		m_font,
 		gui::calcCharSize(32.0f, resolution)
 	);
-	this->texts["ECOSYSTEM NAME"]->setFillColor(sf::Color(225, 225, 225));
-	this->texts["ECOSYSTEM NAME"]->setOrigin(
+
+	m_texts["ECOSYSTEM NAME"]->setFillColor(sf::Color(225, 225, 225));
+	
+	m_texts["ECOSYSTEM NAME"]->setOrigin(
 		sf::Vector2f(
-			this->texts["ECOSYSTEM NAME"]->getGlobalBounds().width / 2.0f,
+			m_texts["ECOSYSTEM NAME"]->getGlobalBounds().width / 2.0f,
 			0.0f
 		)
 	);
-	this->texts["ECOSYSTEM NAME"]->setPosition(
+
+	m_texts["ECOSYSTEM NAME"]->setPosition(
 		sf::Vector2f(
 			resolution.width / 2.0f,
 			gui::p2pY(37.0f, resolution)
@@ -142,9 +180,9 @@ void LoadingState::initTexts()
 
 void LoadingState::initTextBox()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
-	this->textBox = std::make_unique<gui::TextBox>(
+	m_textBox = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(37.0f, resolution),
 			gui::p2pY(45.0f, resolution)
@@ -153,22 +191,31 @@ void LoadingState::initTextBox()
 			gui::p2pX(26.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->font, "",
+		m_font, 
+		"",
 		gui::calcCharSize(26.0f, resolution),
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f / 1080.f, resolution), 0.5f
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125),
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f / 1080.f, resolution), 
+		0.5f
 	);
 }
 
 void LoadingState::initButtons()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
 	float positionYPercentage = 90.0f;
 
-	this->buttons["LOAD"] = std::make_unique<gui::Button>(
+	m_buttons["LOAD"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(71.0f, resolution),
 			gui::p2pY(positionYPercentage, resolution)
@@ -177,14 +224,22 @@ void LoadingState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->font, "LOAD", gui::calcCharSize(26.0f, resolution),
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_font, 
+		"LOAD", 
+		gui::calcCharSize(26.0f, resolution),
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 
-	this->buttons["OK"] = std::make_unique<gui::Button>(
+	m_buttons["OK"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(84.0f, resolution),
 			gui::p2pY(positionYPercentage, resolution)
@@ -193,38 +248,53 @@ void LoadingState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->font, "OK", gui::calcCharSize(26.0f, resolution),
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_font, 
+		"OK", 
+		gui::calcCharSize(26.0f, resolution),
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 }
 
-// other private methods:
 void LoadingState::updateInput()
 {
-	/*
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"])) && !this->keysBlockades["CLOSE"])
-		this->endState();
-	*/
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["CLOSE"]))
+	//	&& !keysBlockades["CLOSE"])
+	//{
+	//	endState();
+	//}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"]))) 
-		this->endState();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["CLOSE"])))
+	{
+		endState();
+	}
 }
 
 void LoadingState::getUpdateFromButtons()
 {
-	if (this->buttons["LOAD"]->isClicked())
+	if (m_buttons["LOAD"]->isClicked())
 	{
-		std::string folderPath = "ecosystems/" + this->textBox->getInput();
+		std::string folderPath = "ecosystems/" + m_textBox->getInput();
 
-		if (this->stateData->ecosystem)
-			this->stateData->ecosystem->loadFromFolder(folderPath);
+		if (m_stateData->m_ecosystem)
+		{
+			m_stateData->m_ecosystem->loadFromFolder(folderPath.c_str());
+		}
 		else
-			this->stateData->ecosystem = new Ecosystem(folderPath);
+		{
+			m_stateData->m_ecosystem = new Ecosystem(folderPath.c_str());
+		}
 	}
-
-	else if (this->buttons["OK"]->isClicked())
-		this->endState();
+	else if (m_buttons["OK"]->isClicked())
+	{
+		endState();
+	}
 }

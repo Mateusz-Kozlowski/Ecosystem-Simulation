@@ -11,22 +11,6 @@ public:
 	void run();
 
 private:
-	GraphicsSettings gfxSettings;
-	sf::RenderWindow* window;
-	std::unordered_map<std::string, int> supportedKeys;
-	std::stack<State*> states;
-	Ecosystem* ecosystem;
-	std::vector<sf::Event> events;
-
-	StateData stateData;
-
-	sf::Clock clock;
-	float dt;
-
-	sf::Event event;
-
-	// private methods:
-	// initialization:
 	void initVariables();
 	void initGraphicsSettings();
 	void initWindow();
@@ -35,9 +19,21 @@ private:
 	void initStateData();
 	void initStates();
 
-	// other private methods:
 	void updateDt();
 	void update();
 	void updateEvents();
 	void render();
+
+private:
+	GraphicsSettings m_gfxSettings;
+	sf::RenderWindow* m_window;
+	std::unordered_map<std::string, int> m_supportedKeys;
+	std::stack<State*> m_states;
+	Ecosystem* m_ecosystem;
+	std::vector<sf::Event> m_events;
+
+	StateData m_stateData;
+
+	sf::Clock m_clock;
+	float m_dt;
 };

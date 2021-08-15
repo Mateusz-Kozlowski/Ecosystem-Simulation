@@ -1,188 +1,216 @@
 #include "pch.h"
 #include "ProgressBar.h"
 
-using namespace gui;
-
-ProgressBar::ProgressBar()
-	: mOverRangeValuesAreCorrected(false),
-	  value(0.0f)
+gui::ProgressBar::ProgressBar()
+	: m_valuesRange()
+	, m_overRangeValuesAreCorrected(false)
+	, m_value(0.0f)
+	, m_background()
+	, m_progressRect()
 {
 	
 }
 
-ProgressBar::ProgressBar(
-	const sf::Vector2f& values_range,
-	bool correct_over_range_values,
-	float default_value,
+gui::ProgressBar::ProgressBar(
+	const sf::Vector2f& valuesRange,
+	bool correctOverRangeValues,
+	float defaultValue,
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
-	const sf::Color& background_color,
-	const sf::Color& progress_rect_color)
-	: valuesRange(values_range),
-	  mOverRangeValuesAreCorrected(correct_over_range_values),
-	  value(default_value)
+	const sf::Color& backgroundColor,
+	const sf::Color& progressRectColor)
+	: m_valuesRange(valuesRange)
+	, m_overRangeValuesAreCorrected(correctOverRangeValues)
+	, m_value(defaultValue)
+	, m_background(size)
+	, m_progressRect()
 {
-	if (correct_over_range_values)
-		this->avoidOverRangeValue();
+	if (correctOverRangeValues)
+	{
+		avoidOverRangeValue();
+	}
 
-	this->initBackground(position, size, background_color);
-	this->initProgressRect(position, progress_rect_color);
+	initBackground(position, backgroundColor);
+	initProgressRect(position, progressRectColor);
 }
 
-// public methods:
-void ProgressBar::render(sf::RenderTarget& target) const
+void gui::ProgressBar::render(sf::RenderTarget& target) const
 {
-	target.draw(this->background);
-	target.draw(this->progressRect);
+	target.draw(m_background);
+	target.draw(m_progressRect);
 }
 
 // accessors:
-const sf::Vector2f& ProgressBar::getValuesRange() const
+
+const sf::Vector2f& gui::ProgressBar::getValuesRange() const
 {
-	return this->valuesRange;
+	return m_valuesRange;
 }
 
-bool ProgressBar::overRangeValuesAreCorrected() const
+bool gui::ProgressBar::overRangeValuesAreCorrected() const
 {
-	return this->mOverRangeValuesAreCorrected;
+	return m_overRangeValuesAreCorrected;
 }
 
-float ProgressBar::getCurrentValue() const
+float gui::ProgressBar::getCurrentValue() const
 {
-	return this->value;
+	return m_value;
 }
 
-const sf::Vector2f& ProgressBar::getPosition() const
+const sf::Vector2f& gui::ProgressBar::getPosition() const
 {
-	return this->background.getPosition();
+	return m_background.getPosition();
 }
 
-const sf::Vector2f& ProgressBar::getSize() const
+const sf::Vector2f& gui::ProgressBar::getSize() const
 {
-	return this->background.getSize();
+	return m_background.getSize();
 }
 
-const sf::Color& ProgressBar::getBackgroundColor() const
+const sf::Color& gui::ProgressBar::getBackgroundColor() const
 {
-	return this->background.getFillColor();
+	return m_background.getFillColor();
 }
 
-const sf::Color& ProgressBar::getProgressRectColor() const
+const sf::Color& gui::ProgressBar::getProgressRectColor() const
 {
-	return this->progressRect.getFillColor();
+	return m_progressRect.getFillColor();
 }
 
 // mutators:
-void ProgressBar::setValuesRange(const sf::Vector2f& values_range)
+
+void gui::ProgressBar::setValuesRange(const sf::Vector2f& valuesRange)
 {
-	this->valuesRange = values_range;
+	m_valuesRange = valuesRange;
 
-	if (this->mOverRangeValuesAreCorrected) this->avoidOverRangeValue();
+	if (m_overRangeValuesAreCorrected)
+	{
+		avoidOverRangeValue();
+	}
 
-	this->updateProgressRectSize();
+	updateProgressRectSize();
 }
 
-void ProgressBar::setCorrectingOverRangeValues(bool correct_over_range_values)
+void gui::ProgressBar::setCorrectingOverRangeValues(
+	bool correctOverRangeValues)
 {
-	this->mOverRangeValuesAreCorrected = correct_over_range_values;
+	m_overRangeValuesAreCorrected = correctOverRangeValues;
 
-	if (correct_over_range_values) this->avoidOverRangeValue();
+	if (correctOverRangeValues) 
+	{
+		avoidOverRangeValue();
+	}
 }
 
-void ProgressBar::setValue(float value)
+void gui::ProgressBar::setValue(float value)
 {
-	this->value = value;
+	m_value = value;
 
-	if (this->mOverRangeValuesAreCorrected) this->avoidOverRangeValue();
+	if (m_overRangeValuesAreCorrected)
+	{
+		avoidOverRangeValue();
+	}
 
-	this->updateProgressRectSize();
+	updateProgressRectSize();
 }
 
-void ProgressBar::increaseValue(float value_increase)
+void gui::ProgressBar::increaseValue(float valueIncrease)
 {
-	this->value += value_increase;
+	m_value += valueIncrease;
 
-	if (this->mOverRangeValuesAreCorrected) this->avoidOverRangeValue();
+	if (m_overRangeValuesAreCorrected)
+	{
+		avoidOverRangeValue();
+	}
 
-	this->updateProgressRectSize();
+	updateProgressRectSize();
 }
 
-void ProgressBar::decreaseValue(float value_decrease)
+void gui::ProgressBar::decreaseValue(float valueDecrease)
 {
-	this->value -= value_decrease;
+	m_value -= valueDecrease;
 
-	if (this->mOverRangeValuesAreCorrected) this->avoidOverRangeValue();
+	if (m_overRangeValuesAreCorrected)
+	{
+		avoidOverRangeValue();
+	}
 
-	this->updateProgressRectSize();
+	updateProgressRectSize();
 }
 
-void ProgressBar::setPosition(const sf::Vector2f& position)
+void gui::ProgressBar::setPosition(const sf::Vector2f& position)
 {
-	this->background.setPosition(position);
-	this->progressRect.setPosition(position);
+	m_background.setPosition(position);
+	m_progressRect.setPosition(position);
 }
 
-void ProgressBar::setSize(const sf::Vector2f& size)
+void gui::ProgressBar::setSize(const sf::Vector2f& size)
 {
-	this->background.setSize(size);
+	m_background.setSize(size);
 
-	this->updateProgressRectSize();
+	updateProgressRectSize();
 }
 
-void ProgressBar::setBackgroundColor(const sf::Color& background_color)
+void gui::ProgressBar::setBackgroundColor(const sf::Color& backgroundColor)
 {
-	this->background.setFillColor(background_color);
+	m_background.setFillColor(backgroundColor);
 }
 
-void ProgressBar::setProgressRectColor(const sf::Color& progress_rect_color)
+void gui::ProgressBar::setProgressRectColor(
+	const sf::Color& progressRectColor)
 {
-	this->progressRect.setFillColor(progress_rect_color);
+	m_progressRect.setFillColor(progressRectColor);
 }
 
 // private methods:
 
-// initialization:
-void ProgressBar::initBackground(
+void gui::ProgressBar::initBackground(
 	const sf::Vector2f& position,
-	const sf::Vector2f& size,
-	const sf::Color& background_color)
+	const sf::Color& backgroundColor)
 {
-	this->background.setPosition(position);
-	this->background.setSize(size);
-	this->background.setFillColor(background_color);
+	m_background.setPosition(position);
+	m_background.setFillColor(backgroundColor);
 }
 
-void ProgressBar::initProgressRect(const sf::Vector2f& position, const sf::Color& progress_rect_color)
+void gui::ProgressBar::initProgressRect(
+	const sf::Vector2f& position, 
+	const sf::Color& progressRectColor)
 {
-	this->progressRect.setPosition(position);
-	this->progressRect.setFillColor(progress_rect_color);
-	this->updateProgressRectSize(); // sets size
+	m_progressRect.setPosition(position);
+	m_progressRect.setFillColor(progressRectColor);
+	updateProgressRectSize(); // sets size
 }
 
-// private utilities:
-void ProgressBar::avoidOverRangeValue()
+void gui::ProgressBar::avoidOverRangeValue()
 {
-	if (this->value > this->valuesRange.y) this->value = this->valuesRange.y;
+	if (m_value > m_valuesRange.y)
+	{
+		m_value = m_valuesRange.y;
+	}
 
-	else if (this->value < this->valuesRange.x) this->value = this->valuesRange.x;
+	else if (m_value < m_valuesRange.x)
+	{
+		m_value = m_valuesRange.x;
+	}
 }
 
-void ProgressBar::updateProgressRectSize()
+void gui::ProgressBar::updateProgressRectSize()
 {
-	float correctedValue = this->value;
+	float correctedValue = m_value;
 
-	correctedValue = std::min(correctedValue, this->valuesRange.y);
-	correctedValue = std::max(correctedValue, this->valuesRange.x);
+	correctedValue = std::min(correctedValue, m_valuesRange.y);
+	correctedValue = std::max(correctedValue, m_valuesRange.x);
 
-	this->progressRect.setSize(
+	m_progressRect.setSize(
 		sf::Vector2f(
-			this->background.getSize().x * (correctedValue - this->valuesRange.x) / this->getRangeLength(),
-			this->background.getSize().y
+			m_background.getSize().x * (correctedValue - m_valuesRange.x)
+			/ getRangeLength(),
+			m_background.getSize().y
 		)
 	);
 }
 
-float ProgressBar::getRangeLength()
+float gui::ProgressBar::getRangeLength()
 {
-	return this->valuesRange.y - this->valuesRange.x;
+	return m_valuesRange.y - m_valuesRange.x;
 }

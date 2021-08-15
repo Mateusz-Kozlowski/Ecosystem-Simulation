@@ -7,37 +7,39 @@
 class LoadingState : public State
 {
 public:
-	LoadingState(StateData* state_data);
-
-	// public methods:
-	virtual void update(float dt);
-	virtual void render(sf::RenderTarget* target = nullptr);
+	LoadingState(StateData* stateData);
+	
+	virtual void update(float dt) override;
+	virtual void render(sf::RenderTarget* target = nullptr) override;
 
 	// mutators:
-	virtual void freeze();
+	
+	virtual void freeze() override;
 
 private:
-	sf::RectangleShape background;
-	sf::RectangleShape container;
-
-	sf::Font font;
-
-	std::unordered_map<const char*, std::unique_ptr<sf::Text>> texts;
-
-	std::unique_ptr<gui::TextBox> textBox;
-	std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
-
-	// private methods:
-	// initialization:
-	virtual void initKeybinds();
+	virtual void initKeybinds() override;
 	void initBackground();
 	void initContainer();
 	void initFonts();
 	void initTexts();
 	void initTextBox();
 	void initButtons();
-
-	// other private methods:
-	virtual void updateInput();
+	
+	virtual void updateInput() override;
 	void getUpdateFromButtons();
+
+private:
+	typedef std::unique_ptr<sf::Text> TextUniquePtr;
+	typedef std::unique_ptr<gui::Button> BtnUniquePtr;
+
+	sf::RectangleShape m_background;
+	sf::RectangleShape m_container;
+
+	sf::Font m_font;
+
+	std::unordered_map<const char*, TextUniquePtr> m_texts;
+
+	std::unique_ptr<gui::TextBox> m_textBox;
+
+	std::unordered_map<std::string, BtnUniquePtr> m_buttons;
 };

@@ -10,23 +10,23 @@ public:
 	Animal(
 		const sf::Vector2f& position,
 		float radius,
-		const sf::Color& body_color,
-		const sf::Color& hp_bar_background_color,
-		const sf::Color& hp_bar_progress_rect_color,
-		float default_hp,
-		float max_hp
+		const sf::Color& bodyColor,
+		const sf::Color& hpBarBackgroundColor,
+		const sf::Color& hpBarProgressRectColor,
+		float defaultHp,
+		float maxHp
 	);
-	Animal(const char* folder_path);
+	Animal(const char* folderPath);
 	Animal(const Animal& rhs);
 	Animal& operator=(const Animal& rhs);
-	
-	void saveToFolder(const char* folder_path) const;
-	void loadFromFolder(const char* folder_path);
+
+	void saveToFolder(const char* folderPath) const;
+	void loadFromFolder(const char* folderPath);
 
 	void update(
 		float dt,
-		float simulation_speed_factor,
-		const std::vector<double>& brain_inputs
+		float simulationSpeedFactor,
+		const std::vector<double>& brainInputs
 	);
 
 	void renderBody(sf::RenderTarget& target) const;
@@ -40,7 +40,7 @@ public:
 	float getRadius() const;
 
 	const sf::Color& getColor() const;
-	
+
 	float getMaxHp() const;
 
 	const MovementComponent& getMovementComponent() const;
@@ -49,7 +49,7 @@ public:
 
 	const sf::Vector2f& getVelocityVector() const;
 	const sf::Vector2f& getAccelerationVector() const;
-	
+
 	float getVelocityVectorValue() const;
 	float getAccelerationVectorValue() const;
 
@@ -64,37 +64,38 @@ public:
 
 	const gui::NeuralNetPreview& getBrainPreview() const;
 
-	bool isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const;
+	bool isCoveredByMouse(const sf::Vector2f& mousePosView) const;
 
 	// mutators:
 
 	void setPosition(const sf::Vector2f& position);
 
-	// TODO: Animal class shouldn't know about sth like world, change arguments to range:
+	// TODO: Animal class shouldn't know about sth like world, 
+	// TODO: change arguments to range:
 	void setRandomPosition(
-		const sf::Vector2f& world_size, 
-		float borders_thickness
+		const sf::Vector2f& worldSize,
+		float bordersThickness
 	);
 
 	void setRadius(float radius);
 
 	void setColor(const sf::Color& color);
 
-	void setMaxHp(float max_hp);
+	void setMaxHp(float maxHp);
 
-	void randomMutate(unsigned brain_mutations_count);
+	void randomMutate(unsigned brainMutationsCount);
 
 	void setVelocity(const sf::Vector2f& velocity);
 
 	void setAlive(bool alive);
 
 	void setHp(float hp);
-	void increaseHp(float hp_increase);
-	void decreaseHp(float hp_decrease);	
+	void increaseHp(float hpIncrease);
+	void decreaseHp(float hpDecrease);
 
 	void setBrainPreviewPosition(const sf::Vector2f& position);
 	void setBrainPreviewPosition(float x, float y);
-		
+
 private:
 	void initBody(
 		const sf::Vector2f& position,
@@ -102,29 +103,28 @@ private:
 		const sf::Color& color
 	);
 	void initHpBar(
-		float default_hp,
-		float max_hp,
-		const sf::Color& hp_bar_background_color,
-		const sf::Color& hp_bar_progress_rect_color
+		float defaultHp,
+		const sf::Color& hpBarBackgroundColor,
+		const sf::Color& hpBarProgressRectColor
 	);
 	void initBrainPreview();
-	
+
 	void updateBody(float dt);
 	void updateHp(float dt);
 	void updateHpBarPosition();
 	void updateBrainPreview();
 
 private:
-	sf::CircleShape body;
+	sf::CircleShape m_body;
 
-	float maxHp;
+	float m_maxHp;
 
-	std::unique_ptr<MovementComponent> movementComponent;
+	std::unique_ptr<MovementComponent> m_movementComponent;
 
-	float kineticEnergyFromPreviousFrame;
+	float m_kineticEnergyFromPreviousFrame;
 
-	bool alive;
+	bool m_alive;
 
-	std::unique_ptr<gui::ProgressBar> hpBar;
-	std::unique_ptr<gui::NeuralNetPreview> brainPreview;
+	std::unique_ptr<gui::ProgressBar> m_hpBar;
+	std::unique_ptr<gui::NeuralNetPreview> m_brainPreview;
 };

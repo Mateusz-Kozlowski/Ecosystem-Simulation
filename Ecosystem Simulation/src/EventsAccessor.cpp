@@ -2,12 +2,13 @@
 #include "EventsAccessor.h"
 
 bool EventsAccessor::hasEventOccured(
-    const sf::Event::EventType& event_type, 
+    const sf::Event::EventType& eventType, 
     const std::vector<sf::Event>& events)
 {
-    for (const auto& e : events)
-        if (e.type == event_type)
-            return true;
+    for (const auto& event : events)
+    {
+        if (event.type == eventType) return true;
+    }
     
     return false;
 }

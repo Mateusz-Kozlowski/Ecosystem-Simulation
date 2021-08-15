@@ -8,46 +8,46 @@
 class MainMenuState : public State
 {
 public:
-	MainMenuState(StateData* state_data);
-
-	// public methods:
-	virtual void update(float dt);
-	virtual void render(sf::RenderTarget* target = nullptr);
+	MainMenuState(StateData* stateData);
+	
+	virtual void update(float dt) override;
+	virtual void render(sf::RenderTarget* target = nullptr) override;
 
 	// mutators:
-	virtual void freeze();	
+
+	virtual void freeze() override;
 
 private:
-	sf::RectangleShape backgroundRect;
-	
-	std::unordered_map<std::string, sf::Font> fonts;
-
-	std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
-
-	sf::Text ecosystemText;
-
-	sf::Color defaultEcosystemTextColor;
-	sf::Color highlightedEcosystemTextColor;
-	
-	float ecosystemTextStopwatch;
-	float highlightningTime;
-
-	// private methods:
-	// initialization:
 	void initVariables();
-	virtual void initKeybinds();
+	virtual void initKeybinds() override;
 	void initBackground();
 	void initFonts();
 	void initButtons();
 	void initEcosystemText();
 
-	// other private methods:
 	void highlightEcosystemText();
 	void saveEcosystem(const Ecosystem& ecosystem);
-	
-	virtual void updateInput();
+
+	virtual void updateInput() override;
 	void getUpdateFromButtons();
 	void updateEcosystemText(float dt);
-	
+
 	void renderButtons(sf::RenderTarget& target);
+
+private:
+	typedef std::unique_ptr<gui::Button> BtnUniquePtr;
+
+	sf::RectangleShape m_backgroundRect;
+	
+	std::unordered_map<std::string, sf::Font> m_fonts;
+
+	std::unordered_map<std::string, BtnUniquePtr> m_buttons;
+
+	sf::Text m_ecosystemText;
+
+	sf::Color m_defaultEcosystemTextColor;
+	sf::Color m_highlightedEcosystemTextColor;
+	
+	float m_ecosystemTextStopwatch;
+	float m_highlightningTime;
 };

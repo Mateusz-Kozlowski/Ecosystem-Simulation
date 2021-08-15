@@ -3,248 +3,315 @@
 
 Ecosystem::Ecosystem(
 	const std::string& name,
-	const sf::Vector2f& world_size,
-	unsigned borders_thickness,
-	const sf::Color& background_color,
-	const sf::Color& borders_color,
-	unsigned animals_count,
-	unsigned fruits_count,
-	float animals_radius,
-	float fruits_radius,
-	float default_animals_hp,
-	float default_fruits_energy,
-	float mutation_percentage,
-	const sf::Color& animals_color,
-	const sf::Color& fruits_color,
-	const sf::Color& tracked_animal_color,
-	float simulation_speed_factor,
-	bool simulation_is_paused,
-	GodTool god_tool,
-	bool render_hp_bars_by_default,
-	bool render_brains_by_default)
-	: name(name),
-	  mutationPercentage(mutation_percentage),
-	  animalsRadius(animals_radius),
-	  fruitsRadius(fruits_radius),
-	  animalsColor(animals_color),
-	  fruitsColor(fruits_color),
-	  trackedAnimalColor(tracked_animal_color),
-	  trackedAnimal(nullptr),
-	  simulationSpeedFactor(simulation_speed_factor),
-	  m_simulationIsPaused(simulation_is_paused),
-	  godTool(god_tool),
-	  totalTimeElapsed(0.0f)
+	const sf::Vector2f& worldSize,
+	unsigned bordersThickness,
+	const sf::Color& backgroundColor,
+	const sf::Color& bordersColor,
+	unsigned animalsCount,
+	unsigned fruitsCount,
+	float animalsRadius,
+	float fruitsRadius,
+	float defaultAnimalsHp,
+	float defaultFruitsEnergy,
+	float mutationPercentage,
+	const sf::Color& animalsColor,
+	const sf::Color& fruitsColor,
+	const sf::Color& trackedAnimalColor,
+	float simulationSpeedFactor,
+	bool simulationIsPaused,
+	GodTool godTool,
+	bool renderHpBarsByDefault,
+	bool renderBrainsByDefault)
+	: m_name(name)
+	, m_background()
+	, m_animals()
+	, m_fruits()
+	, m_mutationPercentage(mutationPercentage)
+	, m_animalsRadius(animalsRadius)
+	, m_fruitsRadius(fruitsRadius)
+	, m_animalsColor(animalsColor)
+	, m_fruitsColor(fruitsColor)
+	, m_trackedAnimalColor(trackedAnimalColor)
+	, m_trackedAnimal(nullptr)
+	, m_simulationSpeedFactor(simulationSpeedFactor)
+	, m_simulationIsPaused(simulationIsPaused)
+	, m_godTool(godTool)
+	, m_hpBarsVisibility()
+	, m_brainsPreviewsVisibility()
+	, m_totalTimeElapsed(0.0f)
 {
-	this->initBackgroundAndBorders(world_size, borders_thickness, background_color, borders_color);
-	this->createNewAnimals(
-		animals_count,
-		default_animals_hp,
-		animals_radius,
-		animals_color,
-		render_hp_bars_by_default,
-		render_brains_by_default
+	initBackgroundAndBorders(
+		worldSize, 
+		bordersThickness, 
+		backgroundColor, 
+		bordersColor
 	);
-	this->createNewFruits(fruits_count, default_fruits_energy, fruits_radius, fruits_color);
+	createNewAnimals(
+		animalsCount,
+		defaultAnimalsHp,
+		animalsRadius,
+		animalsColor,
+		renderHpBarsByDefault,
+		renderBrainsByDefault
+	);
+	createNewFruits(
+		fruitsCount, 
+		defaultFruitsEnergy, 
+		fruitsRadius, 
+		fruitsColor
+	);
 }
 
-Ecosystem::Ecosystem(const std::string& folder_path)
+Ecosystem::Ecosystem(const char* folderPath)
+	: m_name("NO NAME HAS BEEN SET YET")
+	, m_background()
+	, m_animals()
+	, m_fruits()
+	, m_mutationPercentage(0.0f)
+	, m_animalsRadius(0.0f)
+	, m_fruitsRadius(0.0f)
+	, m_animalsColor(sf::Color::Magenta)
+	, m_fruitsColor(sf::Color::Magenta)
+	, m_trackedAnimalColor(sf::Color::Magenta)
+	, m_trackedAnimal(nullptr)
+	, m_simulationSpeedFactor(1.0f)
+	, m_simulationIsPaused(true)
+	, m_godTool(GodTool::NONE)
+	, m_hpBarsVisibility()
+	, m_brainsPreviewsVisibility()
+	, m_totalTimeElapsed(0.0f)
 {
-	this->loadFromFolder(folder_path);
+	loadFromFolder(folderPath);
 }
 
-void Ecosystem::saveToFolder(const std::string& folder_path) const
+void Ecosystem::saveToFolder(const std::string& folderPath) const
 {
-	std::filesystem::create_directories(folder_path);
-
-	// TODO: add static private (or sth even better) methods that returns those paths:
-	this->saveAnimals(folder_path + "/animals");
-	this->saveFruits(folder_path + "/fruits");
-	this->saveEcosystem(folder_path + "/ecosystem.ini");
-	this->saveHpBarsVisibility(folder_path + "/hp bars visibility.ini");
-	this->saveBrainsPreviewsVisibility(folder_path + "/brains previews visibility.ini");
+	if (folderPath != "")
+	{
+		std::filesystem::create_directories(folderPath);
+	}
+	
+	// TODO: add static private (or sth even better) 
+	// TODO: methods that returns those paths:
+	saveAnimals(folderPath + "/animals");
+	saveFruits(folderPath + "/fruits");
+	saveEcosystem(folderPath + "/ecosystem.ini");
+	saveHpBarsVisibility(folderPath + "/hp bars visibility.ini");
+	saveBrainsPreviewsVisibility(
+		folderPath + "/brains previews visibility.ini"
+	);
 }
 
-void Ecosystem::loadFromFolder(const std::string& folder_path)
+void Ecosystem::loadFromFolder(const std::string& folderPath)
 {
-	if (!std::filesystem::is_directory(folder_path))
-		return;
+	if (!std::filesystem::is_directory(folderPath)) return;
 
-	// TODO: add static private (or sth even better) methods that returns those paths:
-	this->loadAnimals(folder_path + "/animals");
-	this->loadFruits(folder_path + "/fruits");
-	this->loadEcosystem(folder_path + "/ecosystem.ini");
-	this->loadHpBarsVisibility(folder_path + "/hp bars visibility.ini");
-	this->loadBrainsPreviewsVisibility(folder_path + "/brains previews visibility.ini");
+	// TODO: add static private (or sth even better) 
+	// TODO: methods that returns those paths:
+	loadAnimals(folderPath + "/animals");
+	loadFruits(folderPath + "/fruits");
+	loadEcosystem(folderPath + "/ecosystem.ini");
+	loadHpBarsVisibility(folderPath + "/hp bars visibility.ini");
+	loadBrainsPreviewsVisibility(
+		folderPath + "/brains previews visibility.ini"
+	);
 }
 
 void Ecosystem::useGodTools(
 	const std::vector<sf::Event>& events,
-	const sf::Vector2f& mouse_pos_view)
+	const sf::Vector2f& mousePosView)
 {
-	if (!EventsAccessor::hasEventOccured(sf::Event::MouseButtonPressed, events))
-		return;
+	bool eventHasOccured = EventsAccessor::hasEventOccured(
+		sf::Event::MouseButtonPressed, 
+		events
+	);
+
+	if (!eventHasOccured) return;
 	
 	// now use God tool:
-	switch (this->godTool)
+	switch (m_godTool)
 	{
 	case GodTool::NONE:
 		return;
 
 	case GodTool::TRACK:
-		this->trackingTool(mouse_pos_view);
+		trackingTool(mousePosView);
 		return;
 
 	case GodTool::KILL:
-		this->killingTool(mouse_pos_view);
+		killingTool(mousePosView);
 		return;
 
 	case GodTool::REPLACE:
-		this->replacingTool(mouse_pos_view);
+		replacingTool(mousePosView);
 		return;
 
 	case GodTool::BRAIN:
-		this->brainTool(mouse_pos_view);
+		brainTool(mousePosView);
 		return;
 
 	case GodTool::STOP:
-		this->stoppingTool(mouse_pos_view);
+		stoppingTool(mousePosView);
 		return;
 
 	case GodTool::INFO:
-		this->infoTool(mouse_pos_view);
+		infoTool(mousePosView);
 		return;
 
 	default:
-		throw "ERROR::Ecosystem::useGodTool::ECOSYSTEM GOD TOOL IS NOT SUPPORTED BY THIS METHOD\n";
+		std::cerr
+			<< "Error::Ecosystem::useGodTool"
+			<< "(const std::vector<sf::Event>&, const sf::Vector2f&)::"
+			<< "there is no God tool like "
+			<< m_godTool
+			<< '\n';
+		assert(false);
 	}
 }
 
 void Ecosystem::update(float dt)
 {
-	if (!this->m_simulationIsPaused)
+	if (!m_simulationIsPaused)
 	{
-		this->totalTimeElapsed += dt;
-		this->updateWorld(dt);
+		m_totalTimeElapsed += dt;
+		updateWorld(dt);
 	}
 }
 
 void Ecosystem::render(sf::RenderTarget& target) const
 {
-	target.draw(this->background);
+	target.draw(m_background);
 
-	for (const auto& animal : this->animals)
+	for (const auto& animal : m_animals)
+	{
 		animal->renderBody(target);
+	}
 
-	for (const auto& animal : this->animals)
-		if (this->hpBarsVisibility.at(animal.get()))
+	for (const auto& animal : m_animals)
+	{
+		if (m_hpBarsVisibility.at(animal.get()))
+		{
 			animal->renderHpBar(target);
+		}
+	}
 
-	for (const auto& fruit : this->fruits)
+	for (const auto& fruit : m_fruits)
+	{
 		fruit->render(target);
+	}
 
-	for (const auto& animal : this->animals)
-		if (this->brainsPreviewsVisibility.at(animal.get()))
+	for (const auto& animal : m_animals)
+	{
+		if (m_brainsPreviewsVisibility.at(animal.get()))
+		{
 			animal->renderBrainPreview(target);
+		}
+	}
 }
 
 // accessors:
 
 const std::string& Ecosystem::getName() const
 {
-	return this->name;
+	return m_name;
 }
 
 sf::Vector2f Ecosystem::getWorldSize() const
 {
-	sf::Vector2f result = {
-		this->background.getSize().x + 2 * this->background.getOutlineThickness(),
-		this->background.getSize().y + 2 * this->background.getOutlineThickness()
+	return {
+		m_background.getSize().x + 2 * m_background.getOutlineThickness(),
+		m_background.getSize().y + 2 * m_background.getOutlineThickness()
 	};
+}
 
-	return result;
+const sf::Vector2f& Ecosystem::getArenaSize() const
+{
+	return m_background.getSize();
 }
 
 unsigned Ecosystem::getBordersThickness() const
 {
-	return this->background.getOutlineThickness();
+	return m_background.getOutlineThickness();
 }
 
 unsigned Ecosystem::getAnimalsCount() const
 {
-	return this->animals.size();
+	return m_animals.size();
 }
 
 const std::vector<std::shared_ptr<Animal>>& Ecosystem::getAnimals() const
 {
-	return this->animals;
+	return m_animals;
 }
 
 unsigned Ecosystem::getFruitsCount() const
 {
-	return this->fruits.size();
+	return m_fruits.size();
 }
 
 float Ecosystem::getMutationPercentage() const
 {
-	return this->mutationPercentage;
+	return m_mutationPercentage;
 }
 
 const sf::Color& Ecosystem::getBackgroundColor() const
 {
-	return this->background.getFillColor();
+	return m_background.getFillColor();
 }
 
 const sf::Color& Ecosystem::getBordersColor() const
 {
-	return this->background.getOutlineColor();
+	return m_background.getOutlineColor();
 }
 
 const sf::Color& Ecosystem::getAnimalsColor() const
 {
-	return this->animalsColor;
+	return m_animalsColor;
 }
 
 const sf::Color& Ecosystem::getFruitsColor() const
 {
-	return this->fruitsColor;
+	return m_fruitsColor;
 }
 
 const sf::Color& Ecosystem::getTrackedAnimalColor() const
 {
-	return this->trackedAnimalColor;
+	return m_trackedAnimalColor;
 }
 
 const Animal* Ecosystem::getTrackedAnimal() const
 {
-	return this->trackedAnimal;
+	return m_trackedAnimal;
 }
 
 float Ecosystem::getSimulationSpeedFactor() const
 {
-	return this->simulationSpeedFactor;
+	return m_simulationSpeedFactor;
 }
 
 bool Ecosystem::isSimulationPaused() const
 {
-	return this->m_simulationIsPaused;
+	return m_simulationIsPaused;
 }
 
 GodTool Ecosystem::getCurrentGodTool() const
 {
-	return this->godTool;
+	return m_godTool;
 }
 
 float Ecosystem::getTotalTimeElapsed() const
 {
-	return this->totalTimeElapsed;
+	return m_totalTimeElapsed;
 }
 
 float Ecosystem::getTotalAnimalsHpEnergy() const
 {
 	float totalHpEnergy = 0.0f;
 
-	for (const auto& animal : this->animals)
+	for (const auto& animal : m_animals)
+	{
 		totalHpEnergy += animal->getHp();
+	}
 
 	return totalHpEnergy;
 }
@@ -253,8 +320,10 @@ float Ecosystem::getTotalAnimalsKineticEnergy() const
 {
 	float totalKineticEnergy = 0.0f;
 
-	for (const auto& animal : this->animals)
+	for (const auto& animal : m_animals)
+	{
 		totalKineticEnergy += animal->getKineticEnergy();
+	}
 
 	return totalKineticEnergy;
 }
@@ -263,174 +332,199 @@ float Ecosystem::getTotalFruitsEnergy() const
 {
 	float totalFruitsEnergy = 0.0f;
 
-	for (const auto& fruit : this->fruits)
+	for (const auto& fruit : m_fruits)
+	{
 		totalFruitsEnergy += fruit->getEnergy();
+	}
 
 	return totalFruitsEnergy;
 }
 
 float Ecosystem::getTotalEnergy() const
 {
-	return this->getTotalAnimalsHpEnergy() + this->getTotalAnimalsKineticEnergy() + this->getTotalFruitsEnergy();
+	return getTotalAnimalsHpEnergy()
+		 + getTotalAnimalsKineticEnergy()
+		 + getTotalFruitsEnergy();
 }
 
 void Ecosystem::printAllAnimalsPositions() const
 {
-	for (const auto& animal : this->animals)
-		std::cout << animal->getPosition().x << ' ' << animal->getPosition().y << '\n';
+	for (const auto& animal : m_animals)
+	{
+		std::cout
+			<< animal->getPosition().x
+			<< ' '
+			<< animal->getPosition().y
+			<< '\n';
+	}
 }
 
 // mutators:
 
 void Ecosystem::setName(const std::string& name)
 {
-	this->name = name;
+	m_name = name;
 }
 
-void Ecosystem::setMutationPercentage(float mutation_rate)
+void Ecosystem::setMutationPercentage(float mutationRate)
 {
-	this->mutationPercentage = mutation_rate;
+	m_mutationPercentage = mutationRate;
 }
 
-void Ecosystem::setBackgroundColor(const sf::Color& background_color)
+void Ecosystem::setBackgroundColor(const sf::Color& backgroundColor)
 {
-	this->background.setFillColor(background_color);
+	m_background.setFillColor(backgroundColor);
 }
 
-void Ecosystem::setBordersColor(const sf::Color& borders_color)
+void Ecosystem::setBordersColor(const sf::Color& bordersColor)
 {
-	this->background.setOutlineColor(borders_color);
+	m_background.setOutlineColor(bordersColor);
 }
 
-void Ecosystem::setAnimalsColor(const sf::Color& animals_color)
+void Ecosystem::setAnimalsColor(const sf::Color& animalsColor)
 {
-	this->animalsColor = animals_color;
+	m_animalsColor = animalsColor;
 
-	for (auto& animal : this->animals)
-		if (animal.get() != this->trackedAnimal)
-			animal->setColor(animals_color);
+	for (auto& animal : m_animals)
+	{
+		if (animal.get() != m_trackedAnimal)
+		{
+			animal->setColor(animalsColor);
+		}
+	}
 }
 
-void Ecosystem::setFruitsColor(const sf::Color& fruits_color)
+void Ecosystem::setFruitsColor(const sf::Color& fruitsColor)
 {
-	this->fruitsColor = fruits_color;
+	m_fruitsColor = fruitsColor;
 
-	for (auto& fruit : this->fruits)
-		fruit->setColor(fruits_color);
+	for (auto& fruit : m_fruits)
+	{
+		fruit->setColor(fruitsColor);
+	}
 }
 
-void Ecosystem::setTrackedAnimalColor(const sf::Color& tracked_animal_color)
+void Ecosystem::setTrackedAnimalColor(const sf::Color& trackedAnimalColor)
 {
-	this->trackedAnimalColor = tracked_animal_color;
+	m_trackedAnimalColor = trackedAnimalColor;
 
-	if (this->trackedAnimal)
-		this->trackedAnimal->setColor(tracked_animal_color);
+	if (m_trackedAnimal)
+	{
+		m_trackedAnimal->setColor(trackedAnimalColor);
+	}
 }
 
-void Ecosystem::setSimulationSpeedFactor(float simulation_speed_factor)
+void Ecosystem::setSimulationSpeedFactor(float simulationSpeedFactor)
 {
-	this->simulationSpeedFactor = simulation_speed_factor;
+	m_simulationSpeedFactor = simulationSpeedFactor;
 }
 
 void Ecosystem::pauseSimulation()
 {
-	this->m_simulationIsPaused = true;
+	m_simulationIsPaused = true;
 }
 
 void Ecosystem::unpauseSimulation()
 {
-	this->m_simulationIsPaused = false;
+	m_simulationIsPaused = false;
 }
 
-void Ecosystem::setGodTool(GodTool god_tool)
+void Ecosystem::setGodTool(GodTool godTool)
 {
-	this->godTool = god_tool;
+	m_godTool = godTool;
 }
 
 // private methods:
 
 void Ecosystem::initBackgroundAndBorders(
-	const sf::Vector2f& world_size,
-	unsigned borders_thickness,
-	const sf::Color& background_color,
-	const sf::Color& borders_color)
+	const sf::Vector2f& worldSize,
+	unsigned bordersThickness,
+	const sf::Color& backgroundColor,
+	const sf::Color& bordersColor)
 {
-	this->background.setSize(
+	m_background.setSize(
 		sf::Vector2f(
-			world_size.x - 2.f * borders_thickness,
-			world_size.y - 2.f * borders_thickness
+			worldSize.x - 2.f * bordersThickness,
+			worldSize.y - 2.f * bordersThickness
 		)
 	);
-	this->background.setPosition(borders_thickness, borders_thickness);
-	this->background.setFillColor(background_color);
+	m_background.setPosition(bordersThickness, bordersThickness);
+	m_background.setFillColor(backgroundColor);
 
-	this->background.setOutlineThickness(borders_thickness);
-	this->background.setOutlineColor(borders_color);
+	m_background.setOutlineThickness(bordersThickness);
+	m_background.setOutlineColor(bordersColor);
 }
 
 void Ecosystem::createNewAnimals(
-	unsigned animals_count,
-	float default_animals_hp,
-	float animals_radius,
-	const sf::Color& animals_color,
-	bool render_hp_bars_by_default,
-	bool render_brains_by_default
+	unsigned animalsCount,
+	float defaultAnimalsHp,
+	float animalsRadius,
+	const sf::Color& animalsColor,
+	bool renderHpBarsByDefault,
+	bool renderBrainsByDefault
 )
 {
-	this->animals.clear();
+	m_animals.clear();
 
-	for (int i = 0; i < animals_count; i++)
-		this->createNewAnimal(
-			default_animals_hp,
-			animals_radius,
-			animals_color,
-			render_hp_bars_by_default,
-			render_brains_by_default
+	for (int i = 0; i < animalsCount; i++)
+	{
+		createNewAnimal(
+			defaultAnimalsHp,
+			animalsRadius,
+			animalsColor,
+			renderHpBarsByDefault,
+			renderBrainsByDefault
 		);
+	}
 }
 
 void Ecosystem::createNewAnimal(
-	float default_animal_hp,
-	float animal_radius,
-	const sf::Color& animal_color,
-	bool render_hp_bar_by_default,
-	bool render_brain_by_default)
+	float defaultAnimalHp,
+	float animalRadius,
+	const sf::Color& animalColor,
+	bool renderHpBarByDefault,
+	bool renderBrainByDefault)
 {
-	this->animals.push_back(
+	m_animals.push_back(
 		std::make_unique<Animal>(
 			sf::Vector2f(
-				this->getWorldSize().x / 2.0f,
-				this->getWorldSize().y / 2.0f
+				getWorldSize().x / 2.0f,
+				getWorldSize().y / 2.0f
 			),
-			animal_radius,
-			animal_color,
+			animalRadius,
+			animalColor,
 			sf::Color(100, 100, 100),
 			sf::Color::Red,
-			default_animal_hp,
-			default_animal_hp
+			defaultAnimalHp,
+			defaultAnimalHp
 		)
 	);
-	this->animals.back()->setRandomPosition(this->getWorldSize(), this->getBordersThickness());
+	m_animals.back()->setRandomPosition(getWorldSize(), getBordersThickness());
 
-	this->hpBarsVisibility[this->animals.back().get()] = render_hp_bar_by_default;
-	this->brainsPreviewsVisibility[this->animals.back().get()] = render_brain_by_default;
+	m_hpBarsVisibility[m_animals.back().get()] = renderHpBarByDefault;
+	m_brainsPreviewsVisibility[m_animals.back().get()] = renderBrainByDefault;
 }
 
 void Ecosystem::createNewFruits(
-	unsigned fruits_count,
-	float default_fruits_energy,
-	float fruits_radius,
-	const sf::Color& fruits_color)
+	unsigned fruitsCount,
+	float defaultFruitsEnergy,
+	float fruitsRadius,
+	const sf::Color& fruitsColor)
 {
-	this->fruits.clear();
+	m_fruits.clear();
 
-	for (int i = 0; i < fruits_count; i++)
-		this->createNewFruit(default_fruits_energy, fruits_radius, fruits_color);
+	for (int i = 0; i < fruitsCount; i++)
+	{
+		createNewFruit(defaultFruitsEnergy, fruitsRadius, fruitsColor);
+	}
 }
 
-void Ecosystem::createNewFruit(float energy, float radius, const sf::Color& fruit_color)
+void Ecosystem::createNewFruit(
+	float energy, 
+	float radius, 
+	const sf::Color& fruitColor)
 {
-	this->fruits.push_back(
+	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			energy,
 			sf::Vector2f(
@@ -438,162 +532,208 @@ void Ecosystem::createNewFruit(float energy, float radius, const sf::Color& frui
 				0.0f
 			),
 			radius,
-			fruit_color
+			fruitColor
 		)
 	);
-	this->fruits.back()->setRandomPosition(this->getWorldSize(), this->getBordersThickness());
+	m_fruits.back()->setRandomPosition(
+		getWorldSize(), 
+		getBordersThickness()
+	);
 }
 
-void Ecosystem::saveAnimals(const std::string& folder_path) const
+void Ecosystem::saveAnimals(const std::string& folderPath) const
 {
-	for (int i = 0; i < this->animals.size(); i++)
+	for (int i = 0; i < m_animals.size(); i++)
 	{
-		std::string path = folder_path;
-		path += "/animal";
-		path += std::to_string(i);
-
-		this->animals[i]->saveToFolder(path.c_str());
+		m_animals[i]->saveToFolder(
+			std::string(
+				folderPath
+				+ "/animal"
+				+ std::to_string(i)
+			).c_str()
+		);
 	}
 }
 
-void Ecosystem::saveFruits(const std::string& folder_path) const
+void Ecosystem::saveFruits(const std::string& folderPath) const
 {
-	std::filesystem::create_directories(folder_path);
+	std::filesystem::create_directories(folderPath);
 
-	for (int i = 0; i < this->fruits.size(); i++)
-		this->fruits[i]->saveToFile(folder_path + "/fruit" + std::to_string(i) + ".ini");
+	for (int i = 0; i < m_fruits.size(); i++)
+	{
+		m_fruits[i]->saveToFile(
+			std::string(
+				folderPath
+				+ "/fruit"
+				+ std::to_string(i) 
+				+ ".ini"
+			).c_str()
+		);
+	}
 }
 
-void Ecosystem::saveEcosystem(const std::string& file_path) const
+void Ecosystem::saveEcosystem(const std::string& filePath) const
 {
-	std::ofstream ofs(file_path);
+	std::ofstream ofs(filePath);
 
 	if (!ofs.is_open())
 	{
-		std::cerr << "ERROR::saveToFolder::CANNOT OPEN: " << file_path << '\n';
-		exit(-1);
+		std::cerr
+			<< "Error::saveToFolder(const std::string&)::"
+			<< "cannot open: "
+			<< filePath
+			<< '\n';
+		assert(false);
+		return;
 	}
 
-	ofs << this->name << '\n';
-	ofs << this->getWorldSize().x << ' ' << this->getWorldSize().y << '\n';
-	ofs << this->background.getOutlineThickness() << '\n';
+	ofs << m_name << '\n';
+	ofs << getWorldSize().x << ' ' << getWorldSize().y << '\n';
+	ofs << m_background.getOutlineThickness() << '\n';
 
-	ofs << static_cast<int>(this->background.getFillColor().r) << ' ';
-	ofs << static_cast<int>(this->background.getFillColor().g) << ' ';
-	ofs << static_cast<int>(this->background.getFillColor().b) << ' ';
-	ofs << static_cast<int>(this->background.getFillColor().a) << '\n';
+	ofs << static_cast<int>(m_background.getFillColor().r) << ' ';
+	ofs << static_cast<int>(m_background.getFillColor().g) << ' ';
+	ofs << static_cast<int>(m_background.getFillColor().b) << ' ';
+	ofs << static_cast<int>(m_background.getFillColor().a) << '\n';
 
-	ofs << static_cast<int>(this->background.getOutlineColor().r) << ' ';
-	ofs << static_cast<int>(this->background.getOutlineColor().g) << ' ';
-	ofs << static_cast<int>(this->background.getOutlineColor().b) << ' ';
-	ofs << static_cast<int>(this->background.getOutlineColor().a) << '\n';
+	ofs << static_cast<int>(m_background.getOutlineColor().r) << ' ';
+	ofs << static_cast<int>(m_background.getOutlineColor().g) << ' ';
+	ofs << static_cast<int>(m_background.getOutlineColor().b) << ' ';
+	ofs << static_cast<int>(m_background.getOutlineColor().a) << '\n';
 
-	ofs << this->mutationPercentage << '\n';
+	ofs << m_mutationPercentage << '\n';
 
-	ofs << static_cast<int>(this->animalsColor.r) << ' ';
-	ofs << static_cast<int>(this->animalsColor.g) << ' ';
-	ofs << static_cast<int>(this->animalsColor.b) << ' ';
-	ofs << static_cast<int>(this->animalsColor.a) << '\n';
+	ofs << static_cast<int>(m_animalsColor.r) << ' ';
+	ofs << static_cast<int>(m_animalsColor.g) << ' ';
+	ofs << static_cast<int>(m_animalsColor.b) << ' ';
+	ofs << static_cast<int>(m_animalsColor.a) << '\n';
 
-	ofs << static_cast<int>(this->fruitsColor.r) << ' ';
-	ofs << static_cast<int>(this->fruitsColor.g) << ' ';
-	ofs << static_cast<int>(this->fruitsColor.b) << ' ';
-	ofs << static_cast<int>(this->fruitsColor.a) << '\n';
+	ofs << static_cast<int>(m_fruitsColor.r) << ' ';
+	ofs << static_cast<int>(m_fruitsColor.g) << ' ';
+	ofs << static_cast<int>(m_fruitsColor.b) << ' ';
+	ofs << static_cast<int>(m_fruitsColor.a) << '\n';
 
-	ofs << static_cast<int>(this->trackedAnimalColor.r) << ' ';
-	ofs << static_cast<int>(this->trackedAnimalColor.g) << ' ';
-	ofs << static_cast<int>(this->trackedAnimalColor.b) << ' ';
-	ofs << static_cast<int>(this->trackedAnimalColor.a) << '\n';
+	ofs << static_cast<int>(m_trackedAnimalColor.r) << ' ';
+	ofs << static_cast<int>(m_trackedAnimalColor.g) << ' ';
+	ofs << static_cast<int>(m_trackedAnimalColor.b) << ' ';
+	ofs << static_cast<int>(m_trackedAnimalColor.a) << '\n';
 
-	ofs << this->getTrackedAnimalIndex() << '\n';
+	ofs << getTrackedAnimalIndex() << '\n';
 
-	ofs << this->simulationSpeedFactor << '\n';
-	ofs << this->m_simulationIsPaused << '\n';
-	ofs << this->godTool << '\n';
-	ofs << this->totalTimeElapsed;
+	ofs << m_simulationSpeedFactor << '\n';
+	ofs << m_simulationIsPaused << '\n';
+	ofs << m_godTool << '\n';
+	ofs << m_totalTimeElapsed;
 
 	ofs.close();
 }
 
 int Ecosystem::getTrackedAnimalIndex() const
 {
-	if (!this->trackedAnimal)
-		return -1;
+	if (!m_trackedAnimal) return -1;
 
-	for (int i = 0; i < this->animals.size(); i++)
-		if (this->animals[i].get() == this->trackedAnimal)
-			return i;
+	for (int i = 0; i < m_animals.size(); i++)
+	{
+		if (m_animals[i].get() == m_trackedAnimal) return i;
+	}
 
-	std::cerr << "ERROR::Ecosystem::getTrackedAnimalIndex::trackedAnimal POINTS TO A NONEXISTENT Animal CLASS OBJECT\n";
+	std::cerr 
+		<< "Error::Ecosystem::getTrackedAnimalIndex() const::"
+		<< "trackedAnimal ptr points to a nonexistent animal\n";
 	assert(false);
 }
 
-void Ecosystem::saveHpBarsVisibility(const std::string& file_path) const
+void Ecosystem::saveHpBarsVisibility(const std::string& filePath) const
 {
-	std::ofstream ofs(file_path);
+	std::ofstream ofs(filePath);
 
 	if (!ofs.is_open())
 	{
-		std::cerr << "ERROR::Ecosystem::saveHpBarsVisibility::CANNOT OPEN: " << file_path << '\n';
-		exit(-1);
+		std::cerr
+			<< "Error::Ecosystem::saveHpBarsVisibility"
+			<< "(const std::string&) const::"
+			<< "cannot open: "
+			<< filePath
+			<< '\n';
+		assert(false);
+		return;
 	}
 
-	for (const auto& it : this->hpBarsVisibility)
+	for (const auto& it : m_hpBarsVisibility)
+	{
 		ofs << it.second << '\n';
+	}
 
 	ofs.close();
 }
 
-void Ecosystem::saveBrainsPreviewsVisibility(const std::string& file_path) const
+void Ecosystem::saveBrainsPreviewsVisibility(const std::string& filePath) const
 {
-	std::ofstream ofs(file_path);
+	std::ofstream ofs(filePath);
 
 	if (!ofs.is_open())
 	{
-		std::cerr << "ERROR::Ecosystem::saveBrainsPreviewsVisibility::CANNOT OPEN: " << file_path << '\n';
-		exit(-1);
+		std::cerr 
+			<< "Error::Ecosystem::"
+			<< "saveBrainsPreviewsVisibility(const std::string&) const::"
+			<< "cannot open: " 
+			<< filePath 
+			<< '\n';
+		assert(false);
+		return;
 	}
 
-	for (const auto& it : this->brainsPreviewsVisibility)
+	for (const auto& it : m_brainsPreviewsVisibility)
+	{
 		ofs << it.second << '\n';
+	}
 
 	ofs.close();
 }
 
-void Ecosystem::loadAnimals(const std::string& folder_path)
+void Ecosystem::loadAnimals(const std::string& folderPath)
 {
-	this->animals.clear();
+	m_animals.clear();
 
-	for (const auto& entry : std::filesystem::directory_iterator(folder_path))
-		this->loadAnimal(entry.path().string());
+	for (const auto& entry : std::filesystem::directory_iterator(folderPath))
+	{
+		loadAnimal(entry.path().string());
+	}
 }
 
-void Ecosystem::loadAnimal(const std::string& folder_path)
+void Ecosystem::loadAnimal(const std::string& folderPath)
 {
-	this->animals.push_back(std::make_unique<Animal>(folder_path.c_str()));
+	m_animals.push_back(std::make_unique<Animal>(folderPath.c_str()));
 }
 
-void Ecosystem::loadFruits(const std::string& folder_path)
+void Ecosystem::loadFruits(const std::string& folderPath)
 {
-	this->fruits.clear();
+	m_fruits.clear();
 
-	for (const auto& entry : std::filesystem::directory_iterator(folder_path))
-		this->loadFruit(entry.path().string());
+	for (const auto& entry : std::filesystem::directory_iterator(folderPath))
+	{
+		loadFruit(entry.path().string());
+	}
 }
 
-void Ecosystem::loadFruit(const std::string& file_path)
+void Ecosystem::loadFruit(const std::string& filePath)
 {
-	this->fruits.push_back(std::make_unique<Fruit>(file_path));
+	m_fruits.push_back(std::make_unique<Fruit>(filePath.c_str()));
 }
 
-void Ecosystem::loadEcosystem(const std::string& file_path)
+void Ecosystem::loadEcosystem(const std::string& filePath)
 {
-	std::ifstream ifs(file_path);
+	std::ifstream ifs(filePath);
 
 	if (!ifs.is_open())
 	{
-		std::cerr << "ERROR::Ecosystem::loadEcosystem::CANNOT OPEN: " << file_path << '\n';
-		exit(-1);
+		std::cerr
+			<< "Error::Ecosystem::loadEcosystem(const std::string&)::"
+			<< "cannot open: "
+			<< filePath
+			<< '\n';
+		assert(false);
+		return;
 	}
 
 	sf::Vector2f worldSize;
@@ -603,9 +743,12 @@ void Ecosystem::loadEcosystem(const std::string& file_path)
 	int trackedAnimalIndex;
 	unsigned animalsColorR, animalsColorG, animalsColorB, animalsColorA;
 	unsigned fruitsColorR, fruitsColorG, fruitsColorB, fruitsColorA;
-	unsigned trackedAnimalColorR, trackedAnimalColorG, trackedAnimalColorB, trackedAnimalColorA;
+	unsigned trackedAnimalColorR,
+			 trackedAnimalColorG,
+			 trackedAnimalColorB,
+			 trackedAnimalColorA;
 
-	std::getline(ifs, this->name);
+	std::getline(ifs, m_name);
 	
 	ifs >> worldSize.x >> worldSize.y;
 	ifs >> bordersThickness;
@@ -613,22 +756,25 @@ void Ecosystem::loadEcosystem(const std::string& file_path)
 	ifs >> bgColorR >> bgColorG >> bgColorB >> bgColorA;
 	ifs >> bordersColorR >> bordersColorG >> bordersColorB >> bordersColorA;
 
-	ifs >> this->mutationPercentage;
+	ifs >> m_mutationPercentage;
 
 	ifs >> animalsColorR >> animalsColorG >> animalsColorB >> animalsColorA;
 	ifs >> fruitsColorR >> fruitsColorG >> fruitsColorB >> fruitsColorA;
-	ifs >> trackedAnimalColorR >> trackedAnimalColorG >> trackedAnimalColorB >> trackedAnimalColorA;
+	ifs >> trackedAnimalColorR 
+		>> trackedAnimalColorG 
+		>> trackedAnimalColorB 
+		>> trackedAnimalColorA;
 
 	ifs >> trackedAnimalIndex;
 
-	ifs >> this->simulationSpeedFactor;
-	ifs >> this->m_simulationIsPaused;
-	ifs >> this->godTool;
-	ifs >> this->totalTimeElapsed;
+	ifs >> m_simulationSpeedFactor;
+	ifs >> m_simulationIsPaused;
+	ifs >> m_godTool;
+	ifs >> m_totalTimeElapsed;
 
 	ifs.close();
 
-	this->initBackgroundAndBorders(
+	initBackgroundAndBorders(
 		worldSize,
 		bordersThickness,
 		sf::Color(
@@ -645,84 +791,99 @@ void Ecosystem::loadEcosystem(const std::string& file_path)
 		)
 	);
 
-	this->animalsColor = sf::Color(
+	m_animalsColor = sf::Color(
 		animalsColorR, 
 		animalsColorG, 
 		animalsColorB, 
 		animalsColorA
 	);
 
-	this->fruitsColor = sf::Color(
+	m_fruitsColor = sf::Color(
 		fruitsColorR, 
 		fruitsColorG, 
 		fruitsColorB, 
 		fruitsColorA
 	);
 
-	this->trackedAnimalColor = sf::Color(
+	m_trackedAnimalColor = sf::Color(
 		trackedAnimalColorR, 
 		trackedAnimalColorG, 
 		trackedAnimalColorB, 
 		trackedAnimalColorA
 	);
 
-	this->trackedAnimal = nullptr;
+	m_trackedAnimal = nullptr;
 
 	if (trackedAnimalIndex != -1)
-		this->makeTracked(*this->animals[trackedAnimalIndex]);
+	{
+		makeTracked(*m_animals[trackedAnimalIndex]);
+	}
 }
 
 void Ecosystem::makeTracked(Animal& animal)
 {
-	if (this->trackedAnimal)
-		this->trackedAnimal->setColor(this->animalsColor);
+	if (m_trackedAnimal)
+	{
+		m_trackedAnimal->setColor(m_animalsColor);
+	}
 	
-	this->trackedAnimal = &animal;
+	m_trackedAnimal = &animal;
 
-	animal.setColor(this->trackedAnimalColor);
+	animal.setColor(m_trackedAnimalColor);
 }
 
-void Ecosystem::loadHpBarsVisibility(const std::string& file_path)
+void Ecosystem::loadHpBarsVisibility(const std::string& filePath)
 {
-	this->hpBarsVisibility.clear();
+	m_hpBarsVisibility.clear();
 
-	std::ifstream ifs(file_path);
+	std::ifstream ifs(filePath);
 
 	if (!ifs.is_open())
 	{
-		std::cerr << "ERROR::Ecosystem::loadHpBarsVisibility::CANNOT OPEN: " << file_path << '\n';
-		exit(-1);
+		std::cerr
+			<< "Error::Ecosystem::loadHpBarsVisibility(const std::string&)::"
+			<< "cannot open: "
+			<< filePath
+			<< '\n';
+		assert(false);
+		return;
 	}
 
 	bool hpBarVisibility;
 
-	for (int i = 0; i < this->animals.size(); i++)
+	for (int i = 0; i < m_animals.size(); i++)
 	{
 		ifs >> hpBarVisibility;
-		this->hpBarsVisibility[this->animals[i].get()] = hpBarVisibility;
+		m_hpBarsVisibility[m_animals[i].get()] = hpBarVisibility;
 	}
 
 	ifs.close();
 }
 
-void Ecosystem::loadBrainsPreviewsVisibility(const std::string& file_path)
+void Ecosystem::loadBrainsPreviewsVisibility(const std::string& filePath)
 {
-	this->brainsPreviewsVisibility.clear();
+	m_brainsPreviewsVisibility.clear();
 
-	std::ifstream ifs(file_path);
+	std::ifstream ifs(filePath);
 
 	if (!ifs.is_open())
 	{
-		std::cerr << "ERROR::Ecosystem::loadBrainsPreviewsVisibility::CANNOT OPEN: " << file_path << '\n';
-		exit(-1);
+		std::cerr 
+			<< "ERROR::Ecosystem::loadBrainsPreviewsVisibility"
+			<< "(const std::string&)::"
+			<< "cannot open: " 
+			<< filePath 
+			<< '\n';
+		assert(false);
+		return;
 	}
 
 	bool brainPreviewVisibility;
 
-	for (int i = 0; i < this->animals.size(); i++)
+	for (int i = 0; i < m_animals.size(); i++)
 	{
 		ifs >> brainPreviewVisibility;
-		this->brainsPreviewsVisibility[this->animals[i].get()] = brainPreviewVisibility;
+		m_brainsPreviewsVisibility[m_animals[i].get()] = brainPreviewVisibility;
 	}
 
 	ifs.close();
@@ -731,133 +892,162 @@ void Ecosystem::loadBrainsPreviewsVisibility(const std::string& file_path)
 // god tools:
 
 // tracking tool:
-void Ecosystem::trackingTool(const sf::Vector2f& mouse_pos_view)
+
+void Ecosystem::trackingTool(const sf::Vector2f& mousePosView)
 {
-	for (auto& animal : this->animals)
-		if (animal->isCoveredByMouse(mouse_pos_view))
+	for (auto& animal : m_animals)
+	{
+		if (animal->isCoveredByMouse(mousePosView))
 		{
-			if (animal.get() == this->trackedAnimal)
-				this->stopTracking();
+			if (animal.get() == m_trackedAnimal)
+			{
+				stopTracking();
+			}
 			else
-				this->makeTracked(*animal);
-			
+			{
+				makeTracked(*animal);
+			}
+
 			return;
 		}
+	}
 }
 
 void Ecosystem::stopTracking()
 {
-	if (!this->trackedAnimal)
-		return;
+	if (!m_trackedAnimal) return;
 
-	this->trackedAnimal->setColor(this->animalsColor);
-	this->trackedAnimal = nullptr;
+	m_trackedAnimal->setColor(m_animalsColor);
+	m_trackedAnimal = nullptr;
 }
 
 // killing tool:
-void Ecosystem::killingTool(const sf::Vector2f& mouse_pos_view)
+
+void Ecosystem::killingTool(const sf::Vector2f& mousePosView)
 {
-	for (auto& animal : this->animals)
-		if (animal->isCoveredByMouse(mouse_pos_view))
+	for (auto& animal : m_animals)
+	{
+		if (animal->isCoveredByMouse(mousePosView))
 		{
-			this->convertAnimalToFruit(animal, false);
+			convertAnimalToFruit(animal, false);
 			return;
 		}
+	}
 }
 
-void Ecosystem::convertAnimalToFruit(std::shared_ptr<Animal>& animal, bool random_fruit_position)
+void Ecosystem::convertAnimalToFruit(
+	std::shared_ptr<Animal>& animal, 
+	bool randomFruitPosition)
 {
-	this->fruits.push_back(
+	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			animal->getTotalEnergy(),
 			animal->getPosition(),
-			this->fruitsRadius,
-			this->fruitsColor
+			m_fruitsRadius,
+			m_fruitsColor
 		)
 	);
 
-	if (random_fruit_position)
-		this->fruits.back()->setRandomPosition(this->getWorldSize(), this->getBordersThickness());
+	if (randomFruitPosition)
+	{
+		m_fruits.back()->setRandomPosition(getWorldSize(), getBordersThickness());
+	}
 
-	if (animal.get() == this->trackedAnimal)
-		this->trackedAnimal = nullptr;
+	if (animal.get() == m_trackedAnimal)
+	{
+		m_trackedAnimal = nullptr;
+	}
 
-	this->removeAnimal(animal);
+	removeAnimal(animal);
 }
 
 // replacing tool:
-void Ecosystem::replacingTool(const sf::Vector2f& mouse_pos_view)
+
+void Ecosystem::replacingTool(const sf::Vector2f& mousePosView)
 {
 	std::cout << "REPLACING TOOL IS NOT DEFINED YET!\n";
 }
 
 // brain tool:
-void Ecosystem::brainTool(const sf::Vector2f& mouse_pos_view)
+
+void Ecosystem::brainTool(const sf::Vector2f& mousePosView)
 {
-	for (auto& animal : this->animals)
+	for (auto& animal : m_animals)
 	{
-		if (animal->isCoveredByMouse(mouse_pos_view))
+		if (animal->isCoveredByMouse(mousePosView))
 		{
-			this->brainsPreviewsVisibility[animal.get()] = !this->brainsPreviewsVisibility[animal.get()];
+			m_brainsPreviewsVisibility[animal.get()]
+				= !m_brainsPreviewsVisibility[animal.get()];
 			return;
 		}
 	}
 }
 
 // stopping tool:
-void Ecosystem::stoppingTool(const sf::Vector2f& mouse_pos_view)
+
+void Ecosystem::stoppingTool(const sf::Vector2f& mousePosView)
 {
-	for (auto& animal : this->animals)
+	for (auto& animal : m_animals)
 	{
-		if (animal->isCoveredByMouse(mouse_pos_view))
+		if (animal->isCoveredByMouse(mousePosView))
 		{
-			this->convertKineticEnergyToFruit(*animal, true);
+			convertKineticEnergyToFruit(*animal, true);
 			return;
 		}
 	}
 }
 
-void Ecosystem::convertKineticEnergyToFruit(Animal& animal, bool random_fruit_position)
+void Ecosystem::convertKineticEnergyToFruit(
+	Animal& animal, 
+	bool randomFruitPosition)
 {
-	if (animal.getKineticEnergy() <= 0.0f)
-		return;
+	if (animal.getKineticEnergy() <= 0.0f) return;
 
-	this->fruits.push_back(
+	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			animal.getKineticEnergy(),
 			animal.getPosition(),
-			this->fruitsRadius,
-			this->fruitsColor
+			m_fruitsRadius,
+			m_fruitsColor
 		)
 	);
 
-	if (random_fruit_position)
-		this->fruits.back()->setRandomPosition(this->getWorldSize(), this->getBordersThickness());
+	if (randomFruitPosition)
+	{
+		m_fruits.back()->setRandomPosition(getWorldSize(), getBordersThickness());
+	}
 
 	animal.setVelocity(sf::Vector2f(0.0f, 0.0f));
 }
 
 // info tool:
-void Ecosystem::infoTool(const sf::Vector2f& mouse_pos_view) const
+
+void Ecosystem::infoTool(const sf::Vector2f& mousePosView) const
 {
 	bool noInfoPrinted = true;
 
-	for (const auto& animal : this->animals)
-		if (animal->isCoveredByMouse(mouse_pos_view))
+	for (const auto& animal : m_animals)
+	{
+		if (animal->isCoveredByMouse(mousePosView))
 		{
 			noInfoPrinted = false;
-			this->printInfoAboutAnimal(*animal);
-		}		
-
-	for (const auto& fruit : this->fruits)
-		if (fruit->isCoveredByMouse(mouse_pos_view))
-		{
-			noInfoPrinted = false;
-			this->printInfoAboutFruit(*fruit);
+			printInfoAboutAnimal(*animal);
 		}
+	}		
+
+	for (const auto& fruit : m_fruits)
+	{
+		if (fruit->isCoveredByMouse(mousePosView))
+		{
+			noInfoPrinted = false;
+			printInfoAboutFruit(*fruit);
+		}
+	}
 
 	if (noInfoPrinted)
-		this->printInfoAboutEcosystem();
+	{
+		printInfoAboutEcosystem();
+	}
 }
 
 void Ecosystem::printInfoAboutAnimal(const Animal& animal) const
@@ -865,9 +1055,20 @@ void Ecosystem::printInfoAboutAnimal(const Animal& animal) const
 	std::cout << '\n';
 	std::cout << "Info about a clicked animal:\n";
 	std::cout << "max hp: " << animal.getMaxHp() << '\n';
-	std::cout << "position: " << animal.getPosition().x << ' ' << animal.getPosition().y << '\n';
-	std::cout << "velocity: " << animal.getVelocityVector().x << ' ' << animal.getVelocityVector().y << '\n';
-	std::cout << "acceleration: " << animal.getAccelerationVector().x << ' ' << animal.getAccelerationVector().y << '\n';
+	std::cout 
+		<< "position: " 
+		<< animal.getPosition().x << ' ' << animal.getPosition().y 
+		<< '\n';
+	std::cout 
+		<< "velocity: " 
+		<< animal.getVelocityVector().x << ' ' << animal.getVelocityVector().y
+		<< '\n';
+	std::cout 
+		<< "acceleration: " 
+		<< animal.getAccelerationVector().x 
+		<< ' ' 
+		<< animal.getAccelerationVector().y 
+		<< '\n';
 	std::cout << "kinetic energy: " << animal.getKineticEnergy() << '\n';
 	std::cout << "HP: " << animal.getHp() << '\n';
 	std::cout << "total energy: " << animal.getTotalEnergy() << '\n';
@@ -878,51 +1079,68 @@ void Ecosystem::printInfoAboutFruit(const Fruit& fruit) const
 	std::cout << '\n';
 	std::cout << "Info about a clicked fruit:\n";
 	std::cout << "energy: " << fruit.getEnergy() << '\n';
-	std::cout << "position: " << fruit.getPosition().x << ' ' << fruit.getPosition().y << '\n';
+	std::cout 
+		<< "position: " 
+		<< fruit.getPosition().x << ' ' << fruit.getPosition().y << '\n';
 }
 
 void Ecosystem::printInfoAboutEcosystem() const
 {
 	std::cout << '\n';
 	std::cout << "Info about the ecosystem:\n";
-	std::cout << "name: " << this->name << '\n';
+	std::cout << "name: " << m_name << '\n';
 	std::cout << "arena size: "
-		<< this->getWorldSize().x - 2U * this->getBordersThickness() << ' '
-		<< this->getWorldSize().y - 2U * this->getBordersThickness() << '\n';
-	std::cout << "borders thickness: " << this->getBordersThickness() << '\n';
-	std::cout << "world size: " << this->getWorldSize().x << ' ' << this->getWorldSize().y << '\n';
-	std::cout << "animals count: " << this->animals.size() << '\n';
-	std::cout << "fruits count: " << this->fruits.size() << '\n';
-	std::cout << "mutation rate percentage: " << this->mutationPercentage << '\n';
-	std::cout << "simulation speed factor: " << this->simulationSpeedFactor << '\n';
-	std::cout << "simulation is paused: " << this->m_simulationIsPaused << '\n';
-	std::cout << "god tool: " << getGodToolStr(this->godTool) << '\n';
-	std::cout << "total time elapsed [sec]: " << this->totalTimeElapsed << '\n';
-	std::cout << "total animals hp energy: " << this->getTotalAnimalsHpEnergy() << '\n';
-	std::cout << "total animals kinetic energy: " << this->getTotalAnimalsKineticEnergy() << '\n';
-	std::cout << "total fruits energy: " << this->getTotalFruitsEnergy() << '\n';
-	std::cout << "total energy: " << this->getTotalEnergy() << '\n';
+		<< getWorldSize().x - 2U * getBordersThickness() << ' '
+		<< getWorldSize().y - 2U * getBordersThickness() << '\n';
+	std::cout << "borders thickness: " << getBordersThickness() << '\n';
+	std::cout 
+		<< "world size: " 
+		<< getWorldSize().x << ' ' << getWorldSize().y << '\n';
+	std::cout << "animals count: " << m_animals.size() << '\n';
+	std::cout << "fruits count: " << m_fruits.size() << '\n';
+	std::cout << "mutation rate percentage: " << m_mutationPercentage << '\n';
+	std::cout 
+		<< "simulation speed factor: " 
+		<< m_simulationSpeedFactor << '\n';
+	std::cout << "simulation is paused: " << m_simulationIsPaused << '\n';
+	std::cout << "god tool: " << getGodToolStr(m_godTool) << '\n';
+	std::cout << "total time elapsed [sec]: " << m_totalTimeElapsed << '\n';
+	std::cout 
+		<< "total animals hp energy: " 
+		<< getTotalAnimalsHpEnergy() << '\n';
+	std::cout 
+		<< "total animals kinetic energy: "
+		<< getTotalAnimalsKineticEnergy() << '\n';
+	std::cout << "total fruits energy: " << getTotalFruitsEnergy() << '\n';
+	std::cout << "total energy: " << getTotalEnergy() << '\n';
 }
 
 void Ecosystem::updateWorld(float dt)
 {
-	this->updateAnimals(dt);
-	this->avoidTunneling();
-	//this->killAnimalsStickingToBorders();
-	this->transferEnergyFromAnimalsToFruits();
-	this->removeDeadAnimals();
-	this->feedAnimals();
-	this->removeEatenFruits();
-	this->correctBrainPreviewsPositions();
+	updateAnimals(dt);
+	avoidTunneling();
+	//killAnimalsStickingToBorders();
+	transferEnergyFromAnimalsToFruits();
+	removeDeadAnimals();
+	feedAnimals();
+	removeEatenFruits();
+	correctBrainPreviewsPositions();
 }
 
 void Ecosystem::updateAnimals(float dt)
 {
-	for (const auto& animal : this->animals)
-		animal->update(dt, this->simulationSpeedFactor, this->getInputsForBrain(*animal));
+	for (const auto& animal : m_animals)
+	{
+		animal->update(
+			dt, 
+			m_simulationSpeedFactor, 
+			getInputsForBrain(*animal)
+		);
+	}
 }
 
-const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(const Animal& animal) const
+const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
+	const Animal& animal) const
 {
 	// TODO: add set BRAIN inputs methods in Animal class
 	std::vector<Blueberry::Scalar> inputsForBrain;
@@ -934,12 +1152,16 @@ const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(const Animal& 
 	
 	inputsForBrain.push_back(log2(animal.getHp()));
 
-	const Fruit* theNearestFruit = this->getTheNearestFruit(animal);
+	const Fruit* theNearestFruit = getTheNearestFruit(animal);
 	
 	if (theNearestFruit)
 	{
-		inputsForBrain.push_back(theNearestFruit->getPosition().x - animal.getPosition().x);
-		inputsForBrain.push_back(theNearestFruit->getPosition().y - animal.getPosition().y);
+		inputsForBrain.push_back(
+			theNearestFruit->getPosition().x - animal.getPosition().x
+		);
+		inputsForBrain.push_back(
+			theNearestFruit->getPosition().y - animal.getPosition().y
+		);
 	}
 	else
 	{
@@ -952,15 +1174,14 @@ const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(const Animal& 
 
 const Fruit* Ecosystem::getTheNearestFruit(const Animal& animal) const
 {
-	if (this->fruits.empty())
-		return nullptr;
+	if (m_fruits.empty()) return nullptr;
 	
 	int theNearestFruitIndex = -1;
 	float theSmallestDistance = INFINITY;
 
-	for (int i = 0; i < this->fruits.size(); i++)
+	for (int i = 0; i < m_fruits.size(); i++)
 	{
-		float distance = this->calcDistance(animal, *this->fruits[i]);
+		float distance = calcDistance(animal, *m_fruits[i]);
 
 		if (distance < theSmallestDistance)
 		{
@@ -969,7 +1190,7 @@ const Fruit* Ecosystem::getTheNearestFruit(const Animal& animal) const
 		}
 	}
 
-	return this->fruits[theNearestFruitIndex].get();
+	return m_fruits[theNearestFruitIndex].get();
 }
 
 float Ecosystem::calcDistance(const Animal& animal, const Fruit& fruit) const
@@ -982,19 +1203,25 @@ float Ecosystem::calcDistance(const Animal& animal, const Fruit& fruit) const
 
 void Ecosystem::avoidTunneling()
 {
-	for (auto& animal : this->animals)
+	for (auto& animal : m_animals)
 	{
 		// it is possible that an animal crossed 2 perpendicular borders in the same frame, 
 		// so we have to call both of these functions: 
-		this->avoidTunnelingByVerticalBorders(*animal);
-		this->avoidTunnelingByHorizontalBorders(*animal);
+		avoidTunnelingByVerticalBorders(*animal);
+		avoidTunnelingByHorizontalBorders(*animal);
 	}
 }
 
 void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 {
+	// make the following if statements shorter:
+	const sf::Vector2f& animalPos = animal.getPosition();
+	float animalRadius = animal.getRadius();
+	unsigned bordersThickness = getBordersThickness();
+	const sf::Vector2f worldSize = getWorldSize();
+
 	// left border:
-	if (animal.getPosition().x - animal.getRadius() < this->getBordersThickness())
+	if (animalPos.x - animalRadius < bordersThickness)
 	{
 		animal.setVelocity(
 			sf::Vector2f(
@@ -1004,13 +1231,14 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 		);
 		animal.setPosition(
 			sf::Vector2f(
-				this->getBordersThickness() + animal.getRadius(),
-				animal.getPosition().y
+				bordersThickness + animalRadius,
+				animalPos.y
 			)
 		);
 	}
-	// right border (it's impossible to cross left and right border in the same frame so we can use "else if"):
-	else if (animal.getPosition().x + animal.getRadius() > this->getWorldSize().x - this->getBordersThickness())
+	// right border (it's impossible to cross left and right border 
+	// in the same frame so we can use "else if"):
+	else if (animalPos.x + animalRadius > worldSize.x - bordersThickness)
 	{
 		animal.setVelocity(
 			sf::Vector2f(
@@ -1020,8 +1248,8 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 		);
 		animal.setPosition(
 			sf::Vector2f(
-				this->getWorldSize().x - this->getBordersThickness() - animal.getRadius(),
-				animal.getPosition().y
+				worldSize.x - bordersThickness - animalRadius,
+				animalPos.y
 			)
 		);
 	}
@@ -1029,8 +1257,15 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 
 void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 {
+	// let's make the following if statements shorter:
+
+	const sf::Vector2f& animalPos = animal.getPosition();
+	float animalRadius = animal.getRadius();
+	unsigned bordersThickness = getBordersThickness();
+	const sf::Vector2f worldSize = getWorldSize();
+
 	// top border:
-	if (animal.getPosition().y - animal.getRadius() < this->getBordersThickness())
+	if (animalPos.y - animalRadius < bordersThickness)
 	{
 		animal.setVelocity(
 			sf::Vector2f(
@@ -1040,13 +1275,14 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 		);
 		animal.setPosition(
 			sf::Vector2f(
-				animal.getPosition().x,
-				this->getBordersThickness() + animal.getRadius()
+				animalPos.x,
+				bordersThickness + animalRadius
 			)
 		);
 	}
-	// bottom border (it's impossible to cross top and bottom border in the same frame so we can use "else if"):
-	else if (animal.getPosition().y + animal.getRadius() > this->getWorldSize().y - this->getBordersThickness())
+	// bottom border (it's impossible to cross top and bottom border 
+	// in the same frame so we can use "else if"):
+	else if (animalPos.y + animalRadius > worldSize.y - bordersThickness)
 	{
 		animal.setVelocity(
 			sf::Vector2f(
@@ -1056,8 +1292,8 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 		);
 		animal.setPosition(
 			sf::Vector2f(
-				animal.getPosition().x,
-				this->getWorldSize().y - this->getBordersThickness() - animal.getRadius()
+				animalPos.x,
+				worldSize.y - bordersThickness - animalRadius
 			)
 		);
 	}
@@ -1065,123 +1301,138 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 
 void Ecosystem::killAnimalsStickingToBorders()
 {
-	for (int i = 0; i < this->animals.size();)
+	for (int i = 0; i < m_animals.size();)
 	{
-		if (this->sticksToBorder(*this->animals[i]))
-			this->convertAnimalToFruit(this->animals[i], true);
-		else
-			i++;
+		if (sticksToBorder(*m_animals[i]))
+		{
+			convertAnimalToFruit(m_animals[i], true);
+		}
+		else i++;
 	}
 }
 
 bool Ecosystem::sticksToBorder(const Animal& animal)
 {
-	if (this->sticksToLeftBorder(animal))
-		return true;
+	if (sticksToLeftBorder(animal)) return true;
 	
-	if (this->sticksToRightBorder(animal))
-		return true;
+	if (sticksToRightBorder(animal)) return true;
 	 
-	if (this->sticksToTopBorder(animal))
-		return true;
+	if (sticksToTopBorder(animal)) return true;
 	
-	if (this->sticksToBottomBorder(animal))
-		return true;
+	if (sticksToBottomBorder(animal)) return true;
 
 	return false;
 }
 
 bool Ecosystem::sticksToLeftBorder(const Animal& animal)
 {
-	if (animal.getAccelerationVector().x > 0.0f)
-		return false;
+	if (animal.getAccelerationVector().x > 0.0f) return false;
 
-	if (animal.getPosition().x != this->getBordersThickness() + animal.getRadius())
-		return false;
+	// let's make the following if statement shorter:
+
+	const sf::Vector2f& animalPos = animal.getPosition();
+	float bordersThickness = getBordersThickness();
+	float animalRadius = animal.getRadius();
+
+	if (animalPos.x != bordersThickness + animalRadius) return false;
 
 	return true;
 }
 
 bool Ecosystem::sticksToRightBorder(const Animal& animal)
 {
-	if (animal.getAccelerationVector().x < 0.0f)
-		return false;
+	if (animal.getAccelerationVector().x < 0.0f) return false;
 
-	if (animal.getPosition().x != this->getWorldSize().x - this->getBordersThickness() - animal.getRadius())
-		return false;
+	// let's make the following if statement shorter:
+
+	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& worldSize = getWorldSize();
+	float bordersThickness = getBordersThickness();
+	float animalR = animal.getRadius();
+
+	if (animalPos.x != worldSize.x - bordersThickness - animalR) return false;
 
 	return true;
 }
 
 bool Ecosystem::sticksToTopBorder(const Animal& animal)
 {
-	if (animal.getAccelerationVector().y > 0.0f)
-		return false;
+	if (animal.getAccelerationVector().y > 0.0f) return false;
 
-	if (animal.getPosition().y != this->getBordersThickness() + animal.getRadius())
-		return false;
+	// let's make the following if statement shorter:
+
+	const sf::Vector2f& animalPos = animal.getPosition();
+	float bordersThickness = getBordersThickness();
+	float animalRadius = animal.getRadius();
+
+	if (animalPos.y != bordersThickness + animalRadius) return false;
 
 	return true;
 }
 
 bool Ecosystem::sticksToBottomBorder(const Animal& animal)
 {
-	if (animal.getAccelerationVector().y < 0.0f)
-		return false;
+	if (animal.getAccelerationVector().y < 0.0f) return false;
 
-	if (animal.getPosition().y != this->getWorldSize().y - this->getBordersThickness() - animal.getRadius())
-		return false;
+	// let's make the following if statement shorter:
+
+	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& worldSize = getWorldSize();
+	float bordersThickness = getBordersThickness();
+	float animalR = animal.getRadius();
+
+	if (animalPos.y != worldSize.y - bordersThickness - animalR) return false;
 
 	return true;
 }
 
 void Ecosystem::removeDeadAnimals()
 {
-	for (int i = 0; i < this->animals.size();)
+	for (int i = 0; i < m_animals.size();)
 	{
-		if (!this->animals[i]->isAlive())
+		if (!m_animals[i]->isAlive())
 		{
-			this->fruits.push_back(
+			m_fruits.push_back(
 				std::make_unique<Fruit>(
-					this->animals[i]->getTotalEnergy(),
-					this->animals[i]->getPosition(),
-					this->fruitsRadius,
-					this->fruitsColor
-					)
+					m_animals[i]->getTotalEnergy(),
+					m_animals[i]->getPosition(),
+					m_fruitsRadius,
+					m_fruitsColor
+				)
 			);
 
-			this->removeAnimal(this->animals[i]);
+			removeAnimal(m_animals[i]);
 		}
-		else
-			i++;
+		else i++;
 	}
 }
 
 void Ecosystem::removeAnimal(std::shared_ptr<Animal>& animal)
 {
-	if (animal.get() == this->trackedAnimal)
-		this->trackedAnimal = nullptr;
+	if (animal.get() == m_trackedAnimal)
+	{
+		m_trackedAnimal = nullptr;
+	}
 	
-	std::swap(animal, this->animals.back());
-	this->animals.pop_back();
+	std::swap(animal, m_animals.back());
+	m_animals.pop_back();
 }
 
 void Ecosystem::feedAnimals()
 {
-	if (this->animals.empty())
-		return;
+	if (m_animals.empty()) return;
 
-	std::sort(this->animals.begin(), this->animals.end(), compareAnimalsYPositions);
+	std::sort(m_animals.begin(), m_animals.end(), compareAnimalsYPositions);
 
-	for (int f = 0; f < this->fruits.size(); f++)
+	for (int f = 0; f < m_fruits.size(); f++)
 	{
-		unsigned left = 0, right = this->animals.size() - 1U;
+		unsigned left = 0, right = m_animals.size() - 1U;
 
 		while (left < right)
 		{
 			unsigned center = (left + right) / 2;
 
-			if (this->animalIsTooHigh(*this->animals[center], *this->fruits[f]))
+			if (animalIsTooHigh(*m_animals[center], *m_fruits[f]))
 			{
 				left = center + 1;
 			}
@@ -1191,7 +1442,7 @@ void Ecosystem::feedAnimals()
 			}
 		}
 
-		this->tryToFindConsumer(*this->fruits[f], left);
+		tryToFindConsumer(*m_fruits[f], left);
 	}
 }
 
@@ -1204,32 +1455,52 @@ bool Ecosystem::compareAnimalsYPositions(
 
 bool Ecosystem::animalIsTooHigh(const Animal& animal, const Fruit& fruit) const
 {
-	return (animal.getPosition().y - fruit.getPosition().y) < -(animal.getRadius() + fruit.getRadius());
+	// let's make the following return statement shorter:
+
+	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& fruitPos = fruit.getPosition();
+	float animalRadius = animal.getRadius();
+	float fruitRadius = fruit.getRadius();
+
+	return (animalPos.y - fruitPos.y) < -(animalRadius + fruitRadius);
 }
 
-int Ecosystem::tryToFindConsumer(Fruit& fruit, unsigned start_animal_index)
+int Ecosystem::tryToFindConsumer(Fruit& fruit, unsigned startAnimalIndex)
 {
-	unsigned animal_index = start_animal_index;
+	unsigned animal_index = startAnimalIndex;
 
-	while (animal_index < this->animals.size() && this->animalReachesFruitInY(*this->animals[animal_index], fruit))
+	while (animal_index < m_animals.size() 
+		   && animalReachesFruitInY(*m_animals[animal_index], fruit))
 	{
-		if (this->animalReachesFruit(*this->animals[animal_index], fruit))
+		if (animalReachesFruit(*m_animals[animal_index], fruit))
 		{
-			this->eat(*this->animals[animal_index], fruit);
+			eat(*m_animals[animal_index], fruit);
 			return 1;
 		}
+
 		animal_index++;
 	}
 
 	return 0;
 }
 
-bool Ecosystem::animalReachesFruitInY(const Animal& animal, const Fruit& fruit) const
+bool Ecosystem::animalReachesFruitInY(
+	const Animal& animal, 
+	const Fruit& fruit) const
 {
-	return abs(animal.getPosition().y - fruit.getPosition().y) <= animal.getRadius() + fruit.getRadius();
+	// let's make the following return statement shorter:
+
+	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& fruitPos = fruit.getPosition();
+	float animalRadius = animal.getRadius();
+	float fruitRadius = fruit.getRadius();
+
+	return abs(animalPos.y - fruitPos.y) <= animalRadius + fruitRadius;
 }
 
-bool Ecosystem::animalReachesFruit(const Animal& animal, const Fruit& fruit) const
+bool Ecosystem::animalReachesFruit(
+	const Animal& animal, 
+	const Fruit& fruit) const
 {
 	float x = animal.getPosition().x - fruit.getPosition().x;
 	float y = animal.getPosition().y - fruit.getPosition().y;
@@ -1251,132 +1522,163 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 		{
 			fruit.setEnergy(fruit.getEnergy() - animal.getMaxHp());
 			
-			this->animals.push_back(std::make_shared<Animal>(animal));
+			m_animals.push_back(std::make_shared<Animal>(animal));
 
-			this->animals.back()->setHp(animal.getMaxHp());
-			this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
-			// TODO: unhard code mutations count, use mutation percentage Ecosystem member
-			//this->animals.back()->randomMutate(this->mutationPercentage);
-			this->animals.back()->randomMutate(3U);
+			m_animals.back()->setHp(animal.getMaxHp());
+			m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+			// TODO: unhard code mutations count, 
+			// TODO: use mutation percentage Ecosystem member
+			//m_animals.back()->randomMutate(m_mutationPercentage);
+			m_animals.back()->randomMutate(3U);
 
-			if (&animal == this->trackedAnimal)
-				this->animals.back()->setColor(this->animalsColor);
+			if (&animal == m_trackedAnimal)
+			{
+				m_animals.back()->setColor(m_animalsColor);
+			}
 
-			this->hpBarsVisibility[this->animals.back().get()] = this->hpBarsVisibility[&animal];
-			this->brainsPreviewsVisibility[this->animals.back().get()] = this->brainsPreviewsVisibility[&animal];
+			m_hpBarsVisibility[m_animals.back().get()]
+				= m_hpBarsVisibility[&animal];
+
+			m_brainsPreviewsVisibility[m_animals.back().get()]
+				= m_brainsPreviewsVisibility[&animal];
 		}
 
-		this->animals.push_back(std::make_shared<Animal>(animal));
+		m_animals.push_back(std::make_shared<Animal>(animal));
 
-		this->animals.back()->setHp(fruit.getEnergy());
-		this->animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
-		// TODO: unhard code mutations count, use mutation percentage Ecosystem member
-		//this->animals.back()->randomMutate(this->mutationPercentage);
-		this->animals.back()->randomMutate(3U);
+		m_animals.back()->setHp(fruit.getEnergy());
+		m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+		// TODO: unhard code mutations count, 
+		// TODO: use mutation percentage Ecosystem member
+		//m_animals.back()->randomMutate(m_mutationPercentage);
+		m_animals.back()->randomMutate(3U);
 
-		if (&animal == this->trackedAnimal)
-			this->animals.back()->setColor(this->animalsColor);
+		if (&animal == m_trackedAnimal)
+		{
+			m_animals.back()->setColor(m_animalsColor);
+		}
 
-		this->hpBarsVisibility[this->animals.back().get()] = this->hpBarsVisibility[&animal];
-		this->brainsPreviewsVisibility[this->animals.back().get()] = this->brainsPreviewsVisibility[&animal];
+		m_hpBarsVisibility[m_animals.back().get()] 
+			= m_hpBarsVisibility[&animal];
+	
+		m_brainsPreviewsVisibility[m_animals.back().get()] 
+			= m_brainsPreviewsVisibility[&animal];
 	}
 	else
+	{
 		animal.increaseHp(fruit.getEnergy());
+	}
 
 	fruit.setEnergy(0.0f);
 }
 
 void Ecosystem::removeEatenFruits()
 {
-	for (int i = 0; i < this->fruits.size();)
+	for (int i = 0; i < m_fruits.size();)
 	{
-		if (this->fruits[i]->getEnergy() == 0.0f)
-			this->removeFruit(this->fruits[i]);
-		else
-			i++;
+		if (m_fruits[i]->getEnergy() == 0.0f)
+		{
+			removeFruit(m_fruits[i]);
+		}
+		else i++;
 	}
 }
 
 void Ecosystem::removeFruit(std::unique_ptr<Fruit>& fruit)
 {
-	std::swap(fruit, this->fruits.back());
-	this->fruits.pop_back();
+	std::swap(fruit, m_fruits.back());
+	m_fruits.pop_back();
 }
 
 void Ecosystem::transferEnergyFromAnimalsToFruits()
 {
-	Fruit* lowestEnergyFruit = this->getLowestEnergyFruit();
+	Fruit* lowestEnergyFruit = getLowestEnergyFruit();
 
-	for (const auto& animal : this->animals)
+	for (const auto& animal : m_animals)
+	{
 		lowestEnergyFruit->increaseEnergy(animal->getEnergyToExpel());
+	}
 }
 
 Fruit* Ecosystem::getLowestEnergyFruit()
 {
-	if (this->fruits.empty())
-		return nullptr;
+	if (m_fruits.empty()) return nullptr;
 	
-	Fruit* lowestEnergyFruit = this->fruits[0].get();
+	Fruit* lowestEnergyFruit = m_fruits[0].get();
 
-	for (const auto& fruit : this->fruits)
+	for (const auto& fruit : m_fruits)
+	{
 		if (fruit->getEnergy() < lowestEnergyFruit->getEnergy())
+		{
 			lowestEnergyFruit = fruit.get();
+		}
+	}
 
 	return lowestEnergyFruit;
 }
 
 void Ecosystem::correctBrainPreviewsPositions()
 {
-	for (auto& animal : this->animals)
+	for (auto& animal : m_animals)
 	{
-		// put an interation into a methods?:
+		// put the following iteration into a method?:
+
 		const gui::NeuralNetPreview& brainPreview = animal->getBrainPreview();
 
-		bool protrudesWorldRightBorder = this->brainPreviewProtrudesWorldRightBorder(brainPreview);
-		bool protrudesWorldBottomBorder = this->brainPreviewProtrudesWorldBottomBorder(brainPreview);
+		bool protrudesRightBorder = brainPreviewProtrudesWorldRightBorder(
+			brainPreview
+		);
+		bool protrudesBottomBorder = brainPreviewProtrudesWorldBottomBorder(
+			brainPreview
+		);
 
-		if (protrudesWorldRightBorder)
+		// let's make the following lines of code shorter:
+
+		if (protrudesRightBorder)
 		{
 			animal->setBrainPreviewPosition(
-				animal->getPosition().x - animal->getBrainPreview().getSize().x,
-				animal->getBrainPreview().getPosition().y
+				animal->getPosition().x - brainPreview.getSize().x,
+				brainPreview.getPosition().y
 			);
 		}
 		else
 		{
 			animal->setBrainPreviewPosition(
 				animal->getPosition().x,
-				animal->getBrainPreview().getPosition().y
+				brainPreview.getPosition().y
 			);
 		}
 
-		if (protrudesWorldBottomBorder)
+		if (protrudesBottomBorder)
 		{
 			animal->setBrainPreviewPosition(
-				animal->getBrainPreview().getPosition().x,
-				animal->getPosition().y - animal->getBrainPreview().getSize().y
+				brainPreview.getPosition().x,
+				animal->getPosition().y - brainPreview.getSize().y
 			);
 		}
 		else
 		{
 			animal->setBrainPreviewPosition(
-				animal->getBrainPreview().getPosition().x,
+				brainPreview.getPosition().x,
 				animal->getPosition().y
 			);
 		}
 	}
 }
 
-bool Ecosystem::brainPreviewProtrudesWorldRightBorder(const gui::NeuralNetPreview& brain_preview)
+bool Ecosystem::brainPreviewProtrudesWorldRightBorder(
+	const gui::NeuralNetPreview& brainPreview)
 {
-	float rightBorderPosition = brain_preview.getPosition().x + brain_preview.getSize().x;
+	float rightBorderPosition = brainPreview.getPosition().x;
+	rightBorderPosition += brainPreview.getSize().x;
 
-	return rightBorderPosition > this->getWorldSize().x;
+	return rightBorderPosition > getWorldSize().x;
 }
 
-bool Ecosystem::brainPreviewProtrudesWorldBottomBorder(const gui::NeuralNetPreview& brain_preview)
+bool Ecosystem::brainPreviewProtrudesWorldBottomBorder(
+	const gui::NeuralNetPreview& brainPreview)
 {
-	float bottomBorderPosition = brain_preview.getPosition().y + brain_preview.getSize().y;
+	float bottomBorderPosition = brainPreview.getPosition().y;
+	bottomBorderPosition += brainPreview.getSize().y;
 
-	return bottomBorderPosition > this->getWorldSize().y;
+	return bottomBorderPosition > getWorldSize().y;
 }

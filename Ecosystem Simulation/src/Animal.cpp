@@ -4,131 +4,161 @@
 Animal::Animal(
 	const sf::Vector2f& position,
 	float radius,
-	const sf::Color& body_color,
-	const sf::Color& hp_bar_background_color,
-	const sf::Color& hp_bar_progress_rect_color,
-	float default_hp,
-	float max_hp)
-	: maxHp(max_hp),
-	  kineticEnergyFromPreviousFrame(0.0f),
-	  alive(true),
-	  movementComponent(std::make_unique<MovementComponent>())
+	const sf::Color& bodyColor,
+	const sf::Color& hpBarBackgroundColor,
+	const sf::Color& hpBarProgressRectColor,
+	float defaultHp,
+	float maxHp)
+	: m_body()
+	, m_maxHp(maxHp)
+	, m_movementComponent(std::make_unique<MovementComponent>())
+	, m_kineticEnergyFromPreviousFrame(0.0f)
+	, m_alive(true)
+	, m_hpBar(nullptr)
+	, m_brainPreview(nullptr)
 {
-	this->initBody(position, radius, body_color);	
-	this->initHpBar(default_hp, max_hp, hp_bar_background_color, hp_bar_progress_rect_color);
+	this->initBody(position, radius, bodyColor);
+	this->initHpBar(defaultHp, hpBarBackgroundColor, hpBarProgressRectColor);
 	this->initBrainPreview();
 }
 
-Animal::Animal(const char* folder_path)
-	: maxHp(0.0f),
-	  kineticEnergyFromPreviousFrame(0.0f),
-	  alive(true),
-	  movementComponent(std::make_unique<MovementComponent>())
+Animal::Animal(const char* folderPath)
+	: m_body()
+	, m_maxHp(0.0f)
+	, m_movementComponent(std::make_unique<MovementComponent>())
+	, m_kineticEnergyFromPreviousFrame(0.0f)
+	, m_alive(true)
+	, m_hpBar(nullptr)
+	, m_brainPreview(nullptr)
 {
-	this->loadFromFolder(folder_path);
+	this->loadFromFolder(folderPath);
 }
 
 Animal::Animal(const Animal& rhs)
-	: movementComponent(std::make_unique<MovementComponent>()),
-	  hpBar(std::make_unique<gui::ProgressBar>())
+	: m_body(rhs.m_body)
+	, m_maxHp(rhs.m_maxHp)
+	, m_movementComponent(std::make_unique<MovementComponent>())
+	, m_kineticEnergyFromPreviousFrame(rhs.m_kineticEnergyFromPreviousFrame)
+	, m_alive(rhs.m_alive)
+	, m_hpBar(std::make_unique<gui::ProgressBar>())
+	, m_brainPreview(nullptr)
 {
-	this->body = rhs.body;
-	this->maxHp = rhs.maxHp;
-	*this->movementComponent = *rhs.movementComponent;
-	this->kineticEnergyFromPreviousFrame = rhs.kineticEnergyFromPreviousFrame;
-	this->alive = rhs.alive;
-	*this->hpBar = *rhs.hpBar;
+	*m_movementComponent = *rhs.m_movementComponent;
+	*m_hpBar = *rhs.m_hpBar;
 
-	this->initBrainPreview();
+	initBrainPreview();
 }
 
 Animal& Animal::operator=(const Animal& rhs)
 {
 	if (this != &rhs)
 	{
-		this->body = rhs.body;
-		this->maxHp = rhs.maxHp;
-		*this->movementComponent = *rhs.movementComponent;
-		this->kineticEnergyFromPreviousFrame = rhs.kineticEnergyFromPreviousFrame;
-		this->alive = rhs.alive;
-		*this->hpBar = *rhs.hpBar;
+		m_body = rhs.m_body;
+		m_maxHp = rhs.m_maxHp;
+		*m_movementComponent = *rhs.m_movementComponent;
+		m_kineticEnergyFromPreviousFrame = rhs.m_kineticEnergyFromPreviousFrame;
+		m_alive = rhs.m_alive;
+		*m_hpBar = *rhs.m_hpBar;
 
-		this->initBrainPreview();
+		initBrainPreview();
 	}
 
 	return *this;
 }
 
-void Animal::saveToFolder(const char* folder_path) const
+void Animal::saveToFolder(const char* folderPath) const
 {
-	std::filesystem::create_directories(folder_path);
+	if (folderPath != "")
+	{
+		std::filesystem::create_directories(folderPath);
+	}
 
-	std::string path = folder_path;
-	path += "/brain.ini";
+	std::string brainFilePath;
 
-	this->movementComponent->saveBrainToFile(path.c_str());
+	if (folderPath)
+	{
+		brainFilePath = folderPath;
+	}
+	
+	brainFilePath += "/brain.ini";
+	
+	m_movementComponent->saveBrainToFile(brainFilePath.c_str());
+	
+	std::string animalFilePath;
 
-	path = folder_path;
-	path += "/animal.ini";
+	if (folderPath)
+	{
+		animalFilePath = folderPath;
+	}
 
-	std::ofstream ofs(path);
+	animalFilePath += "/animal.ini";
+	
+	std::ofstream ofs(animalFilePath);
 
 	if (!ofs.is_open())
 	{
-		std::cerr << "ERROR::Animal::saveToFolder::CANNOT OPEN: " << path << '\n';
+		std::cerr
+			<< "Error::Animal::saveToFolder(const char*)::cannot open: "
+			<< animalFilePath
+			<< '\n';
 		exit(-1);
 	}
 
-	ofs << this->body.getPosition().x << ' ' << this->body.getPosition().y << '\n';
-	ofs << this->body.getRadius() << '\n';
-	
-	ofs << static_cast<int>(this->body.getFillColor().r) << ' ';
-	ofs << static_cast<int>(this->body.getFillColor().g) << ' ';
-	ofs << static_cast<int>(this->body.getFillColor().b) << ' ';
-	ofs << static_cast<int>(this->body.getFillColor().a) << '\n';
+	ofs << m_body.getPosition().x << ' ' << m_body.getPosition().y << '\n';
+	ofs << m_body.getRadius() << '\n';
 
-	ofs << static_cast<int>(this->hpBar->getBackgroundColor().r) << ' ';
-	ofs << static_cast<int>(this->hpBar->getBackgroundColor().g) << ' ';
-	ofs << static_cast<int>(this->hpBar->getBackgroundColor().b) << ' ';
-	ofs << static_cast<int>(this->hpBar->getBackgroundColor().a) << '\n';
-	
-	ofs << static_cast<int>(this->hpBar->getProgressRectColor().r) << ' ';
-	ofs << static_cast<int>(this->hpBar->getProgressRectColor().g) << ' ';
-	ofs << static_cast<int>(this->hpBar->getProgressRectColor().b) << ' ';
-	ofs << static_cast<int>(this->hpBar->getProgressRectColor().a) << '\n';
-	
-	ofs << this->maxHp << '\n';
-	ofs << this->kineticEnergyFromPreviousFrame << '\n';
-	ofs << this->alive << '\n';
-	ofs << this->hpBar->getCurrentValue() << '\n';
-	ofs << this->movementComponent->get_vx() << '\n' << this->movementComponent->get_vy();
+	ofs << static_cast<int>(m_body.getFillColor().r) << ' ';
+	ofs << static_cast<int>(m_body.getFillColor().g) << ' ';
+	ofs << static_cast<int>(m_body.getFillColor().b) << ' ';
+	ofs << static_cast<int>(m_body.getFillColor().a) << '\n';
+
+	ofs << static_cast<int>(m_hpBar->getBackgroundColor().r) << ' ';
+	ofs << static_cast<int>(m_hpBar->getBackgroundColor().g) << ' ';
+	ofs << static_cast<int>(m_hpBar->getBackgroundColor().b) << ' ';
+	ofs << static_cast<int>(m_hpBar->getBackgroundColor().a) << '\n';
+
+	ofs << static_cast<int>(m_hpBar->getProgressRectColor().r) << ' ';
+	ofs << static_cast<int>(m_hpBar->getProgressRectColor().g) << ' ';
+	ofs << static_cast<int>(m_hpBar->getProgressRectColor().b) << ' ';
+	ofs << static_cast<int>(m_hpBar->getProgressRectColor().a) << '\n';
+
+	ofs << m_maxHp << '\n';
+	ofs << m_kineticEnergyFromPreviousFrame << '\n';
+	ofs << m_alive << '\n';
+	ofs << m_hpBar->getCurrentValue() << '\n';
+	ofs << m_movementComponent->getVelocityVector().x << '\n';
+	ofs << m_movementComponent->getVelocityVector().y;
 
 	ofs.close();
 }
 
-void Animal::loadFromFolder(const char* folder_path)
+void Animal::loadFromFolder(const char* folderPath)
 {
-	std::string path = folder_path;
-	path += "/brain.ini";
+	std::string brainFilePath = folderPath;
+	brainFilePath += "/brain.ini";
 
-	this->movementComponent->loadBrainFromFile(path.c_str());
+	m_movementComponent->loadBrainFromFile(brainFilePath.c_str());
 
-	path = folder_path;
+	std::string path = folderPath;
 	path += "/animal.ini";
 
 	std::ifstream ifs(path);
 
 	if (!ifs.is_open())
 	{
-		std::cerr << "ERROR::Animal::loadFromFolder::CANNOT OPEN: " << path << '\n';
-		exit(-1);
+		std::cerr
+			<< "Error::Animal::loadFromFolder(const char*)::cannot open: "
+			<< path
+			<< '\n';
+		assert(false);
+		return;
 	}
 
 	sf::Vector2f position;
 	float radius;
 	unsigned bodyColorR, bodyColorG, bodyColorB, bodyColorA;
 	unsigned hpBarBgColorR, hpBarBgColorG, hpBarBgColorB, hpBarBgColorA;
-	unsigned hpBarProgressColorR, hpBarProgressColorG, hpBarProgressColorB, hpBarProgressColorA;
+	unsigned hpBarColorR, hpBarColorG, hpBarColorB, hpBarColorA;
 	float hp;
 	sf::Vector2f velocity;
 
@@ -136,284 +166,308 @@ void Animal::loadFromFolder(const char* folder_path)
 	ifs >> radius;
 	ifs >> bodyColorR >> bodyColorG >> bodyColorB >> bodyColorA;
 	ifs >> hpBarBgColorR >> hpBarBgColorG >> hpBarBgColorB >> hpBarBgColorA;
-	ifs >> hpBarProgressColorR >> hpBarProgressColorG >> hpBarProgressColorB >> hpBarProgressColorA;
-	ifs >> this->maxHp;
-	ifs >> this->kineticEnergyFromPreviousFrame;
-	ifs >> this->alive;
+	ifs >> hpBarColorR >> hpBarColorG >> hpBarColorB >> hpBarColorA;
+	ifs >> m_maxHp;
+	ifs >> m_kineticEnergyFromPreviousFrame;
+	ifs >> m_alive;
 	ifs >> hp;
 	ifs >> velocity.x >> velocity.y;
 
 	ifs.close();
 
-	this->initBody(position, radius, sf::Color(bodyColorR, bodyColorG, bodyColorB, bodyColorA));
-	this->initHpBar(
-		hp, 
-		this->maxHp, 
+	initBody(
+		position,
+		radius,
+		sf::Color(
+			bodyColorR,
+			bodyColorG,
+			bodyColorB,
+			bodyColorA
+		)
+	);
+
+	initHpBar(
+		hp,
 		sf::Color(
 			hpBarBgColorR,
 			hpBarBgColorG,
 			hpBarBgColorB,
 			hpBarBgColorA
-		), 
+		),
 		sf::Color(
-			hpBarProgressColorR,
-			hpBarProgressColorG,
-			hpBarProgressColorB,
-			hpBarProgressColorA
+			hpBarColorR,
+			hpBarColorG,
+			hpBarColorB,
+			hpBarColorA
 		)
 	);
-	this->initBrainPreview();
 
-	this->movementComponent->setVelocity(velocity);
+	initBrainPreview();
+
+	m_movementComponent->setVelocity(velocity);
 }
 
 void Animal::update(
-	float dt, 
-	float simulation_speed_factor, 
-	const std::vector<double>& brain_inputs)
+	float dt,
+	float simulationSpeedFactor,
+	const std::vector<double>& brainInputs)
 {
-	this->kineticEnergyFromPreviousFrame = this->getKineticEnergy();
+	m_kineticEnergyFromPreviousFrame = getKineticEnergy();
 
-	this->movementComponent->update(dt, simulation_speed_factor, brain_inputs);
+	m_movementComponent->update(dt, simulationSpeedFactor, brainInputs);
 
-	this->updateBody(dt);
-	this->updateHp(dt);
+	updateBody(dt);
+	updateHp(dt);
 
-	this->alive = this->hpBar->getCurrentValue() > 0.0f;
+	m_alive = m_hpBar->getCurrentValue() > 0.0f;
 
-	this->updateHpBarPosition();
-	this->updateBrainPreview();
+	updateHpBarPosition();
+	updateBrainPreview();
 }
 
 void Animal::renderBody(sf::RenderTarget& target) const
 {
-	target.draw(this->body);
+	target.draw(m_body);
 }
 
 void Animal::renderHpBar(sf::RenderTarget& target) const
 {
-	this->hpBar->render(target);
+	m_hpBar->render(target);
 }
 
 void Animal::renderBrainPreview(sf::RenderTarget& target) const
 {
-	this->brainPreview->render(target);
+	m_brainPreview->render(target);
 }
 
 // accessors:
 
 const sf::Vector2f& Animal::getPosition() const
 {
-	return this->body.getPosition();
+	return m_body.getPosition();
 }
 
 float Animal::getRadius() const
 {
-	return this->body.getRadius();
+	return m_body.getRadius();
 }
 
 const sf::Color& Animal::getColor() const
 {
-	return this->body.getFillColor();
+	return m_body.getFillColor();
 }
 
 float Animal::getMaxHp() const
 {
-	return this->maxHp;
+	return m_maxHp;
 }
 
 const MovementComponent& Animal::getMovementComponent() const
 {
-	return *this->movementComponent;
+	return *m_movementComponent;
 }
 
 const Blueberry::Brain& Animal::getBrain() const
 {
-	return this->movementComponent->getBrain();
+	return m_movementComponent->getBrain();
 }
 
 const sf::Vector2f& Animal::getVelocityVector() const
 {
-	return this->movementComponent->getVelocityVector();
+	return m_movementComponent->getVelocityVector();
 }
 
 const sf::Vector2f& Animal::getAccelerationVector() const
 {
-	return this->movementComponent->getAccelerationVector();
+	return m_movementComponent->getAccelerationVector();
 }
 
 float Animal::getVelocityVectorValue() const
 {
-	return this->movementComponent->getVelocityVectorValue();
+	return m_movementComponent->getVelocityVectorValue();
 }
 
 float Animal::getAccelerationVectorValue() const
 {
-	return this->movementComponent->getAccelerationVectorValue();
+	return m_movementComponent->getAccelerationVectorValue();
 }
 
 float Animal::getKineticEnergy() const
 {
-	return 0.5f * pow(this->getVelocityVectorValue(), 2);
+	return 0.5f * pow(getVelocityVectorValue(), 2);
 }
 
 float Animal::getKineticEnergyDelta() const
 {
-	return this->getKineticEnergy() - this->kineticEnergyFromPreviousFrame;
+	return getKineticEnergy() - m_kineticEnergyFromPreviousFrame;
 }
 
 float Animal::getEnergyToExpel() const
 {
-	if (this->getKineticEnergyDelta() >= 0.0f)
-		return 0.0f;
+	if (getKineticEnergyDelta() >= 0.0f) return 0.0f;
 
-	return -2.0f * this->getKineticEnergyDelta();
+	return -2.0f * getKineticEnergyDelta();
 }
 
 bool Animal::isAlive() const
 {
-	return this->alive;
+	return m_alive;
 }
 
 float Animal::getHp() const
 {
-	return this->hpBar->getCurrentValue();
+	return m_hpBar->getCurrentValue();
 }
 
 float Animal::getTotalEnergy() const
 {
-	return this->hpBar->getCurrentValue() + this->getKineticEnergy();
+	return m_hpBar->getCurrentValue() + getKineticEnergy();
 }
 
 const gui::NeuralNetPreview& Animal::getBrainPreview() const
 {
-	return *this->brainPreview;
+	return *m_brainPreview;
 }
 
-bool Animal::isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const
+bool Animal::isCoveredByMouse(const sf::Vector2f& mousePosView) const
 {
-	float x = this->body.getPosition().x - mouse_pos_view.x;
-	float y = this->body.getPosition().y - mouse_pos_view.y;
+	float x = m_body.getPosition().x - mousePosView.x;
+	float y = m_body.getPosition().y - mousePosView.y;
 
-	return sqrt(pow(x, 2) + pow(y, 2)) <= this->body.getRadius();
+	return sqrt(pow(x, 2) + pow(y, 2)) <= m_body.getRadius();
 }
 
 // mutators:
 
 void Animal::setPosition(const sf::Vector2f& position)
 {
-	this->body.setPosition(position);
+	m_body.setPosition(position);
 
-	this->updateHpBarPosition();
-	this->brainPreview->setPosition(this->body.getPosition());
+	updateHpBarPosition();
+	m_brainPreview->setPosition(m_body.getPosition());
 }
 
-void Animal::setRandomPosition(const sf::Vector2f& world_size, float borders_thickness)
+void Animal::setRandomPosition(
+	const sf::Vector2f& worldSize,
+	float bordersThickness)
 {
 	std::pair<unsigned, unsigned> rangeX = {
-		borders_thickness + this->body.getRadius(),
-		world_size.x - borders_thickness - this->body.getRadius()
+		bordersThickness + m_body.getRadius(),
+		worldSize.x - bordersThickness - m_body.getRadius()
 	};
-
 	std::pair<unsigned, unsigned> rangeY = {
-		borders_thickness + this->body.getRadius(),
-		world_size.y - borders_thickness - this->body.getRadius()
+		bordersThickness + m_body.getRadius(),
+		worldSize.y - bordersThickness - m_body.getRadius()
 	};
 
-	float x = Blueberry::RandomEngine::getScalarInRange(rangeX.first, rangeX.second);
-	float y = Blueberry::RandomEngine::getScalarInRange(rangeY.first, rangeY.second);
+	float x = Blueberry::RandomEngine::getScalarInRange(
+		rangeX.first,
+		rangeX.second
+	);
+	float y = Blueberry::RandomEngine::getScalarInRange(
+		rangeY.first,
+		rangeY.second
+	);
 
-	this->body.setPosition(x, y);
+	m_body.setPosition(x, y);
 
-	this->updateHpBarPosition();
-	this->brainPreview->setPosition(this->body.getPosition());
+	updateHpBarPosition();
+	m_brainPreview->setPosition(m_body.getPosition());
 }
 
 void Animal::setRadius(float radius)
 {
-	this->body.setRadius(radius);
+	m_body.setRadius(radius);
 }
 
 void Animal::setColor(const sf::Color& color)
 {
-	this->body.setFillColor(color);
+	m_body.setFillColor(color);
 
-	this->hpBar->setProgressRectColor(color);
+	m_hpBar->setProgressRectColor(color);
 }
 
-void Animal::setMaxHp(float max_hp)
+void Animal::setMaxHp(float maxHp)
 {
-	if (this->hpBar->getCurrentValue() > max_hp)
+	if (m_hpBar->getCurrentValue() > maxHp)
 	{
-		std::cerr << "ERROR::Animal::setMaxHp::CANNOT SET MAX HP SMALLER THAT THE CURRENT HP\n";
-		exit(-1);
+		std::cerr
+			<< "Error::Animal::setMaxHp(float)::"
+			<< "cannot set max hp smaller than the current hp\n";
+		assert(false);
 	}
 
-	this->maxHp = max_hp;
+	m_maxHp = maxHp;
 }
 
-void Animal::randomMutate(unsigned brain_mutations_count)
+void Animal::randomMutate(unsigned brainMutationsCount)
 {
-	this->movementComponent->mutateBrain(brain_mutations_count);
+	m_movementComponent->mutateBrain(brainMutationsCount);
 }
 
 void Animal::setVelocity(const sf::Vector2f& velocity)
 {
-	this->movementComponent->setVelocity(velocity);
+	m_movementComponent->setVelocity(velocity);
 }
 
 void Animal::setAlive(bool alive)
 {
-	this->alive = alive;
+	m_alive = alive;
 }
 
 void Animal::setHp(float hp)
 {
-	if (hp > this->maxHp)
+	if (hp > m_maxHp)
 	{
-		std::cerr << "ERROR::Animal::setHp::CANNOT SET HP GREATER THAN THE MAX HP\n";
-		exit(-1);
+		std::cerr
+			<< "Error::Animal::setHp(float)::"
+			<< "cannot set hp greater than the max hp\n";
+		assert(false);
 	}
 
-	this->hpBar->setValue(hp);
+	m_hpBar->setValue(hp);
 
-	this->alive = this->hpBar->getCurrentValue() > 0.0f;
+	m_alive = m_hpBar->getCurrentValue() > 0.0f;
 }
 
-void Animal::increaseHp(float hp_increase)
+void Animal::increaseHp(float hpIncrease)
 {
-	if (this->hpBar->getCurrentValue() + hp_increase > this->maxHp)
+	if (m_hpBar->getCurrentValue() + hpIncrease > m_maxHp)
 	{
-		std::cerr << "ERROR::Animal::increaseHp::CANNOT SET HP GREATER THAN THE MAX HP\n";
-		exit(-1);
+		std::cerr
+			<< "Error::Animal::increaseHp(float)::"
+			<< "cannot set hp greater than the max hp\n";
+		assert(false);
 	}
 
-	this->hpBar->increaseValue(hp_increase);
+	m_hpBar->increaseValue(hpIncrease);
 
-	this->alive = this->hpBar->getCurrentValue() > 0.0f;
+	m_alive = m_hpBar->getCurrentValue() > 0.0f;
 }
 
-void Animal::decreaseHp(float hp_decrease)
+void Animal::decreaseHp(float hpDecrease)
 {
-	if (this->hpBar->getCurrentValue() - hp_decrease > this->maxHp)
+	if (m_hpBar->getCurrentValue() - hpDecrease > m_maxHp)
 	{
-		std::cerr << "ERROR::Animal::decreaseHp::CANNOT SET HP GREATER THAN THE MAX HP\n";
-		exit(-1);
+		std::cerr
+			<< "Error::Animal::decreaseHp(float)::"
+			<< "cannot set hp greater than the max hp\n";
+		assert(false);
 	}
 
-	this->hpBar->decreaseValue(hp_decrease);
+	m_hpBar->decreaseValue(hpDecrease);
 
-	this->alive = this->hpBar->getCurrentValue() > 0.0f;
+	m_alive = m_hpBar->getCurrentValue() > 0.0f;
 }
 
 void Animal::setBrainPreviewPosition(const sf::Vector2f& position)
 {
-	this->brainPreview->setPosition(position);
+	m_brainPreview->setPosition(position);
 }
 
 void Animal::setBrainPreviewPosition(float x, float y)
 {
-	this->brainPreview->setPosition(x, y);
+	m_brainPreview->setPosition(x, y);
 }
 
 // private methods:
@@ -423,77 +477,79 @@ void Animal::initBody(
 	float radius,
 	const sf::Color& color)
 {
-	this->body.setPosition(position);
-	this->body.setRadius(radius);
-	this->body.setOrigin(radius, radius);
-	this->body.setFillColor(color);
+	m_body.setPosition(position);
+	m_body.setRadius(radius);
+	m_body.setOrigin(radius, radius);
+	m_body.setFillColor(color);
 }
 
 void Animal::initHpBar(
-	float default_hp,
-	float max_hp,
-	const sf::Color& hp_bar_background_color,
-	const sf::Color& hp_bar_progress_rect_color)
+	float defaultHp,
+	const sf::Color& hpBarBackgroundColor,
+	const sf::Color& hpBarProgressRectColor)
 {
-	this->hpBar = std::make_unique<gui::ProgressBar>(
+	m_hpBar = std::make_unique<gui::ProgressBar>(
 		sf::Vector2f(
 			0.0f,
-			max_hp
+			m_maxHp
 		),
 		false,
-		default_hp,
+		defaultHp,
 		sf::Vector2f(
-			this->body.getPosition().x - 3.f * this->body.getRadius(),
-			this->body.getPosition().y - 3.f * this->body.getRadius()
+			m_body.getPosition().x - 3.f * m_body.getRadius(),
+			m_body.getPosition().y - 3.f * m_body.getRadius()
 		),
 		sf::Vector2f(
-			6.f * this->body.getRadius(),
-			this->body.getRadius()
+			6.f * m_body.getRadius(),
+			m_body.getRadius()
 		),
-		hp_bar_background_color,
-		hp_bar_progress_rect_color
-	);
+		hpBarBackgroundColor,
+		hpBarProgressRectColor
+		);
 }
 
 void Animal::initBrainPreview()
 {
 	// TODO: do sth with these hard-coded arguments:
-	this->brainPreview = std::make_unique<gui::NeuralNetPreview>(
-		this->movementComponent->getBrain(),
-		this->body.getPosition(),
+	m_brainPreview = std::make_unique<gui::NeuralNetPreview>(
+		m_movementComponent->getBrain(),
+		m_body.getPosition(),
 		sf::Vector2f(
-			16.0f * this->body.getRadius(),
-			16.0f * this->body.getRadius()
+			16.0f * m_body.getRadius(),
+			16.0f * m_body.getRadius()
 		),
 		sf::Color(100, 100, 100)
-	);
+		);
 }
 
 void Animal::updateBody(float dt)
 {
-	this->body.setPosition(
-		this->body.getPosition().x + this->movementComponent->get_vx() * dt,
-		this->body.getPosition().y + this->movementComponent->get_vy() * dt
+	const sf::Vector2f& velVect = m_movementComponent->getVelocityVector();
+
+	m_body.setPosition(
+		m_body.getPosition().x + velVect.x * dt,
+		m_body.getPosition().y + velVect.y * dt
 	);
 }
 
 void Animal::updateHp(float dt)
 {
-	this->hpBar->decreaseValue(abs(this->getKineticEnergyDelta()));
+	m_hpBar->decreaseValue(abs(getKineticEnergyDelta()));
 }
 
 void Animal::updateHpBarPosition()
 {
-	this->hpBar->setPosition(
+	m_hpBar->setPosition(
 		sf::Vector2f(
-			this->body.getPosition().x - 3.f * this->body.getRadius(),
-			this->body.getPosition().y - 3.f * this->body.getRadius()
+			m_body.getPosition().x - 3.f * m_body.getRadius(),
+			m_body.getPosition().y - 3.f * m_body.getRadius()
 		)
 	);
 }
 
 void Animal::updateBrainPreview()
 {
-	this->brainPreview->setPosition(this->body.getPosition());
-	this->brainPreview->update();
+	m_brainPreview->setPosition(m_body.getPosition());
+	m_brainPreview->update();
 }
+

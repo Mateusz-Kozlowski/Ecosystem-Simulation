@@ -9,17 +9,17 @@ public:
 		float radius,
 		const sf::Color& color
 	);
-	Fruit(const std::string& file_path);
-
-	// public methods:
-	void saveToFile(const std::string& file_path) const;
-	void loadFromFile(const std::string& file_path);
+	Fruit(const char* filePath);
+	
+	void saveToFile(const char* filePath) const;
+	void loadFromFile(const char* filePath);
 
 	void render(sf::RenderTarget& target) const;
 
-	bool isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const;
+	bool isCoveredByMouse(const sf::Vector2f& mousePosView) const;
 
 	// accessors:
+
 	float getEnergy() const;
 
 	const sf::Vector2f& getPosition() const;
@@ -29,28 +29,31 @@ public:
 	const sf::Color& getColor() const;
 
 	// mutators:
+
 	void setEnergy(float energy);
 	void increaseEnergy(float increase);
 
 	void setPosition(float x, float y);
-	void setPosition(const sf::Vector2f& new_position);
+	void setPosition(const sf::Vector2f& newPosition);
 
-	void setRandomPosition(const sf::Vector2f& world_size, float borders_thickness);
+	void setRandomPosition(
+		const sf::Vector2f& worldSize, 
+		float bordersThickness
+	);
 
 	void setRadius(float radius);
 
 	void setColor(const sf::Color& color);
 
 private:
-	float energy;
-
-	sf::CircleShape shape;
-
-	// private methods:
-	// initialization:
 	void initShape(
 		const sf::Vector2f& position,
 		float radius,
 		const sf::Color& color
 	);
+	
+private:
+	float m_energy;
+
+	sf::CircleShape m_shape;
 };

@@ -1,39 +1,49 @@
 #include "pch.h"
 #include "MainMenuState.h"
 
-MainMenuState::MainMenuState(StateData* state_data)
-	: State(state_data)
+MainMenuState::MainMenuState(StateData* stateData)
+	: State(stateData)
+	, m_backgroundRect()
+	, m_fonts()
+	, m_buttons()
+	, m_ecosystemText()
+	, m_defaultEcosystemTextColor()
+	, m_highlightedEcosystemTextColor()
+	, m_ecosystemTextStopwatch(0.0f)
+	, m_highlightningTime(0.0f)
 {
-	this->initVariables();
-	this->initKeybinds();
-	this->initBackground();
-	this->initFonts();
-	this->initButtons();
-	this->initEcosystemText();
+	initVariables();
+	initKeybinds();
+	initBackground();
+	initFonts();
+	initButtons();
+	initEcosystemText();
 }
 
-// public methods:
 void MainMenuState::update(float dt)
 {
-	this->updateMousePositions();
-	this->updateInput();
-	this->getUpdateFromButtons();
-	this->updateEcosystemText(dt);
+	updateMousePositions();
+	updateInput();
+	getUpdateFromButtons();
+	updateEcosystemText(dt);
 }
 
 void MainMenuState::render(sf::RenderTarget* target)
 {
 	if (!target)
-		target = this->stateData->window;
+	{
+		target = m_stateData->m_window;
+	}
 
-	target->draw(this->backgroundRect);
+	target->draw(m_backgroundRect);
 
-	this->renderButtons(*target);
+	renderButtons(*target);
 
-	target->draw(this->ecosystemText);
+	target->draw(m_ecosystemText);
 }
 
 // mutators:
+
 void MainMenuState::freeze()
 {
 	std::cerr << "FREEZING IS NOT DEFINED YET!\n";
@@ -41,14 +51,13 @@ void MainMenuState::freeze()
 
 // private methods:
 
-// initialization:
 void MainMenuState::initVariables()
 {
-	this->defaultEcosystemTextColor = sf::Color(216, 216, 216);
-	this->highlightedEcosystemTextColor = sf::Color::Red;
+	m_defaultEcosystemTextColor = sf::Color(216, 216, 216);
+	m_highlightedEcosystemTextColor = sf::Color::Red;
 
-	this->ecosystemTextStopwatch = 0.0f;
-	this->highlightningTime = 0.5f;
+	m_ecosystemTextStopwatch = 0.0f;
+	m_highlightningTime = 0.5f;
 }
 
 void MainMenuState::initKeybinds()
@@ -63,19 +72,28 @@ void MainMenuState::initKeybinds()
 		std::string key2 = "";
 
 		while (ifs >> key >> key2)
-			this->keybinds[key] = this->stateData->supportedKeys->at(key2);
+		{
+			m_keybinds[key] = m_stateData->m_supportedKeys->at(key2);
+		}
 	}
 	else
-		throw("ERROR::MAINMENUSTATE::COULD NOT OPEN: " + std::string(path));
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::MainMenuState::initKeybinds()"
+			<< "could not open "
+			<< path << '\n'
+		);
+	}
 
 	ifs.close();
 }
 
 void MainMenuState::initBackground()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
-	this->backgroundRect.setSize(
+	m_backgroundRect.setSize(
 		sf::Vector2f
 		(
 			static_cast<float>(resolution.width),
@@ -83,23 +101,27 @@ void MainMenuState::initBackground()
 		)
 	);
 
-	this->backgroundRect.setFillColor(sf::Color(32, 32, 32));
+	m_backgroundRect.setFillColor(sf::Color(32, 32, 32));
 }
 
 void MainMenuState::initFonts()
 {
-	if (!this->fonts["Retroica"].loadFromFile("resources/fonts/Retroica.ttf"))
-		throw("ERROR::MAINMENUSTATE::COULD NOT LOAD A FONT");
-	
-	if (!this->fonts["CONSOLAB"].loadFromFile("resources/fonts/CONSOLAB.ttf"))
-		throw("ERROR::MAINMENUSTATE::COULD NOT LOAD A FONT");
+	if (!m_fonts["Retroica"].loadFromFile("resources/fonts/Retroica.ttf")
+		|| !m_fonts["CONSOLAB"].loadFromFile("resources/fonts/CONSOLAB.ttf"))
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::MainMenuState::initFonts()::"
+			<< "could not load a font\n"
+		);
+	}
 }
 
 void MainMenuState::initButtons()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
-	this->buttons["SIMULATE"] = std::make_unique<gui::Button>(
+	m_buttons["SIMULATE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution),
 			gui::p2pY(31.f, resolution)
@@ -108,14 +130,22 @@ void MainMenuState::initButtons()
 			gui::p2pX(24.f, resolution), 
 			gui::p2pY(8.f, resolution)
 		),
-		this->fonts["Retroica"], "SIMULATE", gui::calcCharSize(32.0f, resolution),
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["Retroica"], 
+		"SIMULATE", 
+		gui::calcCharSize(32.0f, resolution),
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.8f, resolution)
 	);
 
-	this->buttons["NEW ECOSYSTEM"] = std::make_unique<gui::Button>(
+	m_buttons["NEW ECOSYSTEM"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
 			gui::p2pY(43.f, resolution)
@@ -124,14 +154,22 @@ void MainMenuState::initButtons()
 			gui::p2pX(24.f, resolution), 
 			gui::p2pY(8.f, resolution)
 		),
-		this->fonts["Retroica"], "NEW ECOSYSTEM", gui::calcCharSize(32.0f, resolution),
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["Retroica"], 
+		"NEW ECOSYSTEM", 
+		gui::calcCharSize(32.0f, resolution),
+		sf::Color(100, 100, 100),
+		sf::Color(125, 125, 125),
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.8f, resolution)
 	);
 
-	this->buttons["LOAD"] = std::make_unique<gui::Button>(
+	m_buttons["LOAD"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
 			gui::p2pY(55.f, resolution)
@@ -140,14 +178,22 @@ void MainMenuState::initButtons()
 			gui::p2pX(24.f, resolution), 
 			gui::p2pY(8.f, resolution)
 		),
-		this->fonts["Retroica"], "LOAD", gui::calcCharSize(32.0f, resolution),
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["Retroica"], 
+		"LOAD", 
+		gui::calcCharSize(32.0f, resolution),
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.8f, resolution)
 	);
 
-	this->buttons["QUIT"] = std::make_unique<gui::Button>(
+	m_buttons["QUIT"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(38.f, resolution), 
 			gui::p2pY(67.f, resolution)
@@ -156,28 +202,35 @@ void MainMenuState::initButtons()
 			gui::p2pX(24.f, resolution), 
 			gui::p2pY(8.f, resolution)
 		),
-		this->fonts["Retroica"], "QUIT", gui::calcCharSize(32.0f, resolution),
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["Retroica"], 
+		"QUIT",
+		gui::calcCharSize(32.0f, resolution),
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64),
+		sf::Color(100, 100, 100),
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225),
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.8f, resolution)
 	);
 }
 
 void MainMenuState::initEcosystemText()
 {
-	this->ecosystemText.setFont(this->fonts["CONSOLAB"]);
-	this->ecosystemText.setString("NO STRING HAS BEEN SET FOR THIS TEXT");
-	this->ecosystemText.setPosition(50.0f, 50.0f);
-	this->ecosystemText.setCharacterSize(32U);
-	this->ecosystemText.setFillColor(this->defaultEcosystemTextColor);
+	m_ecosystemText.setFont(m_fonts["CONSOLAB"]);
+	m_ecosystemText.setString("NO STRING HAS BEEN SET FOR THIS TEXT");
+	m_ecosystemText.setPosition(50.0f, 50.0f);
+	m_ecosystemText.setCharacterSize(32U);
+	m_ecosystemText.setFillColor(m_defaultEcosystemTextColor);
 }
 
-// private utilities:
 void MainMenuState::highlightEcosystemText()
 {
-	this->ecosystemText.setFillColor(this->highlightedEcosystemTextColor);
-	this->ecosystemTextStopwatch = 0.0f;
+	m_ecosystemText.setFillColor(m_highlightedEcosystemTextColor);
+	m_ecosystemTextStopwatch = 0.0f;
 }
 
 void MainMenuState::saveEcosystem(const Ecosystem& ecosystem)
@@ -185,82 +238,93 @@ void MainMenuState::saveEcosystem(const Ecosystem& ecosystem)
 	std::cout << "SAVE IS NOT DEFINET YET\n";
 }
 
-// other private methods:
 void MainMenuState::updateInput()
 {
-	/*
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"])) && !this->keysBlockades["CLOSE"])
-		this->endState();
-	*/
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["CLOSE"]))
+	//	&& !keysBlockades["CLOSE"])
+	//{
+	//	endState();
+	//}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"])))
-		this->endState();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["CLOSE"])))
+	{
+		endState();
+	}
 }
 
 void MainMenuState::getUpdateFromButtons()
 {
-	for (auto& it : this->buttons)
-		it.second->update(this->mousePosWindow);
+	for (auto& btn : m_buttons)
+	{
+		btn.second->update(m_mousePosWindow);
+	}
 
-	if (this->buttons["SIMULATE"]->isClicked())
+	if (m_buttons["SIMULATE"]->isClicked())
 	{
 		// TODO: What about this?:
-		/*
-		if (this->stateData->ecosystem->isInitialized())
+		//if (m_stateData->m_ecosystem->isInitialized())
+		//{
+		//	m_stateData->m_states->push(new SimulationState(m_stateData));
+		//	m_stateData->m_states->top()->freeze();
+		//}
+		//else
+		//{
+		//	highlightEcosystemText();
+		//}
+		if (m_stateData->m_ecosystem)
 		{
-			this->stateData->states->push(new SimulationState(this->stateData));
-			this->stateData->states->top()->freeze();
-		}
-		else
-			this->highlightEcosystemText();
-		*/
-		if (this->stateData->ecosystem)
-		{
-			this->stateData->states->push(new SimulationState(this->stateData));
-			this->stateData->states->top()->freeze();
+			m_stateData->m_states->push(new SimulationState(m_stateData));
+			m_stateData->m_states->top()->freeze();
 		}
 	}
-
-	else if (this->buttons["NEW ECOSYSTEM"]->isClicked())
+	else if (m_buttons["NEW ECOSYSTEM"]->isClicked())
 	{
-		this->stateData->states->push(new EcosystemCreatorState(this->stateData));
-		this->stateData->states->top()->freeze();
+		m_stateData->m_states->push(new EcosystemCreatorState(m_stateData));
+		m_stateData->m_states->top()->freeze();
 	}
-
-	else if (this->buttons["LOAD"]->isClicked())
+	else if (m_buttons["LOAD"]->isClicked())
 	{
-		this->stateData->states->push(new LoadingState(this->stateData));
-		this->stateData->states->top()->freeze();
+		m_stateData->m_states->push(new LoadingState(m_stateData));
+		m_stateData->m_states->top()->freeze();
 	}
-
-	else if (this->buttons["QUIT"]->isClicked()) 
-		this->endState();
+	else if (m_buttons["QUIT"]->isClicked())
+	{
+		endState();
+	}
 }
 
 void MainMenuState::updateEcosystemText(float dt)
 {
 	// TODO: ecosystem text is not updated at all! Change that!:
-	/*
-	if (!this->stateData->ecosystem->isInitialized())
-	{
-		this->ecosystemText.setString("CREATE A NEW ECOSYSTEM OR LOAD AN EXISTING ONE");
-
-		if (this->ecosystemText.getFillColor() == this->highlightedEcosystemTextColor)
-		{
-			if (this->ecosystemTextStopwatch > this->highlightningTime)
-				this->ecosystemText.setFillColor(this->defaultEcosystemTextColor);
-
-			this->ecosystemTextStopwatch += dt;
-		}
-	}
-
-	else 
-		this->ecosystemText.setString("CURRENT ECOSYSTEM FOLDER: " + this->stateData->ecosystem->getDirectoryPath());
-	*/
+	//if (!m_stateData->m_ecosystem->isInitialized())
+	//{
+	//	m_ecosystemText.setString(
+	//		"CREATE A NEW ECOSYSTEM OR LOAD AN EXISTING ONE"
+	//	);
+	//
+	//	if (m_ecosystemText.getFillColor() == m_highlightedEcosystemTextColor)
+	//	{
+	//		if (m_ecosystemTextStopwatch > m_highlightningTime)
+	//		{
+	//			m_ecosystemText.setFillColor(m_defaultEcosystemTextColor);
+	//		}
+	//
+	//		m_ecosystemTextStopwatch += dt;
+	//	}
+	//}
+	//else
+	//{
+	//	m_ecosystemText.setString(
+	//		"CURRENT ECOSYSTEM FOLDER: " 
+	//		+ m_stateData->m_ecosystem->getName()
+	//	);
+	//}	
 }
 
 void MainMenuState::renderButtons(sf::RenderTarget& target)
 {
-	for (auto& button : this->buttons)
+	for (auto& button : m_buttons)
+	{
 		button.second->render(target);
+	}
 }

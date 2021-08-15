@@ -11,7 +11,7 @@ float gui::p2pY(float percent, const sf::VideoMode& resolution)
 	return static_cast<float>(resolution.height) * (percent / 100.0f);
 }
 
-unsigned gui::calcCharSize(float per_mille, const sf::VideoMode& resolution)
+unsigned gui::calcCharSize(float perMille, const sf::VideoMode& resolution)
 {
-	return static_cast<unsigned>(resolution.height * (per_mille / 1000.0f));
+	return static_cast<unsigned>(resolution.height * (perMille / 1000.0f));
 }

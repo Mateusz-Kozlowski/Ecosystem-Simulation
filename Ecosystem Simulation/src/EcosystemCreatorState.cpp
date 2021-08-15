@@ -1,35 +1,42 @@
 #include "pch.h"
 #include "EcosystemCreatorState.h"
 
-EcosystemCreatorState::EcosystemCreatorState(StateData* state_data)
-	: State(state_data)
+EcosystemCreatorState::EcosystemCreatorState(StateData* stateData)
+	: State(stateData)
+	, m_background()
+	, m_fonts()
+	, m_texts()
+	, m_buttons()
+	, m_textBoxes()
 {
-	this->initKeybinds();
-	this->initBackground();
-	this->initFonts();
-	this->initGui();
+	initKeybinds();
+	initBackground();
+	initFonts();
+	initGui();
 }
 
-// public methods:
 void EcosystemCreatorState::update(float dt)
 {
-	this->updateMousePositions();
-	this->updateInput();
-	this->updateGui(dt);
-	this->getUpdatesFromGui();
+	updateMousePositions();
+	updateInput();
+	updateGui(dt);
+	getUpdatesFromGui();
 }
 
 void EcosystemCreatorState::render(sf::RenderTarget* target)
 {
-	if (!target) 
-		target = this->stateData->window;
+	if (!target)
+	{
+		target = m_stateData->m_window;
+	}
 
-	target->draw(this->background);
+	target->draw(m_background);
 
-	this->renderGui(*target);
+	renderGui(*target);
 }
 
 // mutators:
+
 void EcosystemCreatorState::freeze()
 {
 	std::cout << "FREEZING IS NOT DEFINED YET!\n";
@@ -37,7 +44,6 @@ void EcosystemCreatorState::freeze()
 
 // private methods:
 
-// initialization:
 void EcosystemCreatorState::initKeybinds()
 {
 	const char* path = "config/ecosystem_creator_keybinds.ini";
@@ -49,19 +55,29 @@ void EcosystemCreatorState::initKeybinds()
 		std::string key = "";
 		std::string key2 = "";
 
-		while (ifs >> key >> key2) 
-			this->keybinds[key] = this->stateData->supportedKeys->at(key2);
+		while (ifs >> key >> key2)
+		{
+			m_keybinds[key] = m_stateData->m_supportedKeys->at(key2);
+		}
 	}
-	else throw("ERROR::EcosystemCreatorState::initKeybinds::COULD NOT OPEN: " + std::string(path));
+	else
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::EcosystemCreatorState::initKeybinds()::"
+			<< "could not open "
+			<< path << '\n'
+		);
+	}
 
 	ifs.close();
 }
 
 void EcosystemCreatorState::initBackground()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
-	this->background.setSize(
+	m_background.setSize(
 		sf::Vector2f
 		(
 			static_cast<float>(resolution.width),
@@ -69,32 +85,36 @@ void EcosystemCreatorState::initBackground()
 		)
 	);
 
-	this->background.setFillColor(sf::Color(32, 32, 32));
+	m_background.setFillColor(sf::Color(32, 32, 32));
 }
 
 void EcosystemCreatorState::initFonts()
 {
-	if (!this->fonts["RETROICA"].loadFromFile("resources/fonts/Retroica.ttf"))
-		throw("ERROR::EcosystemCreatorState::initFonts::COULD NOT LOAD A FONT\n");
-
-	if (!this->fonts["CONSOLAB"].loadFromFile("resources/fonts/consolab.ttf"))
-		throw("ERROR::EcosystemCreatorState::initFonts::COULD NOT LOAD A FONT\n");
+	if (!m_fonts["RETROICA"].loadFromFile("resources/fonts/Retroica.ttf")
+		|| !m_fonts["CONSOLAB"].loadFromFile("resources/fonts/consolab.ttf"))
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::EcosystemCreatorState::initFonts()::"
+			<< "could not load a font\n"
+		);
+	}
 }
 
 void EcosystemCreatorState::initGui()
 {
-	this->initButtons();
-	this->initTextBoxes();
-	this->initTexts();
+	initButtons();
+	initTextBoxes();
+	initTexts();
 }
 
 void EcosystemCreatorState::initButtons()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
 	unsigned charSize = gui::calcCharSize(20.0f, resolution);
 
-	this->buttons["SMALL"] = std::make_unique<gui::Button>(
+	m_buttons["SMALL"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(30.0f, resolution),
 			gui::p2pY(7.0f, resolution)
@@ -103,14 +123,20 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "SMALL", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["RETROICA"], "SMALL", charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 
-	this->buttons["BIG"] = std::make_unique<gui::Button>(
+	m_buttons["BIG"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(7.0f, resolution)
@@ -119,14 +145,20 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "BIG", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["RETROICA"], "BIG", charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 
-	this->buttons["HUGE"] = std::make_unique<gui::Button>(
+	m_buttons["HUGE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(58.0f, resolution),
 			gui::p2pY(7.0f, resolution)
@@ -135,14 +167,20 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "HUGE", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["RETROICA"], "HUGE", charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 
-	this->buttons["CREATE"] = std::make_unique<gui::Button>(
+	m_buttons["CREATE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(71.0f, resolution),
 			gui::p2pY(90.0f, resolution)
@@ -151,14 +189,20 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "CREATE", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["RETROICA"], "CREATE", charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 
-	this->buttons["OK"] = std::make_unique<gui::Button>(
+	m_buttons["OK"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(84.0f, resolution),
 			gui::p2pY(90.0f, resolution)
@@ -167,21 +211,27 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "OK", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(48, 48, 48),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
+		m_fonts["RETROICA"], "OK", charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64),
+		sf::Color(100, 100, 100),
+		sf::Color(48, 48, 48),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255),
+		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
 	);
 }
 
 void EcosystemCreatorState::initTextBoxes()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
 	unsigned charSize = gui::calcCharSize(20.0f, resolution);
 
-	this->textBoxes["WORLD WIDTH"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["WORLD WIDTH"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(21.0f, resolution)
@@ -190,14 +240,24 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "3840", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f
+		m_fonts["RETROICA"], 
+		"3840", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64),
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 
+		0.5f
 	);
 
-	this->textBoxes["WORLD HEIGHT"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["WORLD HEIGHT"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(28.0f, resolution)
@@ -206,15 +266,26 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "2160", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
-		false, 1
+		m_fonts["RETROICA"], 
+		"2160", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 
+		0.5f,
+		false,
+		1
 	);
 
-	this->textBoxes["BORDERS THICKNESS"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["BORDERS THICKNESS"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(35.0f, resolution)
@@ -223,15 +294,26 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "32", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
-		false, 2
+		m_fonts["RETROICA"], 
+		"32", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 
+		0.5f,
+		false, 
+		2
 	);
 
-	this->textBoxes["ANIMALS COUNT"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["ANIMALS COUNT"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(42.0f, resolution)
@@ -240,15 +322,26 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "4", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
-		false, 3
+		m_fonts["RETROICA"], 
+		"4", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 
+		0.5f,
+		false, 
+		3
 	);
 
-	this->textBoxes["FRUITS COUNT"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["FRUITS COUNT"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(49.0f, resolution)
@@ -257,15 +350,26 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "1024", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
-		false, 4
+		m_fonts["RETROICA"], 
+		"1024", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 
+		0.5f,
+		false, 
+		4
 	);
 
-	this->textBoxes["DEFAULT HP"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["DEFAULT HP"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(56.0f, resolution)
@@ -274,15 +378,26 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "100000000", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
-		false, 5
+		m_fonts["RETROICA"], 
+		"100000000", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution),
+		0.5f,
+		false, 
+		5
 	);
 
-	this->textBoxes["DEFAULT FRUIT ENERGY"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["DEFAULT FRUIT ENERGY"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(63.0f, resolution)
@@ -291,15 +406,26 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "100000000", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
-		false, 6
+		m_fonts["RETROICA"], 
+		"100000000", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 
+		0.5f,
+		false, 
+		6
 	);
 
-	this->textBoxes["MUTATION RATE"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["MUTATION RATE"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(70.0f, resolution)
@@ -308,15 +434,26 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "100", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
-		false, 7
+		m_fonts["RETROICA"],
+		"100", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 
+		0.5f,
+		false, 
+		7
 	);
 
-	this->textBoxes["NAME"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["NAME"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(77.0f, resolution)
@@ -325,152 +462,173 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		this->fonts["RETROICA"], "Default name", charSize,
-		sf::Color(100, 100, 100), sf::Color(125, 125, 125), sf::Color(75, 75, 75),
-		sf::Color(64, 64, 64), sf::Color(100, 100, 100), sf::Color(32, 32, 32),
-		sf::Color(225, 225, 225), sf::Color(255, 255, 255), sf::Color(150, 150, 150),
-		gui::p2pY(0.5f, resolution), gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 0.5f,
-		false, 8
+		m_fonts["RETROICA"], 
+		"Default name", 
+		charSize,
+		sf::Color(100, 100, 100), 
+		sf::Color(125, 125, 125), 
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64), 
+		sf::Color(100, 100, 100), 
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225), 
+		sf::Color(255, 255, 255), 
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution), 
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 
+		0.5f,
+		false, 
+		8
 	);
 }
 
 void EcosystemCreatorState::initTexts()
 {
-	const sf::VideoMode& resolution = this->stateData->gfxSettings->resolution;
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 
 	unsigned charSize = gui::calcCharSize(20.0f, resolution);
 
-	this->addText(
+	addText(
 		"WORLD WIDTH",
 		"WORLD WIDTH",
-		this->fonts["RETROICA"],
+		m_fonts["RETROICA"],
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
+			gui::p2pX(24.0f, resolution),
 			gui::p2pY(22.1f, resolution)
 		)
 	);
 
-	this->addText(
+	addText(
 		"WORLD HEIGHT",
 		"WORLD HEIGHT",
-		this->fonts["RETROICA"],
+		m_fonts["RETROICA"],
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
+			gui::p2pX(24.0f, resolution),
 			gui::p2pY(29.1f, resolution)
 		)
 	);
 
-	this->addText(
+	addText(
 		"BORDERS THICKNESS",
 		"BORDERS THICKNESS",
-		this->fonts["RETROICA"],
+		m_fonts["RETROICA"],
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
+			gui::p2pX(24.0f, resolution),
 			gui::p2pY(36.1f, resolution)
 		)
 	);
 
-	this->addText(
+	addText(
 		"ANIMALS COUNT",
 		"ANIMALS COUNT",
-		this->fonts["RETROICA"],
+		m_fonts["RETROICA"],
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
+			gui::p2pX(24.0f, resolution),
 			gui::p2pY(43.1f, resolution)
 		)
 	);
 
-	this->addText(
+	addText(
 		"FRUITS COUNT",
 		"FRUITS COUNT",
-		this->fonts["RETROICA"],
+		m_fonts["RETROICA"],
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
+			gui::p2pX(24.0f, resolution),
 			gui::p2pY(50.1f, resolution)
 		)
 	);
 
-	this->addText(
+	addText(
 		"DEFAULT HP",
 		"DEFAULT HP",
-		this->fonts["RETROICA"],
+		m_fonts["RETROICA"],
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
+			gui::p2pX(24.0f, resolution),
 			gui::p2pY(57.1f, resolution)
 		)
 	);
 
-	this->addText(
+	addText(
 		"DEFAULT FRUITS ENERGY",
 		"DEFAULT FRUITS ENERGY",
-		this->fonts["RETROICA"],
+		m_fonts["RETROICA"],
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
+			gui::p2pX(24.0f, resolution),
 			gui::p2pY(64.1f, resolution)
 		)
 	);
 
-	this->addText(
+	addText(
 		"MUTATION RATE",
 		"MUTATION RATE",
-		this->fonts["RETROICA"],
+		m_fonts["RETROICA"],
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
+			gui::p2pX(24.0f, resolution),
 			gui::p2pY(71.1f, resolution)
 		)
 	);
 
-	this->addText(
+	addText(
 		"ECOSYSTEM NAME",
 		"ECOSYSTEM NAME",
-		this->fonts["RETROICA"],
+		m_fonts["RETROICA"],
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
-			gui::p2pX(24.f, resolution),
+			gui::p2pX(24.0f, resolution),
 			gui::p2pY(78.1f, resolution)
 		)
 	);
 }
 
-// other private methods:
 void EcosystemCreatorState::addText(
 	const std::string& str,
-	const std::string& hash_key,
+	const std::string& hashKey,
 	const sf::Font& font,
-	unsigned char_size,
+	unsigned charSize,
 	const sf::Color& color,
 	const sf::Vector2f& position)
 {
-	this->texts[hash_key] = std::make_unique<sf::Text>(str, font, char_size);
-	this->texts[hash_key]->setFillColor(color);
-	this->texts[hash_key]->setPosition(position);
+	m_texts[hashKey] = std::make_unique<sf::Text>(str, font, charSize);
+	m_texts[hashKey]->setFillColor(color);
+	m_texts[hashKey]->setPosition(position);
 }
 
-void EcosystemCreatorState::loadEcosystemTemplate(const std::string& ecosystem_name)
+void EcosystemCreatorState::loadEcosystemTemplate(
+	const std::string& ecosystemName)
 {
-	std::string path = "resources/ecosystems templates/" + ecosystem_name + ".ini";
+	std::string path = "resources/ecosystems templates/";
+	path += ecosystemName.c_str();
+	path += ".ini";
 
 	std::ifstream file(path);
 
 	if (!file.is_open())
-		throw("ERROR::EcosystemCreatorState::useTemplate::COULD NOT OPEN: " + path + '\n');
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::EcosystemCreatorState::"
+			<< "useTemplate(const std::string&)::"
+			<< "could not open "
+			<< path << '\n'
+		);
+	}
 
 	// read some variables:
 	sf::Vector2f worldSize;
@@ -483,87 +641,99 @@ void EcosystemCreatorState::loadEcosystemTemplate(const std::string& ecosystem_n
 	file >> animalsCount >> fruitsCount;
 	file >> defaultHp >> defaultFruitEnergy >> mutationRate;
 
-	std::string strWorldWidth = this->removeFloatTrailingZeros(std::to_string(worldSize.x));
-	std::string strWorldHeight = this->removeFloatTrailingZeros(std::to_string(worldSize.y));
-	std::string strBordersThickness = this->removeFloatTrailingZeros(std::to_string(bordersThickness));
-	std::string strAnimalsCount = this->removeFloatTrailingZeros(std::to_string(animalsCount));
-	std::string strFruitsCount = this->removeFloatTrailingZeros(std::to_string(fruitsCount));
-	std::string strDefaultHp = this->removeFloatTrailingZeros(std::to_string(defaultHp));
-	std::string strDefaultFruitEnergy = this->removeFloatTrailingZeros(std::to_string(defaultFruitEnergy));
-	std::string strMutationRate = this->removeFloatTrailingZeros(std::to_string(mutationRate));
+	std::string strWorldWidth = std::to_string(worldSize.x);
+	std::string strWorldHeight = std::to_string(worldSize.y);
+	std::string strBordersThickness = std::to_string(bordersThickness);
+	std::string strAnimalsCount = std::to_string(animalsCount);
+	std::string strFruitsCount = std::to_string(fruitsCount);
+	std::string strDefaultHp = std::to_string(defaultHp);
+	std::string strDefaultFruitEnergy = std::to_string(defaultFruitEnergy);
+	std::string strMutationRate = std::to_string(mutationRate);
 
-	this->textBoxes["WORLD WIDTH"]->setString(strWorldWidth);
+	strWorldWidth = removeFloatTrailingZeros(strWorldWidth);
+	strWorldHeight = removeFloatTrailingZeros(strWorldHeight);
+	strBordersThickness = removeFloatTrailingZeros(strBordersThickness);
+	strAnimalsCount = removeFloatTrailingZeros(strAnimalsCount);
+	strFruitsCount = removeFloatTrailingZeros(strFruitsCount);
+	strDefaultHp = removeFloatTrailingZeros(strDefaultHp);
+	strDefaultFruitEnergy = removeFloatTrailingZeros(strDefaultFruitEnergy);
+	strMutationRate = removeFloatTrailingZeros(strMutationRate);
 
-	this->textBoxes["WORLD HEIGHT"]->setString(strWorldHeight);
-
-	this->textBoxes["BORDERS THICKNESS"]->setString(strBordersThickness);
-
-	this->textBoxes["ANIMALS COUNT"]->setString(strAnimalsCount);
-
-	this->textBoxes["FRUITS COUNT"]->setString(strFruitsCount);
-
-	this->textBoxes["DEFAULT HP"]->setString(strDefaultHp);
-
-	this->textBoxes["DEFAULT FRUIT ENERGY"]->setString(strDefaultFruitEnergy);
-
-	this->textBoxes["MUTATION RATE"]->setString(strMutationRate);
-
-	this->textBoxes["NAME"]->setString(ecosystem_name);
+	m_textBoxes["WORLD WIDTH"]->setString(strWorldWidth);
+	m_textBoxes["WORLD HEIGHT"]->setString(strWorldHeight);
+	m_textBoxes["BORDERS THICKNESS"]->setString(strBordersThickness);
+	m_textBoxes["ANIMALS COUNT"]->setString(strAnimalsCount);
+	m_textBoxes["FRUITS COUNT"]->setString(strFruitsCount);
+	m_textBoxes["DEFAULT HP"]->setString(strDefaultHp);
+	m_textBoxes["DEFAULT FRUIT ENERGY"]->setString(strDefaultFruitEnergy);
+	m_textBoxes["MUTATION RATE"]->setString(strMutationRate);
+	m_textBoxes["NAME"]->setString(ecosystemName);
 
 	file.close();
 }
 
-std::string EcosystemCreatorState::removeFloatTrailingZeros(const std::string& string)
+std::string EcosystemCreatorState::removeFloatTrailingZeros(
+	const std::string& string)
 {
 	bool periodOccurs = false;
 
-	for (const auto& it : string)
-		if (it == '.')
+	for (const auto& c : string)
+	{
+		if (c == '.')
 		{
 			periodOccurs = true;
 			break;
 		}
+	}
 
-	if (!periodOccurs) 
-		return string;
+	if (!periodOccurs) return string;
 
 	unsigned index = string.size();
 
-	while (index > 0 && string[index - 1] == '0') 
-		index--;
+	while (index > 0 && string[index - 1] == '0') index--;
 
-	if (string[index - 1] == '.') 
-		index--;
+	if (string[index - 1] == '.') index--;
 
-	std::string temp = string;
-
-	return temp.substr(0, index);
+	return string.substr(0, index);
 }
 
 void EcosystemCreatorState::createEcosystem()
 {
-	delete this->stateData->ecosystem;
+	delete m_stateData->m_ecosystem;
 
-	this->stateData->ecosystem = new Ecosystem(
-		this->textBoxes["NAME"]->getInput(),
+	// TODO: do sth with that hard-coded thing
+	m_stateData->m_ecosystem = new Ecosystem(
+		m_textBoxes["NAME"]->getInput(),
 		sf::Vector2f(
-			std::stof(this->textBoxes["WORLD WIDTH"]->getInput()),
-			std::stof(this->textBoxes["WORLD HEIGHT"]->getInput())
+			std::stof(m_textBoxes["WORLD WIDTH"]->getInput()),
+			std::stof(m_textBoxes["WORLD HEIGHT"]->getInput())
 		),
-		std::stof(this->textBoxes["BORDERS THICKNESS"]->getInput()),
-		sf::Color(32, 32, 32),
-		sf::Color(48, 48, 48),
-		std::stoi(this->textBoxes["ANIMALS COUNT"]->getInput()),
-		std::stoi(this->textBoxes["FRUITS COUNT"]->getInput()),
-		8.0f, // TODO: do sth with that hard-coded thing
-		4.0f, // TODO: do sth with that hard-coded thing
-		std::stof(this->textBoxes["DEFAULT HP"]->getInput()),
-		std::stof(this->textBoxes["DEFAULT FRUIT ENERGY"]->getInput()),
-		std::stof(this->textBoxes["MUTATION RATE"]->getInput()),
-		sf::Color::Red, // TODO: do sth with that hard-coded thing
-		sf::Color::Green, // TODO: do sth with that hard-coded thing
-		sf::Color(100, 0, 200), // TODO: do sth with that hard-coded thing
-		1.0f, // TODO: do sth with that hard-coded thing
+		std::stof(m_textBoxes["BORDERS THICKNESS"]->getInput()),
+		sf::Color(
+			32, 
+			32, 
+			32
+		),
+		sf::Color(
+			48, 
+			48, 
+			48
+		),
+		std::stoi(m_textBoxes["ANIMALS COUNT"]->getInput()),
+		std::stoi(m_textBoxes["FRUITS COUNT"]->getInput()),
+		8.0f,
+		4.0f,
+		std::stof(m_textBoxes["DEFAULT HP"]->getInput()),
+		std::stof(m_textBoxes["DEFAULT FRUIT ENERGY"]->getInput()),
+		std::stof(m_textBoxes["MUTATION RATE"]->getInput()),
+		sf::Color::Red,
+		sf::Color::Green,
+		sf::Color(
+			100, 
+			0, 
+			200
+		),
+		1.0f,
 		true,
 		GodTool::NONE,
 		true,
@@ -573,50 +743,69 @@ void EcosystemCreatorState::createEcosystem()
 
 void EcosystemCreatorState::updateInput()
 {
-	/*
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"])) && !this->keysBlockades["CLOSE"])
-		this->endState();
-	*/
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["CLOSE"])) 
+	//	&& !keysBlockades["CLOSE"])
+	//{
+	//	endState();
+	//}	
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds["CLOSE"])))
-		this->endState();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["CLOSE"])))
+	{
+		endState();
+	}
 }
 
 void EcosystemCreatorState::updateGui(float dt)
 {
-	for (auto& button : this->buttons)
-		button.second->update(this->mousePosWindow);
+	for (auto& button : m_buttons)
+	{
+		button.second->update(m_mousePosWindow);
+	}
 
-	for (auto& textBox : this->textBoxes)
-		textBox.second->update(dt, *this->stateData->events, this->mousePosWindow);
+	for (auto& textBox : m_textBoxes)
+	{
+		textBox.second->update(dt, *m_stateData->m_events, m_mousePosWindow);
+	}
 }
 
 void EcosystemCreatorState::getUpdatesFromGui()
 {
-	if (this->buttons["SMALL"]->isClicked())
-		this->loadEcosystemTemplate("small");
-
-	else if (this->buttons["BIG"]->isClicked())
-		this->loadEcosystemTemplate("big");
-
-	else if (this->buttons["HUGE"]->isClicked())
-		this->loadEcosystemTemplate("huge");
-
-	else if (this->buttons["CREATE"]->isClicked())
-		this->createEcosystem();
-
-	else if (this->buttons["OK"]->isClicked())
-		this->endState();
+	if (m_buttons["SMALL"]->isClicked())
+	{
+		loadEcosystemTemplate("small");
+	}
+	else if (m_buttons["BIG"]->isClicked())
+	{
+		loadEcosystemTemplate("big");
+	}
+	else if (m_buttons["HUGE"]->isClicked())
+	{
+		loadEcosystemTemplate("huge");
+	}
+	else if (m_buttons["CREATE"]->isClicked())
+	{
+		createEcosystem();
+	}
+	else if (m_buttons["OK"]->isClicked())
+	{
+		endState();
+	}
 }
 
 void EcosystemCreatorState::renderGui(sf::RenderTarget& target)
 {
-	for (const auto& button : this->buttons)
+	for (const auto& button : m_buttons)
+	{
 		button.second->render(target);
+	}
 
-	for (const auto& textBox : this->textBoxes)
+	for (const auto& textBox : m_textBoxes)
+	{
 		textBox.second->render(target);
+	}
 
-	for (const auto& text : this->texts)
+	for (const auto& text : m_texts)
+	{
 		target.draw(*text.second);
+	}
 }

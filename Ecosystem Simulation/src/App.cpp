@@ -2,83 +2,96 @@
 #include "App.h"
 
 App::App()
+	: m_gfxSettings()
+	, m_window()
+	, m_supportedKeys()
+	, m_states()
+	, m_ecosystem()
+	, m_events()
+	, m_stateData()
+	, m_clock()
+	, m_dt(0.0f)
 {
-	this->initVariables();
-	this->initGraphicsSettings();
-	this->initWindow();
-	this->initKeys();
-	this->initEcosystem();
-	this->initStateData();
-	this->initStates();
+	initVariables();
+	initGraphicsSettings();
+	initWindow();
+	initKeys();
+	initEcosystem();
+	initStateData();
+	initStates();
 }
 
 App::~App()
 {
-	delete this->window;
-	delete this->ecosystem;
+	delete m_window;
+	delete m_ecosystem;
 
-	while (!this->states.empty())
+	while (!m_states.empty())
 	{
-		delete this->states.top();
-		this->states.pop();
+		delete m_states.top();
+		m_states.pop();
 	}
 }
 
 void App::run()
 {
-	while (this->window->isOpen())
+	while (m_window->isOpen())
 	{
-		this->updateDt();
-		this->update();
-		this->render();
+		updateDt();
+		update();
+		render();
 	}
 }
 
 // private methods:
 
-// initialization:
 void App::initVariables()
 {
-	this->window = nullptr;
-	this->ecosystem = nullptr;
-	this->dt = 0.f;
+	m_window = nullptr;
+	m_ecosystem = nullptr;
+	m_dt = 0.0f;
 }
 
 void App::initGraphicsSettings()
 {
-	this->gfxSettings.loadFromFile("config/graphics.ini");
+	m_gfxSettings.loadFromFile("config/graphics.ini");
 }
 
 void App::initWindow()
 {
-	if (this->gfxSettings.fullscreen)
-		this->window = new sf::RenderWindow(
-			this->gfxSettings.resolution,
-			this->gfxSettings.title,
+	if (m_gfxSettings.fullscreen)
+	{
+		m_window = new sf::RenderWindow(
+			m_gfxSettings.resolution,
+			m_gfxSettings.title,
 			sf::Style::Fullscreen,
-			this->gfxSettings.contextSettings
+			m_gfxSettings.contextSettings
 		);
+	}
 	else
-		this->window = new sf::RenderWindow(
-			this->gfxSettings.resolution,
-			this->gfxSettings.title,
+	{
+		m_window = new sf::RenderWindow(
+			m_gfxSettings.resolution,
+			m_gfxSettings.title,
 			sf::Style::Titlebar | sf::Style::Close,
-			this->gfxSettings.contextSettings
+			m_gfxSettings.contextSettings
 		);
+	}
 
-	this->window->setFramerateLimit(this->gfxSettings.frameRateLimit);
+	m_window->setFramerateLimit(m_gfxSettings.frameRateLimit);
+	m_window->setVerticalSyncEnabled(m_gfxSettings.verticalSync);
 
-	this->window->setVerticalSyncEnabled(this->gfxSettings.verticalSync);
-
-	this->window->setPosition(
+	m_window->setPosition(
 		sf::Vector2i(
-			this->gfxSettings.position.first,
-			this->gfxSettings.position.second
+			m_gfxSettings.position.first,
+			m_gfxSettings.position.second
 		)
 	);
 
 	// TODO: what about that?:
-	//this->window->setKeyRepeatEnabled(true);
+	// m_window->setKeyRepeatEnabled(true);
+	// TODO: and maybe there are other public methods from window
+	// TODO: class that should be used?
 }
 
 void App::initKeys()
@@ -93,86 +106,109 @@ void App::initKeys()
 		int key_value = 0;
 
 		while (ifs >> key >> key_value)
-			this->supportedKeys[key] = key_value;
+		{
+			m_supportedKeys[key] = key_value;
+		}
 	}
-	else throw("ERROR::App::initKeys::CANNOT OPEN: " + std::string(path) + '\n');
+	else
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::App::initKeys()::"
+			<< "cannot open "
+			<< path << '\n'
+		);
+	}
 
 	ifs.close();
 }
 
 void App::initEcosystem()
 {
-	this->ecosystem = nullptr;
+	m_ecosystem = nullptr;
 }
 
 void App::initStateData()
 {
-	this->stateData.window = this->window;
-	this->stateData.gfxSettings = &this->gfxSettings;
-	this->stateData.supportedKeys = &this->supportedKeys;
-	this->stateData.states = &this->states;
-	this->stateData.ecosystem = this->ecosystem;
-	this->stateData.events = &this->events;
+	m_stateData.m_window = m_window;
+	m_stateData.m_gfxSettings = &m_gfxSettings;
+	m_stateData.m_supportedKeys = &m_supportedKeys;
+	m_stateData.m_states = &m_states;
+	m_stateData.m_ecosystem = m_ecosystem;
+	m_stateData.m_events = &m_events;
 }
 
 void App::initStates()
 {
-	this->states.push(new MainMenuState(&this->stateData));
+	m_states.push(new MainMenuState(&m_stateData));
 }
 
-// other private methods:
 void App::updateDt()
 {
-	this->dt = this->clock.restart().asSeconds();
+	m_dt = m_clock.restart().asSeconds();
 }
 
 void App::update()
 {
-	this->updateEvents();
+	updateEvents();
 
-	if (!this->states.empty())
+	if (!m_states.empty())
 	{
-		if (this->window->hasFocus())
+		if (m_window->hasFocus())
 		{
-			if (this->states.top()->getQuit())
+			if (m_states.top()->getQuit())
 			{
-				this->states.top()->endState();
-				delete this->states.top();
-				this->states.pop();
+				m_states.top()->endState();
+				delete m_states.top();
+				m_states.pop();
 
-				if (!this->states.empty())
-					this->states.top()->freeze();
-				else 
-					this->window->close();
+				if (!m_states.empty())
+				{
+					m_states.top()->freeze();
+				}
+				else
+				{
+					m_window->close();
+				}
 			}
 
-			if (!this->states.empty())
-				this->states.top()->update(this->dt);
+			if (!m_states.empty())
+			{
+				m_states.top()->update(m_dt);
+			}
 		}
 	}
-	else 
-		this->window->close();
+	else
+	{
+		m_window->close();
+	}
 }
 
 void App::updateEvents()
 {
-	this->events.clear();
+	m_events.clear();
 
-	while (this->window->pollEvent(this->event))
+	sf::Event event;
+
+	while (m_window->pollEvent(event))
 	{
-		if (this->event.type == sf::Event::Closed) 
-			this->window->close();
+		if (event.type == sf::Event::Closed)
+		{
+			m_window->close();
+		}
 
-		this->events.push_back(this->event);
+		m_events.push_back(event);
 	}
 }
 
 void App::render()
 {
-	this->window->clear();
+	m_window->clear();
 
-	if (!this->states.empty()) 
-		this->states.top()->render();
+	if (!m_states.empty())
+	{
+		m_states.top()->render();
+	}
 
-	this->window->display();
+	m_window->display();
 }

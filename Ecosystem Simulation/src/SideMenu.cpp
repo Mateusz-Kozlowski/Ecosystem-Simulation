@@ -1,135 +1,155 @@
 #include "pch.h"
 #include "SideMenu.h"
 
-using namespace gui;
-
-SideMenu::SideMenu(
+gui::SideMenu::SideMenu(
 	const sf::Vector2f& position, 
 	const sf::Vector2f& size,
-	const sf::Color& background_color)
+	const sf::Color& backgroundColor)
+	: m_background(size)
+	, m_textureButtons()
+	, m_buttons()
+	, m_sliders()
+	, m_texts()
 {
-	this->initBackground(position, size, background_color);
+	initBackground(position, backgroundColor);
 }
 
-// public methods:
-void SideMenu::update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events)
+void gui::SideMenu::update(
+	const sf::Vector2i& mousePosWindow, 
+	const std::vector<sf::Event>& events)
 {
-	for (auto& textureButton : this->textureButtons)
-		textureButton.second->update(mouse_pos_window, events);
+	for (auto& textureButton : m_textureButtons)
+	{
+		textureButton.second->update(mousePosWindow, events);
+	}
 
-	for (auto& button : this->buttons)
-		button.second->update(mouse_pos_window);
+	for (auto& button : m_buttons)
+	{
+		button.second->update(mousePosWindow);
+	}
 
-	for (auto& scaleSlider : this->scaleSliders)
-		scaleSlider.second->update(mouse_pos_window);
+	for (auto& scaleSlider : m_sliders)
+	{
+		scaleSlider.second->update(mousePosWindow);
+	}
 }
 
-void SideMenu::render(sf::RenderTarget& target)
+void gui::SideMenu::render(sf::RenderTarget& target)
 {
-	target.draw(this->background);
+	target.draw(m_background);
 
-	for (const auto& textureButton : this->textureButtons) 
+	for (const auto& textureButton : m_textureButtons)
+	{
 		textureButton.second->render(target);
+	}
 
-	for (const auto& button : this->buttons) 
+	for (const auto& button : m_buttons)
+	{
 		button.second->render(target);
+	}
 
-	for (const auto& scaleSlider : this->scaleSliders) 
+	for (const auto& scaleSlider : m_sliders)
+	{
 		scaleSlider.second->render(target);
+	}
 
-	for (const auto& text : this->texts) 
+	for (const auto& text : m_texts)
+	{
 		target.draw(text);
+	}
 }
 
 // accessors:
+
 const sf::Vector2f& gui::SideMenu::getPosition() const
 {
-	return this->background.getPosition();
+	return m_background.getPosition();
 }
 
 const sf::Vector2f& gui::SideMenu::getSize() const
 {
-	return this->background.getSize();
+	return m_background.getSize();
 }
 
-const std::unordered_map<std::string, std::unique_ptr<gui::ImageButton>>& gui::SideMenu::getImageButtons() const
+const gui::SideMenu::ImgBtnsMap& gui::SideMenu::getImageButtons() const
 {
-	return this->textureButtons;
+	return m_textureButtons;
 }
 
-const std::unordered_map<std::string, std::unique_ptr<gui::Button>>& gui::SideMenu::getButtons() const
+const gui::SideMenu::BtnsMap& gui::SideMenu::getButtons() const
 {
-	return this->buttons;
+	return m_buttons;
 }
 
-const std::unordered_map<std::string, std::unique_ptr<gui::Slider>>& gui::SideMenu::getSliders() const
+const gui::SideMenu::SlidersMap& gui::SideMenu::getSliders() const
 {
-	return this->scaleSliders;
+	return m_sliders;
 }
 
-bool SideMenu::hasImageButtonBeenClicked(const std::string& key)
+bool gui::SideMenu::hasImageButtonBeenClicked(const std::string& key)
 {
-	return this->textureButtons[key]->hasBeenClicked();
+	return m_textureButtons[key]->hasBeenClicked();
 }
 
 const sf::RectangleShape& gui::SideMenu::getBackground() const
 {
-	return this->background;
+	return m_background;
 }
 
 // mutators:
-void gui::SideMenu::setPosition(const sf::Vector2f& new_pos)
+
+void gui::SideMenu::setPosition(const sf::Vector2f& newPos)
 {
-	sf::Vector2f oldPos = this->background.getPosition();
+	sf::Vector2f oldPos = m_background.getPosition();
 	
-	this->background.setPosition(new_pos);
+	m_background.setPosition(newPos);
 
 	// texture buttons:
-	for (auto& textureButton : this->textureButtons)
+	for (auto& textureButton : m_textureButtons)
 		textureButton.second->setPosition(
 			sf::Vector2f(
-				new_pos.x - oldPos.x + textureButton.second->getPosition().x,
-				new_pos.y - oldPos.y + textureButton.second->getPosition().y
+				newPos.x - oldPos.x + textureButton.second->getPosition().x,
+				newPos.y - oldPos.y + textureButton.second->getPosition().y
 			)
 		);
 
 	// buttons:
-	for (auto& button : this->buttons)
+	for (auto& button : m_buttons)
 		button.second->setPosition(
 			sf::Vector2f(
-				new_pos.x - oldPos.x + button.second->getPosition().x,
-				new_pos.y - oldPos.y + button.second->getPosition().y
+				newPos.x - oldPos.x + button.second->getPosition().x,
+				newPos.y - oldPos.y + button.second->getPosition().y
 			)
 		);
 
 	// scale sliders:
-	for (auto& scaleSlider: this->scaleSliders)
+	for (auto& scaleSlider: m_sliders)
 		scaleSlider.second->setPosition(
 			sf::Vector2f(
-				new_pos.x - oldPos.x + scaleSlider.second->getPosition().x,
-				new_pos.y - oldPos.y + scaleSlider.second->getPosition().y
+				newPos.x - oldPos.x + scaleSlider.second->getPosition().x,
+				newPos.y - oldPos.y + scaleSlider.second->getPosition().y
 			)
 		);
 
 	// texts:
-	for (auto& text : this->texts)
+	for (auto& text : m_texts)
 		text.setPosition(
-			new_pos.x - oldPos.x + text.getPosition().x,
-			new_pos.y - oldPos.y + text.getPosition().y
+			newPos.x - oldPos.x + text.getPosition().x,
+			newPos.y - oldPos.y + text.getPosition().y
 		);
 }
 
 void gui::SideMenu::addImageButton(
 	const std::string& key,
-	const std::vector<std::pair<std::string, std::string>>& textures_path_and_keys,
-	const std::string& key_of_default_texture,
+	const std::vector<StringsPair>& texturesPathAndKeys,
+	const std::string& keyOfDefaultTexture,
 	const sf::Vector2f& position, 
 	const sf::Vector2f& size,
 	int id)
 {
-	this->textureButtons[key] = std::make_unique<gui::ImageButton>(
-		textures_path_and_keys,
-		key_of_default_texture,
+	m_textureButtons[key] = std::make_unique<gui::ImageButton>(
+		texturesPathAndKeys,
+		keyOfDefaultTexture,
 		position,
 		size
 	);
@@ -139,20 +159,28 @@ void gui::SideMenu::addButton(
 	const std::string& key, 
 	const sf::Vector2f& position, 
 	const sf::Vector2f& size, 
-	int char_size, const sf::Font& font, const std::string& text,
-	sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
-	sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
-	sf::Color text_idle_color, sf::Color text_hover_color, sf::Color text_pressed_color,
+	int charSize, 
+	const sf::Font& font, 
+	const std::string& text,
+	sf::Color idleColor, 
+	sf::Color hoverColor, 
+	sf::Color pressedColor,
+	sf::Color outlineIdleColor, 
+	sf::Color outlineHoverColor, 
+	sf::Color outlinePressedColor,
+	sf::Color textIdleColor, 
+	sf::Color textHoverColor, 
+	sf::Color textPressedColor,
 	float outlineThickness, 
 	short unsigned id)
 {
-	this->buttons[key] = std::make_unique<gui::Button>(
+	m_buttons[key] = std::make_unique<gui::Button>(
 		position,
 		size,
-		font, text, char_size,
-		idle_color, hover_color, pressed_color,
-		outline_idle_color, outline_hover_color, outline_pressed_color,
-		text_idle_color, text_hover_color, text_pressed_color,
+		font, text, charSize,
+		idleColor, hoverColor, pressedColor,
+		outlineIdleColor, outlineHoverColor, outlinePressedColor,
+		textIdleColor, textHoverColor, textPressedColor,
 		outlineThickness, id
 	);
 }
@@ -160,61 +188,68 @@ void gui::SideMenu::addButton(
 void gui::SideMenu::addSlider(
 	const std::string& key,
 	const sf::Vector2f& position, 
-	float textures_scale, 
+	float texturesScale, 
 	const std::pair<float, float>& range,
-	const std::pair<float, float>& not_snapping_to_edges_range,
-	float default_value, 
-	const std::string& axis_idle_path, const std::string& handle_idle_path, 
-	const std::string& axis_hover_path, const std::string& handle_hover_path, 
-	const std::string& axis_pressed_path, const std::string& handle_pressed_path,
-	const std::string& scale_function)
+	const std::pair<float, float>& notSnappingToEdgesRange,
+	float defaultValue, 
+	const std::string& axisIdlePath, 
+	const std::string& handleIdlePath, 
+	const std::string& axisHoverPath, 
+	const std::string& handleHoverPath, 
+	const std::string& axisPressedPath, 
+	const std::string& handlePressedPath,
+	const std::string& scaleFunction)
 {
-	this->scaleSliders[key] = std::make_unique<gui::Slider>(
+	m_sliders[key] = std::make_unique<gui::Slider>(
 		position,
-		textures_scale,
+		texturesScale,
 		range,
-		not_snapping_to_edges_range,
-		default_value,
-		axis_idle_path, handle_idle_path,
-		axis_hover_path, handle_hover_path,
-		axis_pressed_path, handle_pressed_path,
-		scale_function
+		notSnappingToEdgesRange,
+		defaultValue,
+		axisIdlePath, handleIdlePath,
+		axisHoverPath, handleHoverPath,
+		axisPressedPath, handlePressedPath,
+		scaleFunction
 	);
 }
 
 void gui::SideMenu::addCenteredText(
-	float pos_y, 
-	unsigned char_size, 
+	float posY, 
+	unsigned charSize, 
 	const sf::Font& font,
 	const std::string& text, 
 	sf::Color color)
 {
-	this->texts.push_back(sf::Text());
+	m_texts.emplace_back();
 
-	this->texts.back().setFont(font);
-	this->texts.back().setString(text);
-	this->texts.back().setCharacterSize(char_size);
-	this->texts.back().setFillColor(color);
+	m_texts.back().setFont(font);
+	m_texts.back().setString(text);
+	m_texts.back().setCharacterSize(charSize);
+	m_texts.back().setFillColor(color);
 
-	auto rect = this->texts.back().getLocalBounds();
+	const sf::Vector2f& bgPos = m_background.getPosition();
+	const sf::Vector2f& bgSize = m_background.getSize();
+	sf::FloatRect textBounds = m_texts.back().getLocalBounds();
 
-	this->texts.back().setPosition(
-		this->background.getPosition().x + this->background.getSize().x / 2.f - rect.width / 2.f,
-		pos_y
+	m_texts.back().setPosition(
+		bgPos.x + bgSize.x / 2.f - textBounds.width / 2.f,
+		posY
 	);
 }
 
-void gui::SideMenu::setTextureOfImageButton(const std::string& button_key, const std::string& texture_key)
+void gui::SideMenu::setTextureOfImageButton(
+	const std::string& buttonKey, 
+	const std::string& textureKey)
 {
-	this->textureButtons[button_key]->setTexture(texture_key);
+	m_textureButtons[buttonKey]->setTexture(textureKey);
 }
 
 // private methods:
  
-// initialization:
-void gui::SideMenu::initBackground(const sf::Vector2f& position, const sf::Vector2f& size, const sf::Color& color)
+void gui::SideMenu::initBackground(
+	const sf::Vector2f& position,
+	const sf::Color& color)
 {
-	this->background.setPosition(position);
-	this->background.setSize(size);
-	this->background.setFillColor(color);
+	m_background.setPosition(position);
+	m_background.setFillColor(color);
 }

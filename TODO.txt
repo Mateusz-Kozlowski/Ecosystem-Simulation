@@ -48,6 +48,9 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- fix an issue with getWorldSize() and getArenaSize() in Ecosystem class;
+  use the first one when u need the size with borders included 
+  and the second when u need the size without borders included
 - u can use store animals in std::unique_ptrs in Animal class;
   in order to clone an animal just create an empty brand new animal and then do this:
   *a1 = *a2
@@ -81,21 +84,16 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
-- separate private methods from private variables using 2 "private"
-- go from snake_case to cammelCase in all arguments names in the entire project
-- new convention with parentheses after if statements and so on... (for, while etc.)
+- and comments that separate private methods into some groups
+  e.g., initialization, utils and so on...
 - change arguments of all functions from std::strings to const char* where possible;
   notice that u can extract a const char* from every string using c_str() function
-- get rid of all this that can be rmved and use "m_" prefix in all classes members names
 - throw exceptions where errors are "expected" and use asserts where errors shouldn't occur
 - add functions arguments to exceptions because of functions overloading
-- use Formatter from Blueberry library to throw exceptions
-- use override keyword
 - learn about inline functions and use them!
 - all objects should be initialized in 100% before first updates
   e.g. neural net brain preview class should color its neurons in constructor 
   and not wait with that till the first update
-- rename utilities to utils? Google it!
 - mutation rate vs mutation percentage - unify that (probably mutation rate percentage)
 - convention of names in tools 
   (->replace is also called move and it shouldn't have 2 names)(->track and select also)

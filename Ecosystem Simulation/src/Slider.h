@@ -7,62 +7,70 @@ namespace gui
 	class Slider
 	{
 	public:
-		// constructor:
 		Slider(
 			const sf::Vector2f& position,
-			float textures_scale,
+			float texturesScale,
 			const std::pair<float, float>& range,
-			const std::pair<float, float>& not_snapping_to_edges_range,
-			float default_value,
-			const std::string& axis_idle_path, const std::string& handle_idle_path,
-			const std::string& axis_hover_path, const std::string& handle_hover_path,
-			const std::string& axis_pressed_path, const std::string& handle_pressed_path,
-			const std::string& scale_function = "linear"
+			const std::pair<float, float>& notSnappingToEdgesRange,
+			float defaultValue,
+			const std::string& axisIdlePath, 
+			const std::string& handleIdlePath,
+			const std::string& axisHoverPath, 
+			const std::string& handleHoverPath,
+			const std::string& axisPressedPath, 
+			const std::string& handlePressedPath,
+			const std::string& scaleFunction = "linear"
 		);
+		
+		void update(sf::Vector2i mousePosWindow);
+		void render(sf::RenderTarget& target);
 
 		// accessors:
+
 		float getCurrentValue() const;
 
 		const sf::Vector2f& getPosition() const;
 
 		// mutators:
+		
 		void setValue(float value);
 
-		void setPosition(const sf::Vector2f& new_pos);
-
-		// other public methods:
-		void update(sf::Vector2i mousePosWindow);
-		void render(sf::RenderTarget& target);
+		void setPosition(const sf::Vector2f& newPos);
 
 	private:
-		std::unordered_map<std::string, sf::Texture> axisTextures;
-		std::unordered_map<std::string, sf::Texture> handleTextures;
-
-		std::unordered_map<std::string, sf::Sprite> axis;
-		std::unordered_map<std::string, sf::Sprite> handle;
-
-		std::string state;
-
-		std::pair<float, float> range;
-		std::pair<float, float> notSnappingToEdgesRange;
-
-		float value;
-
-		std::string scaleFunction;
-
-		// initialization:
 		void initTextures(
-			const std::string& axis_idle_path, const std::string& handle_idle_path,
-			const std::string& axis_hover_path, const std::string& handle_hover_path,
-			const std::string& axis_pressed_path, const std::string& handle_pressed_path
+			const std::string& axisIdlePath, 
+			const std::string& handleIdlePath,
+			const std::string& axisHoverPath, 
+			const std::string& handleHoverPath,
+			const std::string& axisPressedPath, 
+			const std::string& handlePressedPath
 		);
-		void initSprites(const sf::Vector2f& position, float textures_scale);
-
-		// private utilities:
+		void initSprites(
+			const sf::Vector2f& position, 
+			float texturesScale
+		);
+		
 		float inverseScaleFunction(float y);
 		float scaleFunctionValue(float x);
 
 		void updateCurrentValue();
 		void snapToEdges();
+
+	private:
+		std::unordered_map<std::string, sf::Texture> m_axisTextures;
+		std::unordered_map<std::string, sf::Texture> m_handleTextures;
+
+		std::unordered_map<std::string, sf::Sprite> m_axisSprites;
+		std::unordered_map<std::string, sf::Sprite> m_handleSprites;
+
+		std::string m_state;
+
+		std::pair<float, float> m_range;
+		std::pair<float, float> m_notSnappingToEdgesRange;
+
+		float m_value;
+
+		std::string m_scaleFunction;
 	};
 }

@@ -1,249 +1,326 @@
 #include "pch.h"
 #include "Slider.h"
 
-using namespace gui;
-
-// constructor:
-Slider::Slider(
+gui::Slider::Slider(
 	const sf::Vector2f& position,
-	float textures_scale,
+	float texturesScale,
 	const std::pair<float, float>& range,
-	const std::pair<float, float>& not_snapping_to_edges_range,
-	float default_value,
-	const std::string& axis_idle_path, const std::string& handle_idle_path,
-	const std::string& axis_hover_path, const std::string& handle_hover_path,
-	const std::string& axis_pressed_path, const std::string& handle_pressed_path,
-	const std::string& scale_function)
-	: state("IDLE"), range(range), notSnappingToEdgesRange(not_snapping_to_edges_range),
-	value(default_value), scaleFunction(scale_function)
+	const std::pair<float, float>& notSnappingToEdgesRange,
+	float defaultValue,
+	const std::string& axisIdlePath, const std::string& handleIdlePath,
+	const std::string& axisHoverPath, const std::string& handleHoverPath,
+	const std::string& axisPressedPath, const std::string& handlePressedPath,
+	const std::string& scaleFunction)
+	: m_axisTextures()
+	, m_handleTextures()
+	, m_axisSprites()
+	, m_handleSprites()
+	, m_state("IDLE")
+	, m_range(range)
+	, m_notSnappingToEdgesRange(notSnappingToEdgesRange)
+	, m_value(defaultValue)
+	, m_scaleFunction(scaleFunction)
 {
-	this->initTextures(
-		axis_idle_path, handle_idle_path,
-		axis_hover_path, handle_hover_path,
-		axis_pressed_path, handle_pressed_path
+	initTextures(
+		axisIdlePath, handleIdlePath,
+		axisHoverPath, handleHoverPath,
+		axisPressedPath, handlePressedPath
 	);
-	this->initSprites(position, textures_scale);
+	initSprites(position, texturesScale);
 
-	this->setValue(default_value);
+	setValue(defaultValue);
 }
 
-// accessors:
-float Slider::getCurrentValue() const
+void gui::Slider::update(sf::Vector2i mousePosWindow)
 {
-	return this->value;
-}
+	sf::Sprite currentAxisSprite = m_axisSprites[m_state];
+	sf::Sprite currentHandleSprite = m_handleSprites[m_state];
 
-const sf::Vector2f& Slider::getPosition() const
-{
-	return this->axis.at(this->state).getPosition();
-}
+	auto mousePosWindowF = static_cast<sf::Vector2f>(mousePosWindow);
 
-// mutators:
-void Slider::setValue(float value)
-{
-	if (value < this->range.first || value > this->range.second)
+	if (m_state == "IDLE")
 	{
-		std::cerr << "ERROR::Slider::setValue::ARGUMENT IS NOT IN RANGE ("
-			<< value << "DOESN'T BELONG TO <" << this->range.first << "; " << this->range.second << ">)\n";
-		exit(-1);
-	}
-
-	this->value = value;
-
-	float left = this->axis["IDLE"].getGlobalBounds().left;
-
-	// set x positions:
-	for (auto& it : this->handle)
-	{
-		float offsetX = (this->inverseScaleFunction(this->value) / (this->range.second - this->range.first));
-
-		offsetX *= this->axis["IDLE"].getGlobalBounds().width;
-
-		offsetX -= this->handle["IDLE"].getGlobalBounds().width / 2.f;
-
-		it.second.setPosition(
-			left + offsetX,
-			it.second.getPosition().y
-		);
-	}
-}
-
-void Slider::setPosition(const sf::Vector2f& new_pos)
-{
-	for (auto& axis : this->axis) axis.second.setPosition(new_pos);
-
-	// set handle position taking the current scale slider value into account:
-	this->setValue(this->value);
-}
-
-// other public methods:
-void Slider::update(sf::Vector2i mousePosWindow)
-{
-	if (this->state == "IDLE")
-	{
-		if (this->axis[this->state].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow)) ||
-			this->handle[this->state].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow)))
+		if (currentAxisSprite.getGlobalBounds().contains(mousePosWindowF) 
+			|| currentHandleSprite.getGlobalBounds().contains(mousePosWindowF))
 		{
-			this->state = "HOVERED";
-			this->axis[state].setTexture(this->axisTextures["HOVERED"]);
-			this->handle[state].setTexture(this->handleTextures["HOVERED"]);
+			m_state = "HOVERED";
+			currentAxisSprite.setTexture(m_axisTextures["HOVERED"]);
+			currentHandleSprite.setTexture(m_handleTextures["HOVERED"]);
 		}
 
 		return;
 	}
 
-	if (!this->axis[this->state].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow)) &&
-		!this->handle[this->state].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosWindow)))
+	if (!currentAxisSprite.getGlobalBounds().contains(mousePosWindowF)
+		&& !currentHandleSprite.getGlobalBounds().contains(mousePosWindowF))
 	{
-		this->state = "IDLE";
-		this->axis[this->state].setTexture(this->axisTextures["IDLE"]);
-		this->handle[this->state].setTexture(this->handleTextures["IDLE"]);
+		m_state = "IDLE";
+		currentAxisSprite.setTexture(m_axisTextures["IDLE"]);
+		currentHandleSprite.setTexture(m_handleTextures["IDLE"]);
 
 		return;
 	}
 
-	if (this->state == "HOVERED" && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (m_state == "HOVERED" && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
-		this->state = "PRESSED";
-		this->axis[this->state].setTexture(this->axisTextures["PRESSED"]);
-		this->handle[this->state].setTexture(this->handleTextures["PRESSED"]);
+		m_state = "PRESSED";
+		currentAxisSprite.setTexture(m_axisTextures["PRESSED"]);
+		currentHandleSprite.setTexture(m_handleTextures["PRESSED"]);
 	}
 
-	if (this->state == "PRESSED")
+	if (m_state == "PRESSED")
 	{
 		if (!sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
-			this->state = "HOVERED";
-			this->axis[this->state].setTexture(this->axisTextures["HOVERED"]);
-			this->handle[this->state].setTexture(this->handleTextures["HOVERED"]);
+			m_state = "HOVERED";
+			currentAxisSprite.setTexture(m_axisTextures["HOVERED"]);
+			currentHandleSprite.setTexture(m_handleTextures["HOVERED"]);
 		}
 		else
 		{
-			float left = this->axis["IDLE"].getGlobalBounds().left;
-			float right = left + this->axis["IDLE"].getGlobalBounds().width;
+			sf::FloatRect axisBounds = currentAxisSprite.getGlobalBounds();
+			sf::FloatRect handleBounds = currentHandleSprite.getGlobalBounds();
 
-			if (mousePosWindow.x >= left && mousePosWindow.x <= right)
-				for (auto& it : this->handle)
-					it.second.setPosition(
+			float leftBound = axisBounds.left;
+			float rightBound = axisBounds.left + axisBounds.width;
+
+			if (mousePosWindow.x >=  leftBound 
+				&& mousePosWindow.x <= rightBound)
+			{
+				float xPos = mousePosWindow.x + handleBounds.width / 2.0f;
+				float yPos = currentHandleSprite.getPosition().y;
+
+				for (auto& handleSprites : m_handleSprites)
+				{
+					handleSprites.second.setPosition(
 						sf::Vector2f(
-							mousePosWindow.x - this->handle[this->state].getGlobalBounds().width / 2.f,
-							this->handle[this->state].getPosition().y
+							xPos,
+							yPos
 						)
 					);
+				}
+			}
 		}
 	}
 
-	this->updateCurrentValue();
-	this->snapToEdges();
+	updateCurrentValue();
+	snapToEdges();
 }
 
-void Slider::render(sf::RenderTarget& target)
+void gui::Slider::render(sf::RenderTarget& target)
 {
-	target.draw(this->axis[this->state]);
-	target.draw(this->handle[this->state]);
+	target.draw(m_axisSprites[m_state]);
+	target.draw(m_handleSprites[m_state]);
 }
 
-// initialization:
-void Slider::initTextures(
-	const std::string& axis_idle_path, const std::string& handle_idle_path,
-	const std::string& axis_hover_path, const std::string& handle_hover_path,
-	const std::string& axis_pressed_path, const std::string& handle_pressed_path)
+// accessors:
+
+float gui::Slider::getCurrentValue() const
+{
+	return m_value;
+}
+
+const sf::Vector2f& gui::Slider::getPosition() const
+{
+	return m_axisSprites.at(m_state).getPosition();
+}
+
+// mutators:
+
+void gui::Slider::setValue(float value)
+{
+	if (value < m_range.first || value > m_range.second)
+	{
+		throw std::invalid_argument(
+			Blueberry::Formatter()
+			<< "Error::gui::Slider::setValue(float):: "
+			<< value
+			<< " doesn't belong to "
+			<< '<' << m_range.first << "; " << m_range.second << ">\n"
+		);
+	}
+
+	m_value = value;
+
+	sf::FloatRect axisBounds = m_axisSprites["IDLE"].getGlobalBounds();
+	sf::FloatRect handleBounds = m_handleSprites["IDLE"].getGlobalBounds();
+
+	// set x positions:
+	for (auto& handleSprite : m_handleSprites)
+	{
+		float rangeSize = m_range.second - m_range.first;
+		
+		float xPos = axisBounds.left;
+		float yPos = handleSprite.second.getPosition().y;
+		
+		xPos += inverseScaleFunction(value) / rangeSize * axisBounds.width;
+		xPos -= handleBounds.width / 2.f;
+
+		handleSprite.second.setPosition(
+			xPos,
+			yPos
+		);
+	}
+}
+
+void gui::Slider::setPosition(const sf::Vector2f& new_pos)
+{
+	for (auto& axisSprite : m_axisSprites)
+	{
+		axisSprite.second.setPosition(new_pos);
+	}
+
+	// set handle position 
+	// taking the current scale slider value into account:
+	setValue(m_value);
+}
+
+// private methods:
+
+void gui::Slider::initTextures(
+	const std::string& axisIdlePath, const std::string& handleIdlePath,
+	const std::string& axisHoverPath, const std::string& handleHoverPath,
+	const std::string& axisPressedPath, const std::string& handlePressedPath)
 {
 	// loading axis textures:
-	if (!this->axisTextures["IDLE"].loadFromFile(axis_idle_path) ||
-		!this->axisTextures["HOVERED"].loadFromFile(axis_hover_path) ||
-		!this->axisTextures["PRESSED"].loadFromFile(axis_pressed_path))
+	if (!m_axisTextures["IDLE"].loadFromFile(axisIdlePath) 
+		|| !m_axisTextures["HOVERED"].loadFromFile(axisHoverPath)
+		|| !m_axisTextures["PRESSED"].loadFromFile(axisPressedPath))
 	{
-		throw "ERROR::Slider::initTextures::CANNOT LOAD AN AXIS TEXTURE FROM A FILE";
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::gui::Slider::initTextures(\n"
+			<< "\tconst std::string&, const std::string&\n"
+			<< "\tconst std::string&, const std::string&\n"
+			<< "\tconst std::string&, const std::string&\n"
+			<< ")::cannot load an axis texture from a file\n"
+		);
 	}
 
 	// loading handle textures:
-	if (!this->handleTextures["IDLE"].loadFromFile(handle_idle_path) ||
-		!this->handleTextures["HOVERED"].loadFromFile(handle_hover_path) ||
-		!this->handleTextures["PRESSED"].loadFromFile(handle_pressed_path))
+	if (!m_handleTextures["IDLE"].loadFromFile(handleIdlePath) 
+		|| !m_handleTextures["HOVERED"].loadFromFile(handleHoverPath)
+		|| !m_handleTextures["PRESSED"].loadFromFile(handlePressedPath))
 	{
-		throw "ERROR::Slider::initTextres::CANNOT LOAD A HANDLE TEXTURE FROM A FILE";
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::gui::Slider::initTextures(\n"
+			<< "\tconst std::string&, const std::string&\n"
+			<< "\tconst std::string&, const std::string&\n"
+			<< "\tconst std::string&, const std::string&\n"
+			<< ")::cannot load a handle texture from a file\n"
+		);
 	}
 }
 
-void Slider::initSprites(const sf::Vector2f& position, float textures_scale)
+void gui::Slider::initSprites(
+	const sf::Vector2f& position, 
+	float texturesScale)
 {
-	// creating the axis:		
-	for (auto& it : this->axisTextures)
+	// creating axes:		
+	for (auto& axisTexture : m_axisTextures)
 	{
-		sf::Sprite temp;
-
-		temp.setTexture(it.second);
-		temp.setScale(textures_scale, textures_scale);
-		temp.setPosition(
-			position.x - temp.getGlobalBounds().width / 2.f,
-			position.y - temp.getGlobalBounds().height / 2.f
+		m_axisSprites[axisTexture.first].setTexture(axisTexture.second);
+		m_axisSprites[axisTexture.first].setScale(
+			texturesScale, 
+			texturesScale
 		);
 
-		this->axis[it.first] = temp;
+		const sf::Sprite& axisSprite = m_axisSprites[axisTexture.first];
+
+		m_axisSprites[axisTexture.first].setScale(
+			position.x - axisSprite.getGlobalBounds().width / 2.f,
+			position.y - axisSprite.getGlobalBounds().height / 2.f
+		);
 	}
 
-	// creating the handle:
-	for (auto& it : this->handleTextures)
+	// creating handles:
+	for (auto& handleTexture : m_handleTextures)
 	{
-		sf::Sprite temp;
+		sf::Sprite& axisSprite = m_axisSprites[handleTexture.first];
+		sf::Sprite& handleSprite = m_handleSprites[handleTexture.first];
 
-		temp.setTexture(it.second);
-		temp.setScale(textures_scale, textures_scale);
-		temp.scale(
+		const sf::FloatRect axisBounds = axisSprite.getGlobalBounds();
+		const sf::FloatRect handleBounds = handleSprite.getGlobalBounds();
+
+		handleSprite.setTexture(handleTexture.second);
+		handleSprite.setScale(texturesScale, texturesScale);
+
+		float scaleFactor = axisBounds.height / handleBounds.height;
+		
+		handleSprite.scale(
 			sf::Vector2f(
-				this->axis["IDLE"].getGlobalBounds().height / temp.getGlobalBounds().height,
-				this->axis["IDLE"].getGlobalBounds().height / temp.getGlobalBounds().height
+				scaleFactor,
+				scaleFactor
 			)
 		);
-		temp.setOrigin(0.f, 0.f);
+		handleSprite.setOrigin(0.f, 0.f);
 
 		// set position:
-		float left = this->axis["IDLE"].getGlobalBounds().left;
+		float axisLeftBound = axisBounds.left;
+		float axisWidth = axisBounds.width;
+		float handleWidth = handleBounds.width;
 
-		float posX = left + this->axis["IDLE"].getGlobalBounds().width / 2.f - temp.getGlobalBounds().width / 2.f;
-		float posY = this->axis["IDLE"].getGlobalBounds().top;
+		float posX = axisLeftBound + axisWidth / 2.f - handleWidth / 2.f;
+		float posY = axisBounds.top;
 
-		temp.setPosition(posX, posY);
-
-		this->handle[it.first] = temp;
+		handleSprite.setPosition(posX, posY);
 	}
 }
 
-float Slider::inverseScaleFunction(float y)
+float gui::Slider::inverseScaleFunction(float y)
 {
-	if (this->scaleFunction == "linear") return y;
+	if (m_scaleFunction == "linear") return y;
 
-	else if (this->scaleFunction == "quadratic") return sqrt(y);
+	else if (m_scaleFunction == "quadratic") return sqrt(y);
 
-	std::cerr << "ERROR::Slider::inverseScaleFunction::THERE IS NO: " << this->scaleFunction << " ACTIVATION FUNCTION\n";
-	exit(-1);
+	std::cerr
+		<< "Error::gui::Slider::inverseScaleFunction(float)::"
+		<< "there is no such activation function as "
+		<< m_scaleFunction << '\n';
+	assert(false);
 }
 
-float Slider::scaleFunctionValue(float x)
+float gui::Slider::scaleFunctionValue(float x)
 {
-	if (this->scaleFunction == "linear") return x;
+	if (m_scaleFunction == "linear") return x;
 
-	else if (this->scaleFunction == "quadratic") return pow(x, 2);
+	else if (m_scaleFunction == "quadratic") return pow(x, 2);
 
-	std::cerr << "ERROR::Slider::scaleFunctionValue::THERE IS NO: " << this->scaleFunction << " ACTIVATION FUNCTION\n";
-	exit(-1);
+	std::cerr
+		<< "Error::gui::Slider::scaleFunctionValue(float)::"
+		<< "there is no such activation function as "
+		<< m_scaleFunction << '\n';
+	assert(false);
 }
 
-// private utilities:
-void Slider::updateCurrentValue()
+void gui::Slider::updateCurrentValue()
 {
-	float x = this->handle[this->state].getPosition().x + this->handle[this->state].getGlobalBounds().width / 2.f;
+	const sf::Sprite& handleSprite = m_handleSprites[m_state];
+	const sf::FloatRect handleBounds = handleSprite.getGlobalBounds();
 
-	float left = this->axis["IDLE"].getGlobalBounds().left;
-	float right = left + this->axis["IDLE"].getGlobalBounds().width;
+	float x = handleSprite.getPosition().x + handleBounds.width / 2.f;
 
-	this->value = this->scaleFunctionValue(this->range.first + (this->range.second - this->range.first) * (x - left) / (right - left));
+	float left = m_axisSprites["IDLE"].getGlobalBounds().left;
+	float right = left + m_axisSprites["IDLE"].getGlobalBounds().width;
+
+	float rangeSize = m_range.second - m_range.first;
+
+	float funcVal = m_range.first;
+	funcVal =+ rangeSize * (x - left) / (right - left);
+
+	m_value = scaleFunctionValue(funcVal);
 }
 
-void Slider::snapToEdges()
+void gui::Slider::snapToEdges()
 {
-	if (this->value < this->notSnappingToEdgesRange.first) this->setValue(this->range.first);
+	if (m_value < m_notSnappingToEdgesRange.first)
+	{
+		setValue(m_range.first);
+	}
 
-	else if (this->value > this->notSnappingToEdgesRange.second) this->setValue(this->range.second);
+	else if (m_value > m_notSnappingToEdgesRange.second)
+	{
+		setValue(m_range.second);
+	}
 }

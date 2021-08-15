@@ -9,18 +9,30 @@ namespace gui
 	class Button
 	{
 	public:
-		// constructor:
 		Button(
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
-			const sf::Font& font, const std::string& text, unsigned char_size,
-			sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
-			sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
-			sf::Color text_idle_color, sf::Color text_hover_color, sf::Color text_pressed_color,
-			float outline_thickness = 1.0f, int id = 0
+			const sf::Font& font, 
+			const std::string& text, 
+			unsigned charSize,
+			sf::Color idleColor, 
+			sf::Color hoverColor, 
+			sf::Color pressedColor,
+			sf::Color outlineIdleColor, 
+			sf::Color outlineHoverColor, 
+			sf::Color outlinePressedColor,
+			sf::Color textIdleColor, 
+			sf::Color textHoverColor, 
+			sf::Color textPressedColor,
+			float outlineThickness = 1.0f, 
+			int id = 0
 		);
 
+		void update(const sf::Vector2i& mousePosWindow);
+		void render(sf::RenderTarget& target);
+
 		// accessors:
+
 		bool isClicked() const;
 
 		const std::string& getText() const;
@@ -32,6 +44,7 @@ namespace gui
 		const sf::Vector2f& getPosition() const;
 
 		// mutators:
+
 		void setText(const std::string& text);
 
 		void setId(int id);
@@ -42,29 +55,40 @@ namespace gui
 		
 		void setHovered();
 
-		void setPosition(const sf::Vector2f& new_pos);
-
-		// other public methods:
-		void update(const sf::Vector2i& mouse_pos_window);
-		void render(sf::RenderTarget& target);
+		void setPosition(const sf::Vector2f& newPos);
 
 	private:
-		bool clickBlockade;
+		void initRect(
+			const sf::Vector2f& position,
+			const sf::Vector2f& size,
+			float outlineThickness,
+			const sf::Color& outlineIdleColor,
+			const sf::Color& idleColor
+		);
+		void initText(const sf::Color& textIdleColor);
 
-		bool clicked;
+	private:
+		bool m_clickBlockade;
+		bool m_clicked;
 		
-		ButtonState state;
+		ButtonState m_state;
 		
-		unsigned short id;
+		unsigned short m_id;
 
-		sf::RectangleShape rect;
-
-		std::shared_ptr<sf::Font> font;
+		sf::RectangleShape m_rect;
 		
-		sf::Text text;
+		sf::Text m_text;
 
-		sf::Color idleColor, hoverColor, pressedColor;
-		sf::Color outlineIdleColor, outlineHoverColor, outlinePressedColor;
-		sf::Color textIdleColor, textHoverColor, textPressedColor;
+		sf::Color m_idleColor;
+		sf::Color m_hoverColor;
+		sf::Color m_pressedColor;
+
+		sf::Color m_outlineIdleColor;
+		sf::Color m_outlineHoverColor;
+		sf::Color m_outlinePressedColor;
+
+		sf::Color m_textIdleColor;
+		sf::Color m_textHoverColor;
+		sf::Color m_textPressedColor;
 	};
 }

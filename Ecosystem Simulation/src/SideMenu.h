@@ -8,89 +8,117 @@ namespace gui
 {
 	class SideMenu
 	{
+	private:
+		typedef std::unique_ptr<gui::ImageButton> ImgBtnUniquePtr;
+		typedef std::unique_ptr<gui::Button> BtnUniquePtr;
+		typedef std::unique_ptr<gui::Slider> SliderUniquePtr;
+		typedef std::pair<std::string, std::string> StringsPair;
+
+		typedef std::unordered_map<std::string, ImgBtnUniquePtr> ImgBtnsMap;
+		typedef std::unordered_map<std::string, BtnUniquePtr> BtnsMap;
+		typedef std::unordered_map<std::string, SliderUniquePtr> SlidersMap;
+
 	public:
 		SideMenu(
 			const sf::Vector2f& position, 
 			const sf::Vector2f& size,
-			const sf::Color& background_color
+			const sf::Color& backgroundColor
 		);
-
-		// public methods:
-		void update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events);
+		
+		void update(
+			const sf::Vector2i& mousePosWindow, 
+			const std::vector<sf::Event>& events
+		);
 		void render(sf::RenderTarget& target);
 		
 		// accessors:
-		const sf::Vector2f& getPosition() const;
 
+		const sf::Vector2f& getPosition() const;
 		const sf::Vector2f& getSize() const;
 
-		const std::unordered_map<std::string, std::unique_ptr<gui::ImageButton>>& getImageButtons() const;
-		const std::unordered_map<std::string, std::unique_ptr<gui::Button>>& getButtons() const;
-		const std::unordered_map<std::string, std::unique_ptr<gui::Slider>>& getSliders() const;
+		const ImgBtnsMap& getImageButtons() const;
+		const BtnsMap& getButtons() const;
+		const SlidersMap& getSliders() const;
 
 		bool hasImageButtonBeenClicked(const std::string& key);
 
 		const sf::RectangleShape& getBackground() const;
 			
 		// mutators:
-		void setPosition(const sf::Vector2f& new_pos);
+
+		void setPosition(const sf::Vector2f& newPos);
 
 		void addImageButton(
 			const std::string& key,
-			const std::vector<std::pair<std::string, std::string>>& textures_path_and_keys,
-			const std::string& key_of_default_texture,
+			const std::vector<StringsPair>& texturesPathAndKeys,
+			const std::string& keyOfDefaultTexture,
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
 			int id = 0
 		);
 
 		void setTextureOfImageButton(
-			const std::string& button_key,
-			const std::string& texture_key
+			const std::string& buttonKey,
+			const std::string& textureKey
 		);
 
 		void addButton(
 			const std::string& key,
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
-			int char_size, const sf::Font& font, const std::string& text,
-			sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
-			sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
-			sf::Color text_idle_color, sf::Color text_hover_color, sf::Color text_pressed_color,
-			float outline_thickness = 1.f, short unsigned id = 0
+			int charSize, 
+			const sf::Font& font, 
+			const std::string& text,
+			sf::Color idleColor, 
+			sf::Color hoverColor, 
+			sf::Color pressedColor,
+			sf::Color outlineIdleColor, 
+			sf::Color outlineHoverColor, 
+			sf::Color outlinePressedColor,
+			sf::Color textIdleColor, 
+			sf::Color textHoverColor, 
+			sf::Color textPressedColor,
+			float outlineThickness = 1.f, 
+			short unsigned id = 0
 		);
 
 		void addSlider(
 			const std::string& key,
 			const sf::Vector2f& position,
-			float textures_scale,
+			float texturesScale,
 			const std::pair<float, float>& range,
-			const std::pair<float, float>& not_snapping_to_edges_range,
-			float default_value,
-			const std::string& axis_idle_path, const std::string& handle_idle_path,
-			const std::string& axis_hover_path, const std::string& handle_hover_path,
-			const std::string& axis_pressed_path, const std::string& handle_pressed_path,
-			const std::string& scale_function = "linear"
+			const std::pair<float, float>& notSnappingToEdgesRange,
+			float defaultValue,
+			const std::string& axisIdlePath, 
+			const std::string& handleIdlePath,
+			const std::string& axisHoverPath, 
+			const std::string& handleHoverPath,
+			const std::string& axisPressedPath, 
+			const std::string& handlePressedPath,
+			const std::string& scaleFunction = "linear"
 		);
 
 		void addCenteredText(
-			float pos_y,
-			unsigned char_size,
+			float posY,
+			unsigned charSize,
 			const sf::Font& font,
 			const std::string& text,
 			sf::Color color
 		);
 
 	private:
-		sf::RectangleShape background;
+		void initBackground(
+			const sf::Vector2f& position,
+			const sf::Color& color
+		);
 
-		std::unordered_map<std::string, std::unique_ptr<gui::ImageButton>> textureButtons;
-		std::unordered_map<std::string, std::unique_ptr<gui::Button>> buttons;
-		std::unordered_map<std::string, std::unique_ptr<gui::Slider>> scaleSliders;
+	private:
+		sf::RectangleShape m_background;
 
-		std::vector<sf::Text> texts;
+		ImgBtnsMap m_textureButtons;
+		BtnsMap m_buttons;
+		SlidersMap m_sliders;
 
-		// initialization:
-		void initBackground(const sf::Vector2f& position, const sf::Vector2f& size, const sf::Color& color);
+		std::vector<sf::Text> m_texts;
 	};
 }

@@ -9,55 +9,57 @@ class StateData
 {
 public:
 	StateData()
+		: m_gfxSettings(nullptr)
+		, m_window(nullptr)
+		, m_supportedKeys(nullptr)
+		, m_states(nullptr)
+		, m_ecosystem(nullptr)
+		, m_events(nullptr)
 	{
-		this->gfxSettings = nullptr;
-		this->window = nullptr;
-		this->supportedKeys = nullptr;
-		this->states = nullptr;
-		this->ecosystem = nullptr;
-		this->events = nullptr;
+		
 	}
 
-	GraphicsSettings* gfxSettings;
-	sf::RenderWindow* window;
-	std::unordered_map<std::string, int>* supportedKeys;
-	std::stack<State*>* states;
-	Ecosystem* ecosystem;
-	std::vector<sf::Event>* events;
+	GraphicsSettings* m_gfxSettings;
+	sf::RenderWindow* m_window;
+	std::unordered_map<std::string, int>* m_supportedKeys;
+	std::stack<State*>* m_states;
+	Ecosystem* m_ecosystem;
+	std::vector<sf::Event>* m_events;
 };
 
 class State
 {
 public:
-	State(StateData* state_data);
+	State(StateData* stateData);
 	virtual ~State();
-
-	// public methods:
+	
 	virtual void update(float dt) = 0;
 	virtual void render(sf::RenderTarget* target = nullptr) = 0;
 
 	// accessors:
+
 	bool getQuit() const;
 
 	// mutators:
+	
 	void endState();
 
 	virtual void freeze();
 	
 protected:
-	StateData* stateData;
-
-	std::unordered_map<std::string, int> keybinds;
-
-	bool quit;
-
-	sf::Vector2i mousePosScreen;
-	sf::Vector2i mousePosWindow;
-	sf::Vector2f mousePosView;
-
-	// protected methods:
 	void updateMousePositions(const sf::View* view = nullptr);
-	
+
 	virtual void initKeybinds() = 0;
 	virtual void updateInput() = 0;
+
+protected:
+	StateData* m_stateData;
+
+	std::unordered_map<std::string, int> m_keybinds;
+
+	bool m_quit;
+
+	sf::Vector2i m_mousePosScreen;
+	sf::Vector2i m_mousePosWindow;
+	sf::Vector2f m_mousePosView;
 };

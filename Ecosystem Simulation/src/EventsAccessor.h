@@ -4,7 +4,7 @@ static class EventsAccessor
 {
 public:
 	static bool hasEventOccured(
-		const sf::Event::EventType& event_type,
+		const sf::Event::EventType& eventType,
 		const std::vector<sf::Event>& events
 	);
 };

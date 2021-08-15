@@ -1,202 +1,240 @@
 #include "pch.h"
 #include "Button.h"
 
-using namespace gui;
-
-// constructor:
-Button::Button(
+gui::Button::Button(
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
-	const sf::Font& font, const std::string& text, unsigned char_size,
-	sf::Color idle_color, sf::Color hover_color, sf::Color pressed_color,
-	sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_pressed_color,
-	sf::Color text_idle_color, sf::Color text_hover_color, sf::Color text_pressed_color,
-	float outline_thickness, int id)
+	const sf::Font& font, 
+	const std::string& text, 
+	unsigned charSize,
+	sf::Color idleColor, 
+	sf::Color hoverColor, 
+	sf::Color pressedColor,
+	sf::Color outlineIdleColor, 
+	sf::Color outlineHoverColor, 
+	sf::Color outlinePressedColor,
+	sf::Color textIdleColor, 
+	sf::Color textHoverColor, 
+	sf::Color textPressedColor,
+	float outlineThickness, 
+	int id)
+	: m_clickBlockade(false)
+	, m_clicked(false)
+	, m_state(ButtonState::BTN_IDLE)
+	, m_id(id)
+	, m_rect()
+	, m_text(text, font, charSize)
+	, m_idleColor(idleColor)
+	, m_hoverColor(hoverColor)
+	, m_pressedColor(pressedColor)
+	, m_outlineIdleColor(outlineIdleColor)
+	, m_outlineHoverColor(outlineHoverColor)
+	, m_outlinePressedColor(outlinePressedColor)
+	, m_textIdleColor(textIdleColor)
+	, m_textHoverColor(textHoverColor)
+	, m_textPressedColor(textPressedColor)
 {
-	this->clickBlockade = false;
-	this->clicked = false;
-	this->state = ButtonState::BTN_IDLE;
-	this->id = id;
-
-	this->rect.setPosition(
-		sf::Vector2f(
-			position.x + outline_thickness,
-			position.y + outline_thickness
-		)
-	);
-	this->rect.setSize(
-		sf::Vector2f(
-			size.x - 2.0f * outline_thickness,
-			size.y - 2.0f * outline_thickness
-		)
-	);
-	this->rect.setOutlineThickness(outline_thickness);
-	this->rect.setOutlineColor(outline_idle_color);
-	this->rect.setFillColor(idle_color);
-
-	this->text.setFont(font);
-	this->text.setString(text);
-	this->text.setCharacterSize(char_size);
-	this->text.setFillColor(text_idle_color);
-
-	// centering the input:
-	sf::FloatRect textRect = this->text.getLocalBounds();
-	this->text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-
-	this->text.setPosition(
-		sf::Vector2f(
-			this->rect.getPosition().x + this->rect.getSize().x / 2,
-			this->rect.getPosition().y + this->rect.getSize().y / 2
-		)
-	);
-
-	this->idleColor = idle_color;
-	this->hoverColor = hover_color;
-	this->pressedColor = pressed_color;
-
-	this->outlineIdleColor = outline_idle_color;
-	this->outlineHoverColor = outline_hover_color;
-	this->outlinePressedColor = outline_pressed_color;
-
-	this->textIdleColor = text_idle_color;
-	this->textHoverColor = text_hover_color;
-	this->textPressedColor = text_pressed_color;
+	initRect(position, size, outlineThickness, outlineIdleColor, idleColor);
+	initText(textIdleColor);
 }
 
-// accessors:
-bool Button::isClicked() const
+void gui::Button::update(const sf::Vector2i& mousePosWindow)
 {
-	return this->clicked;
-}
+	m_clicked = false;
 
-const std::string& Button::getText() const
-{
-	return this->text.getString();
-}
+	if (!sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		m_clickBlockade = false;
+	}
 
-int Button::getId() const
-{
-	return this->id;
-}
-
-ButtonState Button::getState() const
-{
-	return this->state;
-}
-
-const sf::Vector2f& Button::getPosition() const
-{
-	return this->rect.getPosition();
-}
-
-// mutators:
-void Button::setText(const std::string& text)
-{
-	this->text.setString(text);
-}
-
-void Button::setId(int id)
-{
-	this->id = id;
-}
-
-void Button::setClickBlockade(bool blockade)
-{
-	this->clickBlockade = blockade;
-}
-
-void Button::setIdle()
-{
-	this->state = ButtonState::BTN_IDLE;
-	this->rect.setFillColor(this->idleColor);
-	this->rect.setOutlineColor(this->outlineIdleColor);
-	this->text.setFillColor(this->textIdleColor);
-}
-
-void Button::setHovered()
-{
-	this->state = ButtonState::BTN_HOVERED;
-	this->rect.setFillColor(this->hoverColor);
-	this->rect.setOutlineColor(this->outlineHoverColor);
-	this->text.setFillColor(this->textHoverColor);
-}
-
-void Button::setPosition(const sf::Vector2f& new_pos)
-{
-	this->rect.setPosition(
-		sf::Vector2f(
-			new_pos.x + this->rect.getOutlineThickness(),
-			new_pos.y + this->rect.getOutlineThickness()
-		)
-	);
-
-	this->text.setPosition(
-		sf::Vector2f(
-			this->rect.getPosition().x + this->rect.getSize().x / 2,
-			this->rect.getPosition().y + this->rect.getSize().y / 2
-		)
-	);
-}
-
-// other public methods:
-void Button::update(const sf::Vector2i& mouse_pos_window)
-{
-	this->clicked = false;
-
-	if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) this->clickBlockade = false;
-
-	if (this->state == ButtonState::BTN_PRESSED)
+	if (m_state == ButtonState::BTN_PRESSED)
 	{
 		if (!sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
-			if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window)))
-				this->state = ButtonState::BTN_HOVERED;
-			else
-				this->state = ButtonState::BTN_IDLE;
-		}
-	}
-	else if (this->state == ButtonState::BTN_HOVERED)
-	{
-		if (!this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window)))
-			this->state = ButtonState::BTN_IDLE;
-		else
-		{
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !this->clickBlockade)
+			const sf::Vector2f v2f = static_cast<sf::Vector2f>(mousePosWindow);
+
+			if (m_rect.getGlobalBounds().contains(v2f))
 			{
-				this->clickBlockade = true;
-				this->state = ButtonState::BTN_PRESSED;
-				this->clicked = true;
+				m_state = ButtonState::BTN_HOVERED;
+			}
+			else
+			{
+				m_state = ButtonState::BTN_IDLE;
 			}
 		}
 	}
-	else if (this->state == ButtonState::BTN_IDLE)
+	else if (m_state == ButtonState::BTN_HOVERED)
 	{
-		if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window)))
-			this->state = ButtonState::BTN_HOVERED;
+		const sf::Vector2f v2f = static_cast<sf::Vector2f>(mousePosWindow);
+
+		if (!m_rect.getGlobalBounds().contains(v2f))
+		{
+			m_state = ButtonState::BTN_IDLE;
+		}
+		else
+		{
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left) 
+				&& !m_clickBlockade)
+			{
+				m_clickBlockade = true;
+				m_state = ButtonState::BTN_PRESSED;
+				m_clicked = true;
+			}
+		}
+	}
+	else if (m_state == ButtonState::BTN_IDLE)
+	{
+		const sf::Vector2f v2f = static_cast<sf::Vector2f>(mousePosWindow);
+
+		if (m_rect.getGlobalBounds().contains(v2f))
+		{
+			m_state = ButtonState::BTN_HOVERED;
+		}
 	}
 
-	if (this->state == ButtonState::BTN_PRESSED)
+	if (m_state == ButtonState::BTN_PRESSED)
 	{
-		this->rect.setFillColor(this->pressedColor);
-		this->rect.setOutlineColor(this->outlinePressedColor);
-		this->text.setFillColor(this->textPressedColor);
+		m_rect.setFillColor(m_pressedColor);
+		m_rect.setOutlineColor(m_outlinePressedColor);
+		m_text.setFillColor(m_textPressedColor);
 	}
-	else if (this->state == ButtonState::BTN_HOVERED)
+	else if (m_state == ButtonState::BTN_HOVERED)
 	{
-		this->rect.setFillColor(this->hoverColor);
-		this->rect.setOutlineColor(this->outlineHoverColor);
-		this->text.setFillColor(this->textHoverColor);
+		m_rect.setFillColor(m_hoverColor);
+		m_rect.setOutlineColor(m_outlineHoverColor);
+		m_text.setFillColor(m_textHoverColor);
 	}
-	else if (this->state == ButtonState::BTN_IDLE)
+	else if (m_state == ButtonState::BTN_IDLE)
 	{
-		this->rect.setFillColor(this->idleColor);
-		this->rect.setOutlineColor(this->outlineIdleColor);
-		this->text.setFillColor(this->textIdleColor);
+		m_rect.setFillColor(m_idleColor);
+		m_rect.setOutlineColor(m_outlineIdleColor);
+		m_text.setFillColor(m_textIdleColor);
 	}
 }
 
-void Button::render(sf::RenderTarget& target)
+void gui::Button::render(sf::RenderTarget& target)
 {
-	target.draw(this->rect);
-	target.draw(this->text);
+	target.draw(m_rect);
+	target.draw(m_text);
+}
+
+// accessors:
+
+bool gui::Button::isClicked() const
+{
+	return m_clicked;
+}
+
+const std::string& gui::Button::getText() const
+{
+	return m_text.getString();
+}
+
+int gui::Button::getId() const
+{
+	return m_id;
+}
+
+gui::ButtonState gui::Button::getState() const
+{
+	return m_state;
+}
+
+const sf::Vector2f& gui::Button::getPosition() const
+{
+	return m_rect.getPosition();
+}
+
+// mutators:
+
+void gui::Button::setText(const std::string& text)
+{
+	m_text.setString(text);
+}
+
+void gui::Button::setId(int id)
+{
+	m_id = id;
+}
+
+void gui::Button::setClickBlockade(bool blockade)
+{
+	m_clickBlockade = blockade;
+}
+
+void gui::Button::setIdle()
+{
+	m_state = ButtonState::BTN_IDLE;
+	m_rect.setFillColor(m_idleColor);
+	m_rect.setOutlineColor(m_outlineIdleColor);
+	m_text.setFillColor(m_textIdleColor);
+}
+
+void gui::Button::setHovered()
+{
+	m_state = ButtonState::BTN_HOVERED;
+	m_rect.setFillColor(m_hoverColor);
+	m_rect.setOutlineColor(m_outlineHoverColor);
+	m_text.setFillColor(m_textHoverColor);
+}
+
+void gui::Button::setPosition(const sf::Vector2f& newPos)
+{
+	m_rect.setPosition(
+		sf::Vector2f(
+			newPos.x + m_rect.getOutlineThickness(),
+			newPos.y + m_rect.getOutlineThickness()
+		)
+	);
+
+	m_text.setPosition(
+		sf::Vector2f(
+			m_rect.getPosition().x + m_rect.getSize().x / 2,
+			m_rect.getPosition().y + m_rect.getSize().y / 2
+		)
+	);
+}
+
+// private methods:
+
+void gui::Button::initRect(
+	const sf::Vector2f& position, 
+	const sf::Vector2f& size, 
+	float outlineThickness,
+	const sf::Color& outlineIdleColor,
+	const sf::Color& idleColor)
+{
+	m_rect.setPosition(
+		sf::Vector2f(
+			position.x + outlineThickness,
+			position.y + outlineThickness
+		)
+	);
+	m_rect.setSize(
+		sf::Vector2f(
+			size.x - 2.0f * outlineThickness,
+			size.y - 2.0f * outlineThickness
+		)
+	);
+	m_rect.setOutlineThickness(outlineThickness);
+	m_rect.setOutlineColor(outlineIdleColor);
+	m_rect.setFillColor(idleColor);
+}
+
+void gui::Button::initText(const sf::Color& textIdleColor)
+{
+	m_text.setFillColor(textIdleColor);
+
+	sf::FloatRect textRect = m_text.getLocalBounds();
+	m_text.setOrigin(
+		textRect.left + textRect.width / 2.0f, 
+		textRect.top + textRect.height / 2.0f
+	);
+
+	m_text.setPosition(
+		sf::Vector2f(
+			m_rect.getPosition().x + m_rect.getSize().x / 2,
+			m_rect.getPosition().y + m_rect.getSize().y / 2
+		)
+	);
 }

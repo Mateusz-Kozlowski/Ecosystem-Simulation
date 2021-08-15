@@ -6,154 +6,184 @@ Fruit::Fruit(
 	const sf::Vector2f& position,
 	float radius,
 	const sf::Color& color)
-	: energy(energy)
+	: m_energy(energy)
+	, m_shape()
 {
-	this->initShape(position, radius, color);
+	initShape(position, radius, color);
 }
 
-Fruit::Fruit(const std::string& file_path)
+Fruit::Fruit(const char* filePath)
+	: m_energy(0.0f)
+	, m_shape()
 {
-	this->loadFromFile(file_path);
+	loadFromFile(filePath);
 }
 
-// public methods:
-void Fruit::saveToFile(const std::string& file_path) const
+void Fruit::saveToFile(const char* filePath) const
 {
-	std::ofstream ofs(file_path);
+	std::filesystem::path dirPath = std::filesystem::path(filePath).remove_filename();
+	
+	if (!dirPath.empty())
+	{
+		std::filesystem::create_directories(dirPath);
+	}
+
+	std::ofstream ofs(filePath);
 
 	if (!ofs.is_open())
 	{
-		std::cerr << "ERROR::Fruit::saveToFile::CANNOT OPEN: " << file_path << '\n';
-		exit(-1);
+		std::cerr 
+			<< "Error::Fruit::saveToFile(const char*) const::"
+			<< "cannot open: " 
+			<< filePath 
+			<< '\n';
+		assert(false);
+		return;
 	}
 
-	ofs << this->energy << '\n';
-	ofs << this->shape.getPosition().x << ' ' << this->shape.getPosition().y << '\n';
-	ofs << this->shape.getRadius() << '\n';
-	ofs << static_cast<int>(this->shape.getFillColor().r) << ' ';
-	ofs << static_cast<int>(this->shape.getFillColor().g) << ' ';
-	ofs << static_cast<int>(this->shape.getFillColor().b) << ' ';
-	ofs << static_cast<int>(this->shape.getFillColor().a);
+	ofs << m_energy << '\n';
+	ofs << m_shape.getPosition().x << ' ' << m_shape.getPosition().y << '\n';
+	ofs << m_shape.getRadius() << '\n';
+	ofs << static_cast<int>(m_shape.getFillColor().r) << ' ';
+	ofs << static_cast<int>(m_shape.getFillColor().g) << ' ';
+	ofs << static_cast<int>(m_shape.getFillColor().b) << ' ';
+	ofs << static_cast<int>(m_shape.getFillColor().a);
 
 	ofs.close();
 }
 
-void Fruit::loadFromFile(const std::string& file_path)
+void Fruit::loadFromFile(const char* filePath)
 {
-	std::ifstream ifs(file_path);
+	std::ifstream ifs(filePath);
 
 	if (!ifs.is_open())
 	{
-		std::cerr << "ERROR::Fruit::saveToFile::CANNOT OPEN: " << file_path << '\n';
-		exit(-1);
+		std::cerr
+			<< "Error::Fruit::saveToFile(const char*)::"
+			<< "cannot open: "
+			<< filePath
+			<< '\n';
+		assert(false);
+		return;
 	}
 
 	sf::Vector2f position;
 	float radius;
 	unsigned red, green, blue, alfa;
 
-	ifs >> this->energy;
+	ifs >> m_energy;
 	ifs >> position.x >> position.y;
 	ifs >> radius;
 	ifs >> red >> green >> blue >> alfa;
 
-	this->initShape(position, radius, sf::Color(red, green, blue, alfa));
+	initShape(position, radius, sf::Color(red, green, blue, alfa));
 
 	ifs.close();
 }
 
 void Fruit::render(sf::RenderTarget& target) const
 {
-	target.draw(this->shape);
+	target.draw(m_shape);
 }
 
-bool Fruit::isCoveredByMouse(const sf::Vector2f& mouse_pos_view) const
+bool Fruit::isCoveredByMouse(const sf::Vector2f& mousePosView) const
 {
-	float x = this->shape.getPosition().x - mouse_pos_view.x;
-	float y = this->shape.getPosition().y - mouse_pos_view.y;
+	float x = m_shape.getPosition().x - mousePosView.x;
+	float y = m_shape.getPosition().y - mousePosView.y;
 
 	float distance = sqrt(pow(x, 2) + pow(y, 2));
 
-	return this->getRadius() >= distance;
+	return getRadius() >= distance;
 }
 
 // accessors:
+
 const sf::Vector2f& Fruit::getPosition() const
 {
-	return this->shape.getPosition();
+	return m_shape.getPosition();
 }
 
 float Fruit::getRadius() const
 {
-	return this->shape.getRadius();
+	return m_shape.getRadius();
 }
 
 float Fruit::getEnergy() const
 {
-	return this->energy;
+	return m_energy;
 }
 
 const sf::Color& Fruit::getColor() const
 {
-	return this->shape.getFillColor();
+	return m_shape.getFillColor();
 }
 
 // mutators:
+
 void Fruit::setPosition(float x, float y)
 {
-	this->shape.setPosition(x, y);
+	m_shape.setPosition(x, y);
 }
 
-void Fruit::setPosition(const sf::Vector2f& new_position)
+void Fruit::setPosition(const sf::Vector2f& newPosition)
 {
-	this->shape.setPosition(new_position);
+	m_shape.setPosition(newPosition);
 }
 
-void Fruit::setRandomPosition(const sf::Vector2f& world_size, float borders_thickness)
+void Fruit::setRandomPosition(
+	const sf::Vector2f& worldSize, 
+	float bordersThickness)
 {
 	std::pair<unsigned, unsigned> rangeX = {
-		borders_thickness + this->shape.getRadius(),
-		world_size.x - borders_thickness - this->shape.getRadius()
+		bordersThickness + m_shape.getRadius(),
+		worldSize.x - bordersThickness - m_shape.getRadius()
 	};
-	
 	std::pair<unsigned, unsigned> rangeY = {
-		borders_thickness + this->shape.getRadius(),
-		world_size.y - borders_thickness - this->shape.getRadius()
+		bordersThickness + m_shape.getRadius(),
+		worldSize.y - bordersThickness - m_shape.getRadius()
 	};
 
-	float x = Blueberry::RandomEngine::getScalarInRange(rangeX.first, rangeX.second);
-	float y = Blueberry::RandomEngine::getScalarInRange(rangeY.first, rangeY.second);
+	float x = Blueberry::RandomEngine::getScalarInRange(
+		rangeX.first, 
+		rangeX.second
+	);
+	float y = Blueberry::RandomEngine::getScalarInRange(
+		rangeY.first, 
+		rangeY.second
+	);
 
-	this->shape.setPosition(x, y);
+	m_shape.setPosition(x, y);
 }
 
 void Fruit::setRadius(float radius)
 {
-	this->shape.setRadius(radius);
+	m_shape.setRadius(radius);
 }
 
 void Fruit::setEnergy(float energy)
 {
-	this->energy = energy;
+	m_energy = energy;
 }
 
 void Fruit::increaseEnergy(float increase)
 {
-	this->energy += increase;
+	m_energy += increase;
 }
 
 void Fruit::setColor(const sf::Color& color)
 {
-	this->shape.setFillColor(color);
+	m_shape.setFillColor(color);
 }
 
 // private methods:
 
-// initialization:
-void Fruit::initShape(const sf::Vector2f& position, float radius, const sf::Color& color)
+void Fruit::initShape(
+	const sf::Vector2f& position, 
+	float radius, 
+	const sf::Color& color)
 {
-	this->shape.setPosition(position);
-	this->shape.setRadius(radius);
-	this->shape.setOrigin(radius, radius);
-	this->shape.setFillColor(color);
+	m_shape.setPosition(position);
+	m_shape.setRadius(radius);
+	m_shape.setOrigin(radius, radius);
+	m_shape.setFillColor(color);
 }

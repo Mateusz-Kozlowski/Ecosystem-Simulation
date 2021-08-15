@@ -1,117 +1,150 @@
 #include "pch.h"
 #include "ImageButton.h"
 
-using namespace gui;
-
-ImageButton::ImageButton(
-	const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths,
-	const std::string& key_of_default_texture,
+gui::ImageButton::ImageButton(
+	const std::vector<StringsPair>& texturesKeysAndPaths,
+	const std::string& keyOfDefaultTexture,
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
 	int id)
-	: id(id), hasBeenClickedSinceLastFrame(false), hovered(false), currentTextureKey(key_of_default_texture)
+	: m_textures()
+	, m_sprite()
+	, m_id(id)
+	, m_hasBeenClickedSinceLastFrame(false)
+	, m_pressed(false)
+	, m_hovered(false)
+	, m_currentTextureKey(keyOfDefaultTexture)
 {
-	this->initTextures(textures_keys_and_paths);
-	this->initSprite(key_of_default_texture, position, size);
+	initTextures(texturesKeysAndPaths);
+	initSprite(keyOfDefaultTexture, position, size);
 }
 
-// accessors:
-bool ImageButton::hasBeenClicked() const
+void gui::ImageButton::update(
+	const sf::Vector2i& mousePosWindow, 
+	const std::vector<sf::Event>& events)
 {
-	return this->hasBeenClickedSinceLastFrame;
-}
-
-bool ImageButton::isPressed() const
-{
-	return this->pressed;
-}
-
-bool ImageButton::isHovered() const
-{
-	return this->hovered;
-}
-
-const std::string& ImageButton::getCurrentTextureKey() const
-{
-	return this->currentTextureKey;
-}
-
-const sf::Vector2f& ImageButton::getPosition() const
-{
-	return this->sprite.getPosition();
-}
-
-const sf::Vector2f& ImageButton::getSize() const
-{
-	return sf::Vector2f(this->sprite.getLocalBounds().width, this->sprite.getLocalBounds().height);
-}
-
-// mutators:
-void ImageButton::setTexture(const std::string& key)
-{
-	this->sprite.setTexture(this->textures[key]);
-
-	this->currentTextureKey = key;
-}
-
-void ImageButton::setPosition(const sf::Vector2f& new_pos)
-{
-	this->sprite.setPosition(new_pos);
-}
-
-// other public methods:
-void ImageButton::update(const sf::Vector2i& mouse_pos_window, const std::vector<sf::Event>& events)
-{
-	this->hasBeenClickedSinceLastFrame = false;
-	this->pressed = false;
-	this->hovered = false;
+	m_hasBeenClickedSinceLastFrame = false;
+	m_pressed = false;
+	m_hovered = false;
 
 	// temporary variables:
-	float posX = this->sprite.getPosition().x;
-	float posY = this->sprite.getPosition().y;
+	float posX = m_sprite.getPosition().x;
+	float posY = m_sprite.getPosition().y;
 
-	if (posX < mouse_pos_window.x && mouse_pos_window.x < posX + this->sprite.getGlobalBounds().width)
+	if (posX < mousePosWindow.x 
+		&& mousePosWindow.x < posX + m_sprite.getGlobalBounds().width)
 	{
-		if (posY < mouse_pos_window.y && mouse_pos_window.y < posY + this->sprite.getGlobalBounds().height)
+		if (posY < mousePosWindow.y 
+			&& mousePosWindow.y < posY + m_sprite.getGlobalBounds().height)
 		{
-			this->hovered = true;
+			m_hovered = true;
 
 			// check if has been clicked:
-			if (EventsAccessor::hasEventOccured(sf::Event::MouseButtonPressed, events))
-				this->hasBeenClickedSinceLastFrame = true;
+
+			bool hasEventOccured = EventsAccessor::hasEventOccured(
+				sf::Event::MouseButtonPressed,
+				events
+			);
+
+			if (hasEventOccured)
+			{
+				m_hasBeenClickedSinceLastFrame = true;
+			}
 
 			// check if a button is pressed:
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) this->pressed = true;
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				m_pressed = true;
+			}
 		}
 	}
 }
 
-void ImageButton::render(sf::RenderTarget& target) const
+void gui::ImageButton::render(sf::RenderTarget& target) const
 {
-	target.draw(this->sprite);
+	target.draw(m_sprite);
+}
+
+// accessors:
+
+bool gui::ImageButton::hasBeenClicked() const
+{
+	return m_hasBeenClickedSinceLastFrame;
+}
+
+bool gui::ImageButton::isPressed() const
+{
+	return m_pressed;
+}
+
+bool gui::ImageButton::isHovered() const
+{
+	return m_hovered;
+}
+
+const std::string& gui::ImageButton::getCurrentTextureKey() const
+{
+	return m_currentTextureKey;
+}
+
+const sf::Vector2f& gui::ImageButton::getPosition() const
+{
+	return m_sprite.getPosition();
+}
+
+const sf::Vector2f& gui::ImageButton::getSize() const
+{
+	return sf::Vector2f(
+		m_sprite.getLocalBounds().width, 
+		m_sprite.getLocalBounds().height
+	);
+}
+
+// mutators:
+
+void gui::ImageButton::setTexture(const std::string& key)
+{
+	m_sprite.setTexture(m_textures[key]);
+
+	m_currentTextureKey = key;
+}
+
+void gui::ImageButton::setPosition(const sf::Vector2f& newPos)
+{
+	m_sprite.setPosition(newPos);
 }
 
 // private methods:
-// initialization:
-void ImageButton::initTextures(const std::vector<std::pair<std::string, std::string>>& textures_keys_and_paths)
+
+void gui::ImageButton::initTextures(
+	const std::vector<StringsPair>& texturesKeysAndPaths)
 {
-	for (const auto& it : textures_keys_and_paths)
+	for (const auto& it : texturesKeysAndPaths)
 	{
-		if (!this->textures[it.first].loadFromFile(it.second))
-			throw("ERROR::TEXTUREBUTTON::CANNOT LOAD FROM FILE: " + it.second);
+		if (!m_textures[it.first].loadFromFile(it.second))
+		{
+			throw std::runtime_error(
+				Blueberry::Formatter()
+				<< "Error::gui::ImageButton::initTextures"
+				<< "(const std::vector<std::pair<std::string, std::string>>&::"
+				<< "cannot load the following texture: "
+				<< it.second
+				<< '\n'
+			);
+		}
 	}
 }
 
-void ImageButton::initSprite(
-	const std::string& key_of_default_texture,
+void gui::ImageButton::initSprite(
+	const std::string& keyOfDefaultTexture,
 	const sf::Vector2f& position,
 	const sf::Vector2f& size)
 {
-	this->sprite.setTexture(this->textures[key_of_default_texture]);
-	this->sprite.setPosition(position.x, position.y);
+	m_sprite.setTexture(m_textures[keyOfDefaultTexture]);
+	m_sprite.setPosition(position.x, position.y);
 
-	this->sprite.setScale(
-		size.x / this->sprite.getGlobalBounds().width,
-		size.y / this->sprite.getGlobalBounds().height
+	m_sprite.setScale(
+		size.x / m_sprite.getGlobalBounds().width,
+		size.y / m_sprite.getGlobalBounds().height
 	);
 }

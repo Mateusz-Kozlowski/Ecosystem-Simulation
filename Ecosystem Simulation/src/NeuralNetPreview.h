@@ -9,7 +9,7 @@ namespace gui
 			const Blueberry::Brain& brain,
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
-			const sf::Color& background_color
+			const sf::Color& backgroundColor
 		);
 		
 		void update();
@@ -35,9 +35,8 @@ namespace gui
 
 	private:
 		void initBackground(
-			const sf::Vector2f& preview_pos, 
-			const sf::Vector2f& size, 
-			const sf::Color& background_color
+			const sf::Vector2f& previewPos,
+			const sf::Color& backgroundColor
 		);
 		void initNeurons();
 		void initNeuronsVector();
@@ -46,7 +45,10 @@ namespace gui
 		
 		void setNeuronsPositions();
 
-		sf::Vector2f calcNeuronPosition(unsigned index1, unsigned index2) const;
+		sf::Vector2f calcNeuronPosition(
+			unsigned index1, 
+			unsigned index2
+		) const;
 
 		float calcTopMargin(unsigned index1) const;
 		float calcGapBetweenLayers() const;
@@ -61,8 +63,8 @@ namespace gui
 		void setHiddenNeuronsColors();
 		void setOutputNeuronsColors();
 
-		Blueberry::Scalar getTheBiggestActivatedValue(unsigned layer_index);
-		Blueberry::Scalar getTheSmallestActivatedValue(unsigned layer_index);
+		Blueberry::Scalar getTheBiggestActivatedValue(unsigned layerIndex);
+		Blueberry::Scalar getTheSmallestActivatedValue(unsigned layerIndex);
 
 		void setSynapsesPositions();
 		void setSynapsesColors();
@@ -76,13 +78,15 @@ namespace gui
 		void renderSynapses(sf::RenderTarget& target) const;
 
 	private:
+		typedef std::vector<sf::Vertex> VertexVect;
+		
 		// there are some errors in constructor while using here a reference:
-		const Blueberry::Brain* brain;
+		const Blueberry::Brain* m_brain;
 
-		sf::RectangleShape background;
+		sf::RectangleShape m_background;
 
-		std::vector<std::vector<sf::CircleShape>> neurons;
+		std::vector<std::vector<sf::CircleShape>> m_neurons;
 
-		std::vector<std::vector<std::vector<std::vector<sf::Vertex>>>> synapses;
+		std::vector<std::vector<std::vector<VertexVect>>> m_synapses;
 	};
 }

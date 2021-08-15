@@ -1,296 +1,351 @@
 #include "pch.h"
 #include "TextBox.h"
 
-using namespace gui;
-
-TextBox::TextBox(
+gui::TextBox::TextBox(
     const sf::Vector2f& position,
     const sf::Vector2f& size,
-    const sf::Font& font, const std::string& default_str, float char_size,
-    const sf::Color& idle_color, const sf::Color& hovered_color, const sf::Color& pressed_color,
-    const sf::Color& outline_idle_color, const sf::Color& outline_hovered_color, const sf::Color& outline_pressed_color,
-    const sf::Color& text_idle_color, const sf::Color& text_hovered_color, const sf::Color& text_pressed_color,
-    float outline_thickness, float cursor_width, float cursor_frequency,
-    bool turned_on, int id)
-    : font(font), charSize(char_size), input(default_str),
-      stopwatch(0.f), cursorFrequency(cursor_frequency), cursorIsRendered(false),
-      turnedOnBlockade(false), turnedOn(turned_on), m_HasBeenTurnedOn(false), id(id),
-      state("IDLE"),
-      textHasChanged(false), stateHasChanged(false)
+    const sf::Font& font, 
+    const std::string& defaultStr, 
+    float charSize,
+    const sf::Color& idleColor, 
+    const sf::Color& hoveredColor,
+    const sf::Color& pressedColor,
+    const sf::Color& outlineIdleColor, 
+    const sf::Color& outlineHoveredColor, 
+    const sf::Color& outlinePressedColor,
+    const sf::Color& textIdleColor, 
+    const sf::Color& textHoveredColor, 
+    const sf::Color& textPressedColor,
+    float outlineThickness, 
+    float cursorWidth, 
+    float cursorFrequency,
+    bool turnedOn, 
+    int id)
+    : m_rect()
+    , m_text(defaultStr, font, charSize)
+    , m_input(defaultStr)
+    , m_cursor(sf::Vector2f(cursorWidth, charSize))
+    , m_stopwatch(0.0f)
+    , m_cursorFrequency(cursorFrequency)
+    , m_cursorIsRendered(false)
+    , m_colors()
+    , m_turnedOnBlockade(false)
+    , m_turnedOn(turnedOn)
+    , m_hasBeenTurnedOn(false)
+    , m_id(id)
+    , m_state("IDLE")
+    , m_textHasChanged(false)
+    , m_stateHasChanged(false)
 {
-    this->initRect(position, size, idle_color, outline_idle_color, outline_thickness);
-    this->initText(default_str, char_size, text_idle_color);
-    this->initCursor(cursor_width, text_idle_color);
-    this->initColors(idle_color, hovered_color, pressed_color,
-        outline_idle_color, outline_hovered_color, outline_pressed_color,
-        text_idle_color, text_hovered_color, text_pressed_color
+    initRect(position, size, idleColor, outlineIdleColor, outlineThickness);
+    initText(textIdleColor);
+    initCursor(textIdleColor);
+    initColors(
+        idleColor, hoveredColor, pressedColor,
+        outlineIdleColor, outlineHoveredColor, outlinePressedColor,
+        textIdleColor, textHoveredColor, textPressedColor
     );
 }
 
-// public methods:
-void TextBox::update(
+void gui::TextBox::update(
     float dt,
     const std::vector<sf::Event>& events,
-    const sf::Vector2i& mouse_pos_window)
+    const sf::Vector2i& mousePosWindow)
 {
-    this->updateState(events, mouse_pos_window);
+    updateState(events, mousePosWindow);
 
-    if (this->stateHasChanged)
-        this->updateColors();
-
-    if (!this->turnedOn)
-        return;
-
-    this->handleTextEntering(events);
-
-    if (this->textHasChanged)
+    if (m_stateHasChanged)
     {
-        this->updateTextPosition();
-        this->updateCursorPosition();
+        updateColors();
     }
 
-    this->updateCursorVisibility(dt);
+    if (!m_turnedOn) return;
+
+    handleTextEntering(events);
+
+    if (m_textHasChanged)
+    {
+        updateTextPosition();
+        updateCursorPosition();
+    }
+
+    updateCursorVisibility(dt);
 }
 
-void TextBox::render(sf::RenderTarget& target)
+void gui::TextBox::render(sf::RenderTarget& target)
 {
-    target.draw(this->rect);
-    target.draw(this->text);
+    target.draw(m_rect);
+    target.draw(m_text);
 
-    if (this->cursorIsRendered)
-        target.draw(this->cursor);
+    if (m_cursorIsRendered)
+    {
+        target.draw(m_cursor);
+    }
 }
 
 // accessors:
-int TextBox::getId() const
+
+int gui::TextBox::getId() const
 {
-    return this->id;
+    return m_id;
 }
 
-const std::string& TextBox::getInput() const
+const std::string& gui::TextBox::getInput() const
 {
-    return this->input;
+    return m_input;
 }
 
-bool TextBox::isTurnedOn() const
+bool gui::TextBox::isTurnedOn() const
 {
-    return this->turnedOn;
+    return m_turnedOn;
 }
 
-bool TextBox::hasBeenTurnedOn() const
+bool gui::TextBox::hasBeenTurnedOn() const
 {
-    return this->m_HasBeenTurnedOn;
+    return m_hasBeenTurnedOn;
 }
 
 // mutators:
-void TextBox::turnOn()
+
+void gui::TextBox::turnOn()
 {
-    this->turnedOn = true;
+    m_turnedOn = true;
 }
 
-void TextBox::turnOff()
+void gui::TextBox::turnOff()
 {
-    this->turnedOn = false;
+    m_turnedOn = false;
 
-    this->cursor.setFillColor(sf::Color::Transparent);
+    m_cursor.setFillColor(sf::Color::Transparent);
 }
 
-void TextBox::setString(const std::string& string)
+void gui::TextBox::setString(const std::string& string)
 {
-    this->text.setString(string);
-    this->updateTextPosition();
-    this->updateCursorPosition();
-    this->input = string;
+    m_text.setString(string);
+    updateTextPosition();
+    updateCursorPosition();
+    m_input = string;
 }
 
 // private methods:
 
-// initialization:
-void TextBox::initRect(
+void gui::TextBox::initRect(
     const sf::Vector2f& position,
     const sf::Vector2f& size,
-    const sf::Color& idle_color,
-    const sf::Color& outline_idle_color,
-    float outline_thickness)
+    const sf::Color& idleColor,
+    const sf::Color& outlineIdleColor,
+    float outlineThickness)
 {
-    this->rect.setPosition(
+    m_rect.setPosition(
         sf::Vector2f(
-            position.x + outline_thickness,
-            position.y + outline_thickness
+            position.x + outlineThickness,
+            position.y + outlineThickness
         )
     );
-    this->rect.setSize(
+    m_rect.setSize(
         sf::Vector2f(
-            size.x - 2.0f * outline_thickness,
-            size.y - 2.0f * outline_thickness
+            size.x - 2.0f * outlineThickness,
+            size.y - 2.0f * outlineThickness
         )
     );
-    this->rect.setFillColor(idle_color);
+    m_rect.setFillColor(idleColor);
 
-    this->rect.setOutlineThickness(outline_thickness);
-    this->rect.setOutlineColor(outline_idle_color);
+    m_rect.setOutlineThickness(outlineThickness);
+    m_rect.setOutlineColor(outlineIdleColor);
 }
 
-void TextBox::initText(
-    const std::string& default_str,
-    unsigned char_size,
-    const sf::Color& text_idle_color)
+void gui::TextBox::initText(const sf::Color& textIdleColor)
 {
-    this->text.setString(default_str);
-    this->text.setCharacterSize(char_size);
-    this->text.setFillColor(text_idle_color);
-    this->text.setFont(font);
-    this->text.setOrigin(
-        this->text.getGlobalBounds().width / 2.f,
-        this->text.getLocalBounds().top + this->text.getLocalBounds().height / 2.f
-    );
-    this->text.setPosition(
-        this->rect.getGlobalBounds().left + this->rect.getGlobalBounds().width / 2.f,
-        this->rect.getGlobalBounds().top + this->rect.getGlobalBounds().height / 2.f
-    );
-}
+    m_text.setFillColor(textIdleColor);
 
-void TextBox::initCursor(float cursor_width, const sf::Color& text_idle_color)
-{
-    this->cursor.setOrigin(0.f, this->charSize / 2.f);
-    this->cursor.setSize(sf::Vector2f(cursor_width, charSize));
-    this->cursor.setFillColor(text_idle_color);
-    this->cursor.setPosition(
-        this->text.getGlobalBounds().left + this->text.getGlobalBounds().width + this->cursor.getSize().x,
-        this->rect.getGlobalBounds().top + this->rect.getGlobalBounds().height / 2.f
+    sf::FloatRect textGlobalBounds = m_text.getGlobalBounds();
+    sf::FloatRect textLocalBounds = m_text.getLocalBounds();
+
+    m_text.setOrigin(
+        textGlobalBounds.width / 2.f,
+        textLocalBounds.top + textLocalBounds.height / 2.f
+    );
+
+    sf::FloatRect rectGlobalBounds = m_rect.getGlobalBounds();
+
+    m_text.setPosition(
+        rectGlobalBounds.left + rectGlobalBounds.width / 2.f,
+        rectGlobalBounds.top +  rectGlobalBounds.height / 2.f
     );
 }
 
-void TextBox::initColors(
-    const sf::Color& idle_color, const sf::Color& hovered_color, const sf::Color& pressed_color,
-    const sf::Color& outline_idle_color, const sf::Color& outline_hovered_color, const sf::Color& outline_pressed_color,
-    const sf::Color& text_idle_color, const sf::Color& text_hovered_color, const sf::Color& text_pressed_color)
+void gui::TextBox::initCursor(const sf::Color& textIdleColor)
 {
-    this->colors["INPUT FIELD"]["IDLE"] = idle_color;
-    this->colors["INPUT FIELD"]["HOVERED"] = hovered_color;
-    this->colors["INPUT FIELD"]["PRESSED"] = pressed_color;
+    m_cursor.setOrigin(
+        0.0f, 
+        m_text.getCharacterSize() / 2.0f
+    );
 
-    this->colors["OUTLINE"]["IDLE"] = outline_idle_color;
-    this->colors["OUTLINE"]["HOVERED"] = outline_hovered_color;
-    this->colors["OUTLINE"]["PRESSED"] = outline_pressed_color;
+    m_cursor.setFillColor(textIdleColor);
+    
+    sf::FloatRect textBounds = m_text.getGlobalBounds();
+    sf::FloatRect rectBounds = m_rect.getGlobalBounds();
 
-    this->colors["TEXT"]["IDLE"] = text_idle_color;
-    this->colors["TEXT"]["HOVERED"] = text_hovered_color;
-    this->colors["TEXT"]["PRESSED"] = text_pressed_color;
+    m_cursor.setPosition(
+        textBounds.left + textBounds.width + m_cursor.getSize().x,
+        rectBounds.top + rectBounds.height / 2.f
+    );
 }
 
-// other private methods:
-void TextBox::updateState(const std::vector<sf::Event>& events, const sf::Vector2i& mouse_pos_window)
+void gui::TextBox::initColors(
+    const sf::Color& idleColor, 
+    const sf::Color& hoveredColor, 
+    const sf::Color& pressedColor,
+    const sf::Color& outlineIdleColor, 
+    const sf::Color& outlineHoveredColor, 
+    const sf::Color& outlinePressedColor,
+    const sf::Color& textIdleColor, 
+    const sf::Color& textHoveredColor, 
+    const sf::Color& textPressedColor)
 {
-    this->m_HasBeenTurnedOn = false;
-    this->stateHasChanged = false;
+    m_colors["INPUT FIELD"]["IDLE"] = idleColor;
+    m_colors["INPUT FIELD"]["HOVERED"] = hoveredColor;
+    m_colors["INPUT FIELD"]["PRESSED"] = pressedColor;
 
-    if (this->rect.getGlobalBounds().contains(static_cast<sf::Vector2f>(mouse_pos_window)))
+    m_colors["OUTLINE"]["IDLE"] = outlineIdleColor;
+    m_colors["OUTLINE"]["HOVERED"] = outlineHoveredColor;
+    m_colors["OUTLINE"]["PRESSED"] = outlinePressedColor;
+
+    m_colors["TEXT"]["IDLE"] = textIdleColor;
+    m_colors["TEXT"]["HOVERED"] = textHoveredColor;
+    m_colors["TEXT"]["PRESSED"] = textPressedColor;
+}
+
+void gui::TextBox::updateState(
+    const std::vector<sf::Event>& events, 
+    const sf::Vector2i& mousePosWindow)
+{
+    m_hasBeenTurnedOn = false;
+    m_stateHasChanged = false;
+
+    auto mousePosWindowF = static_cast<sf::Vector2f>(mousePosWindow);
+
+    if (m_rect.getGlobalBounds().contains(mousePosWindowF))
     {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
-            if (!this->turnedOnBlockade)
+            if (!m_turnedOnBlockade)
             {
-                if (this->state != "PRESSED")
+                if (m_state != "PRESSED")
                 {
-                    this->stateHasChanged = true;
-                    this->state = "PRESSED";
+                    m_stateHasChanged = true;
+                    m_state = "PRESSED";
                 }
 
-                this->turnedOnBlockade = true;
+                m_turnedOnBlockade = true;
 
-                this->turnedOn = !this->turnedOn;
+                m_turnedOn = !m_turnedOn;
 
-                if (this->turnedOn) 
-                    this->m_HasBeenTurnedOn;
-                else 
-                    this->cursorIsRendered = false;
+                if (m_turnedOn)
+                {
+                    m_hasBeenTurnedOn = true;
+                }
+                else
+                {
+                    m_cursorIsRendered = false;
+                }
             }
         }
         else
         {
-            this->turnedOnBlockade = false;
+            m_turnedOnBlockade = false;
 
-            if (this->state != "HOVERED")
+            if (m_state != "HOVERED")
             {
-                this->stateHasChanged = true;
-                this->state = "HOVERED";
+                m_stateHasChanged = true;
+                m_state = "HOVERED";
             }
         }
     }
     else
     {
-        if (this->state != "IDLE")
+        if (m_state != "IDLE")
         {
-            this->stateHasChanged = true;
-            this->state = "IDLE";
+            m_stateHasChanged = true;
+            m_state = "IDLE";
         }
     }
 }
 
-void TextBox::updateColors()
+void gui::TextBox::updateColors()
 {
-    this->rect.setFillColor(this->colors["INPUT FIELD"][this->state]);
+    m_rect.setFillColor(m_colors["INPUT FIELD"][m_state]);
 
-    this->rect.setOutlineColor(this->colors["OUTLINE"][this->state]);
+    m_rect.setOutlineColor(m_colors["OUTLINE"][m_state]);
 
-    this->text.setFillColor(this->colors["TEXT"][this->state]);
+    m_text.setFillColor(m_colors["TEXT"][m_state]);
 
-    this->cursor.setFillColor(this->colors["TEXT"][this->state]);
+    m_cursor.setFillColor(m_colors["TEXT"][m_state]);
 }
 
-void TextBox::handleTextEntering(const std::vector<sf::Event>& events)
+void gui::TextBox::handleTextEntering(const std::vector<sf::Event>& events)
 {
-    this->textHasChanged = false;
+    m_textHasChanged = false;
 
     for (const auto& event : events)
+    {
         if (event.type == sf::Event::TextEntered)
         {
             if (event.text.unicode == 8) // backspace
             {
-                if (!this->input.empty())
+                if (!m_input.empty())
                 {
-                    this->textHasChanged = true;
-                    this->input.pop_back();
-                    this->text.setString(this->input);
+                    m_textHasChanged = true;
+                    m_input.pop_back();
+                    m_text.setString(m_input);
                 }
             }
             if (event.text.unicode > 31)
             {
-                    this->textHasChanged = true;
-                    this->input.push_back(event.text.unicode);
-                    this->text.setString(this->input);
+                m_textHasChanged = true;
+                m_input.push_back(event.text.unicode);
+                m_text.setString(m_input);
             }
         }
+    }
 }
 
-void TextBox::updateTextPosition()
+void gui::TextBox::updateTextPosition()
 {
-    this->text.setOrigin(
-        this->text.getGlobalBounds().width / 2.f,
-        this->text.getLocalBounds().top + this->text.getLocalBounds().height / 2.f
+    sf::FloatRect textGlobalBounds = m_text.getGlobalBounds();
+    sf::FloatRect textLocalBounds = m_text.getLocalBounds();
+    
+    m_text.setOrigin(
+        textGlobalBounds.width / 2.f,
+        textLocalBounds.top + textLocalBounds.height / 2.f
     );
-    this->text.setPosition(
-        this->rect.getGlobalBounds().left + this->rect.getGlobalBounds().width / 2.f,
-        this->rect.getGlobalBounds().top + this->rect.getGlobalBounds().height / 2.f
-    );
-}
 
-void TextBox::updateCursorPosition()
-{
-    this->cursor.setPosition(
-        this->text.getGlobalBounds().left + this->text.getGlobalBounds().width + this->cursor.getSize().x,
-        this->rect.getGlobalBounds().top + this->rect.getGlobalBounds().height / 2.f
+    sf::FloatRect rectGlobalBounds = m_rect.getGlobalBounds();
+    
+    m_text.setPosition(
+        rectGlobalBounds.left + rectGlobalBounds.width / 2.f,
+        rectGlobalBounds.top  + rectGlobalBounds.height / 2.f
     );
 }
 
-void TextBox::updateCursorVisibility(float dt)
+void gui::TextBox::updateCursorPosition()
 {
-    this->stopwatch += dt;
+    sf::FloatRect textGlobalBounds = m_text.getGlobalBounds();
+    sf::FloatRect rectGlobalBounds = m_rect.getGlobalBounds();
 
-    if (this->stopwatch > this->cursorFrequency)
+    m_cursor.setPosition(
+        textGlobalBounds.left + textGlobalBounds.width + m_cursor.getSize().x,
+        rectGlobalBounds.top + rectGlobalBounds.height / 2.f
+    );
+}
+
+void gui::TextBox::updateCursorVisibility(float dt)
+{
+    m_stopwatch += dt;
+
+    if (m_stopwatch > m_cursorFrequency)
     {
-        this->cursorIsRendered = !this->cursorIsRendered;
-        this->stopwatch = 0.f;
+        m_cursorIsRendered = !m_cursorIsRendered;
+        m_stopwatch = 0.f;
     }
 }

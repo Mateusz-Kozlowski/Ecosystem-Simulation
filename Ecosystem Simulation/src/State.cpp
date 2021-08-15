@@ -1,28 +1,34 @@
 #include "pch.h"
 #include "State.h"
 
-State::State(StateData* state_data)
+State::State(StateData* stateData)
+	: m_stateData(stateData)
+	, m_keybinds()
+	, m_quit(false)
+	, m_mousePosScreen()
+	, m_mousePosWindow()
+	, m_mousePosView()
 {
-	this->stateData = state_data;
-	this->quit = false;
+	
 }
 
 State::~State()
 {
+
 }
 
-// public methods:
-
 // accessors:
+
 bool State::getQuit() const
 {
-	return this->quit;
+	return m_quit;
 }
 
 // mutators:
+
 void State::endState()
 {
-	this->quit = true;
+	m_quit = true;
 }
 
 void State::freeze()
@@ -31,21 +37,32 @@ void State::freeze()
 }
 
 // protected methods:
+
 void State::updateMousePositions(const sf::View* view)
 {
-	this->mousePosScreen = sf::Mouse::getPosition();
-	this->mousePosWindow = sf::Mouse::getPosition(*this->stateData->window);
+	m_mousePosScreen = sf::Mouse::getPosition();
+	m_mousePosWindow = sf::Mouse::getPosition(*m_stateData->m_window);
 
 	if (view)
 	{
-		sf::View temp = this->stateData->window->getView();
+		sf::View temp = m_stateData->m_window->getView();
 
-		this->stateData->window->setView(*view);
+		m_stateData->m_window->setView(*view);
 
-		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
+		m_mousePosView = m_stateData->m_window->mapPixelToCoords(
+			sf::Mouse::getPosition(
+				*m_stateData->m_window
+			)
+		);
 
-		this->stateData->window->setView(temp);
+		m_stateData->m_window->setView(temp);
 	}
 	else
-		this->mousePosView = this->stateData->window->mapPixelToCoords(sf::Mouse::getPosition(*this->stateData->window));
+	{
+		m_mousePosView = m_stateData->m_window->mapPixelToCoords(
+			sf::Mouse::getPosition(
+				*m_stateData->m_window
+			)
+		);
+	}
 }

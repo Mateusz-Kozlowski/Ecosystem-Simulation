@@ -5,19 +5,19 @@ class MovementComponent
 public:
 	MovementComponent();
 	MovementComponent(
-		const sf::Vector2f& default_velocity, 
-		const char* brain_file_path
+		const sf::Vector2f& defaultVelocity,
+		const char* brainFilePath
 	);
 	MovementComponent(const MovementComponent& rhs);
 	MovementComponent& operator=(const MovementComponent& rhs);
-	
-	void saveBrainToFile(const char* file_path) const;
-	void loadBrainFromFile(const char* file_path);
+
+	void saveBrainToFile(const char* filePath) const;
+	void loadBrainFromFile(const char* filePath);
 
 	void update(
-		float dt, 
-		float speed_factor, 
-		const std::vector<double>& brain_inputs
+		float dt,
+		float speedFactor,
+		const std::vector<double>& brainInputs
 	);
 
 	// accessors:
@@ -27,30 +27,24 @@ public:
 	const sf::Vector2f& getVelocityVector() const;
 	const sf::Vector2f& getAccelerationVector() const;
 
-	float get_vx() const;
-	float get_vy() const;
-
-	float get_ax() const;
-	float get_ay() const;
-
 	float getVelocityVectorValue() const;
 	float getAccelerationVectorValue() const;
 
 	// mutators:
 
-	void mutateBrain(unsigned brain_mutations_count);
+	void mutateBrain(unsigned brainMutationsCount);
 
 	void setVelocity(const sf::Vector2f& velocity);
 	void setVelocity(float x, float y);
 
-	void set_vx(float vx);
-	void set_vy(float vy);
+	void setVelocityX(float vx);
+	void setVelocityY(float vy);
 
 private:
-	std::unique_ptr<Blueberry::Brain> brain;
+	std::unique_ptr<Blueberry::Brain> m_brain;
 
 	// kinematics:
 
-	sf::Vector2f velocity;
-	sf::Vector2f acceleration;
+	sf::Vector2f m_velocity;
+	sf::Vector2f m_acceleration;
 };

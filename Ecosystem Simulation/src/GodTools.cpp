@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "GodTools.h"
 
-std::string getGodToolStr(GodTool god_tool)
+std::string getGodToolStr(GodTool godTool)
 {
-    switch (god_tool)
+    switch (godTool)
     {
     case GodTool::NONE:
         return "NONE";
@@ -27,7 +27,13 @@ std::string getGodToolStr(GodTool god_tool)
         return "INFO";
 
     default:
-        throw "ERROR::getGodToolStr::THE FUNCTION SEEMS TO BE OUT OF DATE - IT DOESN'T TAKE INTO ACCOUNT ALL GOD TOOLS\n";
+        throw std::invalid_argument(
+            Blueberry::Formatter()
+            << "Error::getGodToolStr(GodTool)::"
+            << "there is no such tool as "
+            << godTool
+            << '\n'
+        );
     }
 }
 
@@ -55,14 +61,20 @@ GodTool getGodTool(const std::string& key)
         return GodTool::INFO;
 
     else
-        throw("ERROR::getGodTool::THE FUNCTION SEEMS TO BE OUT OF DATE - IT DOESN'T TAKE INTO ACCOUNT ALL GOD TOOLS\n");
+    {
+        throw std::invalid_argument(
+            Blueberry::Formatter()
+            << "Error::getGodTool(const std::string&)::"
+            << "there is no such a tool as "
+            << key
+            << '\n'
+        );
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const GodTool& rhs)
 {
-    os << getGodToolStr(rhs);
-
-    return os;
+    return os << getGodToolStr(rhs);
 }
 
 std::istream& operator>>(std::istream& is, GodTool& rhs)
@@ -70,7 +82,9 @@ std::istream& operator>>(std::istream& is, GodTool& rhs)
     std::string value;
 
     if (is >> value)
+    {
         rhs = getGodTool(value.c_str());
+    }
 
     return is;
 }

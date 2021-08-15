@@ -1,35 +1,42 @@
 #include "pch.h"
 #include "GraphicsSettings.h"
 
-// constructor:
 GraphicsSettings::GraphicsSettings()
+	: videoModes(sf::VideoMode::getFullscreenModes())
+	, resolution(sf::VideoMode::getDesktopMode())
+	, title("DEFAULT TITLE")
+	, contextSettings()
+	, fullscreen(false)
+	, verticalSync(false)
+	, frameRateLimit(144U)
+	, position(0, 0)
 {
-	this->title = "DEFAULT TITLE";
-	this->resolution = sf::VideoMode::getDesktopMode();
-	this->fullscreen = false;
-	this->verticalSync = false;
-	this->frameRateLimit = 144U;
-	this->contextSettings.antialiasingLevel = 0;
-	this->videoModes = sf::VideoMode::getFullscreenModes();
-	this->position = { 0, 0 };
+	contextSettings.antialiasingLevel = 0;
 }
 
-// methods:
 void GraphicsSettings::saveToFile(const std::string& path)
 {
 	std::ofstream ofs(path);
 
 	if (ofs.is_open())
 	{
-		ofs << this->title;
-		ofs << this->resolution.width << ' ' << this->resolution.height;
-		ofs << this->fullscreen;
-		ofs << this->frameRateLimit;
-		ofs << this->verticalSync;
-		ofs << this->contextSettings.antialiasingLevel;
-		ofs << this->position.first << ' ' << this->position.second;
+		ofs << title;
+		ofs << resolution.width << ' ' << resolution.height;
+		ofs << fullscreen;
+		ofs << frameRateLimit;
+		ofs << verticalSync;
+		ofs << contextSettings.antialiasingLevel;
+		ofs << position.first << ' ' << position.second;
 	}
-	else throw("ERROR::GRAPHICSSETTINGS::COULD NOT OPEN: " + path);
+	else
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::GraphicsSettings::saveToFile(const std::string&)::"
+			<< "could not open "
+			<< path << '\n'
+		);
+	}
 
 	ofs.close();
 }
@@ -40,15 +47,23 @@ void GraphicsSettings::loadFromFile(const std::string& path)
 
 	if (ifs.is_open())
 	{
-		std::getline(ifs, this->title);
-		ifs >> this->resolution.width >> this->resolution.height;
-		ifs >> this->fullscreen;
-		ifs >> this->frameRateLimit;
-		ifs >> this->verticalSync;
-		ifs >> this->contextSettings.antialiasingLevel;
-		ifs >> this->position.first >> this->position.second;
+		std::getline(ifs, title);
+		ifs >> resolution.width >> resolution.height;
+		ifs >> fullscreen;
+		ifs >> frameRateLimit;
+		ifs >> verticalSync;
+		ifs >> contextSettings.antialiasingLevel;
+		ifs >> position.first >> position.second;
 	}
-	else throw("ERROR::GRAPHICSSETTINGS::COULD NOT OPEN: " + path);
+	else
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::GraphicsSettings::loadFromFile(const std::string&)::"
+			<< "could not open "
+			<< path << '\n'
+		);
+	}
 
 	ifs.close();
 }
