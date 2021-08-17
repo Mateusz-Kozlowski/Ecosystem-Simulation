@@ -225,10 +225,10 @@ private:
 
 	void correctBrainPreviewsPositions();
 	bool brainPreviewProtrudesWorldRightBorder(
-		const gui::NeuralNetPreview& brainPreview
+		const gui::BrainPreview& brainPreview
 	);
 	bool brainPreviewProtrudesWorldBottomBorder(
-		const gui::NeuralNetPreview& brainPreview
+		const gui::BrainPreview& brainPreview
 	);
 
 private:

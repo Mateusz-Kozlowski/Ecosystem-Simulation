@@ -66,7 +66,7 @@ namespace gui
 		Blueberry::Scalar getTheBiggestActivatedValue(unsigned layerIndex);
 		Blueberry::Scalar getTheSmallestActivatedValue(unsigned layerIndex);
 
-		void setSynapsesPositions();
+		void setSynapsesPos();
 		void setSynapsesColors();
 
 		Blueberry::Scalar getTheBiggestWeight();
@@ -86,7 +86,6 @@ namespace gui
 		sf::RectangleShape m_background;
 
 		std::vector<std::vector<sf::CircleShape>> m_neurons;
-
 		std::vector<std::vector<std::vector<VertexVect>>> m_synapses;
 	};
 }

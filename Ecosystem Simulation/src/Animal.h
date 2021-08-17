@@ -2,7 +2,7 @@
 
 #include "MovementComponent.h"
 #include "ProgressBar.h"
-#include "NeuralNetPreview.h"
+#include "BrainPreview.h"
 
 class Animal
 {
@@ -62,7 +62,7 @@ public:
 	float getHp() const;
 	float getTotalEnergy() const;
 
-	const gui::NeuralNetPreview& getBrainPreview() const;
+	const gui::BrainPreview& getBrainPreview() const;
 
 	bool isCoveredByMouse(const sf::Vector2f& mousePosView) const;
 
@@ -126,5 +126,5 @@ private:
 	bool m_alive;
 
 	std::unique_ptr<gui::ProgressBar> m_hpBar;
-	std::unique_ptr<gui::NeuralNetPreview> m_brainPreview;
+	std::unique_ptr<gui::BrainPreview> m_brainPreview;
 };

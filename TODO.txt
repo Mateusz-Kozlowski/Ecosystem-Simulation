@@ -84,6 +84,11 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
+- subtracting operator is overloaded in sf::Vector<T> class!
+  use it EVERYWHERE!
+- rewrite almost all classes and add asserts and exceptions
+  and add info about when every class was refactored
+  and estimated code cleanliness level
 - and comments that separate private methods into some groups
   e.g., initialization, utils and so on...
 - change arguments of all functions from std::strings to const char* where possible;

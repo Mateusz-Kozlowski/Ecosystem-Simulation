@@ -324,7 +324,7 @@ float Animal::getTotalEnergy() const
 	return m_hpBar->getCurrentValue() + getKineticEnergy();
 }
 
-const gui::NeuralNetPreview& Animal::getBrainPreview() const
+const gui::BrainPreview& Animal::getBrainPreview() const
 {
 	return *m_brainPreview;
 }
@@ -403,6 +403,7 @@ void Animal::setMaxHp(float maxHp)
 void Animal::randomMutate(unsigned brainMutationsCount)
 {
 	m_movementComponent->mutateBrain(brainMutationsCount);
+	m_brainPreview->update();
 }
 
 void Animal::setVelocity(const sf::Vector2f& velocity)
@@ -511,15 +512,15 @@ void Animal::initHpBar(
 void Animal::initBrainPreview()
 {
 	// TODO: do sth with these hard-coded arguments:
-	m_brainPreview = std::make_unique<gui::NeuralNetPreview>(
+	m_brainPreview = std::make_unique<gui::BrainPreview>(
 		m_movementComponent->getBrain(),
 		m_body.getPosition(),
 		sf::Vector2f(
 			16.0f * m_body.getRadius(),
 			16.0f * m_body.getRadius()
 		),
-		sf::Color(100, 100, 100)
-		);
+		sf::Color(128, 128, 128)
+	);
 }
 
 void Animal::updateBody(float dt)
@@ -552,4 +553,3 @@ void Animal::updateBrainPreview()
 	m_brainPreview->setPosition(m_body.getPosition());
 	m_brainPreview->update();
 }
-

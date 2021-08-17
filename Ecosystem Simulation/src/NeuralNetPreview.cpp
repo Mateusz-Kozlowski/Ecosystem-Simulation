@@ -58,7 +58,7 @@ void gui::NeuralNetPreview::setPosition(const sf::Vector2f& position)
 	m_background.setPosition(position);
 
 	setNeuronsPositions();
-	setSynapsesPositions();
+	setSynapsesPos();
 }
 
 void gui::NeuralNetPreview::setPosition(float x, float y)
@@ -66,7 +66,7 @@ void gui::NeuralNetPreview::setPosition(float x, float y)
 	m_background.setPosition(x, y);
 
 	setNeuronsPositions();
-	setSynapsesPositions();
+	setSynapsesPos();
 }
 
 void gui::NeuralNetPreview::setSize(const sf::Vector2f& size)
@@ -75,7 +75,7 @@ void gui::NeuralNetPreview::setSize(const sf::Vector2f& size)
 
 	setNeuronsPositions();
 	setNeuronsSizes();
-	setSynapsesPositions();
+	setSynapsesPos();
 }
 
 void gui::NeuralNetPreview::setBackgroundColor(const sf::Color& color)
@@ -132,7 +132,7 @@ void gui::NeuralNetPreview::initNeuronsVector()
 void gui::NeuralNetPreview::initSynapses()
 {
 	initSynapsesVector();
-	setSynapsesPositions();
+	setSynapsesPos();
 	setSynapsesColors();
 }
 
@@ -542,7 +542,7 @@ Blueberry::Scalar gui::NeuralNetPreview::getTheSmallestActivatedValue(
 	return 0.0;
 }
 
-void gui::NeuralNetPreview::setSynapsesPositions()
+void gui::NeuralNetPreview::setSynapsesPos()
 {
 	//// calculate useful variables:
 	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().size();

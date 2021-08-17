@@ -1521,7 +1521,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 		while (fruit.getEnergy() > animal.getMaxHp())
 		{
 			fruit.setEnergy(fruit.getEnergy() - animal.getMaxHp());
-			
+
 			m_animals.push_back(std::make_shared<Animal>(animal));
 
 			m_animals.back()->setHp(animal.getMaxHp());
@@ -1622,7 +1622,7 @@ void Ecosystem::correctBrainPreviewsPositions()
 	{
 		// put the following iteration into a method?:
 
-		const gui::NeuralNetPreview& brainPreview = animal->getBrainPreview();
+		const gui::BrainPreview& brainPreview = animal->getBrainPreview();
 
 		bool protrudesRightBorder = brainPreviewProtrudesWorldRightBorder(
 			brainPreview
@@ -1666,7 +1666,7 @@ void Ecosystem::correctBrainPreviewsPositions()
 }
 
 bool Ecosystem::brainPreviewProtrudesWorldRightBorder(
-	const gui::NeuralNetPreview& brainPreview)
+	const gui::BrainPreview& brainPreview)
 {
 	float rightBorderPosition = brainPreview.getPosition().x;
 	rightBorderPosition += brainPreview.getSize().x;
@@ -1675,7 +1675,7 @@ bool Ecosystem::brainPreviewProtrudesWorldRightBorder(
 }
 
 bool Ecosystem::brainPreviewProtrudesWorldBottomBorder(
-	const gui::NeuralNetPreview& brainPreview)
+	const gui::BrainPreview& brainPreview)
 {
 	float bottomBorderPosition = brainPreview.getPosition().y;
 	bottomBorderPosition += brainPreview.getSize().y;
