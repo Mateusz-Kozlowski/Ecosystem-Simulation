@@ -19,6 +19,7 @@ App::App()
 	initEcosystem();
 	initStateData();
 	initStates();
+	initFPSpreview();
 }
 
 App::~App()
@@ -92,6 +93,7 @@ void App::initWindow()
 	// m_window->setKeyRepeatEnabled(true);
 	// TODO: and maybe there are other public methods from window
 	// TODO: class that should be used?
+	// TODO: should some of them be read from a file?
 }
 
 void App::initKeys()
@@ -143,6 +145,22 @@ void App::initStates()
 	m_states.push(new MainMenuState(&m_stateData));
 }
 
+void App::initFPSpreview()
+{
+	if (!tempFont.loadFromFile("Resources/fonts/Retroica.ttf")) exit(-1);
+
+	const sf::VideoMode& resolution = m_gfxSettings.resolution;
+
+	gui::FPS::init(
+		0.2f,
+		sf::Color::Transparent,
+		gui::calcCharSize(32.0f, resolution),
+		tempFont,
+		sf::Color::White,
+		resolution
+	);
+}
+
 void App::updateDt()
 {
 	m_dt = m_clock.restart().asSeconds();
@@ -150,6 +168,7 @@ void App::updateDt()
 
 void App::update()
 {
+	updateFPSpreview();
 	updateEvents();
 
 	if (!m_states.empty())
@@ -184,6 +203,11 @@ void App::update()
 	}
 }
 
+void App::updateFPSpreview()
+{
+	gui::FPS::update(m_dt);
+}
+
 void App::updateEvents()
 {
 	m_events.clear();
@@ -209,6 +233,8 @@ void App::render()
 	{
 		m_states.top()->render();
 	}
+
+	gui::FPS::render(*m_window);
 
 	m_window->display();
 }

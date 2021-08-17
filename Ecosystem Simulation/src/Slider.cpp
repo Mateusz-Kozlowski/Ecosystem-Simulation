@@ -40,7 +40,7 @@ void gui::Slider::update(sf::Vector2i mousePosWindow)
 
 	if (m_state == "IDLE")
 	{
-		if (currentAxisSprite.getGlobalBounds().contains(mousePosWindowF) 
+		if (currentAxisSprite.getGlobalBounds().contains(mousePosWindowF)
 			|| currentHandleSprite.getGlobalBounds().contains(mousePosWindowF))
 		{
 			m_state = "HOVERED";
@@ -84,10 +84,10 @@ void gui::Slider::update(sf::Vector2i mousePosWindow)
 			float leftBound = axisBounds.left;
 			float rightBound = axisBounds.left + axisBounds.width;
 
-			if (mousePosWindow.x >=  leftBound 
+			if (mousePosWindow.x >= leftBound
 				&& mousePosWindow.x <= rightBound)
 			{
-				float xPos = mousePosWindow.x + handleBounds.width / 2.0f;
+				float xPos = mousePosWindow.x - handleBounds.width / 2.0f;
 				float yPos = currentHandleSprite.getPosition().y;
 
 				for (auto& handleSprites : m_handleSprites)
@@ -149,10 +149,10 @@ void gui::Slider::setValue(float value)
 	for (auto& handleSprite : m_handleSprites)
 	{
 		float rangeSize = m_range.second - m_range.first;
-		
+
 		float xPos = axisBounds.left;
 		float yPos = handleSprite.second.getPosition().y;
-		
+
 		xPos += inverseScaleFunction(value) / rangeSize * axisBounds.width;
 		xPos -= handleBounds.width / 2.f;
 
@@ -183,7 +183,7 @@ void gui::Slider::initTextures(
 	const std::string& axisPressedPath, const std::string& handlePressedPath)
 {
 	// loading axis textures:
-	if (!m_axisTextures["IDLE"].loadFromFile(axisIdlePath) 
+	if (!m_axisTextures["IDLE"].loadFromFile(axisIdlePath)
 		|| !m_axisTextures["HOVERED"].loadFromFile(axisHoverPath)
 		|| !m_axisTextures["PRESSED"].loadFromFile(axisPressedPath))
 	{
@@ -198,7 +198,7 @@ void gui::Slider::initTextures(
 	}
 
 	// loading handle textures:
-	if (!m_handleTextures["IDLE"].loadFromFile(handleIdlePath) 
+	if (!m_handleTextures["IDLE"].loadFromFile(handleIdlePath)
 		|| !m_handleTextures["HOVERED"].loadFromFile(handleHoverPath)
 		|| !m_handleTextures["PRESSED"].loadFromFile(handlePressedPath))
 	{
@@ -214,7 +214,7 @@ void gui::Slider::initTextures(
 }
 
 void gui::Slider::initSprites(
-	const sf::Vector2f& position, 
+	const sf::Vector2f& position,
 	float texturesScale)
 {
 	// creating axes:		
@@ -222,13 +222,13 @@ void gui::Slider::initSprites(
 	{
 		m_axisSprites[axisTexture.first].setTexture(axisTexture.second);
 		m_axisSprites[axisTexture.first].setScale(
-			texturesScale, 
+			texturesScale,
 			texturesScale
 		);
 
 		const sf::Sprite& axisSprite = m_axisSprites[axisTexture.first];
 
-		m_axisSprites[axisTexture.first].setScale(
+		m_axisSprites[axisTexture.first].setPosition(
 			position.x - axisSprite.getGlobalBounds().width / 2.f,
 			position.y - axisSprite.getGlobalBounds().height / 2.f
 		);
@@ -240,23 +240,25 @@ void gui::Slider::initSprites(
 		sf::Sprite& axisSprite = m_axisSprites[handleTexture.first];
 		sf::Sprite& handleSprite = m_handleSprites[handleTexture.first];
 
-		const sf::FloatRect axisBounds = axisSprite.getGlobalBounds();
-		const sf::FloatRect handleBounds = handleSprite.getGlobalBounds();
-
 		handleSprite.setTexture(handleTexture.second);
 		handleSprite.setScale(texturesScale, texturesScale);
 
+		const sf::FloatRect axisBounds = axisSprite.getGlobalBounds();
+		const sf::FloatRect handleBounds = handleSprite.getGlobalBounds();
+
 		float scaleFactor = axisBounds.height / handleBounds.height;
-		
+
 		handleSprite.scale(
 			sf::Vector2f(
 				scaleFactor,
 				scaleFactor
 			)
 		);
+
 		handleSprite.setOrigin(0.f, 0.f);
 
 		// set position:
+
 		float axisLeftBound = axisBounds.left;
 		float axisWidth = axisBounds.width;
 		float handleWidth = handleBounds.width;
@@ -307,7 +309,7 @@ void gui::Slider::updateCurrentValue()
 	float rangeSize = m_range.second - m_range.first;
 
 	float funcVal = m_range.first;
-	funcVal =+ rangeSize * (x - left) / (right - left);
+	funcVal = +rangeSize * (x - left) / (right - left);
 
 	m_value = scaleFunctionValue(funcVal);
 }

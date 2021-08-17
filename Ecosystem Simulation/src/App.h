@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MainMenuState.h"
+#include "FPS.h"
 
 class App
 {
@@ -18,9 +19,11 @@ private:
 	void initEcosystem();
 	void initStateData();
 	void initStates();
+	void initFPSpreview();
 
 	void updateDt();
 	void update();
+	void updateFPSpreview();
 	void updateEvents();
 	void render();
 
@@ -36,4 +39,7 @@ private:
 
 	sf::Clock m_clock;
 	float m_dt;
+
+	// TODO: rmv later!:
+	sf::Font tempFont;
 };

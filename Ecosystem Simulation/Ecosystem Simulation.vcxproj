@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\FPS.cpp" />
     <ClCompile Include="src\BrainPreview.cpp" />
     <ClCompile Include="src\SaveAsPanel.cpp" />
     <ClCompile Include="src\GodTools.cpp" />
@@ -203,6 +204,7 @@
     <ClCompile Include="src\ImageButton.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\FPS.h" />
     <ClInclude Include="src\BrainPreview.h" />
     <ClInclude Include="src\SaveAsPanel.h" />
     <ClInclude Include="src\GodTools.h" />

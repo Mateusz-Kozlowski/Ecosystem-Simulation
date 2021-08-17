@@ -1529,7 +1529,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 			// TODO: unhard code mutations count, 
 			// TODO: use mutation percentage Ecosystem member
 			//m_animals.back()->randomMutate(m_mutationPercentage);
-			m_animals.back()->randomMutate(3U);
+			m_animals.back()->randomMutate(1U);
 
 			if (&animal == m_trackedAnimal)
 			{
@@ -1550,7 +1550,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit)
 		// TODO: unhard code mutations count, 
 		// TODO: use mutation percentage Ecosystem member
 		//m_animals.back()->randomMutate(m_mutationPercentage);
-		m_animals.back()->randomMutate(3U);
+		m_animals.back()->randomMutate(1U);
 
 		if (&animal == m_trackedAnimal)
 		{

@@ -10,7 +10,7 @@ namespace gui
 		Slider(
 			const sf::Vector2f& position,
 			float texturesScale,
-			const std::pair<float, float>& range,
+			const std::pair<float, float>& m_range,
 			const std::pair<float, float>& notSnappingToEdgesRange,
 			float defaultValue,
 			const std::string& axisIdlePath, 

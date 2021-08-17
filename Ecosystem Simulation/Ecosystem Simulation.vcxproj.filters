@@ -82,6 +82,9 @@
     <ClCompile Include="src\BrainPreview.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\FPS.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -240,6 +243,9 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\BrainPreview.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FPS.h">
       <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>

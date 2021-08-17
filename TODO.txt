@@ -48,6 +48,8 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- mutate God tool!
+- add big good events schedule, like killing 1/2 of the population every specific unit of time
 - fix an issue with getWorldSize() and getArenaSize() in Ecosystem class;
   use the first one when u need the size with borders included 
   and the second when u need the size without borders included
