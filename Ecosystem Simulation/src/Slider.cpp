@@ -163,11 +163,11 @@ void gui::Slider::setValue(float value)
 	}
 }
 
-void gui::Slider::setPosition(const sf::Vector2f& new_pos)
+void gui::Slider::setPosition(const sf::Vector2f& newPos)
 {
 	for (auto& axisSprite : m_axisSprites)
 	{
-		axisSprite.second.setPosition(new_pos);
+		axisSprite.second.setPosition(newPos);
 	}
 
 	// set handle position 
@@ -309,7 +309,7 @@ void gui::Slider::updateCurrentValue()
 	float rangeSize = m_range.second - m_range.first;
 
 	float funcVal = m_range.first;
-	funcVal = +rangeSize * (x - left) / (right - left);
+	funcVal += rangeSize * (x - left) / (right - left);
 
 	m_value = scaleFunctionValue(funcVal);
 }
