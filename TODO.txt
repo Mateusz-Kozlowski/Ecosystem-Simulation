@@ -11,7 +11,6 @@ ResourceManager:
 - implement some kind of resource managing framework
 
 app:
-- add a static class called FPS counter which can draw FPS count
 - change the way of dealing with events:
   call State class handleEvent method from App class updateEvents method;
   states stack top will be feed with events; that state will do with those events whatever it wants,

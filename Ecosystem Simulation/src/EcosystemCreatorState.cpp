@@ -4,7 +4,7 @@
 EcosystemCreatorState::EcosystemCreatorState(StateData* stateData)
 	: State(stateData)
 	, m_background()
-	, m_fonts()
+	, m_font()
 	, m_texts()
 	, m_buttons()
 	, m_textBoxes()
@@ -90,13 +90,15 @@ void EcosystemCreatorState::initBackground()
 
 void EcosystemCreatorState::initFonts()
 {
-	if (!m_fonts["RETROICA"].loadFromFile("resources/fonts/Retroica.ttf")
-		|| !m_fonts["CONSOLAB"].loadFromFile("resources/fonts/consolab.ttf"))
+	const char* filePath = "resources/fonts/Retroica.ttf";
+
+	if (!m_font.loadFromFile(filePath))
 	{
 		throw std::runtime_error(
 			Blueberry::Formatter()
 			<< "Error::EcosystemCreatorState::initFonts()::"
-			<< "could not load a font\n"
+			<< "could not load "
+			<< filePath << '\n'
 		);
 	}
 }
@@ -123,7 +125,7 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], "SMALL", charSize,
+		m_font, "SMALL", charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
 		sf::Color(75, 75, 75),
@@ -145,7 +147,7 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], "BIG", charSize,
+		m_font, "BIG", charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
 		sf::Color(75, 75, 75),
@@ -167,7 +169,7 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], "HUGE", charSize,
+		m_font, "HUGE", charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
 		sf::Color(75, 75, 75),
@@ -189,7 +191,7 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], "CREATE", charSize,
+		m_font, "CREATE", charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
 		sf::Color(75, 75, 75),
@@ -211,7 +213,7 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], "OK", charSize,
+		m_font, "OK", charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
 		sf::Color(75, 75, 75),
@@ -240,7 +242,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], 
+		m_font, 
 		"3840", 
 		charSize,
 		sf::Color(100, 100, 100), 
@@ -266,7 +268,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], 
+		m_font, 
 		"2160", 
 		charSize,
 		sf::Color(100, 100, 100), 
@@ -294,7 +296,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], 
+		m_font, 
 		"32", 
 		charSize,
 		sf::Color(100, 100, 100), 
@@ -322,7 +324,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], 
+		m_font, 
 		"4", 
 		charSize,
 		sf::Color(100, 100, 100), 
@@ -350,7 +352,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], 
+		m_font, 
 		"1024", 
 		charSize,
 		sf::Color(100, 100, 100), 
@@ -378,7 +380,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], 
+		m_font, 
 		"100000000", 
 		charSize,
 		sf::Color(100, 100, 100), 
@@ -406,7 +408,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], 
+		m_font, 
 		"100000000", 
 		charSize,
 		sf::Color(100, 100, 100), 
@@ -434,7 +436,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"],
+		m_font,
 		"100", 
 		charSize,
 		sf::Color(100, 100, 100), 
@@ -462,7 +464,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_fonts["RETROICA"], 
+		m_font, 
 		"Default name", 
 		charSize,
 		sf::Color(100, 100, 100), 
@@ -491,7 +493,7 @@ void EcosystemCreatorState::initTexts()
 	addText(
 		"WORLD WIDTH",
 		"WORLD WIDTH",
-		m_fonts["RETROICA"],
+		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
@@ -503,7 +505,7 @@ void EcosystemCreatorState::initTexts()
 	addText(
 		"WORLD HEIGHT",
 		"WORLD HEIGHT",
-		m_fonts["RETROICA"],
+		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
@@ -515,7 +517,7 @@ void EcosystemCreatorState::initTexts()
 	addText(
 		"BORDERS THICKNESS",
 		"BORDERS THICKNESS",
-		m_fonts["RETROICA"],
+		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
@@ -527,7 +529,7 @@ void EcosystemCreatorState::initTexts()
 	addText(
 		"ANIMALS COUNT",
 		"ANIMALS COUNT",
-		m_fonts["RETROICA"],
+		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
@@ -539,7 +541,7 @@ void EcosystemCreatorState::initTexts()
 	addText(
 		"FRUITS COUNT",
 		"FRUITS COUNT",
-		m_fonts["RETROICA"],
+		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
@@ -551,7 +553,7 @@ void EcosystemCreatorState::initTexts()
 	addText(
 		"DEFAULT HP",
 		"DEFAULT HP",
-		m_fonts["RETROICA"],
+		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
@@ -563,7 +565,7 @@ void EcosystemCreatorState::initTexts()
 	addText(
 		"DEFAULT FRUITS ENERGY",
 		"DEFAULT FRUITS ENERGY",
-		m_fonts["RETROICA"],
+		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
@@ -575,7 +577,7 @@ void EcosystemCreatorState::initTexts()
 	addText(
 		"MUTATION RATE",
 		"MUTATION RATE",
-		m_fonts["RETROICA"],
+		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(
@@ -587,7 +589,7 @@ void EcosystemCreatorState::initTexts()
 	addText(
 		"ECOSYSTEM NAME",
 		"ECOSYSTEM NAME",
-		m_fonts["RETROICA"],
+		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
 		sf::Vector2f(

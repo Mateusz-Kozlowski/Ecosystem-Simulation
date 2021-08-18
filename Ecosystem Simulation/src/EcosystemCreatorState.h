@@ -55,7 +55,7 @@ private:
 
 	sf::RectangleShape m_background;
 
-	std::unordered_map<std::string, sf::Font> m_fonts;
+	sf::Font m_font;
 	std::unordered_map<std::string, TextUniquePtr> m_texts;
 
 	std::unordered_map<std::string, BtnUniquePtr> m_buttons;
