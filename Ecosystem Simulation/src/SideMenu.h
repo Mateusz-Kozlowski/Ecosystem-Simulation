@@ -57,7 +57,7 @@ namespace gui
 			int id = 0
 		);
 
-		void setTextureOfImageButton(
+		void setTextureOfImgBtn(
 			const std::string& buttonKey,
 			const std::string& textureKey
 		);

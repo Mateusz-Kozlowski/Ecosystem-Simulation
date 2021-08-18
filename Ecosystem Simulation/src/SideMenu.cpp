@@ -237,7 +237,7 @@ void gui::SideMenu::addCenteredText(
 	);
 }
 
-void gui::SideMenu::setTextureOfImageButton(
+void gui::SideMenu::setTextureOfImgBtn(
 	const std::string& buttonKey, 
 	const std::string& textureKey)
 {

@@ -5,9 +5,7 @@ brain inputs:
 - remove log from input with hp?
 
 side menu:
-- side menu should be able to be opened not only using Esc key 
-  but also using a gui widget which doesn't even exist yet
-- after loading ecosystem side menu panel should be updated (e.g. speed scaler)
+- after loading ecosystem side menu panel should be updated (e.g., speed scaler)
 
 ResourceManager:
 - implement some kind of resource managing framework
@@ -31,7 +29,6 @@ simulation state:
 UI:
 - Google professional names of GUI widgets
 - use move method in widgets
-- static ResourceManager class
 - hold fonts in static way and as keys use UNMUTABLE for the first font 
   and MUTABLE for the second font 
   (
@@ -43,7 +40,6 @@ UI:
 - unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
 - input field text shouldn't dance up and down
 - there are 2 fonts; which should be used for what?
-- add NEAT-RT preview class
 - rename neural net preview to sequential preview or sth like that
 - one convention for all gui widgets, maybe even polimorphizm
 - some GUI widgets positions are set relative to their centers and some are set relative to their

@@ -36,6 +36,8 @@ void SimulationState::update(float dt)
 
 	updateMousePositions(&m_view);
 
+	updateSideMenuVisibility();
+
 	if (m_sideMenuIsRendered)
 	{
 		updateSideMenu();
@@ -45,7 +47,11 @@ void SimulationState::update(float dt)
 
 	if (m_saveAsPanelIsRendered)
 	{
-		m_saveAsPanel->update(dt, *m_stateData->m_events, m_mousePosWindow);
+		m_saveAsPanel->update(
+			dt, 
+			*m_stateData->m_events, 
+			m_mousePosWindow
+		);
 	}
 
 	getUpdatesFromSaveAsPanel();
@@ -658,12 +664,12 @@ void SimulationState::updateInput()
 				if (m_stateData->m_ecosystem->isSimulationPaused())
 				{
 					m_stateData->m_ecosystem->unpauseSimulation();
-					m_sideMenu->setTextureOfImageButton("PAUSE", "STOP");
+					m_sideMenu->setTextureOfImgBtn("PAUSE", "STOP");
 				}
 				else
 				{
 					m_stateData->m_ecosystem->pauseSimulation();
-					m_sideMenu->setTextureOfImageButton("PAUSE", "PLAY");
+					m_sideMenu->setTextureOfImgBtn("PAUSE", "PLAY");
 				}
 				return;
 			}
@@ -712,6 +718,27 @@ void SimulationState::updateMousePositions(const sf::View* view)
 	}
 }
 
+void SimulationState::updateSideMenuVisibility()
+{
+	if (m_sideMenu->getPosition().x == 0.0f)
+	{
+		if (m_mousePosWindow.x <= 0.0f && m_previousMousePosWindow.x > 0.0f)
+		{
+			m_sideMenuIsRendered = !m_sideMenuIsRendered;
+		}
+	}
+	else
+	{
+		unsigned winWidth = m_stateData->m_window->getSize().x;
+			
+		if (m_mousePosWindow.x >= winWidth - 1
+			&& m_previousMousePosWindow.x < winWidth - 1)
+		{
+			m_sideMenuIsRendered = !m_sideMenuIsRendered;
+		}
+	}
+}
+
 void SimulationState::updateSideMenu()
 {
 	m_sideMenu->update(m_mousePosWindow, *m_stateData->m_events);
@@ -730,21 +757,21 @@ void SimulationState::updateSideMenuGui()
 			{
 				if (imgBtn.second->isPressed())
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"PLAY PRESSED"
 					);
 				}
 				else if (imgBtn.second->isHovered())
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"PLAY HOVERED"
 					);
 				}
 				else
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"PLAY IDLE"
 					);
@@ -754,21 +781,21 @@ void SimulationState::updateSideMenuGui()
 			{
 				if (imgBtn.second->isPressed())
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"STOP PRESSED"
 					);
 				}
 				else if (imgBtn.second->isHovered())
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"STOP HOVERED"
 					);
 				}
 				else
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"STOP IDLE"
 					);
@@ -781,21 +808,21 @@ void SimulationState::updateSideMenuGui()
 			{
 				if (imgBtn.second->isPressed())
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"RIGHT PRESSED"
 					);
 				}
 				else if (imgBtn.second->isHovered())
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"RIGHT HOVERED"
 					);
 				}
 				else
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"RIGHT IDLE"
 					);
@@ -805,21 +832,21 @@ void SimulationState::updateSideMenuGui()
 			{
 				if (imgBtn.second->isPressed())
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"LEFT PRESSED"
 					);
 				}
 				else if (imgBtn.second->isHovered())
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"LEFT HOVERED"
 					);
 				}
 				else
 				{
-					m_sideMenu->setTextureOfImageButton(
+					m_sideMenu->setTextureOfImgBtn(
 						imgBtn.first, 
 						"LEFT IDLE"
 					);
@@ -830,21 +857,21 @@ void SimulationState::updateSideMenuGui()
 		{
 			if (imgBtn.second->isPressed())
 			{
-				m_sideMenu->setTextureOfImageButton(
+				m_sideMenu->setTextureOfImgBtn(
 					imgBtn.first, 
 					"PRESSED"
 				);
 			}
 			else if (imgBtn.second->isHovered())
 			{
-				m_sideMenu->setTextureOfImageButton(
+				m_sideMenu->setTextureOfImgBtn(
 					imgBtn.first, 
 					"HOVERED"
 				);
 			}
 			else
 			{
-				m_sideMenu->setTextureOfImageButton(
+				m_sideMenu->setTextureOfImgBtn(
 					imgBtn.first, 
 					"IDLE"
 				);
@@ -874,7 +901,7 @@ void SimulationState::updateGodToolButton(const std::string& godToolBtnKey)
 			// the button is hovered, 
 			// because u can't click a button 
 			// without hovering it with a mouse cursor:
-			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "LIGHT");
+			m_sideMenu->setTextureOfImgBtn(godToolBtnKey, "LIGHT");
 
 			ecosystem->setGodTool(GodTool::NONE);
 		}
@@ -882,20 +909,20 @@ void SimulationState::updateGodToolButton(const std::string& godToolBtnKey)
 		// pretty straight forward, it's pressed so it's dark:
 		else if (m_sideMenu->getImageButtons().at(godToolBtnKey)->isPressed())
 		{
-			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "DARK");
+			m_sideMenu->setTextureOfImgBtn(godToolBtnKey, "DARK");
 		}
 
 		// is hovered so is light:
 		else if (m_sideMenu->getImageButtons().at(godToolBtnKey)->isHovered())
 		{
-			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "LIGHT");
+			m_sideMenu->setTextureOfImgBtn(godToolBtnKey, "LIGHT");
 		}
 
 		// it is neither hovered nor pressed, but let me remind u,
 		// that it's still the current tool, so we darken it:
 		else
 		{
-			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "DARK");
+			m_sideMenu->setTextureOfImgBtn(godToolBtnKey, "DARK");
 		}
 	}
 	else // the argument isn't the current tool:
@@ -906,7 +933,7 @@ void SimulationState::updateGodToolButton(const std::string& godToolBtnKey)
 			// old tool (if it exists at all) ceases to be the current tool:
 			if (ecosystem->getCurrentGodTool() != GodTool::NONE)
 			{
-				m_sideMenu->setTextureOfImageButton(
+				m_sideMenu->setTextureOfImgBtn(
 					currentGodToolStr, 
 					"IDLE"
 				);
@@ -918,19 +945,19 @@ void SimulationState::updateGodToolButton(const std::string& godToolBtnKey)
 			// because a mouse cursor is still covering it 
 			// (because it has just been clicked 
 			// and a mouse hasn't go away yet):
-			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "LIGHT");
+			m_sideMenu->setTextureOfImgBtn(godToolBtnKey, "LIGHT");
 		}
 
 		// next pretty straight forward line, it's hovered so it's light: 
 		else if (m_sideMenu->getImageButtons().at(godToolBtnKey)->isHovered())
 		{
-			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "LIGHT");
+			m_sideMenu->setTextureOfImgBtn(godToolBtnKey, "LIGHT");
 		}
 
 		// the most common case, ordinary idle tool:
 		else
 		{
-			m_sideMenu->setTextureOfImageButton(godToolBtnKey, "IDLE");
+			m_sideMenu->setTextureOfImgBtn(godToolBtnKey, "IDLE");
 		}
 	}
 }
@@ -959,14 +986,14 @@ void SimulationState::getUpdatesFromSideMenuGui()
 
 		if (currentTextureKey.substr(0, 4) == "PLAY")
 		{
-			m_sideMenu->setTextureOfImageButton(
+			m_sideMenu->setTextureOfImgBtn(
 				"PAUSE",
 				currentTextureKey.replace(0, 4, "STOP")
 			);
 		}
 		else
 		{
-			m_sideMenu->setTextureOfImageButton(
+			m_sideMenu->setTextureOfImgBtn(
 				"PAUSE", 
 				currentTextureKey.replace(0, 4, "PLAY")
 			);
@@ -989,7 +1016,7 @@ void SimulationState::getUpdatesFromSideMenuGui()
 				)
 			);
 
-			m_sideMenu->setTextureOfImageButton(
+			m_sideMenu->setTextureOfImgBtn(
 				"ARROW", 
 				currentTextureKey.replace(0, 5, "LEFT")
 			);
@@ -1003,7 +1030,7 @@ void SimulationState::getUpdatesFromSideMenuGui()
 				)
 			);
 
-			m_sideMenu->setTextureOfImageButton(
+			m_sideMenu->setTextureOfImgBtn(
 				"ARROW", 
 				currentTextureKey.replace(0, 4, "RIGHT")
 			);

@@ -31,6 +31,8 @@ private:
 
 	virtual void updateMousePositions(const sf::View* view = nullptr);
 
+	void updateSideMenuVisibility();
+
 	void updateSideMenu();
 	void updateSideMenuGui();
 	void updateGodToolButton(const std::string& godToolBtnKey);
