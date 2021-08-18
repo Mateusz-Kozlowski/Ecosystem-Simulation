@@ -11,6 +11,7 @@ App::App()
 	, m_stateData()
 	, m_clock()
 	, m_dt(0.0f)
+	, m_font()
 {
 	initVariables();
 	initGraphicsSettings();
@@ -19,6 +20,7 @@ App::App()
 	initEcosystem();
 	initStateData();
 	initStates();
+	initFont();
 	initFPSpreview();
 }
 
@@ -145,17 +147,30 @@ void App::initStates()
 	m_states.push(new MainMenuState(&m_stateData));
 }
 
+void App::initFont()
+{
+	const char* filePath = "Resources/fonts/CONSOLAB.ttf";
+
+	if (!m_font.loadFromFile(filePath))
+	{
+		throw std::runtime_error(
+			Blueberry::Formatter()
+			<< "Error::App::initFont()::"
+			<< "Cannot load "
+			<< filePath << '\n'
+		);
+	}
+}
+
 void App::initFPSpreview()
 {
-	if (!tempFont.loadFromFile("Resources/fonts/Retroica.ttf")) exit(-1);
-
 	const sf::VideoMode& resolution = m_gfxSettings.resolution;
 
 	gui::FPS::init(
 		0.2f,
 		sf::Color::Transparent,
 		gui::calcCharSize(32.0f, resolution),
-		tempFont,
+		m_font,
 		sf::Color::White,
 		resolution
 	);
@@ -170,7 +185,33 @@ void App::update()
 {
 	updateFPSpreview();
 	updateEvents();
+	updateStates();
+}
 
+void App::updateFPSpreview()
+{
+	gui::FPS::update(m_dt);
+}
+
+void App::updateEvents()
+{
+	m_events.clear();
+
+	sf::Event event;
+
+	while (m_window->pollEvent(event))
+	{
+		if (event.type == sf::Event::Closed)
+		{
+			m_window->close();
+		}
+
+		m_events.push_back(event);
+	}
+}
+
+void App::updateStates()
+{
 	if (!m_states.empty())
 	{
 		if (m_window->hasFocus())
@@ -200,28 +241,6 @@ void App::update()
 	else
 	{
 		m_window->close();
-	}
-}
-
-void App::updateFPSpreview()
-{
-	gui::FPS::update(m_dt);
-}
-
-void App::updateEvents()
-{
-	m_events.clear();
-
-	sf::Event event;
-
-	while (m_window->pollEvent(event))
-	{
-		if (event.type == sf::Event::Closed)
-		{
-			m_window->close();
-		}
-
-		m_events.push_back(event);
 	}
 }
 

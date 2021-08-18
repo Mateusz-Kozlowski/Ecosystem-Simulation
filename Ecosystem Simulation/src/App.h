@@ -19,12 +19,16 @@ private:
 	void initEcosystem();
 	void initStateData();
 	void initStates();
+	void initFont();
 	void initFPSpreview();
 
 	void updateDt();
 	void update();
+	
 	void updateFPSpreview();
 	void updateEvents();
+	void updateStates();
+
 	void render();
 
 private:
@@ -39,7 +43,6 @@ private:
 
 	sf::Clock m_clock;
 	float m_dt;
-
-	// TODO: rmv later!:
-	sf::Font tempFont;
+	
+	sf::Font m_font;
 };

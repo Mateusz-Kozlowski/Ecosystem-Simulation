@@ -9,6 +9,9 @@ side menu:
   but also using a gui widget which doesn't even exist yet
 - after loading ecosystem side menu panel should be updated (e.g. speed scaler)
 
+ResourceManager:
+- implement some kind of resource managing framework
+
 app:
 - add a static class called FPS counter which can draw FPS count
 - change the way of dealing with events:
