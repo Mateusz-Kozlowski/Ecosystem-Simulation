@@ -5,6 +5,7 @@
 #include "EventsAccessor.h"
 #include "GodTools.h"
 #include "SideMenu.h"
+#include "FPS.h"
 
 class Ecosystem
 {
@@ -227,6 +228,8 @@ private:
 
 	void transferEnergyFromAnimalsToFruits();
 	Fruit* getLowestEnergyFruit();
+
+	void correctPopulationSize(float dt);
 
 	void correctBrainPreviewsPositions();
 	bool brainPreviewProtrudesWorldRightBorder(

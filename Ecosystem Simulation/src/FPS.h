@@ -24,15 +24,9 @@ namespace gui
 		static const unsigned long long& getTotalFramesCount();
 		static float getTotalTimeElapsed();
 
-		static unsigned getFramesCount();
-		static float getTimer();
-
 		static float getDelay();
 
-		static unsigned getFPS();
-
 		static const sf::RectangleShape& getBackground();
-		static const sf::Text& getText();
 		static sf::VideoMode& getResolution();
 
 		// mutators:

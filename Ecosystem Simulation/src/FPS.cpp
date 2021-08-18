@@ -84,34 +84,14 @@ float gui::FPS::getTotalTimeElapsed()
 	return s_totalTimeElapsed;
 }
 
-unsigned gui::FPS::getFramesCount()
-{
-	return s_framesCount;
-}
-
-float gui::FPS::getTimer()
-{
-	return s_timer;
-}
-
 float gui::FPS::getDelay()
 {
 	return s_delay;
 }
 
-unsigned gui::FPS::getFPS()
-{
-	return s_FPS;
-}
-
 const sf::RectangleShape& gui::FPS::getBackground()
 {
 	return s_bg;
-}
-
-const sf::Text& gui::FPS::getText()
-{
-	return s_text;
 }
 
 sf::VideoMode& gui::FPS::getResolution()

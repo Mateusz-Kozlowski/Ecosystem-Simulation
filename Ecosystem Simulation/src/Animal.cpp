@@ -16,6 +16,7 @@ Animal::Animal(
 	, m_alive(true)
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
+	, m_timeElapsedSinceLastExternalHpChange(0.0f)
 {
 	this->initBody(position, radius, bodyColor);
 	this->initHpBar(defaultHp, hpBarBackgroundColor, hpBarProgressRectColor);
@@ -30,6 +31,7 @@ Animal::Animal(const char* folderPath)
 	, m_alive(true)
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
+	, m_timeElapsedSinceLastExternalHpChange(0.0f)
 {
 	this->loadFromFolder(folderPath);
 }
@@ -42,6 +44,7 @@ Animal::Animal(const Animal& rhs)
 	, m_alive(rhs.m_alive)
 	, m_hpBar(std::make_unique<gui::ProgressBar>())
 	, m_brainPreview(nullptr)
+	, m_timeElapsedSinceLastExternalHpChange(rhs.m_timeElapsedSinceLastExternalHpChange)
 {
 	*m_movementComponent = *rhs.m_movementComponent;
 	*m_hpBar = *rhs.m_hpBar;
@@ -61,6 +64,8 @@ Animal& Animal::operator=(const Animal& rhs)
 		*m_hpBar = *rhs.m_hpBar;
 
 		initBrainPreview();
+
+		m_timeElapsedSinceLastExternalHpChange = rhs.m_timeElapsedSinceLastExternalHpChange;
 	}
 
 	return *this;
@@ -127,7 +132,8 @@ void Animal::saveToFolder(const char* folderPath) const
 	ofs << m_alive << '\n';
 	ofs << m_hpBar->getCurrentValue() << '\n';
 	ofs << m_movementComponent->getVelocityVector().x << '\n';
-	ofs << m_movementComponent->getVelocityVector().y;
+	ofs << m_movementComponent->getVelocityVector().y << '\n';
+	ofs << m_timeElapsedSinceLastExternalHpChange;
 
 	ofs.close();
 }
@@ -172,6 +178,7 @@ void Animal::loadFromFolder(const char* folderPath)
 	ifs >> m_alive;
 	ifs >> hp;
 	ifs >> velocity.x >> velocity.y;
+	ifs >> m_timeElapsedSinceLastExternalHpChange;
 
 	ifs.close();
 
@@ -223,6 +230,8 @@ void Animal::update(
 
 	updateHpBarPosition();
 	updateBrainPreview();
+
+	m_timeElapsedSinceLastExternalHpChange += dt;
 }
 
 void Animal::renderBody(sf::RenderTarget& target) const
@@ -329,6 +338,11 @@ const gui::BrainPreview& Animal::getBrainPreview() const
 	return *m_brainPreview;
 }
 
+float Animal::getTimeElapsedSinceLastExternalHpChange() const
+{
+	return m_timeElapsedSinceLastExternalHpChange;
+}
+
 bool Animal::isCoveredByMouse(const sf::Vector2f& mousePosView) const
 {
 	float x = m_body.getPosition().x - mousePosView.x;
@@ -429,6 +443,8 @@ void Animal::setHp(float hp)
 	m_hpBar->setValue(hp);
 
 	m_alive = m_hpBar->getCurrentValue() > 0.0f;
+
+	m_timeElapsedSinceLastExternalHpChange = 0.0f;
 }
 
 void Animal::increaseHp(float hpIncrease)
@@ -444,6 +460,8 @@ void Animal::increaseHp(float hpIncrease)
 	m_hpBar->increaseValue(hpIncrease);
 
 	m_alive = m_hpBar->getCurrentValue() > 0.0f;
+
+	m_timeElapsedSinceLastExternalHpChange = 0.0f;
 }
 
 void Animal::decreaseHp(float hpDecrease)
@@ -459,6 +477,8 @@ void Animal::decreaseHp(float hpDecrease)
 	m_hpBar->decreaseValue(hpDecrease);
 
 	m_alive = m_hpBar->getCurrentValue() > 0.0f;
+
+	m_timeElapsedSinceLastExternalHpChange = 0.0f;
 }
 
 void Animal::setBrainPreviewPosition(const sf::Vector2f& position)

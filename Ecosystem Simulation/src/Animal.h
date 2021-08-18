@@ -64,6 +64,8 @@ public:
 
 	const gui::BrainPreview& getBrainPreview() const;
 
+	float getTimeElapsedSinceLastExternalHpChange() const;
+
 	bool isCoveredByMouse(const sf::Vector2f& mousePosView) const;
 
 	// mutators:
@@ -127,4 +129,6 @@ private:
 
 	std::unique_ptr<gui::ProgressBar> m_hpBar;
 	std::unique_ptr<gui::BrainPreview> m_brainPreview;
+
+	float m_timeElapsedSinceLastExternalHpChange;
 };

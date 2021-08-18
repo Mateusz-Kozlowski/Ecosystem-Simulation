@@ -1145,6 +1145,7 @@ void Ecosystem::updateWorld(float dt)
 	removeDeadAnimals();
 	feedAnimals();
 	removeEatenFruits();
+	correctPopulationSize(dt);
 	correctBrainPreviewsPositions();
 }
 
@@ -1635,6 +1636,22 @@ Fruit* Ecosystem::getLowestEnergyFruit()
 	}
 
 	return lowestEnergyFruit;
+}
+
+void Ecosystem::correctPopulationSize(float dt)
+{
+	const unsigned fps = 1.0f / dt;
+	
+	if (m_animals.size() <= 1) return;
+
+	for (int i = 0; i < m_animals.size();)
+	{
+		if (m_animals[i]->getTimeElapsedSinceLastExternalHpChange() > fps)
+		{
+			convertAnimalToFruit(m_animals[i], false);
+		}
+		else i++;
+	}
 }
 
 void Ecosystem::correctBrainPreviewsPositions()
