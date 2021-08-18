@@ -11,7 +11,7 @@ EcosystemCreatorState::EcosystemCreatorState(StateData* stateData)
 {
 	initKeybinds();
 	initBackground();
-	initFonts();
+	initFont();
 	initGui();
 }
 
@@ -88,7 +88,7 @@ void EcosystemCreatorState::initBackground()
 	m_background.setFillColor(sf::Color(32, 32, 32));
 }
 
-void EcosystemCreatorState::initFonts()
+void EcosystemCreatorState::initFont()
 {
 	const char* filePath = "resources/fonts/Retroica.ttf";
 
@@ -256,7 +256,8 @@ void EcosystemCreatorState::initTextBoxes()
 		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution), 
 		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution), 
-		0.5f
+		0.5f,
+		false
 	);
 
 	m_textBoxes["WORLD HEIGHT"] = std::make_unique<gui::TextBox>(

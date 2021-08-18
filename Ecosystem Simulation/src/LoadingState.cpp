@@ -13,7 +13,7 @@ LoadingState::LoadingState(StateData* stateData)
 	initKeybinds();
 	initBackground();
 	initContainer();
-	initFonts();
+	initFont();
 	initTexts();
 	initTextBox();
 	initButtons();
@@ -139,7 +139,7 @@ void LoadingState::initContainer()
 	);
 }
 
-void LoadingState::initFonts()
+void LoadingState::initFont()
 {
 	if (!m_font.loadFromFile("resources/fonts/consolab.ttf"))
 	{

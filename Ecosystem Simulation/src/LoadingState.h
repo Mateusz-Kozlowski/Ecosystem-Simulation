@@ -20,7 +20,7 @@ private:
 	virtual void initKeybinds() override;
 	void initBackground();
 	void initContainer();
-	void initFonts();
+	void initFont();
 	void initTexts();
 	void initTextBox();
 	void initButtons();
