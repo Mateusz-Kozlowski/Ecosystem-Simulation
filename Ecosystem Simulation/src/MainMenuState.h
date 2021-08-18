@@ -17,7 +17,7 @@ public:
 
 	virtual void freeze() override;
 
-private:
+private:	
 	void initVariables();
 	virtual void initKeybinds() override;
 	void initBackground();

@@ -47,7 +47,7 @@ public:
 	virtual void freeze();
 	
 protected:
-	void updateMousePositions(const sf::View* view = nullptr);
+	virtual void updateMousePositions(const sf::View* view = nullptr);
 
 	virtual void initKeybinds() = 0;
 	virtual void updateInput() = 0;

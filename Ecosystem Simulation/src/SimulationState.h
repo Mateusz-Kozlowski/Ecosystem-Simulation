@@ -29,7 +29,7 @@ private:
 	virtual void updateInput() override;
 	void updateInputWithPanelRendered();
 
-	virtual void updateMousePositions(const sf::View* view = nullptr);
+	virtual void updateMousePositions(const sf::View* view = nullptr) override;
 
 	void updateSideMenuVisibility();
 
