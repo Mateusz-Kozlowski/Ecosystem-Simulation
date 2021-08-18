@@ -299,6 +299,11 @@ GodTool Ecosystem::getCurrentGodTool() const
 	return m_godTool;
 }
 
+const std::unordered_map<Animal*, bool>& Ecosystem::getBrainsVisibility() const
+{
+	return m_brainsPreviewsVisibility;
+}
+
 float Ecosystem::getTotalTimeElapsed() const
 {
 	return m_totalTimeElapsed;
@@ -432,6 +437,22 @@ void Ecosystem::unpauseSimulation()
 void Ecosystem::setGodTool(GodTool godTool)
 {
 	m_godTool = godTool;
+}
+
+void Ecosystem::hideAllBrainsPreviews()
+{
+	for (auto& it : m_brainsPreviewsVisibility)
+	{
+		it.second = false;
+	}
+}
+
+void Ecosystem::showAllBrainsPreviews()
+{
+	for (auto& it : m_brainsPreviewsVisibility)
+	{
+		it.second = true;
+	}
 }
 
 // private methods:

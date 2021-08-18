@@ -74,6 +74,8 @@ public:
 
 	GodTool getCurrentGodTool() const;
 
+	const std::unordered_map<Animal*, bool>& getBrainsVisibility() const;
+
 	float getTotalTimeElapsed() const;
 
 	float getTotalAnimalsHpEnergy() const;
@@ -102,6 +104,9 @@ public:
 	void unpauseSimulation();
 
 	void setGodTool(GodTool godTool);
+
+	void hideAllBrainsPreviews();
+	void showAllBrainsPreviews();
 
 private:
 	void initBackgroundAndBorders(

@@ -673,6 +673,21 @@ void SimulationState::updateInput()
 				}
 				return;
 			}
+			if (event.key.code == sf::Keyboard::Key::B)
+			{
+				auto brainsVisibility = m_stateData->m_ecosystem->getBrainsVisibility();
+
+				if (brainsVisibility.empty()) return;
+
+				if (brainsVisibility.begin()->second)
+				{
+					m_stateData->m_ecosystem->hideAllBrainsPreviews();
+					return;
+				}
+
+				m_stateData->m_ecosystem->showAllBrainsPreviews();
+				return;
+			}
 		}
 	}
 }
@@ -686,6 +701,21 @@ void SimulationState::updateInputWithPanelRendered()
 			if (event.key.code == sf::Keyboard::Key(m_keybinds.at("CLOSE")))
 			{
 				m_sideMenuIsRendered = !m_sideMenuIsRendered;
+				return;
+			}
+			if (event.key.code == sf::Keyboard::Key::B)
+			{
+				auto brainsVisibility = m_stateData->m_ecosystem->getBrainsVisibility();
+				
+				if (brainsVisibility.empty()) return;
+
+				if (brainsVisibility.begin()->second)
+				{
+					m_stateData->m_ecosystem->hideAllBrainsPreviews();
+					return;
+				}
+				
+				m_stateData->m_ecosystem->showAllBrainsPreviews();
 				return;
 			}
 		}
