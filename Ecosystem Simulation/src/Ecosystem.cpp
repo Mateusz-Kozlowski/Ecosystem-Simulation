@@ -517,7 +517,7 @@ void Ecosystem::createNewAnimal(
 			sf::Color(100, 100, 100),
 			sf::Color::Red,
 			defaultAnimalHp,
-			defaultAnimalHp
+			INFINITY
 		)
 	);
 	m_animals.back()->setRandomPosition(getWorldSize(), getBordersThickness());
