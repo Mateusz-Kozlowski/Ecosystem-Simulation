@@ -250,8 +250,6 @@ private:
 	std::vector<std::shared_ptr<Animal>> m_animals;
 	std::vector<std::unique_ptr<Fruit>> m_fruits;
 
-	float m_mutationPercentage;
-
 	// TODO: add a multiline comment that:
 	// - explains why those variables are useful in those situations
 	// - describes those situation (when they appear and how they disappear)
@@ -261,6 +259,10 @@ private:
 
 	// useful when there are temporarily no fruits in an ecosystem:
 	float m_fruitsRadius;
+
+	float m_defaultAnimalsHp;
+
+	float m_mutationPercentage;
 
 	// useful when there are temporarily no m_animals in an ecosystem:
 	sf::Color m_animalsColor;

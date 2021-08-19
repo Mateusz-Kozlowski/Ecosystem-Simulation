@@ -26,9 +26,10 @@ Ecosystem::Ecosystem(
 	, m_background()
 	, m_animals()
 	, m_fruits()
-	, m_mutationPercentage(mutationPercentage)
 	, m_animalsRadius(animalsRadius)
+	, m_defaultAnimalsHp(defaultAnimalsHp)
 	, m_fruitsRadius(fruitsRadius)
+	, m_mutationPercentage(mutationPercentage)
 	, m_animalsColor(animalsColor)
 	, m_fruitsColor(fruitsColor)
 	, m_trackedAnimalColor(trackedAnimalColor)
@@ -67,9 +68,10 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_background()
 	, m_animals()
 	, m_fruits()
-	, m_mutationPercentage(0.0f)
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
+	, m_defaultAnimalsHp(0.0f)
+	, m_mutationPercentage(0.0f)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
 	, m_trackedAnimalColor(sf::Color::Magenta)
@@ -622,6 +624,7 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 	ofs << static_cast<int>(m_background.getOutlineColor().b) << ' ';
 	ofs << static_cast<int>(m_background.getOutlineColor().a) << '\n';
 
+	ofs << m_defaultAnimalsHp << '\n';
 	ofs << m_mutationPercentage << '\n';
 
 	ofs << static_cast<int>(m_animalsColor.r) << ' ';
@@ -777,6 +780,7 @@ void Ecosystem::loadEcosystem(const std::string& filePath)
 	ifs >> bgColorR >> bgColorG >> bgColorB >> bgColorA;
 	ifs >> bordersColorR >> bordersColorG >> bordersColorB >> bordersColorA;
 
+	ifs >> m_defaultAnimalsHp;
 	ifs >> m_mutationPercentage;
 
 	ifs >> animalsColorR >> animalsColorG >> animalsColorB >> animalsColorA;
@@ -1526,63 +1530,98 @@ bool Ecosystem::animalReachesFruit(
 
 void Ecosystem::eat(Animal& animal, Fruit& fruit)
 {
-	if (fruit.getEnergy() + animal.getHp() > animal.getMaxHp())
-	{
-		fruit.setEnergy(fruit.getEnergy() + animal.getHp() - animal.getMaxHp());
-		animal.setHp(animal.getMaxHp());
+	float prevAnimalHp = animal.getHp();
 
-		// clone using energy surplus!:
-		while (fruit.getEnergy() > animal.getMaxHp())
-		{
-			fruit.setEnergy(fruit.getEnergy() - animal.getMaxHp());
+	animal.setHp(
+		std::min(
+			prevAnimalHp + fruit.getEnergy(),
+			m_defaultAnimalsHp
+		)
+	);
 
-			m_animals.push_back(std::make_shared<Animal>(animal));
+	fruit.increaseEnergy(prevAnimalHp - animal.getHp());
 
-			m_animals.back()->setHp(animal.getMaxHp());
-			m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
-			// TODO: unhard code mutations count, 
-			// TODO: use mutation percentage Ecosystem member
-			//m_animals.back()->randomMutate(m_mutationPercentage);
-			m_animals.back()->randomMutate(1U);
+	// there is no more energy left in the fruit after eating:
+	if (fruit.getEnergy() == 0.0f) return;
 
-			if (&animal == m_trackedAnimal)
-			{
-				m_animals.back()->setColor(m_animalsColor);
-			}
-
-			m_hpBarsVisibility[m_animals.back().get()]
-				= m_hpBarsVisibility[&animal];
-
-			m_brainsPreviewsVisibility[m_animals.back().get()]
-				= m_brainsPreviewsVisibility[&animal];
-		}
-
-		m_animals.push_back(std::make_shared<Animal>(animal));
-
-		m_animals.back()->setHp(fruit.getEnergy());
-		m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
-		// TODO: unhard code mutations count, 
-		// TODO: use mutation percentage Ecosystem member
-		//m_animals.back()->randomMutate(m_mutationPercentage);
-		m_animals.back()->randomMutate(1U);
-
-		if (&animal == m_trackedAnimal)
-		{
-			m_animals.back()->setColor(m_animalsColor);
-		}
-
-		m_hpBarsVisibility[m_animals.back().get()] 
-			= m_hpBarsVisibility[&animal];
+	// if there is any energy left in the fruit make animal clone!:
+	// TODO: put the following lines of code into a separate method
+	m_animals.push_back(std::make_shared<Animal>(animal));
 	
-		m_brainsPreviewsVisibility[m_animals.back().get()] 
-			= m_brainsPreviewsVisibility[&animal];
-	}
-	else
+	m_animals.back()->setHp(fruit.getEnergy());
+	m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+	m_animals.back()->randomMutate(1U);  // TODO: "unhardcode" that
+
+	if (&animal == m_trackedAnimal)
 	{
-		animal.increaseHp(fruit.getEnergy());
+		m_animals.back()->setColor(m_animalsColor);
 	}
+
+	m_hpBarsVisibility[m_animals.back().get()]
+		= m_hpBarsVisibility[&animal];
+
+	m_brainsPreviewsVisibility[m_animals.back().get()]
+		= m_brainsPreviewsVisibility[&animal];
 
 	fruit.setEnergy(0.0f);
+	
+	//if (fruit.getEnergy() + animal.getHp() > animal.getMaxHp())
+	//{
+	//	fruit.setEnergy(fruit.getEnergy() + animal.getHp() - animal.getMaxHp());
+	//	animal.setHp(animal.getMaxHp());
+	//
+	//	// clone using energy surplus!:
+	//	while (fruit.getEnergy() > animal.getMaxHp())
+	//	{
+	//		fruit.setEnergy(fruit.getEnergy() - animal.getMaxHp());
+	//
+	//		m_animals.push_back(std::make_shared<Animal>(animal));
+	//
+	//		m_animals.back()->setHp(animal.getMaxHp());
+	//		m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+	//		// TODO: unhard code mutations count, 
+			// TODO: use mutation percentage Ecosystem member
+			//m_animals.back()->randomMutate(m_mutationPercentage);
+	//		m_animals.back()->randomMutate(1U);
+	//
+	//		if (&animal == m_trackedAnimal)
+	//		{
+	//			m_animals.back()->setColor(m_animalsColor);
+	//		}
+	//
+	//		m_hpBarsVisibility[m_animals.back().get()]
+	//			= m_hpBarsVisibility[&animal];
+	//
+	//		m_brainsPreviewsVisibility[m_animals.back().get()]
+	//			= m_brainsPreviewsVisibility[&animal];
+	//	}
+	//
+	//	m_animals.push_back(std::make_shared<Animal>(animal));
+	//
+	//	m_animals.back()->setHp(fruit.getEnergy());
+	//	m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+	//	// TODO: unhard code mutations count, 
+		// TODO: use mutation percentage Ecosystem member
+		//m_animals.back()->randomMutate(m_mutationPercentage);
+	//	m_animals.back()->randomMutate(1U);
+	//
+	//	if (&animal == m_trackedAnimal)
+	//	{
+	//		m_animals.back()->setColor(m_animalsColor);
+	//	}
+	//
+	//	m_hpBarsVisibility[m_animals.back().get()] 
+	//		= m_hpBarsVisibility[&animal];
+	//
+	//	m_brainsPreviewsVisibility[m_animals.back().get()] 
+	//		= m_brainsPreviewsVisibility[&animal];
+	//}
+	//else
+	//{
+	//	animal.increaseHp(fruit.getEnergy());
+	//}
+	//
+	//fruit.setEnergy(0.0f);
 }
 
 void Ecosystem::removeEatenFruits()
