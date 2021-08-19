@@ -1,25 +1,25 @@
 #include "pch.h"
-#include "FPS.h"
+#include "FPSpreview.h"
 
-bool gui::FPS::s_initialized = false;
+bool gui::FPSpreview::s_initialized = false;
 
-unsigned long long gui::FPS::s_totalFramesCount = 0U;
-float gui::FPS::s_totalTimeElapsed = 0.0f;
+unsigned long long gui::FPSpreview::s_totalFramesCount = 0U;
+float gui::FPSpreview::s_totalTimeElapsed = 0.0f;
 
-unsigned gui::FPS::s_framesCount = 0U;
-float gui::FPS::s_timer = 0.0f;
+unsigned gui::FPSpreview::s_framesCount = 0U;
+float gui::FPSpreview::s_timer = 0.0f;
 
-float gui::FPS::s_delay = 1.0f;
+float gui::FPSpreview::s_delay = 1.0f;
 
-unsigned gui::FPS::s_FPS = 0U;
+unsigned gui::FPSpreview::s_FPSpreview = 0U;
 
-sf::Text gui::FPS::s_text;
+sf::Text gui::FPSpreview::s_text;
 
-sf::RectangleShape gui::FPS::s_bg;
+sf::RectangleShape gui::FPSpreview::s_bg;
 
-sf::VideoMode gui::FPS::s_resolution = sf::VideoMode(1920U, 1080U);
+sf::VideoMode gui::FPSpreview::s_resolution = sf::VideoMode(1920U, 1080U);
 
-void gui::FPS::init(
+void gui::FPSpreview::init(
 	float delay,
 	const sf::Color& backgroundColor, 
 	unsigned charSize, 
@@ -43,7 +43,7 @@ void gui::FPS::init(
 	updateBg();
 }
 
-void gui::FPS::update(float dt)
+void gui::FPSpreview::update(float dt)
 {
 	assert(s_initialized);
 
@@ -52,14 +52,14 @@ void gui::FPS::update(float dt)
 
 	if (s_timer >= s_delay)
 	{
-		updateFPS();
+		updateFPSpreview();
 		updateText();
 		updateBg();
 		reset();
 	}
 }
 
-void gui::FPS::render(sf::RenderTarget& target)
+void gui::FPSpreview::render(sf::RenderTarget& target)
 {
 	assert(s_initialized);
 
@@ -69,68 +69,68 @@ void gui::FPS::render(sf::RenderTarget& target)
 
 // accessors:
 
-bool gui::FPS::isInitialized()
+bool gui::FPSpreview::isInitialized()
 {
 	return s_initialized;
 }
 
-const unsigned long long& gui::FPS::getTotalFramesCount()
+const unsigned long long& gui::FPSpreview::getTotalFramesCount()
 {
 	return s_totalFramesCount;
 }
 
-float gui::FPS::getTotalTimeElapsed()
+float gui::FPSpreview::getTotalTimeElapsed()
 {
 	return s_totalTimeElapsed;
 }
 
-float gui::FPS::getDelay()
+float gui::FPSpreview::getDelay()
 {
 	return s_delay;
 }
 
-const sf::RectangleShape& gui::FPS::getBackground()
+const sf::RectangleShape& gui::FPSpreview::getBackground()
 {
 	return s_bg;
 }
 
-sf::VideoMode& gui::FPS::getResolution()
+sf::VideoMode& gui::FPSpreview::getResolution()
 {
 	return s_resolution;
 }
 
 // mutators:
 
-void gui::FPS::setDelay(float delay)
+void gui::FPSpreview::setDelay(float delay)
 {
 	s_delay = delay;
 }
 
-void gui::FPS::setCharSize(unsigned charSize)
+void gui::FPSpreview::setCharSize(unsigned charSize)
 {
 	s_text.setCharacterSize(charSize);
 	updateText();
 	updateBg();
 }
 
-void gui::FPS::setFont(const sf::Font& font)
+void gui::FPSpreview::setFont(const sf::Font& font)
 {
 	s_text.setFont(font);
 	updateText();
 	updateBg();
 }
 
-void gui::FPS::setBackgroundColor(const sf::Color& color)
+void gui::FPSpreview::setBackgroundColor(const sf::Color& color)
 {
 	s_bg.setFillColor(color);
 }
 
-void gui::FPS::setTextColor(const sf::Color& color)
+void gui::FPSpreview::setTextColor(const sf::Color& color)
 {
 	s_text.setFillColor(color);
 }
 
-void gui::FPS::setResolution(const sf::VideoMode& resolution)
+void gui::FPSpreview::setResolution(const sf::VideoMode& resolution)
 {
 	s_resolution = resolution;
 	updateText();
@@ -139,26 +139,26 @@ void gui::FPS::setResolution(const sf::VideoMode& resolution)
 
 // private methods:
 
-void gui::FPS::updateFrames()
+void gui::FPSpreview::updateFrames()
 {
 	s_totalFramesCount++;
 	s_framesCount++;
 }
 
-void gui::FPS::updateTime(float dt)
+void gui::FPSpreview::updateTime(float dt)
 {
 	s_totalTimeElapsed += dt;
 	s_timer += dt;
 }
 
-void gui::FPS::updateFPS()
+void gui::FPSpreview::updateFPSpreview()
 {
-	s_FPS = static_cast<unsigned>(s_framesCount / s_timer);
+	s_FPSpreview = static_cast<unsigned>(s_framesCount / s_timer);
 }
 
-void gui::FPS::updateText()
+void gui::FPSpreview::updateText()
 {
-	s_text.setString(std::to_string(s_FPS));
+	s_text.setString(std::to_string(s_FPSpreview));
 
 	const sf::FloatRect& textBounds = s_text.getLocalBounds();
 
@@ -173,7 +173,7 @@ void gui::FPS::updateText()
 	);
 }
 
-void gui::FPS::updateBg()
+void gui::FPSpreview::updateBg()
 {
 	s_bg.setPosition(
 		s_text.getPosition().x - s_text.getGlobalBounds().width / 2.0f,
@@ -188,7 +188,7 @@ void gui::FPS::updateBg()
 	);
 }
 
-void gui::FPS::reset()
+void gui::FPSpreview::reset()
 {
 	s_framesCount = 0U;
 	s_timer = 0.0f;

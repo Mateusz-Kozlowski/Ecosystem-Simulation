@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MainMenuState.h"
-#include "FPS.h"
+#include "FPSpreview.h"
 
 class App
 {

@@ -2,7 +2,7 @@
 
 namespace gui
 {
-	class FPS
+	class FPSpreview
 	{
 	public:
 		static void init(
@@ -42,7 +42,7 @@ namespace gui
 	private:
 		static void updateFrames();
 		static void updateTime(float dt);
-		static void updateFPS();
+		static void updateFPSpreview();
 		static void updateText();
 		static void updateBg();
 		static void reset();
@@ -58,7 +58,7 @@ namespace gui
 
 		static float s_delay;
 
-		static unsigned s_FPS;
+		static unsigned s_FPSpreview;
 
 		static sf::RectangleShape s_bg;
 		static sf::Text s_text;

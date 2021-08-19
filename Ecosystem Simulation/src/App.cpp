@@ -166,7 +166,7 @@ void App::initFPSpreview()
 {
 	const sf::VideoMode& resolution = m_gfxSettings.resolution;
 
-	gui::FPS::init(
+	gui::FPSpreview::init(
 		0.2f,
 		sf::Color::Transparent,
 		gui::calcCharSize(32.0f, resolution),
@@ -190,7 +190,7 @@ void App::update()
 
 void App::updateFPSpreview()
 {
-	gui::FPS::update(m_dt);
+	gui::FPSpreview::update(m_dt);
 }
 
 void App::updateEvents()
@@ -253,7 +253,7 @@ void App::render()
 		m_states.top()->render();
 	}
 
-	gui::FPS::render(*m_window);
+	gui::FPSpreview::render(*m_window);
 
 	m_window->display();
 }

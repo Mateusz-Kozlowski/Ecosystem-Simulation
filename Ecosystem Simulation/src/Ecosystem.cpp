@@ -1356,9 +1356,7 @@ bool Ecosystem::sticksToLeftBorder(const Animal& animal)
 	float bordersThickness = getBordersThickness();
 	float animalRadius = animal.getRadius();
 
-	if (animalPos.x != bordersThickness + animalRadius) return false;
-
-	return true;
+	return animalPos.x == bordersThickness + animalRadius;
 }
 
 bool Ecosystem::sticksToRightBorder(const Animal& animal)
@@ -1372,9 +1370,7 @@ bool Ecosystem::sticksToRightBorder(const Animal& animal)
 	float bordersThickness = getBordersThickness();
 	float animalR = animal.getRadius();
 
-	if (animalPos.x != worldSize.x - bordersThickness - animalR) return false;
-
-	return true;
+	return animalPos.x == worldSize.x - bordersThickness - animalR;
 }
 
 bool Ecosystem::sticksToTopBorder(const Animal& animal)
@@ -1387,9 +1383,7 @@ bool Ecosystem::sticksToTopBorder(const Animal& animal)
 	float bordersThickness = getBordersThickness();
 	float animalRadius = animal.getRadius();
 
-	if (animalPos.y != bordersThickness + animalRadius) return false;
-
-	return true;
+	return animalPos.y == bordersThickness + animalRadius;
 }
 
 bool Ecosystem::sticksToBottomBorder(const Animal& animal)
@@ -1403,9 +1397,7 @@ bool Ecosystem::sticksToBottomBorder(const Animal& animal)
 	float bordersThickness = getBordersThickness();
 	float animalR = animal.getRadius();
 
-	if (animalPos.y != worldSize.y - bordersThickness - animalR) return false;
-
-	return true;
+	return animalPos.y == worldSize.y - bordersThickness - animalR;
 }
 
 void Ecosystem::removeDeadAnimals()
@@ -1640,18 +1632,21 @@ Fruit* Ecosystem::getLowestEnergyFruit()
 
 void Ecosystem::correctPopulationSize(float dt)
 {
-	const unsigned fps = 1.0f / dt;
-	
-	if (m_animals.size() <= 1) return;
-
-	for (int i = 0; i < m_animals.size();)
-	{
-		if (m_animals[i]->getTimeElapsedSinceLastExternalHpChange() > fps)
-		{
-			convertAnimalToFruit(m_animals[i], false);
-		}
-		else i++;
-	}
+	//const unsigned fps = 1.0f / dt;
+	//const unsigned threshold = std::exp2f(fps / 10.0f);
+	//
+	//std::cout << threshold << '\n';
+	//
+	//if (m_animals.size() <= 1) return;
+	//
+	//for (int i = 0; i < m_animals.size();)
+	//{
+	//	if (m_animals[i]->getTimeElapsedSinceLastExternalHpChange() > threshold)
+	//	{
+	//		convertAnimalToFruit(m_animals[i], false);
+	//	}
+	//	else i++;
+	//}
 }
 
 void Ecosystem::correctBrainPreviewsPositions()

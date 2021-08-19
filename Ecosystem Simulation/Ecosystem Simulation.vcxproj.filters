@@ -82,7 +82,7 @@
     <ClCompile Include="src\BrainPreview.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\FPS.cpp">
+    <ClCompile Include="src\FPSpreview.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -245,7 +245,7 @@
     <ClInclude Include="src\BrainPreview.h">
       <Filter>GUI</Filter>
     </ClInclude>
-    <ClInclude Include="src\FPS.h">
+    <ClInclude Include="src\FPSpreview.h">
       <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
