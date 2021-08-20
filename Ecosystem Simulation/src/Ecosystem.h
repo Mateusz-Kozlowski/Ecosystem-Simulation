@@ -165,6 +165,8 @@ private:
 
 	int getTrackedAnimalIndex() const;
 
+	void mutatingTool(const sf::Vector2f& mousePosView);
+
 	void trackingTool(const sf::Vector2f& mousePosView);
 	void stopTracking();
 

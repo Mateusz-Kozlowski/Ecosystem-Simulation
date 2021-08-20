@@ -440,6 +440,24 @@ void SimulationState::initGodToolsGui()
 	);
 
 	m_sideMenu->addImageButton(
+		"MUTATE",
+		{
+			{"IDLE", guiPath + "/God tools/mutate/mutate.png"},
+			{"LIGHT", guiPath + "/God tools/mutate/mutate light.png"},
+			{"DARK", guiPath + "/God tools/mutate/mutate dark.png"}
+		},
+		"IDLE",
+		sf::Vector2f(
+			gui::p2pX(2.0f + 1.0f / 3.0f, resolution),
+			gui::p2pY(posYpercentage, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(100.0f * 64.0f / 1920.0f, resolution),
+			gui::p2pY(100.0f * 64.0f / 1080.0f, resolution)
+		)
+	);
+
+	m_sideMenu->addImageButton(
 		"TRACK",
 		{
 			{"IDLE", guiPath + "/God tools/track/track.png"},

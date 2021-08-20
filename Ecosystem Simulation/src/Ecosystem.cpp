@@ -136,6 +136,10 @@ void Ecosystem::useGodTools(
 	case GodTool::NONE:
 		return;
 
+	case GodTool::MUTATE:
+		mutatingTool(mousePosView);
+		return;
+
 	case GodTool::TRACK:
 		trackingTool(mousePosView);
 		return;
@@ -165,8 +169,7 @@ void Ecosystem::useGodTools(
 			<< "Error::Ecosystem::useGodTool"
 			<< "(const std::vector<sf::Event>&, const sf::Vector2f&)::"
 			<< "there is no God tool like "
-			<< m_godTool
-			<< '\n';
+			<< m_godTool << '\n';
 		assert(false);
 	}
 }
@@ -915,6 +918,20 @@ void Ecosystem::loadBrainsPreviewsVisibility(const std::string& filePath)
 }
 
 // god tools:
+
+// mutating tool:
+
+void Ecosystem::mutatingTool(const sf::Vector2f& mousePosView)
+{
+	for (auto& animal : m_animals)
+	{
+		if (animal->isCoveredByMouse(mousePosView))
+		{
+			animal->randomMutate(1U);
+			return;
+		}
+	}
+}
 
 // tracking tool:
 

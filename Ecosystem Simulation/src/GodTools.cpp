@@ -8,6 +8,9 @@ std::string getGodToolStr(GodTool godTool)
     case GodTool::NONE:
         return "NONE";
 
+    case GodTool::MUTATE:
+        return "MUTATE";
+
     case GodTool::TRACK:
         return "TRACK";
 
@@ -41,6 +44,9 @@ GodTool getGodTool(const std::string& key)
 {
     if (key == "NONE")
         return GodTool::NONE;
+
+    else if(key == "MUTATE")
+        return GodTool::MUTATE;
 
     else if (key == "TRACK")
         return GodTool::TRACK;
