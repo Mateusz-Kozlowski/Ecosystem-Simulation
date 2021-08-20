@@ -512,7 +512,7 @@ void Animal::initHpBar(
 	m_hpBar = std::make_unique<gui::ProgressBar>(
 		sf::Vector2f(
 			0.0f,
-			m_maxHp
+			defaultHp
 		),
 		false,
 		defaultHp,
