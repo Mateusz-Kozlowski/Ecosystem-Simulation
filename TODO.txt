@@ -31,17 +31,9 @@ simulation state:
 UI:
 - Google professional names of GUI widgets
 - use move method in widgets
-- hold fonts in static way and as keys use UNMUTABLE for the first font 
-  and MUTABLE for the second font 
-  (
-    I don't remember their names...
-    actually I remeber their names, they are called CONSOLAB and Retroica
-    but I don't remeber which is which
-  );
-  keys can be represented as strings/const char* or maybe even sth different
 - unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
 - input field text shouldn't dance up and down
-- there are 2 fonts; which should be used for what?
+- use Retroica font wherever possible, consolab where neccessarily
 - rename neural net preview to sequential preview or sth like that
 - one convention for all gui widgets, maybe even polimorphizm
 - some GUI widgets positions are set relative to their centers and some are set relative to their
@@ -52,7 +44,6 @@ simulation/ecosystem:
 - all animals energy to expel from animals should go to only one fruit,
   fruit with the lowest energy
 - use some STL algo to feed animals
-- mutate God tool!
 - add a way to set automaticaly execution of some global "God events"
   like killing 1/2 of population every 30 seconds...
 - fix an issue with getWorldSize() and getArenaSize() in Ecosystem class;
@@ -81,6 +72,7 @@ shortcuts:
 - speeding up and slowing down
 - moving side panel	
 - every God tool:
+  - mutate (M)
   - track (T)
   - kill (K)
   - replace (R)
