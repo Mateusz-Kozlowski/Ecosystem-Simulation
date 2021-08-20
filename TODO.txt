@@ -7,6 +7,9 @@ brain inputs:
 side menu:
 - after loading ecosystem side menu panel should be updated (e.g., speed scaler)
 
+logging system:
+- add a logging library
+
 ResourceManager:
 - implement some kind of resource managing framework
 
@@ -46,6 +49,8 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- all animals energy to expel from animals should go to only one fruit,
+  fruit with the lowest energy
 - use some STL algo to feed animals
 - mutate God tool!
 - add a way to set automaticaly execution of some global "God events"

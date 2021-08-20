@@ -1147,7 +1147,7 @@ void Ecosystem::updateWorld(float dt)
 	//killAnimalsStickingToBorders();
 	transferEnergyFromAnimalsToFruits();
 	removeDeadAnimals();
-	feedAnimals();
+	feedAnimals(dt);
 	removeEatenFruits();
 	correctPopulationSize(dt);
 	correctBrainPreviewsPositions();
@@ -1436,7 +1436,7 @@ void Ecosystem::removeAnimal(std::shared_ptr<Animal>& animal)
 	m_animals.pop_back();
 }
 
-void Ecosystem::feedAnimals()
+void Ecosystem::feedAnimals(float dt)
 {
 	if (m_animals.empty()) return;
 
@@ -1460,7 +1460,7 @@ void Ecosystem::feedAnimals()
 			}
 		}
 
-		tryToFindConsumer(*m_fruits[f], left);
+		tryToFindConsumer(*m_fruits[f], left, dt);
 	}
 }
 
@@ -1483,7 +1483,10 @@ bool Ecosystem::animalIsTooHigh(const Animal& animal, const Fruit& fruit) const
 	return (animalPos.y - fruitPos.y) < -(animalRadius + fruitRadius);
 }
 
-int Ecosystem::tryToFindConsumer(Fruit& fruit, unsigned startAnimalIndex)
+int Ecosystem::tryToFindConsumer(
+	Fruit& fruit, 
+	unsigned startAnimalIndex, 
+	float dt)
 {
 	unsigned animal_index = startAnimalIndex;
 
@@ -1492,7 +1495,7 @@ int Ecosystem::tryToFindConsumer(Fruit& fruit, unsigned startAnimalIndex)
 	{
 		if (animalReachesFruit(*m_animals[animal_index], fruit))
 		{
-			eat(*m_animals[animal_index], fruit);
+			eat(*m_animals[animal_index], fruit, dt);
 			return 1;
 		}
 
@@ -1528,8 +1531,21 @@ bool Ecosystem::animalReachesFruit(
 	return distance <= animal.getRadius() + fruit.getRadius();
 }
 
-void Ecosystem::eat(Animal& animal, Fruit& fruit)
+void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 {
+	unsigned fps = 1.0f / dt;
+
+	if (fps < 30U)
+	{
+		animal.increaseHp(fruit.getEnergy());
+		fruit.setEnergy(0.0f);
+
+		// TODO: a good candidate for logging:
+		//std::cout << "FPS to low to clone!\n";
+
+		return;
+	}
+
 	float prevAnimalHp = animal.getHp();
 
 	animal.setHp(
@@ -1671,21 +1687,91 @@ Fruit* Ecosystem::getLowestEnergyFruit()
 
 void Ecosystem::correctPopulationSize(float dt)
 {
-	//const unsigned fps = 1.0f / dt;
-	//const unsigned threshold = std::exp2f(fps / 10.0f);
+	unsigned prevAnimalsCount = m_animals.size();
+
+	std::sort(
+		m_animals.begin(),
+		m_animals.end(),
+		correctPopulationSizeComparator
+	);
+
+	if (m_animals.size() > 1)
+	{
+		assert(m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
+			   >= m_animals[1]->getTimeElapsedSinceLastExternalHpChange());
+	}
+
+	unsigned threshold = 10'000U / m_animals.size();
+
+	while (2 * (m_animals.size() + 1) > prevAnimalsCount)
+	{
+		if (m_animals[0]->getTimeElapsedSinceLastExternalHpChange() > threshold)
+		{
+			// TODO: a good candidate for logging:
+			// std::cout << "Kill 'cause of th=" << threshold << '\n';
+			convertAnimalToFruit(m_animals[0], false);
+		}
+		else return;
+	}
+	
+	//unsigned prevAnimalsCount = m_animals.size();
 	//
-	//std::cout << threshold << '\n';
+	//std::sort(
+	//	m_animals.begin(),
+	//	m_animals.end(),
+	//	correctPopulationSizeComparator
+	//);
 	//
-	//if (m_animals.size() <= 1) return;
+	//assert(m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
+	//	>= m_animals[1]->getTimeElapsedSinceLastExternalHpChange());
 	//
+	//unsigned fps = 1.0f / dt;
+	//unsigned murdersCount = 0U;
+	//
+	////std::cout << "fps: " << fps << '\n';
+	//
+	//if (fps < 10U)
+	//{
+	//	murdersCount = 0.5f * m_animals.size();
+	//}
+	//else if (fps < 30 && fps >= 10U)
+	//{
+	//	murdersCount = 0.1f * m_animals.size();
+	//}
+	//
+	//while (murdersCount--)
+	//{
+	//	std::cout
+	//		<< "kill: "
+	//		<< m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
+	//		<< '\n';
+	//	convertAnimalToFruit(m_animals[0], false);
+	//}
+	//
+	//std::cout << '\n';
+	//
+	//// now kill animals starving for more than 1 minute:
 	//for (int i = 0; i < m_animals.size();)
 	//{
-	//	if (m_animals[i]->getTimeElapsedSinceLastExternalHpChange() > threshold)
+	//	if (2U * m_animals.size() <= prevAnimalsCount) return;
+	//
+	//	// TODO: "unhardcode" that:
+	//	if (m_animals[i]->getTimeElapsedSinceLastExternalHpChange() > 60.0f)
 	//	{
 	//		convertAnimalToFruit(m_animals[i], false);
 	//	}
 	//	else i++;
 	//}
+	//
+	//assert(2U * (m_animals.size() + 1) > prevAnimalsCount);
+}
+
+bool Ecosystem::correctPopulationSizeComparator(
+	std::shared_ptr<Animal> a1, 
+	std::shared_ptr<Animal> a2)
+{
+	return a1->getTimeElapsedSinceLastExternalHpChange()
+		   > a2->getTimeElapsedSinceLastExternalHpChange();
 }
 
 void Ecosystem::correctBrainPreviewsPositions()

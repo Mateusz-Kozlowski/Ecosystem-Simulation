@@ -211,16 +211,20 @@ private:
 	void removeDeadAnimals();
 	void removeAnimal(std::shared_ptr<Animal>& animal);
 
-	void feedAnimals();
+	void feedAnimals(float dt);
 	static bool compareAnimalsYPositions(
 		std::shared_ptr<Animal> a1, 
 		std::shared_ptr<Animal> a2
 	);
 	bool animalIsTooHigh(const Animal& animal, const Fruit& fruit) const;
-	int tryToFindConsumer(Fruit& fruit, unsigned startAnimalindex);
+	int tryToFindConsumer(
+		Fruit& fruit, 
+		unsigned startAnimalindex,
+		float dt
+	);
 	bool animalReachesFruitInY(const Animal& animal, const Fruit& fruit) const;
 	bool animalReachesFruit(const Animal& animal, const Fruit& fruit) const;
-	void eat(Animal& animal, Fruit& fruit);
+	void eat(Animal& animal, Fruit& fruit, float dt);
 	
 	void removeEatenFruits();
 	void removeFruit(std::unique_ptr<Fruit>& fruit);
@@ -229,6 +233,10 @@ private:
 	Fruit* getLowestEnergyFruit();
 
 	void correctPopulationSize(float dt);
+	static bool correctPopulationSizeComparator(
+		std::shared_ptr<Animal> a1,
+		std::shared_ptr<Animal> a2
+	);
 
 	void correctBrainPreviewsPositions();
 	bool brainPreviewProtrudesWorldRightBorder(
