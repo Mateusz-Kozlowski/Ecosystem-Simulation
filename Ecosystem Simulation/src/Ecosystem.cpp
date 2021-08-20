@@ -1718,7 +1718,7 @@ void Ecosystem::correctPopulationSize(float dt)
 			   >= m_animals[1]->getTimeElapsedSinceLastExternalHpChange());
 	}
 
-	unsigned threshold = 10'000U / m_animals.size();
+	unsigned threshold = 5'000U / m_animals.size();
 
 	while (2 * (m_animals.size() + 1) > prevAnimalsCount)
 	{
