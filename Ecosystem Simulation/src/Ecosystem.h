@@ -48,8 +48,10 @@ public:
 	
 	const std::string& getName() const;
 
-	sf::Vector2f getWorldSize() const;
+	float calcFruitsDensity() const;
+	float calcArenaArea() const;
 	const sf::Vector2f& getArenaSize() const;
+	sf::Vector2f getWorldSize() const;
 
 	unsigned getBordersThickness() const;
 	unsigned getAnimalsCount() const;
@@ -235,6 +237,7 @@ private:
 	Fruit* getLowestEnergyFruit();
 
 	void correctPopulationSize(float dt);
+	void randomShuffleAnimals();
 	static bool correctPopulationSizeComparator(
 		std::shared_ptr<Animal> a1,
 		std::shared_ptr<Animal> a2

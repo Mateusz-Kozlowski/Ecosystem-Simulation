@@ -221,17 +221,27 @@ const std::string& Ecosystem::getName() const
 	return m_name;
 }
 
+float Ecosystem::calcFruitsDensity() const
+{
+	return m_fruits.size() / calcArenaArea();
+}
+
+float Ecosystem::calcArenaArea() const
+{
+	return getArenaSize().x * getArenaSize().y;
+}
+
+const sf::Vector2f& Ecosystem::getArenaSize() const
+{
+	return m_background.getSize();
+}
+
 sf::Vector2f Ecosystem::getWorldSize() const
 {
 	return {
 		m_background.getSize().x + 2 * m_background.getOutlineThickness(),
 		m_background.getSize().y + 2 * m_background.getOutlineThickness()
 	};
-}
-
-const sf::Vector2f& Ecosystem::getArenaSize() const
-{
-	return m_background.getSize();
 }
 
 unsigned Ecosystem::getBordersThickness() const
@@ -995,11 +1005,6 @@ void Ecosystem::convertAnimalToFruit(
 		m_fruits.back()->setRandomPosition(getWorldSize(), getBordersThickness());
 	}
 
-	if (animal.get() == m_trackedAnimal)
-	{
-		m_trackedAnimal = nullptr;
-	}
-
 	removeAnimal(animal);
 }
 
@@ -1704,7 +1709,14 @@ Fruit* Ecosystem::getLowestEnergyFruit()
 
 void Ecosystem::correctPopulationSize(float dt)
 {
-	unsigned prevAnimalsCount = m_animals.size();
+	float fastingThreshold = 5'000U / m_animals.size();
+
+	std::cout 
+		<< "starvation death threshold: " 
+		<< fastingThreshold 
+		<< " sec\n";
+
+	randomShuffleAnimals();
 
 	std::sort(
 		m_animals.begin(),
@@ -1712,25 +1724,34 @@ void Ecosystem::correctPopulationSize(float dt)
 		correctPopulationSizeComparator
 	);
 
-	if (m_animals.size() > 1)
-	{
-		assert(m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
-			   >= m_animals[1]->getTimeElapsedSinceLastExternalHpChange());
-	}
+	assert(m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
+		>= m_animals[1]->getTimeElapsedSinceLastExternalHpChange());
 
-	unsigned threshold = 5'000U / m_animals.size();
+	unsigned murdersCount = 0U;
 
-	while (2 * (m_animals.size() + 1) > prevAnimalsCount)
+	for (int i = 0; i < m_animals.size() / 2; i++)
 	{
-		if (m_animals[0]->getTimeElapsedSinceLastExternalHpChange() > threshold)
+		if (m_animals[i]->getTimeElapsedSinceLastExternalHpChange()
+			> fastingThreshold)
 		{
-			// TODO: a good candidate for logging:
-			// std::cout << "Kill 'cause of th=" << threshold << '\n';
-			convertAnimalToFruit(m_animals[0], false);
+			murdersCount++;
 		}
-		else return;
+		else break;
 	}
-	
+
+	// kill them:
+	for (int i = 0; i < murdersCount; i++)
+	{
+		convertAnimalToFruit(m_animals[i], false);
+	}
+
+	if (murdersCount != 0U)
+	{
+		std::cout 
+			<< "\npopulation corrected by " 
+			<< murdersCount << "\n\n";
+	}
+
 	//unsigned prevAnimalsCount = m_animals.size();
 	//
 	//std::sort(
@@ -1781,6 +1802,20 @@ void Ecosystem::correctPopulationSize(float dt)
 	//}
 	//
 	//assert(2U * (m_animals.size() + 1) > prevAnimalsCount);
+}
+
+void Ecosystem::randomShuffleAnimals()
+{
+	unsigned animalsSize = m_animals.size();
+
+	for (int i = 0; i < animalsSize; i++)
+	{
+		unsigned randIdx = Blueberry::RandomEngine::getIntInRange(
+			i, 
+			animalsSize - 1
+		);
+		std::swap(m_animals[i], m_animals[randIdx]);
+	}
 }
 
 bool Ecosystem::correctPopulationSizeComparator(
