@@ -69,10 +69,6 @@ simulation/ecosystem:
 - there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
 - update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
 
-Animal:
-- move getKineticEnergy method (and simlar methods if such exist) 
-  to MovementComponent class
-
 shortcuts:
 - speeding up and slowing down
 - moving side panel	

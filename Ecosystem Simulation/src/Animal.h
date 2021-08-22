@@ -46,16 +46,19 @@ public:
 	const MovementComponent& getMovementComponent() const;
 
 	const Blueberry::Brain& getBrain() const;
+	
+	float getEnergyToExpel() const;
+	float getKineticEnergyDelta() const;
+	float getPreviousKineticEnergy() const;
+	float getKineticEnergy() const;
 
-	const sf::Vector2f& getVelocityVector() const;
-	const sf::Vector2f& getAccelerationVector() const;
-
+	float getPreviousVelocityVectorValue() const;
 	float getVelocityVectorValue() const;
 	float getAccelerationVectorValue() const;
 
-	float getKineticEnergy() const;
-	float getKineticEnergyDelta() const;
-	float getEnergyToExpel() const;
+	const sf::Vector2f& getPreviousVelocityVector() const;
+	const sf::Vector2f& getVelocityVector() const;
+	const sf::Vector2f& getAccelerationVector() const;
 
 	bool isAlive() const;
 
@@ -122,9 +125,7 @@ private:
 	float m_maxHp;
 
 	std::unique_ptr<MovementComponent> m_movementComponent;
-
-	float m_kineticEnergyFromPreviousFrame;
-
+	
 	bool m_alive;
 
 	std::unique_ptr<gui::ProgressBar> m_hpBar;

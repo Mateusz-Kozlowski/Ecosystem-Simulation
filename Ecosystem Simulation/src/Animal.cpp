@@ -12,7 +12,6 @@ Animal::Animal(
 	: m_body()
 	, m_maxHp(maxHp)
 	, m_movementComponent(std::make_unique<MovementComponent>())
-	, m_kineticEnergyFromPreviousFrame(0.0f)
 	, m_alive(true)
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
@@ -27,7 +26,6 @@ Animal::Animal(const char* folderPath)
 	: m_body()
 	, m_maxHp(0.0f)
 	, m_movementComponent(std::make_unique<MovementComponent>())
-	, m_kineticEnergyFromPreviousFrame(0.0f)
 	, m_alive(true)
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
@@ -40,7 +38,6 @@ Animal::Animal(const Animal& rhs)
 	: m_body(rhs.m_body)
 	, m_maxHp(rhs.m_maxHp)
 	, m_movementComponent(std::make_unique<MovementComponent>())
-	, m_kineticEnergyFromPreviousFrame(rhs.m_kineticEnergyFromPreviousFrame)
 	, m_alive(rhs.m_alive)
 	, m_hpBar(std::make_unique<gui::ProgressBar>())
 	, m_brainPreview(nullptr)
@@ -59,7 +56,6 @@ Animal& Animal::operator=(const Animal& rhs)
 		m_body = rhs.m_body;
 		m_maxHp = rhs.m_maxHp;
 		*m_movementComponent = *rhs.m_movementComponent;
-		m_kineticEnergyFromPreviousFrame = rhs.m_kineticEnergyFromPreviousFrame;
 		m_alive = rhs.m_alive;
 		*m_hpBar = *rhs.m_hpBar;
 
@@ -128,9 +124,10 @@ void Animal::saveToFolder(const char* folderPath) const
 	ofs << static_cast<int>(m_hpBar->getProgressRectColor().a) << '\n';
 
 	ofs << m_maxHp << '\n';
-	ofs << m_kineticEnergyFromPreviousFrame << '\n';
 	ofs << m_alive << '\n';
 	ofs << m_hpBar->getCurrentValue() << '\n';
+	ofs << m_movementComponent->getPreviousVelocityVector().x << '\n';
+	ofs << m_movementComponent->getPreviousVelocityVector().y << '\n';
 	ofs << m_movementComponent->getVelocityVector().x << '\n';
 	ofs << m_movementComponent->getVelocityVector().y << '\n';
 	ofs << m_timeElapsedSinceLastExternalHpChange;
@@ -166,6 +163,7 @@ void Animal::loadFromFolder(const char* folderPath)
 	unsigned hpBarBgColorR, hpBarBgColorG, hpBarBgColorB, hpBarBgColorA;
 	unsigned hpBarColorR, hpBarColorG, hpBarColorB, hpBarColorA;
 	float hp;
+	sf::Vector2f prevVelocity;
 	sf::Vector2f velocity;
 
 	ifs >> position.x >> position.y;
@@ -174,9 +172,9 @@ void Animal::loadFromFolder(const char* folderPath)
 	ifs >> hpBarBgColorR >> hpBarBgColorG >> hpBarBgColorB >> hpBarBgColorA;
 	ifs >> hpBarColorR >> hpBarColorG >> hpBarColorB >> hpBarColorA;
 	ifs >> m_maxHp;
-	ifs >> m_kineticEnergyFromPreviousFrame;
 	ifs >> m_alive;
 	ifs >> hp;
+	ifs >> prevVelocity.x >> prevVelocity.y;
 	ifs >> velocity.x >> velocity.y;
 	ifs >> m_timeElapsedSinceLastExternalHpChange;
 
@@ -219,8 +217,6 @@ void Animal::update(
 	float simulationSpeedFactor,
 	const std::vector<double>& brainInputs)
 {
-	m_kineticEnergyFromPreviousFrame = getKineticEnergy();
-
 	m_movementComponent->update(dt, simulationSpeedFactor, brainInputs);
 
 	updateBody(dt);
@@ -281,14 +277,29 @@ const Blueberry::Brain& Animal::getBrain() const
 	return m_movementComponent->getBrain();
 }
 
-const sf::Vector2f& Animal::getVelocityVector() const
+float Animal::getEnergyToExpel() const
 {
-	return m_movementComponent->getVelocityVector();
+	return m_movementComponent->getEnergyToExpel();
 }
 
-const sf::Vector2f& Animal::getAccelerationVector() const
+float Animal::getKineticEnergyDelta() const
 {
-	return m_movementComponent->getAccelerationVector();
+	return m_movementComponent->getKineticEnergyDelta();
+}
+
+float Animal::getPreviousKineticEnergy() const
+{
+	return m_movementComponent->getPreviousKineticEnergy();
+}
+
+float Animal::getKineticEnergy() const
+{
+	return m_movementComponent->getKineticEnergy();
+}
+
+float Animal::getPreviousVelocityVectorValue() const
+{
+	return m_movementComponent->getPreviousVelocityVectorValue();
 }
 
 float Animal::getVelocityVectorValue() const
@@ -301,21 +312,19 @@ float Animal::getAccelerationVectorValue() const
 	return m_movementComponent->getAccelerationVectorValue();
 }
 
-float Animal::getKineticEnergy() const
+const sf::Vector2f& Animal::getPreviousVelocityVector() const
 {
-	return 0.5f * pow(getVelocityVectorValue(), 2);
+	return m_movementComponent->getPreviousVelocityVector();
 }
 
-float Animal::getKineticEnergyDelta() const
+const sf::Vector2f& Animal::getVelocityVector() const
 {
-	return getKineticEnergy() - m_kineticEnergyFromPreviousFrame;
+	return m_movementComponent->getVelocityVector();
 }
 
-float Animal::getEnergyToExpel() const
+const sf::Vector2f& Animal::getAccelerationVector() const
 {
-	if (getKineticEnergyDelta() >= 0.0f) return 0.0f;
-
-	return -2.0f * getKineticEnergyDelta();
+	return m_movementComponent->getAccelerationVector();
 }
 
 bool Animal::isAlive() const

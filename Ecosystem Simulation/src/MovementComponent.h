@@ -24,11 +24,18 @@ public:
 
 	const Blueberry::Brain& getBrain() const;
 
-	const sf::Vector2f& getVelocityVector() const;
-	const sf::Vector2f& getAccelerationVector() const;
+	float getEnergyToExpel() const;
+	float getKineticEnergyDelta() const;
+	float getPreviousKineticEnergy() const;
+	float getKineticEnergy() const;
 
+	float getPreviousVelocityVectorValue() const;
 	float getVelocityVectorValue() const;
 	float getAccelerationVectorValue() const;
+
+	const sf::Vector2f& getPreviousVelocityVector() const;
+	const sf::Vector2f& getVelocityVector() const;
+	const sf::Vector2f& getAccelerationVector() const;
 
 	// mutators:
 
@@ -41,10 +48,14 @@ public:
 	void setVelocityY(float vy);
 
 private:
+	static float getVectorValue(const sf::Vector2f& vector);
+
+private:
 	std::unique_ptr<Blueberry::Brain> m_brain;
 
 	// kinematics:
 
+	sf::Vector2f m_prevVelocity;
 	sf::Vector2f m_velocity;
 	sf::Vector2f m_acceleration;
 };
