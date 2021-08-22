@@ -282,6 +282,8 @@ void LoadingState::getUpdateFromButtons()
 {
 	if (m_buttons["LOAD"]->isClicked())
 	{
+		if (m_textBox->getInput().empty()) return;
+
 		std::string folderPath = "ecosystems/" + m_textBox->getInput();
 
 		if (m_stateData->m_ecosystem)
