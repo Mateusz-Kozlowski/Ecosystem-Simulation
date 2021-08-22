@@ -497,8 +497,7 @@ void Ecosystem::createNewAnimals(
 	float animalsRadius,
 	const sf::Color& animalsColor,
 	bool renderHpBarsByDefault,
-	bool renderBrainsByDefault
-)
+	bool renderBrainsByDefault)
 {
 	m_animals.clear();
 
@@ -521,6 +520,8 @@ void Ecosystem::createNewAnimal(
 	bool renderHpBarByDefault,
 	bool renderBrainByDefault)
 {
+	assert(defaultAnimalHp >= 0.0f);
+
 	m_animals.push_back(
 		std::make_unique<Animal>(
 			sf::Vector2f(
@@ -560,6 +561,8 @@ void Ecosystem::createNewFruit(
 	float radius, 
 	const sf::Color& fruitColor)
 {
+	assert(energy >= 0.0f);
+
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			energy,
@@ -1197,7 +1200,9 @@ const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 
 	inputsForBrain.push_back(animal.getVelocityVector().x);
 	inputsForBrain.push_back(animal.getVelocityVector().y);
-	
+
+	assert(animal.getHp() > 0.0f);
+
 	inputsForBrain.push_back(log2(animal.getHp()));
 
 	const Fruit* theNearestFruit = getTheNearestFruit(animal);
@@ -1432,6 +1437,8 @@ void Ecosystem::removeDeadAnimals()
 	{
 		if (!m_animals[i]->isAlive())
 		{
+			assert(m_animals[i]->getTotalEnergy() >= 0.0f);
+
 			m_fruits.push_back(
 				std::make_unique<Fruit>(
 					m_animals[i]->getTotalEnergy(),
@@ -1555,6 +1562,8 @@ bool Ecosystem::animalReachesFruit(
 
 void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 {
+	assert(fruit.getEnergy() >= 0.0f);
+	
 	unsigned fps = 1.0f / dt;
 
 	if (fps < 30U)
@@ -1686,6 +1695,7 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 
 	for (const auto& animal : m_animals)
 	{
+		assert(animal->getEnergyToExpel() >= 0.0f);
 		lowestEnergyFruit->increaseEnergy(animal->getEnergyToExpel());
 	}
 }
@@ -1709,6 +1719,8 @@ Fruit* Ecosystem::getLowestEnergyFruit()
 
 void Ecosystem::correctPopulationSize(float dt)
 {
+	if (m_animals.empty()) return;
+
 	float fastingThreshold = 5'000.0f / m_animals.size();
 
 	//std::cout 

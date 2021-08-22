@@ -22,6 +22,7 @@ app:
 - define states freezing
 
 simulation state:
+- print ecosystem info at the very beginning
 - move that thing controling simulation speed factor from updateEcosystem method to getUpdatesFromGui
 - saving zoom/world camera can be useful
 - avoid drawing things that are outside the window
@@ -67,6 +68,10 @@ simulation/ecosystem:
 - total energy is not conservate - fix that!
 - there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
 - update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
+
+Animal:
+- move getKineticEnergy method (and simlar methods if such exist) 
+  to MovementComponent class
 
 shortcuts:
 - speeding up and slowing down
