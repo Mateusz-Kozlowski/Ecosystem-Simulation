@@ -1711,10 +1711,10 @@ void Ecosystem::correctPopulationSize(float dt)
 {
 	float fastingThreshold = 5'000.0f / m_animals.size();
 
-	std::cout 
-		<< "starvation death threshold: " 
-		<< fastingThreshold 
-		<< " sec\n";
+	//std::cout 
+	//	<< "starvation death threshold: " 
+	//	<< fastingThreshold 
+	//	<< " sec\n";
 
 	randomShuffleAnimals();
 
@@ -1739,18 +1739,19 @@ void Ecosystem::correctPopulationSize(float dt)
 		else break;
 	}
 
-	// kill them:
+	// convert them into fruits:
 	for (int i = 0; i < murdersCount; i++)
 	{
+		//std::cout << m_animals[i]->getTimeElapsedSinceLastExternalHpChange() << '\n';
 		convertAnimalToFruit(m_animals[i], false);
 	}
 
-	if (murdersCount != 0U)
-	{
-		std::cout 
-			<< "\npopulation corrected by " 
-			<< murdersCount << "\n\n";
-	}
+	//if (murdersCount != 0U)
+	//{
+	//	std::cout 
+	//		<< "\npopulation corrected by " 
+	//		<< murdersCount << "\n\n";
+	//}
 
 	//unsigned prevAnimalsCount = m_animals.size();
 	//
