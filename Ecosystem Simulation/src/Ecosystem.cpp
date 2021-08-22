@@ -1709,7 +1709,7 @@ Fruit* Ecosystem::getLowestEnergyFruit()
 
 void Ecosystem::correctPopulationSize(float dt)
 {
-	float fastingThreshold = 5'000U / m_animals.size();
+	float fastingThreshold = 5'000.0f / m_animals.size();
 
 	std::cout 
 		<< "starvation death threshold: " 
