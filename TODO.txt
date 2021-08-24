@@ -42,6 +42,50 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- restore increase/decrease methods in Animal and Food classes and in other places
+  but don't use += operator with floats and doubles 
+  and add comments that explain why u those methods don't use += operator;
+  add do all that things not only in Animal and Fruit but in the entire solution
+- add some to way to mark energy to expel as expeled (or reset)
+- frame by frame simulation;
+- more than one std::vector<std::shared_ptr<Animal>>?;
+  it's an amazing idea! (u can simply copy std::shared_ptr while initializing animals);
+  this will allow to sort each vector by different parameter
+  which will allow to avoid that weird switching of order of brains previews 
+  while rendering;
+  now I came up with 3 kinds of those vectors:
+  - default, will be optimized to sort animals for eating;
+  - vector optimized for correcting population size;
+  - vector optimized for rendering brain previews, but u have to add a hierarcy of rendering brain previews
+    which will be used in sorting that vector;
+  it works because every vector will be always almost sorted, 1 update can't completely destroy
+  order from a previous update, that order will be almost perfectly conserved, so any next sorting will be very
+  quickly, almost constant time!;
+  but what about removing animal?
+  I know how to implement that;
+  it refers to not only rmving animals with hp smaller than 0
+  but also to kill God tool, correcting population and so on...
+  instead of always directly converting an animal to a fruit 
+  u can mark animal as not alive and then convert to fruits all dead animals
+  (directly after a function that marks animals as not alive)
+  (that converting dead animals to fruits process can occur a few times in update world method)
+- add a way to change a tracked animal, even add arrows "previous" and "next"
+- spawn more fruits in the center of the world
+- don't update a brain if it isn't rendered (order of calling methods in updateWorld might be important)
+- lots of things there, read it carefully apply step by step!:
+  change accelerationIsPossible to acceleration was possible 
+  and reset vel if wasn't;
+  if that won't help with fixing the bug with animals with negative total energy 
+  in MC in check if possible use delta accessors like in updateHp in animal class
+  instead of calculating those temp vars
+  !!!maybe don't allow only if total will be negative!!! and allow to reach negative hp
+  if total won't be negative
+  check if fruits with 0 produces in that way won't be rmv if such a way that 
+  they will affacted brains inputs and then disappear or even if they don't
+  disapper immediately they should be created if they energy would be equal to 0,
+  maybe just don't create them and not only in that case, maybe in order places
+  creating fruits with E=0 can be avoided y just not creating them;
+  and what about setVel in MV? should it change prevKinEnergy?
 - all animals energy to expel from animals should go to only one fruit,
   fruit with the lowest energy
 - use some STL algo to feed animals
@@ -84,6 +128,8 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
+- check all error msgs contain correct number of arguments and correct arguments types
+- change all 0.f to 0.0f (and 17.f to 17.0f and so on and so forth)
 - subtracting operator is overloaded in sf::Vector<T> class!
   use it EVERYWHERE!
 - rewrite almost all classes and add asserts and exceptions

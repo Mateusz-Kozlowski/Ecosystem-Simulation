@@ -56,6 +56,7 @@ void MovementComponent::loadBrainFromFile(const char* filePath)
 
 void MovementComponent::update(
 	float dt,
+	double availableEnergy,
 	float speedFactor,
 	const std::vector<double>& brainInputs)
 {
@@ -69,6 +70,12 @@ void MovementComponent::update(
 	// update acceleration:
 	m_acceleration.x = brainOutput[0];
 	m_acceleration.y = brainOutput[1];
+
+	if (!accelerationIsPossible(dt, availableEnergy))
+	{
+		std::cout << "acceleration impossible\n";
+		return;
+	}
 
 	// update previous velocity:
 	m_prevVelocity = m_velocity;
@@ -85,26 +92,26 @@ const Blueberry::Brain& MovementComponent::getBrain() const
 	return *m_brain;
 }
 
-float MovementComponent::getEnergyToExpel() const
+double MovementComponent::getEnergyToExpel() const
 {
-	if (getKineticEnergyDelta() >= 0.0f) return 0.0f;
+	if (getKineticEnergyDelta() >= 0.0) return 0.0;
 
-	return -2.0f * getKineticEnergyDelta();
+	return -2.0 * getKineticEnergyDelta();
 }
 
-float MovementComponent::getKineticEnergyDelta() const
+double MovementComponent::getKineticEnergyDelta() const
 {
 	return getKineticEnergy() - getPreviousKineticEnergy();
 }
 
-float MovementComponent::getPreviousKineticEnergy() const
+double MovementComponent::getPreviousKineticEnergy() const
 {
-	return 0.5f * std::pow(getPreviousVelocityVectorValue(), 2.0f);
+	return 0.5 * std::pow(getPreviousVelocityVectorValue(), 2.0);
 }
 
-float MovementComponent::getKineticEnergy() const
+double MovementComponent::getKineticEnergy() const
 {
-	return 0.5f * std::pow(getVelocityVectorValue(), 2.0f);
+	return 0.5 * std::pow(getVelocityVectorValue(), 2.0);
 }
 
 float MovementComponent::getPreviousVelocityVectorValue() const
@@ -146,8 +153,7 @@ void MovementComponent::mutateBrain(unsigned brainMutationsCount)
 
 void MovementComponent::setVelocity(const sf::Vector2f& velocity)
 {
-	m_prevVelocity = m_velocity;
-	m_velocity = velocity;
+	setVelocity(velocity.x, velocity.y);
 }
 
 void MovementComponent::setVelocity(float x, float y)
@@ -159,17 +165,59 @@ void MovementComponent::setVelocity(float x, float y)
 
 void MovementComponent::setVelocityX(float vx)
 {
-	m_prevVelocity.x = m_velocity.x;
+	m_prevVelocity = m_velocity;
 	m_velocity.x = vx;
 }
 
 void MovementComponent::setVelocityY(float vy)
 {
-	m_prevVelocity.y = m_velocity.y;
+	m_prevVelocity = m_velocity;
 	m_velocity.y = vy;
 }
 
 // private methods:
+
+bool MovementComponent::accelerationIsPossible(
+	float dt, 
+	double availableEnergy)
+{
+	// previous and wrong approach to solve the problem:
+	// check if hp will be greater than 0:
+	//const sf::Vector2f velVectDelta{
+	//	m_acceleration.x * dt,
+	//	m_acceleration.y * dt
+	//};
+	//const sf::Vector2f newVelVect = m_velocity + velVectDelta;
+	//
+	//const float newVelVectVal = getVectorValue(newVelVect);
+	//const double newKinEnergy = 0.5 * std::pow(newVelVectVal, 2.0);
+	//
+	//std::cout << availableEnergy << " vs " << abs(newKinEnergy - getKineticEnergy()) << '\n';
+	//
+	//return availableEnergy >= abs(newKinEnergy - getKineticEnergy());
+
+	// check if total energy will be greater than 0:
+
+	const sf::Vector2f velVectDelta{
+		m_acceleration.x * dt,
+		m_acceleration.y * dt
+	};
+	
+	const sf::Vector2f newVelVect = m_velocity + velVectDelta;
+	
+	const double newKinEnergy = 0.5 * std::pow(
+		getVectorValue(newVelVect), 
+		2.0
+	);
+
+	const double newHp = availableEnergy - abs(
+		newKinEnergy - getKineticEnergy()
+	);
+
+	const double newTotalEnergy = newKinEnergy + newHp;
+
+	return newTotalEnergy >= 0.0;
+}
 
 float MovementComponent::getVectorValue(const sf::Vector2f& vector)
 {

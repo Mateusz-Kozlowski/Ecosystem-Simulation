@@ -4,7 +4,7 @@
 gui::ProgressBar::ProgressBar()
 	: m_valuesRange()
 	, m_overRangeValuesAreCorrected(false)
-	, m_value(0.0f)
+	, m_value(0.0)
 	, m_background()
 	, m_progressRect()
 {
@@ -12,9 +12,9 @@ gui::ProgressBar::ProgressBar()
 }
 
 gui::ProgressBar::ProgressBar(
-	const sf::Vector2f& valuesRange,
+	const std::pair<double, double>& valuesRange,
 	bool correctOverRangeValues,
-	float defaultValue,
+	double defaultValue,
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
 	const sf::Color& backgroundColor,
@@ -42,7 +42,7 @@ void gui::ProgressBar::render(sf::RenderTarget& target) const
 
 // accessors:
 
-const sf::Vector2f& gui::ProgressBar::getValuesRange() const
+const std::pair<double, double>& gui::ProgressBar::getValuesRange() const
 {
 	return m_valuesRange;
 }
@@ -52,7 +52,7 @@ bool gui::ProgressBar::overRangeValuesAreCorrected() const
 	return m_overRangeValuesAreCorrected;
 }
 
-float gui::ProgressBar::getCurrentValue() const
+double gui::ProgressBar::getCurrentValue() const
 {
 	return m_value;
 }
@@ -79,7 +79,8 @@ const sf::Color& gui::ProgressBar::getProgressRectColor() const
 
 // mutators:
 
-void gui::ProgressBar::setValuesRange(const sf::Vector2f& valuesRange)
+void gui::ProgressBar::setValuesRange(
+	const std::pair<double, double>& valuesRange)
 {
 	m_valuesRange = valuesRange;
 
@@ -102,7 +103,7 @@ void gui::ProgressBar::setCorrectingOverRangeValues(
 	}
 }
 
-void gui::ProgressBar::setValue(float value)
+void gui::ProgressBar::setValue(double value)
 {
 	m_value = value;
 
@@ -114,9 +115,9 @@ void gui::ProgressBar::setValue(float value)
 	updateProgressRectSize();
 }
 
-void gui::ProgressBar::increaseValue(float valueIncrease)
+void gui::ProgressBar::increaseValue(double valueIncrease)
 {
-	m_value += valueIncrease;
+	m_value = m_value + valueIncrease; // += operator can cause a bug
 
 	if (m_overRangeValuesAreCorrected)
 	{
@@ -126,9 +127,9 @@ void gui::ProgressBar::increaseValue(float valueIncrease)
 	updateProgressRectSize();
 }
 
-void gui::ProgressBar::decreaseValue(float valueDecrease)
+void gui::ProgressBar::decreaseValue(double valueDecrease)
 {
-	m_value -= valueDecrease;
+	m_value = m_value - valueDecrease; // -= operator can cause a bug
 
 	if (m_overRangeValuesAreCorrected)
 	{
@@ -183,34 +184,34 @@ void gui::ProgressBar::initProgressRect(
 
 void gui::ProgressBar::avoidOverRangeValue()
 {
-	if (m_value > m_valuesRange.y)
+	if (m_value > m_valuesRange.second)
 	{
-		m_value = m_valuesRange.y;
+		m_value = m_valuesRange.second;
 	}
 
-	else if (m_value < m_valuesRange.x)
+	else if (m_value < m_valuesRange.first)
 	{
-		m_value = m_valuesRange.x;
+		m_value = m_valuesRange.first;
 	}
 }
 
 void gui::ProgressBar::updateProgressRectSize()
 {
-	float correctedValue = m_value;
+	double correctedValue = m_value;
 
-	correctedValue = std::min(correctedValue, m_valuesRange.y);
-	correctedValue = std::max(correctedValue, m_valuesRange.x);
+	correctedValue = std::min(correctedValue, m_valuesRange.second);
+	correctedValue = std::max(correctedValue, m_valuesRange.first);
 
 	m_progressRect.setSize(
 		sf::Vector2f(
-			m_background.getSize().x * (correctedValue - m_valuesRange.x)
+			m_background.getSize().x * (correctedValue - m_valuesRange.first)
 			/ getRangeLength(),
 			m_background.getSize().y
 		)
 	);
 }
 
-float gui::ProgressBar::getRangeLength()
+double gui::ProgressBar::getRangeLength()
 {
-	return m_valuesRange.y - m_valuesRange.x;
+	return m_valuesRange.second - m_valuesRange.first;
 }

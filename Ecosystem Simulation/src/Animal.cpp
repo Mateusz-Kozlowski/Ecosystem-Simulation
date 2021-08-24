@@ -7,8 +7,8 @@ Animal::Animal(
 	const sf::Color& bodyColor,
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor,
-	float defaultHp,
-	float maxHp)
+	double defaultHp,
+	double maxHp)
 	: m_body()
 	, m_maxHp(maxHp)
 	, m_movementComponent(std::make_unique<MovementComponent>())
@@ -24,7 +24,7 @@ Animal::Animal(
 
 Animal::Animal(const char* folderPath)
 	: m_body()
-	, m_maxHp(0.0f)
+	, m_maxHp(0.0)
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
 	, m_hpBar(nullptr)
@@ -217,12 +217,23 @@ void Animal::update(
 	float simulationSpeedFactor,
 	const std::vector<double>& brainInputs)
 {
-	m_movementComponent->update(dt, simulationSpeedFactor, brainInputs);
+	m_movementComponent->update(
+		dt, 
+		m_hpBar->getCurrentValue(),
+		simulationSpeedFactor, 
+		brainInputs
+	);
 
 	updateBody(dt);
 	updateHp(dt);
 
-	m_alive = m_hpBar->getCurrentValue() > 0.0f;
+	m_alive = m_hpBar->getCurrentValue() > 0.0;
+
+	// TODO: rmv later!:
+	if (!m_alive)
+	{
+		std::cout << "Died 'cause of hp=" << m_hpBar->getCurrentValue() << '\n';
+	}
 
 	updateHpBarPosition();
 	updateBrainPreview();
@@ -262,7 +273,7 @@ const sf::Color& Animal::getColor() const
 	return m_body.getFillColor();
 }
 
-float Animal::getMaxHp() const
+double Animal::getMaxHp() const
 {
 	return m_maxHp;
 }
@@ -277,22 +288,22 @@ const Blueberry::Brain& Animal::getBrain() const
 	return m_movementComponent->getBrain();
 }
 
-float Animal::getEnergyToExpel() const
+double Animal::getEnergyToExpel() const
 {
 	return m_movementComponent->getEnergyToExpel();
 }
 
-float Animal::getKineticEnergyDelta() const
+double Animal::getKineticEnergyDelta() const
 {
 	return m_movementComponent->getKineticEnergyDelta();
 }
 
-float Animal::getPreviousKineticEnergy() const
+double Animal::getPreviousKineticEnergy() const
 {
 	return m_movementComponent->getPreviousKineticEnergy();
 }
 
-float Animal::getKineticEnergy() const
+double Animal::getKineticEnergy() const
 {
 	return m_movementComponent->getKineticEnergy();
 }
@@ -332,12 +343,12 @@ bool Animal::isAlive() const
 	return m_alive;
 }
 
-float Animal::getHp() const
+double Animal::getHp() const
 {
 	return m_hpBar->getCurrentValue();
 }
 
-float Animal::getTotalEnergy() const
+double Animal::getTotalEnergy() const
 {
 	return m_hpBar->getCurrentValue() + getKineticEnergy();
 }
@@ -357,7 +368,7 @@ bool Animal::isCoveredByMouse(const sf::Vector2f& mousePosView) const
 	float x = m_body.getPosition().x - mousePosView.x;
 	float y = m_body.getPosition().y - mousePosView.y;
 
-	return sqrt(pow(x, 2) + pow(y, 2)) <= m_body.getRadius();
+	return sqrt(pow(x, 2.0f) + pow(y, 2.0f)) <= m_body.getRadius();
 }
 
 // mutators:
@@ -410,12 +421,12 @@ void Animal::setColor(const sf::Color& color)
 	m_hpBar->setProgressRectColor(color);
 }
 
-void Animal::setMaxHp(float maxHp)
+void Animal::setMaxHp(double maxHp)
 {
 	if (m_hpBar->getCurrentValue() > maxHp)
 	{
 		std::cerr
-			<< "Error::Animal::setMaxHp(float)::"
+			<< "Error::Animal::setMaxHp(double)::"
 			<< "cannot set max hp smaller than the current hp\n";
 		assert(false);
 	}
@@ -439,56 +450,56 @@ void Animal::setAlive(bool alive)
 	m_alive = alive;
 }
 
-void Animal::setHp(float hp)
+void Animal::setHp(double hp)
 {
 	if (hp > m_maxHp)
 	{
 		std::cerr
-			<< "Error::Animal::setHp(float)::"
+			<< "Error::Animal::setHp(double)::"
 			<< "cannot set hp greater than the max hp\n";
 		assert(false);
 	}
 
 	m_hpBar->setValue(hp);
 
-	m_alive = m_hpBar->getCurrentValue() > 0.0f;
+	m_alive = m_hpBar->getCurrentValue() > 0.0;
 
 	m_timeElapsedSinceLastExternalHpChange = 0.0f;
 }
 
-void Animal::increaseHp(float hpIncrease)
-{
-	if (m_hpBar->getCurrentValue() + hpIncrease > m_maxHp)
-	{
-		std::cerr
-			<< "Error::Animal::increaseHp(float)::"
-			<< "cannot set hp greater than the max hp\n";
-		assert(false);
-	}
+//void Animal::increaseHp(double hpIncrease)
+//{
+//	if (m_hpBar->getCurrentValue() + hpIncrease > m_maxHp)
+//	{
+//		std::cerr
+//			<< "Error::Animal::increaseHp(double)::"
+//			<< "cannot set hp greater than the max hp\n";
+//		assert(false);
+//	}
+//
+//	m_hpBar->increaseValue(hpIncrease);
+//
+//	m_alive = m_hpBar->getCurrentValue() > 0.0;
+//
+//	m_timeElapsedSinceLastExternalHpChange = 0.0f;
+//}
 
-	m_hpBar->increaseValue(hpIncrease);
-
-	m_alive = m_hpBar->getCurrentValue() > 0.0f;
-
-	m_timeElapsedSinceLastExternalHpChange = 0.0f;
-}
-
-void Animal::decreaseHp(float hpDecrease)
-{
-	if (m_hpBar->getCurrentValue() - hpDecrease > m_maxHp)
-	{
-		std::cerr
-			<< "Error::Animal::decreaseHp(float)::"
-			<< "cannot set hp greater than the max hp\n";
-		assert(false);
-	}
-
-	m_hpBar->decreaseValue(hpDecrease);
-
-	m_alive = m_hpBar->getCurrentValue() > 0.0f;
-
-	m_timeElapsedSinceLastExternalHpChange = 0.0f;
-}
+//void Animal::decreaseHp(double hpDecrease)
+//{
+//	if (m_hpBar->getCurrentValue() - hpDecrease > m_maxHp)
+//	{
+//		std::cerr
+//			<< "Error::Animal::decreaseHp(double)::"
+//			<< "cannot set hp greater than the max hp\n";
+//		assert(false);
+//	}
+//
+//	m_hpBar->decreaseValue(hpDecrease);
+//
+//	m_alive = m_hpBar->getCurrentValue() > 0.0;
+//
+//	m_timeElapsedSinceLastExternalHpChange = 0.0f;
+//}
 
 void Animal::setBrainPreviewPosition(const sf::Vector2f& position)
 {
@@ -514,28 +525,28 @@ void Animal::initBody(
 }
 
 void Animal::initHpBar(
-	float defaultHp,
+	double defaultHp,
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor)
 {
 	m_hpBar = std::make_unique<gui::ProgressBar>(
-		sf::Vector2f(
-			0.0f,
+		std::pair<double, double>(
+			0.0,
 			defaultHp
 		),
 		false,
 		defaultHp,
 		sf::Vector2f(
-			m_body.getPosition().x - 3.f * m_body.getRadius(),
-			m_body.getPosition().y - 3.f * m_body.getRadius()
+			m_body.getPosition().x - 3.0f * m_body.getRadius(),
+			m_body.getPosition().y - 3.0f * m_body.getRadius()
 		),
 		sf::Vector2f(
-			6.f * m_body.getRadius(),
+			6.0f * m_body.getRadius(),
 			m_body.getRadius()
 		),
 		hpBarBackgroundColor,
 		hpBarProgressRectColor
-		);
+	);
 }
 
 void Animal::initBrainPreview()
@@ -571,8 +582,8 @@ void Animal::updateHpBarPosition()
 {
 	m_hpBar->setPosition(
 		sf::Vector2f(
-			m_body.getPosition().x - 3.f * m_body.getRadius(),
-			m_body.getPosition().y - 3.f * m_body.getRadius()
+			m_body.getPosition().x - 3.0f * m_body.getRadius(),
+			m_body.getPosition().y - 3.0f * m_body.getRadius()
 		)
 	);
 }

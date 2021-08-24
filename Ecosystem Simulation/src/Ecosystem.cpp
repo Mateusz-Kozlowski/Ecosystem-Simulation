@@ -4,15 +4,15 @@
 Ecosystem::Ecosystem(
 	const std::string& name,
 	const sf::Vector2f& worldSize,
-	unsigned bordersThickness,
+	float bordersThickness,
 	const sf::Color& backgroundColor,
 	const sf::Color& bordersColor,
 	unsigned animalsCount,
 	unsigned fruitsCount,
 	float animalsRadius,
 	float fruitsRadius,
-	float defaultAnimalsHp,
-	float defaultFruitsEnergy,
+	double defaultAnimalsHp,
+	double defaultFruitsEnergy,
 	float mutationPercentage,
 	const sf::Color& animalsColor,
 	const sf::Color& fruitsColor,
@@ -70,7 +70,7 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_fruits()
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
-	, m_defaultAnimalsHp(0.0f)
+	, m_defaultAnimalsHp(0.0)
 	, m_mutationPercentage(0.0f)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
@@ -244,7 +244,7 @@ sf::Vector2f Ecosystem::getWorldSize() const
 	};
 }
 
-unsigned Ecosystem::getBordersThickness() const
+float Ecosystem::getBordersThickness() const
 {
 	return m_background.getOutlineThickness();
 }
@@ -324,9 +324,9 @@ float Ecosystem::getTotalTimeElapsed() const
 	return m_totalTimeElapsed;
 }
 
-float Ecosystem::getTotalAnimalsHpEnergy() const
+double Ecosystem::getTotalAnimalsHpEnergy() const
 {
-	float totalHpEnergy = 0.0f;
+	double totalHpEnergy = 0.0;
 
 	for (const auto& animal : m_animals)
 	{
@@ -336,9 +336,9 @@ float Ecosystem::getTotalAnimalsHpEnergy() const
 	return totalHpEnergy;
 }
 
-float Ecosystem::getTotalAnimalsKineticEnergy() const
+double Ecosystem::getTotalAnimalsKineticEnergy() const
 {
-	float totalKineticEnergy = 0.0f;
+	double totalKineticEnergy = 0.0;
 
 	for (const auto& animal : m_animals)
 	{
@@ -348,9 +348,9 @@ float Ecosystem::getTotalAnimalsKineticEnergy() const
 	return totalKineticEnergy;
 }
 
-float Ecosystem::getTotalFruitsEnergy() const
+double Ecosystem::getTotalFruitsEnergy() const
 {
-	float totalFruitsEnergy = 0.0f;
+	double totalFruitsEnergy = 0.0;
 
 	for (const auto& fruit : m_fruits)
 	{
@@ -360,7 +360,7 @@ float Ecosystem::getTotalFruitsEnergy() const
 	return totalFruitsEnergy;
 }
 
-float Ecosystem::getTotalEnergy() const
+double Ecosystem::getTotalEnergy() const
 {
 	return getTotalAnimalsHpEnergy()
 		 + getTotalAnimalsKineticEnergy()
@@ -474,14 +474,14 @@ void Ecosystem::showAllBrainsPreviews()
 
 void Ecosystem::initBackgroundAndBorders(
 	const sf::Vector2f& worldSize,
-	unsigned bordersThickness,
+	float bordersThickness,
 	const sf::Color& backgroundColor,
 	const sf::Color& bordersColor)
 {
 	m_background.setSize(
 		sf::Vector2f(
-			worldSize.x - 2.f * bordersThickness,
-			worldSize.y - 2.f * bordersThickness
+			worldSize.x - 2.0f * bordersThickness,
+			worldSize.y - 2.0f * bordersThickness
 		)
 	);
 	m_background.setPosition(bordersThickness, bordersThickness);
@@ -493,7 +493,7 @@ void Ecosystem::initBackgroundAndBorders(
 
 void Ecosystem::createNewAnimals(
 	unsigned animalsCount,
-	float defaultAnimalsHp,
+	double defaultAnimalsHp,
 	float animalsRadius,
 	const sf::Color& animalsColor,
 	bool renderHpBarsByDefault,
@@ -514,13 +514,13 @@ void Ecosystem::createNewAnimals(
 }
 
 void Ecosystem::createNewAnimal(
-	float defaultAnimalHp,
+	double defaultAnimalHp,
 	float animalRadius,
 	const sf::Color& animalColor,
 	bool renderHpBarByDefault,
 	bool renderBrainByDefault)
 {
-	assert(defaultAnimalHp >= 0.0f);
+	assert(defaultAnimalHp >= 0.0);
 
 	m_animals.push_back(
 		std::make_unique<Animal>(
@@ -544,7 +544,7 @@ void Ecosystem::createNewAnimal(
 
 void Ecosystem::createNewFruits(
 	unsigned fruitsCount,
-	float defaultFruitsEnergy,
+	double defaultFruitsEnergy,
 	float fruitsRadius,
 	const sf::Color& fruitsColor)
 {
@@ -557,11 +557,11 @@ void Ecosystem::createNewFruits(
 }
 
 void Ecosystem::createNewFruit(
-	float energy, 
+	double energy,
 	float radius, 
 	const sf::Color& fruitColor)
 {
-	assert(energy >= 0.0f);
+	assert(energy >= 0.0);
 
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
@@ -681,6 +681,8 @@ int Ecosystem::getTrackedAnimalIndex() const
 		<< "Error::Ecosystem::getTrackedAnimalIndex() const::"
 		<< "trackedAnimal ptr points to a nonexistent animal\n";
 	assert(false);
+
+	return -1;
 }
 
 void Ecosystem::saveHpBarsVisibility(const std::string& filePath) const
@@ -1051,7 +1053,7 @@ void Ecosystem::convertKineticEnergyToFruit(
 	Animal& animal, 
 	bool randomFruitPosition)
 {
-	if (animal.getKineticEnergy() <= 0.0f) return;
+	if (animal.getKineticEnergy() <= 0.0) return;
 
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
@@ -1168,9 +1170,9 @@ void Ecosystem::printInfoAboutEcosystem() const
 void Ecosystem::updateWorld(float dt)
 {
 	updateAnimals(dt);
+	transferEnergyFromAnimalsToFruits();
 	avoidTunneling();
 	//killAnimalsStickingToBorders();
-	transferEnergyFromAnimalsToFruits();
 	removeDeadAnimals();
 	feedAnimals(dt);
 	removeEatenFruits();
@@ -1198,10 +1200,15 @@ const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 
 	inputsForBrain.reserve(5);
 
-	inputsForBrain.push_back(animal.getVelocityVector().x);
-	inputsForBrain.push_back(animal.getVelocityVector().y);
+	inputsForBrain.push_back(static_cast<double>(animal.getVelocityVector().x));
+	inputsForBrain.push_back(static_cast<double>(animal.getVelocityVector().y));
 
-	assert(animal.getHp() > 0.0f);
+	if (animal.getHp() <= 0.0)
+	{
+		std::cout << "Assertion will fail, hp= " << animal.getHp() << '\n';
+	}
+
+	assert(animal.getHp() > 0.0);
 
 	inputsForBrain.push_back(log2(animal.getHp()));
 
@@ -1210,10 +1217,14 @@ const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 	if (theNearestFruit)
 	{
 		inputsForBrain.push_back(
-			theNearestFruit->getPosition().x - animal.getPosition().x
+			static_cast<double>(
+				theNearestFruit->getPosition().x - animal.getPosition().x
+			)
 		);
 		inputsForBrain.push_back(
-			theNearestFruit->getPosition().y - animal.getPosition().y
+			static_cast<double>(
+				theNearestFruit->getPosition().y - animal.getPosition().y
+			)
 		);
 	}
 	else
@@ -1270,7 +1281,7 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 	// make the following if statements shorter:
 	const sf::Vector2f& animalPos = animal.getPosition();
 	float animalRadius = animal.getRadius();
-	unsigned bordersThickness = getBordersThickness();
+	float bordersThickness = getBordersThickness();
 	const sf::Vector2f worldSize = getWorldSize();
 
 	// left border:
@@ -1314,7 +1325,7 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 
 	const sf::Vector2f& animalPos = animal.getPosition();
 	float animalRadius = animal.getRadius();
-	unsigned bordersThickness = getBordersThickness();
+	float bordersThickness = getBordersThickness();
 	const sf::Vector2f worldSize = getWorldSize();
 
 	// top border:
@@ -1437,7 +1448,7 @@ void Ecosystem::removeDeadAnimals()
 	{
 		if (!m_animals[i]->isAlive())
 		{
-			assert(m_animals[i]->getTotalEnergy() >= 0.0f);
+			assert(m_animals[i]->getTotalEnergy() >= 0.0);
 
 			m_fruits.push_back(
 				std::make_unique<Fruit>(
@@ -1447,6 +1458,10 @@ void Ecosystem::removeDeadAnimals()
 					m_fruitsColor
 				)
 			);
+
+			std::cout
+				<< "Rmved a dead animal 'cause of its hp="
+				<< m_animals[i]->getHp() << '\n';
 
 			removeAnimal(m_animals[i]);
 		}
@@ -1562,22 +1577,25 @@ bool Ecosystem::animalReachesFruit(
 
 void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 {
-	assert(fruit.getEnergy() >= 0.0f);
-	
-	unsigned fps = 1.0f / dt;
+	assert(fruit.getEnergy() >= 0.0);
+	assert(animal.getHp() > 0.0);
+
+	unsigned fps = static_cast<unsigned>(1.0f / dt);
 
 	if (fps < 30U)
 	{
-		animal.increaseHp(fruit.getEnergy());
-		fruit.setEnergy(0.0f);
+		animal.setHp(animal.getHp() + fruit.getEnergy());
+		fruit.setEnergy(0.0);
 
 		// TODO: a good candidate for logging:
 		//std::cout << "FPS to low to clone!\n";
 
+		assert(animal.getTotalEnergy() > 0.0);
+
 		return;
 	}
 
-	float prevAnimalHp = animal.getHp();
+	double prevAnimalHp = animal.getHp();
 
 	animal.setHp(
 		std::min(
@@ -1586,17 +1604,36 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 		)
 	);
 
-	fruit.increaseEnergy(prevAnimalHp - animal.getHp());
+	std::cout << "prev fruit energy: " << fruit.getEnergy() << '\n';
+
+	fruit.setEnergy(fruit.getEnergy() + prevAnimalHp - animal.getHp());
+
+	std::cout << "prevAnimalHp: " << prevAnimalHp << '\n';
+	std::cout << "fruit energy: " << fruit.getEnergy() << '\n';
+	std::cout << "animal hp: " << animal.getHp() << '\n';
+	std::cout << "m_defaultAnimalHp: " << m_defaultAnimalsHp << '\n';
+
+	assert(fruit.getEnergy() >= 0.0);
+	assert(animal.getTotalEnergy() > 0.0);
 
 	// there is no more energy left in the fruit after eating:
-	if (fruit.getEnergy() == 0.0f) return;
+	if (fruit.getEnergy() == 0.0) return;
 
 	// if there is any energy left in the fruit make animal clone!:
 	// TODO: put the following lines of code into a separate method
 	m_animals.push_back(std::make_shared<Animal>(animal));
 	
 	m_animals.back()->setHp(fruit.getEnergy());
-	m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+	m_animals.back()->setVelocity(sf::Vector2f(0.0f, 0.0f));
+	
+	if (m_animals.back()->getTotalEnergy() <= 0.0)
+	{
+		std::cout
+			<< m_animals.back()->getHp() << ' '
+			<< m_animals.back()->getKineticEnergy();
+		assert(false);
+	}
+	
 	m_animals.back()->randomMutate(1U);  // TODO: "unhardcode" that
 
 	if (&animal == m_trackedAnimal)
@@ -1610,7 +1647,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 	m_brainsPreviewsVisibility[m_animals.back().get()]
 		= m_brainsPreviewsVisibility[&animal];
 
-	fruit.setEnergy(0.0f);
+	fruit.setEnergy(0.0);
 	
 	//if (fruit.getEnergy() + animal.getHp() > animal.getMaxHp())
 	//{
@@ -1625,7 +1662,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 	//		m_animals.push_back(std::make_shared<Animal>(animal));
 	//
 	//		m_animals.back()->setHp(animal.getMaxHp());
-	//		m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+	//		m_animals.back()->setVelocity(sf::Vector2f(0.0f, 0.0f));
 	//		// TODO: unhard code mutations count, 
 			// TODO: use mutation percentage Ecosystem member
 			//m_animals.back()->randomMutate(m_mutationPercentage);
@@ -1646,7 +1683,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 	//	m_animals.push_back(std::make_shared<Animal>(animal));
 	//
 	//	m_animals.back()->setHp(fruit.getEnergy());
-	//	m_animals.back()->setVelocity(sf::Vector2f(0.f, 0.f));
+	//	m_animals.back()->setVelocity(sf::Vector2f(0.0f, 0.0f));
 	//	// TODO: unhard code mutations count, 
 		// TODO: use mutation percentage Ecosystem member
 		//m_animals.back()->randomMutate(m_mutationPercentage);
@@ -1668,14 +1705,14 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 	//	animal.increaseHp(fruit.getEnergy());
 	//}
 	//
-	//fruit.setEnergy(0.0f);
+	//fruit.setEnergy(0.0);
 }
 
 void Ecosystem::removeEatenFruits()
 {
 	for (int i = 0; i < m_fruits.size();)
 	{
-		if (m_fruits[i]->getEnergy() == 0.0f)
+		if (m_fruits[i]->getEnergy() == 0.0)
 		{
 			removeFruit(m_fruits[i]);
 		}
@@ -1695,8 +1732,12 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 
 	for (const auto& animal : m_animals)
 	{
-		assert(animal->getEnergyToExpel() >= 0.0f);
-		lowestEnergyFruit->increaseEnergy(animal->getEnergyToExpel());
+		assert(animal->getEnergyToExpel() >= 0.0);
+
+		lowestEnergyFruit->setEnergy(
+			lowestEnergyFruit->getEnergy()
+			+ animal->getEnergyToExpel()
+		);
 	}
 }
 
@@ -1776,7 +1817,7 @@ void Ecosystem::correctPopulationSize(float dt)
 	//assert(m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
 	//	>= m_animals[1]->getTimeElapsedSinceLastExternalHpChange());
 	//
-	//unsigned fps = 1.0f / dt;
+	//unsigned fps = 1U / dt;
 	//unsigned murdersCount = 0U;
 	//
 	////std::cout << "fps: " << fps << '\n';

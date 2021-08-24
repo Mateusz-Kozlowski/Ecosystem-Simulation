@@ -637,7 +637,8 @@ void EcosystemCreatorState::loadEcosystemTemplate(
 	sf::Vector2f worldSize;
 	float bordersThickness;
 	unsigned animalsCount, fruitsCount;
-	float defaultHp, defaultFruitEnergy, mutationRate;
+	double defaultHp, defaultFruitEnergy;
+	float mutationRate;
 
 	file >> worldSize.x >> worldSize.y;
 	file >> bordersThickness;
@@ -693,11 +694,11 @@ std::string EcosystemCreatorState::removeFloatTrailingZeros(
 
 	unsigned index = string.size();
 
-	while (index > 0 && string[index - 1] == '0') index--;
+	while (index > 0U && string[index - 1U] == '0') index--;
 
-	if (string[index - 1] == '.') index--;
+	if (string[index - 1U] == '.') index--;
 
-	return string.substr(0, index);
+	return string.substr(0U, index);
 }
 
 void EcosystemCreatorState::createEcosystem()
@@ -726,8 +727,8 @@ void EcosystemCreatorState::createEcosystem()
 		std::stoi(m_textBoxes["FRUITS COUNT"]->getInput()),
 		8.0f,
 		4.0f,
-		std::stof(m_textBoxes["DEFAULT HP"]->getInput()),
-		std::stof(m_textBoxes["DEFAULT FRUIT ENERGY"]->getInput()),
+		static_cast<double>(std::stof(m_textBoxes["DEFAULT HP"]->getInput())),
+		static_cast<double>(std::stof(m_textBoxes["DEFAULT FRUIT ENERGY"]->getInput())),
 		std::stof(m_textBoxes["MUTATION RATE"]->getInput()),
 		sf::Color::Red,
 		sf::Color::Green,

@@ -12,15 +12,15 @@ public:
 	Ecosystem(
 		const std::string& name,
 		const sf::Vector2f& worldSize,
-		unsigned bordersThickness,
+		float bordersThickness,
 		const sf::Color& backgroundColor,
 		const sf::Color& bordersColor,
 		unsigned animalsCount,
 		unsigned fruitsCount,
 		float animalsRadius,
 		float fruitsRadius,
-		float defaultAnimalsHp,
-		float defaultFruitsEnergy,
+		double defaultAnimalsHp,
+		double defaultFruitsEnergy,
 		float mutationPercentage,
 		const sf::Color& animalsColor,
 		const sf::Color& fruitsColor,
@@ -53,7 +53,7 @@ public:
 	const sf::Vector2f& getArenaSize() const;
 	sf::Vector2f getWorldSize() const;
 
-	unsigned getBordersThickness() const;
+	float getBordersThickness() const;
 	unsigned getAnimalsCount() const;
 
 	const std::vector<std::shared_ptr<Animal>>& getAnimals() const;
@@ -80,10 +80,10 @@ public:
 
 	float getTotalTimeElapsed() const;
 
-	float getTotalAnimalsHpEnergy() const;
-	float getTotalAnimalsKineticEnergy() const;
-	float getTotalFruitsEnergy() const;
-	float getTotalEnergy() const;
+	double getTotalAnimalsHpEnergy() const;
+	double getTotalAnimalsKineticEnergy() const;
+	double getTotalFruitsEnergy() const;
+	double getTotalEnergy() const;
 
 	void printAllAnimalsPositions() const;
 
@@ -113,21 +113,21 @@ public:
 private:
 	void initBackgroundAndBorders(
 		const sf::Vector2f& worldSize,
-		unsigned bordersThickness,
+		float bordersThickness,
 		const sf::Color& backgroundColor,
 		const sf::Color& bordersColor
 	);
 
 	void createNewAnimals(
 		unsigned animalsCount,
-		float defaultAnimalsHp,
+		double defaultAnimalsHp,
 		float animalsRadius,
 		const sf::Color& animalsColor,
 		bool renderHpBarsByDefault,
 		bool renderBrainsByDefault
 	);
 	void createNewAnimal(
-		float defaultAnimalHp,
+		double defaultAnimalHp,
 		float animalRadius,
 		const sf::Color& animalColor,
 		bool renderHpBarByDefault,
@@ -136,12 +136,12 @@ private:
 
 	void createNewFruits(
 		unsigned fruitsCount,
-		float defaultFruitsEnergy,
+		double defaultFruitsEnergy,
 		float fruitsRadius,
 		const sf::Color& fruitsColor
 	);
 	void createNewFruit(
-		float energy, 
+		double energy, 
 		float radius, 
 		const sf::Color& fruitColor
 	);
@@ -273,7 +273,7 @@ private:
 	// useful when there are temporarily no fruits in an ecosystem:
 	float m_fruitsRadius;
 
-	float m_defaultAnimalsHp;
+	double m_defaultAnimalsHp;
 
 	float m_mutationPercentage;
 

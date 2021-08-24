@@ -2,7 +2,7 @@
 #include "Fruit.h"
 
 Fruit::Fruit(
-	float energy,
+	double energy,
 	const sf::Vector2f& position,
 	float radius,
 	const sf::Color& color)
@@ -13,7 +13,7 @@ Fruit::Fruit(
 }
 
 Fruit::Fruit(const char* filePath)
-	: m_energy(0.0f)
+	: m_energy(0.0)
 	, m_shape()
 {
 	loadFromFile(filePath);
@@ -91,7 +91,7 @@ bool Fruit::isCoveredByMouse(const sf::Vector2f& mousePosView) const
 	float x = m_shape.getPosition().x - mousePosView.x;
 	float y = m_shape.getPosition().y - mousePosView.y;
 
-	float distance = sqrt(pow(x, 2) + pow(y, 2));
+	float distance = sqrt(pow(x, 2.0f) + pow(y, 2.0f));
 
 	return getRadius() >= distance;
 }
@@ -108,7 +108,7 @@ float Fruit::getRadius() const
 	return m_shape.getRadius();
 }
 
-float Fruit::getEnergy() const
+double Fruit::getEnergy() const
 {
 	return m_energy;
 }
@@ -160,14 +160,9 @@ void Fruit::setRadius(float radius)
 	m_shape.setRadius(radius);
 }
 
-void Fruit::setEnergy(float energy)
+void Fruit::setEnergy(double energy)
 {
 	m_energy = energy;
-}
-
-void Fruit::increaseEnergy(float increase)
-{
-	m_energy += increase;
 }
 
 void Fruit::setColor(const sf::Color& color)

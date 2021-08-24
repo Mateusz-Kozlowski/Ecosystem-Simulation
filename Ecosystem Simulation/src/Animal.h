@@ -13,8 +13,8 @@ public:
 		const sf::Color& bodyColor,
 		const sf::Color& hpBarBackgroundColor,
 		const sf::Color& hpBarProgressRectColor,
-		float defaultHp,
-		float maxHp
+		double defaultHp,
+		double maxHp
 	);
 	Animal(const char* folderPath);
 	Animal(const Animal& rhs);
@@ -41,16 +41,16 @@ public:
 
 	const sf::Color& getColor() const;
 
-	float getMaxHp() const;
+	double getMaxHp() const;
 
 	const MovementComponent& getMovementComponent() const;
 
 	const Blueberry::Brain& getBrain() const;
 	
-	float getEnergyToExpel() const;
-	float getKineticEnergyDelta() const;
-	float getPreviousKineticEnergy() const;
-	float getKineticEnergy() const;
+	double getEnergyToExpel() const;
+	double getKineticEnergyDelta() const;
+	double getPreviousKineticEnergy() const;
+	double getKineticEnergy() const;
 
 	float getPreviousVelocityVectorValue() const;
 	float getVelocityVectorValue() const;
@@ -62,8 +62,8 @@ public:
 
 	bool isAlive() const;
 
-	float getHp() const;
-	float getTotalEnergy() const;
+	double getHp() const;
+	double getTotalEnergy() const;
 
 	const gui::BrainPreview& getBrainPreview() const;
 
@@ -86,7 +86,7 @@ public:
 
 	void setColor(const sf::Color& color);
 
-	void setMaxHp(float maxHp);
+	void setMaxHp(double maxHp);
 
 	void randomMutate(unsigned brainMutationsCount);
 
@@ -94,9 +94,9 @@ public:
 
 	void setAlive(bool alive);
 
-	void setHp(float hp);
-	void increaseHp(float hpIncrease);
-	void decreaseHp(float hpDecrease);
+	void setHp(double hp);
+	//void increaseHp(double hpIncrease);
+	//void decreaseHp(double hpDecrease);
 
 	void setBrainPreviewPosition(const sf::Vector2f& position);
 	void setBrainPreviewPosition(float x, float y);
@@ -108,7 +108,7 @@ private:
 		const sf::Color& color
 	);
 	void initHpBar(
-		float defaultHp,
+		double defaultHp,
 		const sf::Color& hpBarBackgroundColor,
 		const sf::Color& hpBarProgressRectColor
 	);
@@ -122,7 +122,7 @@ private:
 private:
 	sf::CircleShape m_body;
 
-	float m_maxHp;
+	double m_maxHp;
 
 	std::unique_ptr<MovementComponent> m_movementComponent;
 	
