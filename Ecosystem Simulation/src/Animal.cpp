@@ -7,8 +7,8 @@ Animal::Animal(
 	const sf::Color& bodyColor,
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor,
-	double defaultHp,
-	double maxHp)
+	const Blueberry::Scalar& defaultHp,
+	const Blueberry::Scalar& maxHp)
 	: m_body()
 	, m_maxHp(maxHp)
 	, m_movementComponent(std::make_unique<MovementComponent>())
@@ -215,7 +215,7 @@ void Animal::loadFromFolder(const char* folderPath)
 void Animal::update(
 	float dt,
 	float simulationSpeedFactor,
-	const std::vector<double>& brainInputs)
+	const std::vector<Blueberry::Scalar>& brainInputs)
 {
 	m_movementComponent->update(
 		dt, 
@@ -273,7 +273,7 @@ const sf::Color& Animal::getColor() const
 	return m_body.getFillColor();
 }
 
-double Animal::getMaxHp() const
+const Blueberry::Scalar& Animal::getMaxHp() const
 {
 	return m_maxHp;
 }
@@ -288,22 +288,22 @@ const Blueberry::Brain& Animal::getBrain() const
 	return m_movementComponent->getBrain();
 }
 
-double Animal::getEnergyToExpel() const
+Blueberry::Scalar Animal::getEnergyToExpel() const
 {
 	return m_movementComponent->getEnergyToExpel();
 }
 
-double Animal::getKineticEnergyDelta() const
+Blueberry::Scalar Animal::getKineticEnergyDelta() const
 {
 	return m_movementComponent->getKineticEnergyDelta();
 }
 
-double Animal::getPreviousKineticEnergy() const
+Blueberry::Scalar Animal::getPreviousKineticEnergy() const
 {
 	return m_movementComponent->getPreviousKineticEnergy();
 }
 
-double Animal::getKineticEnergy() const
+Blueberry::Scalar Animal::getKineticEnergy() const
 {
 	return m_movementComponent->getKineticEnergy();
 }
@@ -343,12 +343,12 @@ bool Animal::isAlive() const
 	return m_alive;
 }
 
-double Animal::getHp() const
+const Blueberry::Scalar& Animal::getHp() const
 {
 	return m_hpBar->getCurrentValue();
 }
 
-double Animal::getTotalEnergy() const
+Blueberry::Scalar Animal::getTotalEnergy() const
 {
 	return m_hpBar->getCurrentValue() + getKineticEnergy();
 }
@@ -421,7 +421,7 @@ void Animal::setColor(const sf::Color& color)
 	m_hpBar->setProgressRectColor(color);
 }
 
-void Animal::setMaxHp(double maxHp)
+void Animal::setMaxHp(const Blueberry::Scalar& maxHp)
 {
 	if (m_hpBar->getCurrentValue() > maxHp)
 	{
@@ -450,7 +450,7 @@ void Animal::setAlive(bool alive)
 	m_alive = alive;
 }
 
-void Animal::setHp(double hp)
+void Animal::setHp(const Blueberry::Scalar& hp)
 {
 	if (hp > m_maxHp)
 	{
@@ -525,12 +525,12 @@ void Animal::initBody(
 }
 
 void Animal::initHpBar(
-	double defaultHp,
+	const Blueberry::Scalar& defaultHp,
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor)
 {
 	m_hpBar = std::make_unique<gui::ProgressBar>(
-		std::pair<double, double>(
+		std::pair<Blueberry::Scalar, Blueberry::Scalar>(
 			0.0,
 			defaultHp
 		),

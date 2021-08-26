@@ -13,8 +13,8 @@ public:
 		const sf::Color& bodyColor,
 		const sf::Color& hpBarBackgroundColor,
 		const sf::Color& hpBarProgressRectColor,
-		double defaultHp,
-		double maxHp
+		const Blueberry::Scalar& defaultHp,
+		const Blueberry::Scalar& maxHp
 	);
 	Animal(const char* folderPath);
 	Animal(const Animal& rhs);
@@ -26,7 +26,7 @@ public:
 	void update(
 		float dt,
 		float simulationSpeedFactor,
-		const std::vector<double>& brainInputs
+		const std::vector<Blueberry::Scalar>& brainInputs
 	);
 
 	void renderBody(sf::RenderTarget& target) const;
@@ -41,16 +41,16 @@ public:
 
 	const sf::Color& getColor() const;
 
-	double getMaxHp() const;
+	const Blueberry::Scalar& getMaxHp() const;
 
 	const MovementComponent& getMovementComponent() const;
 
 	const Blueberry::Brain& getBrain() const;
 	
-	double getEnergyToExpel() const;
-	double getKineticEnergyDelta() const;
-	double getPreviousKineticEnergy() const;
-	double getKineticEnergy() const;
+	Blueberry::Scalar getEnergyToExpel() const;
+	Blueberry::Scalar getKineticEnergyDelta() const;
+	Blueberry::Scalar getPreviousKineticEnergy() const;
+	Blueberry::Scalar getKineticEnergy() const;
 
 	float getPreviousVelocityVectorValue() const;
 	float getVelocityVectorValue() const;
@@ -62,8 +62,8 @@ public:
 
 	bool isAlive() const;
 
-	double getHp() const;
-	double getTotalEnergy() const;
+	const Blueberry::Scalar& getHp() const;
+	Blueberry::Scalar getTotalEnergy() const;
 
 	const gui::BrainPreview& getBrainPreview() const;
 
@@ -86,7 +86,7 @@ public:
 
 	void setColor(const sf::Color& color);
 
-	void setMaxHp(double maxHp);
+	void setMaxHp(const Blueberry::Scalar& maxHp);
 
 	void randomMutate(unsigned brainMutationsCount);
 
@@ -94,9 +94,9 @@ public:
 
 	void setAlive(bool alive);
 
-	void setHp(double hp);
-	//void increaseHp(double hpIncrease);
-	//void decreaseHp(double hpDecrease);
+	void setHp(const Blueberry::Scalar& hp);
+	//void increaseHp(const Blueberry::Scalar& hpIncrease);
+	//void decreaseHp(const Blueberry::Scalar& hpDecrease);
 
 	void setBrainPreviewPosition(const sf::Vector2f& position);
 	void setBrainPreviewPosition(float x, float y);
@@ -108,7 +108,7 @@ private:
 		const sf::Color& color
 	);
 	void initHpBar(
-		double defaultHp,
+		const Blueberry::Scalar& defaultHp,
 		const sf::Color& hpBarBackgroundColor,
 		const sf::Color& hpBarProgressRectColor
 	);
@@ -122,7 +122,7 @@ private:
 private:
 	sf::CircleShape m_body;
 
-	double m_maxHp;
+	Blueberry::Scalar m_maxHp;
 
 	std::unique_ptr<MovementComponent> m_movementComponent;
 	

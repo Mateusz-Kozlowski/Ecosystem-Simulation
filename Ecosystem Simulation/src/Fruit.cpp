@@ -2,7 +2,7 @@
 #include "Fruit.h"
 
 Fruit::Fruit(
-	double energy,
+	const Blueberry::Scalar& energy,
 	const sf::Vector2f& position,
 	float radius,
 	const sf::Color& color)
@@ -108,7 +108,7 @@ float Fruit::getRadius() const
 	return m_shape.getRadius();
 }
 
-double Fruit::getEnergy() const
+const Blueberry::Scalar& Fruit::getEnergy() const
 {
 	return m_energy;
 }
@@ -160,7 +160,7 @@ void Fruit::setRadius(float radius)
 	m_shape.setRadius(radius);
 }
 
-void Fruit::setEnergy(double energy)
+void Fruit::setEnergy(const Blueberry::Scalar& energy)
 {
 	m_energy = energy;
 }

@@ -16,19 +16,19 @@ public:
 
 	void update(
 		float dt,
-		double availableEnergy,
+		const Blueberry::Scalar& availableEnergy,
 		float speedFactor,
-		const std::vector<double>& brainInputs
+		const std::vector<Blueberry::Scalar>& brainInputs
 	);
 
 	// accessors:
 
 	const Blueberry::Brain& getBrain() const;
 
-	double getEnergyToExpel() const;
-	double getKineticEnergyDelta() const;
-	double getPreviousKineticEnergy() const;
-	double getKineticEnergy() const;
+	Blueberry::Scalar getEnergyToExpel() const;
+	Blueberry::Scalar getKineticEnergyDelta() const;
+	Blueberry::Scalar getPreviousKineticEnergy() const;
+	Blueberry::Scalar getKineticEnergy() const;
 
 	float getPreviousVelocityVectorValue() const;
 	float getVelocityVectorValue() const;
@@ -49,8 +49,10 @@ public:
 	void setVelocityY(float vy);
 
 private:
-	bool accelerationIsPossible(float dt, double availableEnergy);
-
+	bool accelerationIsPossible(
+		float dt, 
+		const Blueberry::Scalar& availableEnergy
+	);
 	static float getVectorValue(const sf::Vector2f& vector);
 
 private:

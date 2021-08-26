@@ -19,8 +19,8 @@ public:
 		unsigned fruitsCount,
 		float animalsRadius,
 		float fruitsRadius,
-		double defaultAnimalsHp,
-		double defaultFruitsEnergy,
+		const Blueberry::Scalar& defaultAnimalsHp,
+		const Blueberry::Scalar& defaultFruitsEnergy,
 		float mutationPercentage,
 		const sf::Color& animalsColor,
 		const sf::Color& fruitsColor,
@@ -80,10 +80,10 @@ public:
 
 	float getTotalTimeElapsed() const;
 
-	double getTotalAnimalsHpEnergy() const;
-	double getTotalAnimalsKineticEnergy() const;
-	double getTotalFruitsEnergy() const;
-	double getTotalEnergy() const;
+	Blueberry::Scalar getTotalAnimalsHpEnergy() const;
+	Blueberry::Scalar getTotalAnimalsKineticEnergy() const;
+	Blueberry::Scalar getTotalFruitsEnergy() const;
+	Blueberry::Scalar getTotalEnergy() const;
 
 	void printAllAnimalsPositions() const;
 
@@ -120,14 +120,14 @@ private:
 
 	void createNewAnimals(
 		unsigned animalsCount,
-		double defaultAnimalsHp,
+		const Blueberry::Scalar& defaultAnimalsHp,
 		float animalsRadius,
 		const sf::Color& animalsColor,
 		bool renderHpBarsByDefault,
 		bool renderBrainsByDefault
 	);
 	void createNewAnimal(
-		double defaultAnimalHp,
+		const Blueberry::Scalar& defaultAnimalHp,
 		float animalRadius,
 		const sf::Color& animalColor,
 		bool renderHpBarByDefault,
@@ -136,12 +136,12 @@ private:
 
 	void createNewFruits(
 		unsigned fruitsCount,
-		double defaultFruitsEnergy,
+		const Blueberry::Scalar& defaultFruitsEnergy,
 		float fruitsRadius,
 		const sf::Color& fruitsColor
 	);
 	void createNewFruit(
-		double energy, 
+		const Blueberry::Scalar& energy,
 		float radius, 
 		const sf::Color& fruitColor
 	);
@@ -273,7 +273,7 @@ private:
 	// useful when there are temporarily no fruits in an ecosystem:
 	float m_fruitsRadius;
 
-	double m_defaultAnimalsHp;
+	Blueberry::Scalar m_defaultAnimalsHp;
 
 	float m_mutationPercentage;
 

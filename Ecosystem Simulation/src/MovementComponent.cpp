@@ -56,9 +56,9 @@ void MovementComponent::loadBrainFromFile(const char* filePath)
 
 void MovementComponent::update(
 	float dt,
-	double availableEnergy,
+	const Blueberry::Scalar& availableEnergy,
 	float speedFactor,
-	const std::vector<double>& brainInputs)
+	const std::vector<Blueberry::Scalar>& brainInputs)
 {
 	// update acceleration:	
 	m_brain->propagateForward(brainInputs);
@@ -92,24 +92,24 @@ const Blueberry::Brain& MovementComponent::getBrain() const
 	return *m_brain;
 }
 
-double MovementComponent::getEnergyToExpel() const
+Blueberry::Scalar MovementComponent::getEnergyToExpel() const
 {
 	if (getKineticEnergyDelta() >= 0.0) return 0.0;
 
 	return -2.0 * getKineticEnergyDelta();
 }
 
-double MovementComponent::getKineticEnergyDelta() const
+Blueberry::Scalar MovementComponent::getKineticEnergyDelta() const
 {
 	return getKineticEnergy() - getPreviousKineticEnergy();
 }
 
-double MovementComponent::getPreviousKineticEnergy() const
+Blueberry::Scalar MovementComponent::getPreviousKineticEnergy() const
 {
 	return 0.5 * std::pow(getPreviousVelocityVectorValue(), 2.0);
 }
 
-double MovementComponent::getKineticEnergy() const
+Blueberry::Scalar MovementComponent::getKineticEnergy() const
 {
 	return 0.5 * std::pow(getVelocityVectorValue(), 2.0);
 }
@@ -179,7 +179,7 @@ void MovementComponent::setVelocityY(float vy)
 
 bool MovementComponent::accelerationIsPossible(
 	float dt, 
-	double availableEnergy)
+	const Blueberry::Scalar& availableEnergy)
 {
 	// previous and wrong approach to solve the problem:
 	// check if hp will be greater than 0:
@@ -205,16 +205,16 @@ bool MovementComponent::accelerationIsPossible(
 	
 	const sf::Vector2f newVelVect = m_velocity + velVectDelta;
 	
-	const double newKinEnergy = 0.5 * std::pow(
+	const Blueberry::Scalar newKinEnergy = 0.5 * std::pow(
 		getVectorValue(newVelVect), 
 		2.0
 	);
 
-	const double newHp = availableEnergy - abs(
+	const Blueberry::Scalar newHp = availableEnergy - abs(
 		newKinEnergy - getKineticEnergy()
 	);
 
-	const double newTotalEnergy = newKinEnergy + newHp;
+	const Blueberry::Scalar newTotalEnergy = newKinEnergy + newHp;
 
 	return newTotalEnergy >= 0.0;
 }

@@ -11,8 +11,8 @@ Ecosystem::Ecosystem(
 	unsigned fruitsCount,
 	float animalsRadius,
 	float fruitsRadius,
-	double defaultAnimalsHp,
-	double defaultFruitsEnergy,
+	const Blueberry::Scalar& defaultAnimalsHp,
+	const Blueberry::Scalar& defaultFruitsEnergy,
 	float mutationPercentage,
 	const sf::Color& animalsColor,
 	const sf::Color& fruitsColor,
@@ -324,9 +324,9 @@ float Ecosystem::getTotalTimeElapsed() const
 	return m_totalTimeElapsed;
 }
 
-double Ecosystem::getTotalAnimalsHpEnergy() const
+Blueberry::Scalar Ecosystem::getTotalAnimalsHpEnergy() const
 {
-	double totalHpEnergy = 0.0;
+	Blueberry::Scalar totalHpEnergy = 0.0;
 
 	for (const auto& animal : m_animals)
 	{
@@ -336,9 +336,9 @@ double Ecosystem::getTotalAnimalsHpEnergy() const
 	return totalHpEnergy;
 }
 
-double Ecosystem::getTotalAnimalsKineticEnergy() const
+Blueberry::Scalar Ecosystem::getTotalAnimalsKineticEnergy() const
 {
-	double totalKineticEnergy = 0.0;
+	Blueberry::Scalar totalKineticEnergy = 0.0;
 
 	for (const auto& animal : m_animals)
 	{
@@ -348,9 +348,9 @@ double Ecosystem::getTotalAnimalsKineticEnergy() const
 	return totalKineticEnergy;
 }
 
-double Ecosystem::getTotalFruitsEnergy() const
+Blueberry::Scalar Ecosystem::getTotalFruitsEnergy() const
 {
-	double totalFruitsEnergy = 0.0;
+	Blueberry::Scalar totalFruitsEnergy = 0.0;
 
 	for (const auto& fruit : m_fruits)
 	{
@@ -360,7 +360,7 @@ double Ecosystem::getTotalFruitsEnergy() const
 	return totalFruitsEnergy;
 }
 
-double Ecosystem::getTotalEnergy() const
+Blueberry::Scalar Ecosystem::getTotalEnergy() const
 {
 	return getTotalAnimalsHpEnergy()
 		 + getTotalAnimalsKineticEnergy()
@@ -493,7 +493,7 @@ void Ecosystem::initBackgroundAndBorders(
 
 void Ecosystem::createNewAnimals(
 	unsigned animalsCount,
-	double defaultAnimalsHp,
+	const Blueberry::Scalar& defaultAnimalsHp,
 	float animalsRadius,
 	const sf::Color& animalsColor,
 	bool renderHpBarsByDefault,
@@ -514,7 +514,7 @@ void Ecosystem::createNewAnimals(
 }
 
 void Ecosystem::createNewAnimal(
-	double defaultAnimalHp,
+	const Blueberry::Scalar& defaultAnimalHp,
 	float animalRadius,
 	const sf::Color& animalColor,
 	bool renderHpBarByDefault,
@@ -544,7 +544,7 @@ void Ecosystem::createNewAnimal(
 
 void Ecosystem::createNewFruits(
 	unsigned fruitsCount,
-	double defaultFruitsEnergy,
+	const Blueberry::Scalar& defaultFruitsEnergy,
 	float fruitsRadius,
 	const sf::Color& fruitsColor)
 {
@@ -557,7 +557,7 @@ void Ecosystem::createNewFruits(
 }
 
 void Ecosystem::createNewFruit(
-	double energy,
+	const Blueberry::Scalar& energy,
 	float radius, 
 	const sf::Color& fruitColor)
 {
@@ -1200,8 +1200,12 @@ const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 
 	inputsForBrain.reserve(5);
 
-	inputsForBrain.push_back(static_cast<double>(animal.getVelocityVector().x));
-	inputsForBrain.push_back(static_cast<double>(animal.getVelocityVector().y));
+	inputsForBrain.push_back(static_cast<Blueberry::Scalar>(
+		animal.getVelocityVector().x)
+	);
+	inputsForBrain.push_back(static_cast<Blueberry::Scalar>(
+		animal.getVelocityVector().y)
+	);
 
 	if (animal.getHp() <= 0.0)
 	{
@@ -1269,7 +1273,8 @@ void Ecosystem::avoidTunneling()
 {
 	for (auto& animal : m_animals)
 	{
-		// it is possible that an animal crossed 2 perpendicular borders in the same frame, 
+		// it is possible that an animal crossed 2 perpendicular borders 
+		// in the same frame, 
 		// so we have to call both of these functions: 
 		avoidTunnelingByVerticalBorders(*animal);
 		avoidTunnelingByHorizontalBorders(*animal);
@@ -1595,7 +1600,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 		return;
 	}
 
-	double prevAnimalHp = animal.getHp();
+	Blueberry::Scalar prevAnimalHp = animal.getHp();
 
 	animal.setHp(
 		std::min(

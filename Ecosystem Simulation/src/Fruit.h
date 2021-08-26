@@ -4,7 +4,7 @@ class Fruit
 {
 public:
 	Fruit(
-		double energy,
+		const Blueberry::Scalar& energy,
 		const sf::Vector2f& position,
 		float radius,
 		const sf::Color& color
@@ -20,7 +20,7 @@ public:
 
 	// accessors:
 
-	double getEnergy() const;
+	const Blueberry::Scalar& getEnergy() const;
 
 	const sf::Vector2f& getPosition() const;
 
@@ -30,7 +30,7 @@ public:
 
 	// mutators:
 
-	void setEnergy(double energy);
+	void setEnergy(const Blueberry::Scalar& energy);
 	
 	void setPosition(float x, float y);
 	void setPosition(const sf::Vector2f& newPosition);
@@ -52,7 +52,7 @@ private:
 	);
 	
 private:
-	double m_energy;
+	Blueberry::Scalar m_energy;
 
 	sf::CircleShape m_shape;
 };
