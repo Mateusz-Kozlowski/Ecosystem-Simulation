@@ -141,7 +141,6 @@ code:
 - change all pointers to references (except where nullptr may be desired)
 - replace std::string with const char* where possible
 - replace std::vector with std::array when u deal with fixed size memory
-- smart pointers should completly replace raw pointers
 - in initKeybinds functions (are maybe in others that contains reading from files) 
   there are issues with if statements:
   replace sth like this:
@@ -159,7 +158,6 @@ code:
 	reading from file...
 
 - change speed_factor to simulation_speed_factor everywhere
-- use EventsAccessors class wherever possible (including GUI classes)
 - every mutator that changes more that one variable 
   (i mean change a variable but that change has further implications)
   should at the very start check if its arguments really changes sth
