@@ -13,11 +13,9 @@ App::App()
 	, m_dt(0.0f)
 	, m_font()
 {
-	initVariables();
 	initGraphicsSettings();
 	initWindow();
 	initKeys();
-	initEcosystem();
 	initStateData();
 	initStates();
 	initFont();
@@ -26,19 +24,15 @@ App::App()
 
 App::~App()
 {
-	delete m_window;
-	delete m_ecosystem;
-
 	while (!m_states.empty())
 	{
-		delete m_states.top();
 		m_states.pop();
 	}
 }
 
 void App::run()
 {
-	while (m_window->isOpen())
+	while (m_window.isOpen())
 	{
 		updateDt();
 		update();
@@ -48,12 +42,7 @@ void App::run()
 
 // private methods:
 
-void App::initVariables()
-{
-	m_window = nullptr;
-	m_ecosystem = nullptr;
-	m_dt = 0.0f;
-}
+// initialization:
 
 void App::initGraphicsSettings()
 {
@@ -64,7 +53,7 @@ void App::initWindow()
 {
 	if (m_gfxSettings.fullscreen)
 	{
-		m_window = new sf::RenderWindow(
+		m_window.create(
 			m_gfxSettings.resolution,
 			m_gfxSettings.title,
 			sf::Style::Fullscreen,
@@ -73,7 +62,7 @@ void App::initWindow()
 	}
 	else
 	{
-		m_window = new sf::RenderWindow(
+		m_window.create(
 			m_gfxSettings.resolution,
 			m_gfxSettings.title,
 			sf::Style::Titlebar | sf::Style::Close,
@@ -81,10 +70,10 @@ void App::initWindow()
 		);
 	}
 
-	m_window->setFramerateLimit(m_gfxSettings.frameRateLimit);
-	m_window->setVerticalSyncEnabled(m_gfxSettings.verticalSync);
+	m_window.setFramerateLimit(m_gfxSettings.frameRateLimit);
+	m_window.setVerticalSyncEnabled(m_gfxSettings.verticalSync);
 
-	m_window->setPosition(
+	m_window.setPosition(
 		sf::Vector2i(
 			m_gfxSettings.position.first,
 			m_gfxSettings.position.second
@@ -127,24 +116,19 @@ void App::initKeys()
 	ifs.close();
 }
 
-void App::initEcosystem()
-{
-	m_ecosystem = nullptr;
-}
-
 void App::initStateData()
 {
-	m_stateData.m_window = m_window;
+	m_stateData.m_window = &m_window;
 	m_stateData.m_gfxSettings = &m_gfxSettings;
 	m_stateData.m_supportedKeys = &m_supportedKeys;
 	m_stateData.m_states = &m_states;
-	m_stateData.m_ecosystem = m_ecosystem;
+	m_stateData.m_ecosystem = &m_ecosystem;
 	m_stateData.m_events = &m_events;
 }
 
 void App::initStates()
 {
-	m_states.push(new MainMenuState(&m_stateData));
+	m_states.push(std::make_unique<MainMenuState>(&m_stateData));
 }
 
 void App::initFont()
@@ -176,6 +160,8 @@ void App::initFPSpreview()
 	);
 }
 
+// utils:
+
 void App::updateDt()
 {
 	m_dt = m_clock.restart().asSeconds();
@@ -199,11 +185,11 @@ void App::updateEvents()
 
 	sf::Event event;
 
-	while (m_window->pollEvent(event))
+	while (m_window.pollEvent(event))
 	{
 		if (event.type == sf::Event::Closed)
 		{
-			m_window->close();
+			m_window.close();
 		}
 
 		m_events.push_back(event);
@@ -214,12 +200,11 @@ void App::updateStates()
 {
 	if (!m_states.empty())
 	{
-		if (m_window->hasFocus())
+		if (m_window.hasFocus())
 		{
 			if (m_states.top()->getQuit())
 			{
 				m_states.top()->endState();
-				delete m_states.top();
 				m_states.pop();
 
 				if (!m_states.empty())
@@ -228,7 +213,7 @@ void App::updateStates()
 				}
 				else
 				{
-					m_window->close();
+					m_window.close();
 				}
 			}
 
@@ -240,20 +225,20 @@ void App::updateStates()
 	}
 	else
 	{
-		m_window->close();
+		m_window.close();
 	}
 }
 
 void App::render()
 {
-	m_window->clear();
+	m_window.clear();
 
 	if (!m_states.empty())
 	{
 		m_states.top()->render();
 	}
 
-	gui::FPSpreview::render(*m_window);
+	gui::FPSpreview::render(m_window);
 
-	m_window->display();
+	m_window.display();
 }

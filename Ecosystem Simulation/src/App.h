@@ -12,15 +12,17 @@ public:
 	void run();
 
 private:
-	void initVariables();
+	// initialization:
+
 	void initGraphicsSettings();
 	void initWindow();
 	void initKeys();
-	void initEcosystem();
 	void initStateData();
 	void initStates();
 	void initFont();
 	void initFPSpreview();
+
+	// utils:
 
 	void updateDt();
 	void update();
@@ -33,10 +35,10 @@ private:
 
 private:
 	GraphicsSettings m_gfxSettings;
-	sf::RenderWindow* m_window;
+	sf::RenderWindow m_window;
 	std::unordered_map<std::string, int> m_supportedKeys;
-	std::stack<State*> m_states;
-	Ecosystem* m_ecosystem;
+	std::stack<std::unique_ptr<State>> m_states;
+	Ecosystem m_ecosystem;
 	std::vector<sf::Event> m_events;
 
 	StateData m_stateData;

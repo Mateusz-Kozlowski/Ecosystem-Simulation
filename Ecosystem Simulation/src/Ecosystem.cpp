@@ -1,6 +1,29 @@
 #include "pch.h"
 #include "Ecosystem.h"
 
+Ecosystem::Ecosystem()
+	: m_name("")
+	, m_background()
+	, m_animals()
+	, m_fruits()
+	, m_animalsRadius(0.0f)
+	, m_fruitsRadius(0.0f)
+	, m_defaultAnimalsHp(0.0)
+	, m_mutationPercentage(0.0f)
+	, m_animalsColor(sf::Color::Magenta)
+	, m_fruitsColor(sf::Color::Magenta)
+	, m_trackedAnimalColor(sf::Color::Magenta)
+	, m_trackedAnimal(nullptr)
+	, m_simulationSpeedFactor(1.0f)
+	, m_simulationIsPaused(true)
+	, m_godTool(GodTool::NONE)
+	, m_hpBarsVisibility()
+	, m_brainsPreviewsVisibility()
+	, m_totalTimeElapsed(0.0f)
+{
+
+}
+
 Ecosystem::Ecosystem(
 	const std::string& name,
 	const sf::Vector2f& worldSize,

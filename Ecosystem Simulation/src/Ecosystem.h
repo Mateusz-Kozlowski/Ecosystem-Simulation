@@ -9,6 +9,7 @@
 class Ecosystem
 {
 public:
+	Ecosystem();
 	Ecosystem(
 		const std::string& name,
 		const sf::Vector2f& worldSize,

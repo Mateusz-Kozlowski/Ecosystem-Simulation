@@ -273,18 +273,24 @@ void MainMenuState::getUpdateFromButtons()
 		//}
 		if (m_stateData->m_ecosystem)
 		{
-			m_stateData->m_states->push(new SimulationState(m_stateData));
+			m_stateData->m_states->push(
+				std::make_unique<SimulationState>(m_stateData)
+			);
 			m_stateData->m_states->top()->freeze();
 		}
 	}
 	else if (m_buttons["NEW ECOSYSTEM"]->isClicked())
 	{
-		m_stateData->m_states->push(new EcosystemCreatorState(m_stateData));
+		m_stateData->m_states->push(
+			std::make_unique<EcosystemCreatorState>(m_stateData)
+		);
 		m_stateData->m_states->top()->freeze();
 	}
 	else if (m_buttons["LOAD"]->isClicked())
 	{
-		m_stateData->m_states->push(new LoadingState(m_stateData));
+		m_stateData->m_states->push(
+			std::make_unique<LoadingState>(m_stateData)
+		);
 		m_stateData->m_states->top()->freeze();
 	}
 	else if (m_buttons["QUIT"]->isClicked())

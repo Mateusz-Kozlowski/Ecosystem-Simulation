@@ -8,21 +8,10 @@ class State;
 class StateData
 {
 public:
-	StateData()
-		: m_gfxSettings(nullptr)
-		, m_window(nullptr)
-		, m_supportedKeys(nullptr)
-		, m_states(nullptr)
-		, m_ecosystem(nullptr)
-		, m_events(nullptr)
-	{
-		
-	}
-
 	GraphicsSettings* m_gfxSettings;
 	sf::RenderWindow* m_window;
 	std::unordered_map<std::string, int>* m_supportedKeys;
-	std::stack<State*>* m_states;
+	std::stack<std::unique_ptr<State>>* m_states;
 	Ecosystem* m_ecosystem;
 	std::vector<sf::Event>* m_events;
 };

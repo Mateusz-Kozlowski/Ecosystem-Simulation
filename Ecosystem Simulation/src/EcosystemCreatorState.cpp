@@ -703,10 +703,8 @@ std::string EcosystemCreatorState::removeFloatTrailingZeros(
 
 void EcosystemCreatorState::createEcosystem()
 {
-	delete m_stateData->m_ecosystem;
-
 	// TODO: do sth with that hard-coded thing
-	m_stateData->m_ecosystem = new Ecosystem(
+	*m_stateData->m_ecosystem = Ecosystem(
 		m_textBoxes["NAME"]->getInput(),
 		sf::Vector2f(
 			std::stof(m_textBoxes["WORLD WIDTH"]->getInput()),
