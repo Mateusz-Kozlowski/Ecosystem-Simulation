@@ -53,6 +53,8 @@ namespace gui
 		void setProgressRectColor(const sf::Color& progressRectColor);
 
 	private:
+		// initialization:
+
 		void initBackground(
 			const sf::Vector2f& position,
 			const sf::Color& backgroundColor
@@ -62,6 +64,8 @@ namespace gui
 			const sf::Color& progressColor
 		);
 		
+		// utils:
+
 		void avoidOverRangeValue();
 
 		void updateProgressRectSize();

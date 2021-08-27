@@ -19,6 +19,8 @@ sf::RectangleShape gui::FPSpreview::s_bg;
 
 sf::VideoMode gui::FPSpreview::s_resolution = sf::VideoMode(1920U, 1080U);
 
+// public methods:
+
 void gui::FPSpreview::init(
 	float delay,
 	const sf::Color& backgroundColor, 

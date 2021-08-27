@@ -165,6 +165,8 @@ void gui::ProgressBar::setProgressRectColor(
 
 // private methods:
 
+// initialization:
+
 void gui::ProgressBar::initBackground(
 	const sf::Vector2f& position,
 	const sf::Color& backgroundColor)
@@ -181,6 +183,8 @@ void gui::ProgressBar::initProgressRect(
 	m_progressRect.setFillColor(progressRectColor);
 	updateProgressRectSize(); // sets size
 }
+
+// utils:
 
 void gui::ProgressBar::avoidOverRangeValue()
 {

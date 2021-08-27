@@ -92,24 +92,7 @@ void gui::Button::update(const sf::Vector2i& mousePosWindow)
 		}
 	}
 
-	if (m_state == ButtonState::BTN_PRESSED)
-	{
-		m_rect.setFillColor(m_pressedColor);
-		m_rect.setOutlineColor(m_outlinePressedColor);
-		m_text.setFillColor(m_textPressedColor);
-	}
-	else if (m_state == ButtonState::BTN_HOVERED)
-	{
-		m_rect.setFillColor(m_hoverColor);
-		m_rect.setOutlineColor(m_outlineHoverColor);
-		m_text.setFillColor(m_textHoverColor);
-	}
-	else if (m_state == ButtonState::BTN_IDLE)
-	{
-		m_rect.setFillColor(m_idleColor);
-		m_rect.setOutlineColor(m_outlineIdleColor);
-		m_text.setFillColor(m_textIdleColor);
-	}
+	updateColors();
 }
 
 void gui::Button::render(sf::RenderTarget& target)
@@ -197,6 +180,8 @@ void gui::Button::setPosition(const sf::Vector2f& newPos)
 
 // private methods:
 
+// initialization:
+
 void gui::Button::initRect(
 	const sf::Vector2f& position, 
 	const sf::Vector2f& size, 
@@ -237,4 +222,28 @@ void gui::Button::initText(const sf::Color& textIdleColor)
 			m_rect.getPosition().y + m_rect.getSize().y / 2
 		)
 	);
+}
+
+// utils:
+
+void gui::Button::updateColors()
+{
+	if (m_state == ButtonState::BTN_PRESSED)
+	{
+		m_rect.setFillColor(m_pressedColor);
+		m_rect.setOutlineColor(m_outlinePressedColor);
+		m_text.setFillColor(m_textPressedColor);
+	}
+	else if (m_state == ButtonState::BTN_HOVERED)
+	{
+		m_rect.setFillColor(m_hoverColor);
+		m_rect.setOutlineColor(m_outlineHoverColor);
+		m_text.setFillColor(m_textHoverColor);
+	}
+	else if (m_state == ButtonState::BTN_IDLE)
+	{
+		m_rect.setFillColor(m_idleColor);
+		m_rect.setOutlineColor(m_outlineIdleColor);
+		m_text.setFillColor(m_textIdleColor);
+	}
 }

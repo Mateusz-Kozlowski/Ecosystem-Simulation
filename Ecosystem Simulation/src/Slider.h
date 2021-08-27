@@ -38,6 +38,8 @@ namespace gui
 		void setPosition(const sf::Vector2f& newPos);
 
 	private:
+		// initialization:
+
 		void initTextures(
 			const std::string& axisIdlePath, 
 			const std::string& handleIdlePath,
@@ -51,6 +53,8 @@ namespace gui
 			float texturesScale
 		);
 		
+		// utils:
+
 		float inverseScaleFunction(float y);
 		float scaleFunctionValue(float x);
 

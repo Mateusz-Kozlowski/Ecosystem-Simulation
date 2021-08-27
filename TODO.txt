@@ -8,6 +8,7 @@ side menu:
 - after loading ecosystem side menu panel should be updated (e.g., speed scaler)
 
 logging system:
+- write temporary Log class with levels
 - add a logging library
 
 ResourceManager:
@@ -22,7 +23,6 @@ app:
 - define states freezing
 
 simulation state:
-- print ecosystem info at the very beginning
 - move that thing controling simulation speed factor from updateEcosystem method to getUpdatesFromGui
 - saving zoom/world camera can be useful
 - avoid drawing things that are outside the window
@@ -72,20 +72,6 @@ simulation/ecosystem:
 - add a way to change a tracked animal, even add arrows "previous" and "next"
 - spawn more fruits in the center of the world
 - don't update a brain if it isn't rendered (order of calling methods in updateWorld might be important)
-- lots of things there, read it carefully apply step by step!:
-  change accelerationIsPossible to acceleration was possible 
-  and reset vel if wasn't;
-  if that won't help with fixing the bug with animals with negative total energy 
-  in MC in check if possible use delta accessors like in updateHp in animal class
-  instead of calculating those temp vars
-  !!!maybe don't allow only if total will be negative!!! and allow to reach negative hp
-  if total won't be negative
-  check if fruits with 0 produces in that way won't be rmv if such a way that 
-  they will affacted brains inputs and then disappear or even if they don't
-  disapper immediately they should be created if they energy would be equal to 0,
-  maybe just don't create them and not only in that case, maybe in order places
-  creating fruits with E=0 can be avoided y just not creating them;
-  and what about setVel in MV? should it change prevKinEnergy?
 - all animals energy to expel from animals should go to only one fruit,
   fruit with the lowest energy
 - use some STL algo to feed animals

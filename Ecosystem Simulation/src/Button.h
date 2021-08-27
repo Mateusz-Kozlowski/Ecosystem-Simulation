@@ -58,6 +58,8 @@ namespace gui
 		void setPosition(const sf::Vector2f& newPos);
 
 	private:
+		// initialization:
+
 		void initRect(
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
@@ -66,6 +68,10 @@ namespace gui
 			const sf::Color& idleColor
 		);
 		void initText(const sf::Color& textIdleColor);
+
+		// utils:
+
+		void updateColors();
 
 	private:
 		bool m_clickBlockade;

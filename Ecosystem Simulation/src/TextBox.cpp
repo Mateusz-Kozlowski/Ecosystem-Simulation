@@ -129,6 +129,8 @@ void gui::TextBox::setString(const std::string& string)
 
 // private methods:
 
+// initialization:
+
 void gui::TextBox::initRect(
     const sf::Vector2f& position,
     const sf::Vector2f& size,
@@ -215,6 +217,8 @@ void gui::TextBox::initColors(
     m_colors["TEXT"]["HOVERED"] = textHoveredColor;
     m_colors["TEXT"]["PRESSED"] = textPressedColor;
 }
+
+// utils:
 
 void gui::TextBox::updateState(
     const std::vector<sf::Event>& events, 

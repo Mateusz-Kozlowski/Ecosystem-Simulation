@@ -177,6 +177,8 @@ void gui::Slider::setPosition(const sf::Vector2f& newPos)
 
 // private methods:
 
+// initialization:
+
 void gui::Slider::initTextures(
 	const std::string& axisIdlePath, const std::string& handleIdlePath,
 	const std::string& axisHoverPath, const std::string& handleHoverPath,
@@ -269,6 +271,8 @@ void gui::Slider::initSprites(
 		handleSprite.setPosition(posX, posY);
 	}
 }
+
+// utils:
 
 float gui::Slider::inverseScaleFunction(float y)
 {

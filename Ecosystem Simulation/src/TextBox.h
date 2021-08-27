@@ -53,6 +53,8 @@ namespace gui
 		void setString(const std::string& string);
 
 	private:
+		// initialization:
+
 		void initRect(
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
@@ -75,6 +77,8 @@ namespace gui
 			const sf::Color& textPressedColor
 		);
 		
+		// utils:
+
 		void updateState(
 			const std::vector<sf::Event>& events, 
 			const sf::Vector2i& mousePositionWindow);
