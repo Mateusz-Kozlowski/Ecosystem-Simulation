@@ -42,6 +42,7 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- save fruits and animals count to file in order to know how many of them should be loaded
 - restore increase/decrease methods in Animal and Food classes and in other places
   but don't use += operator with floats and doubles 
   and add comments that explain why u those methods don't use += operator;

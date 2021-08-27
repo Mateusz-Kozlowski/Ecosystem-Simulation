@@ -555,8 +555,7 @@ void Ecosystem::createNewAnimal(
 			animalColor,
 			sf::Color(100, 100, 100),
 			sf::Color::Red,
-			defaultAnimalHp,
-			INFINITY
+			defaultAnimalHp
 		)
 	);
 	m_animals.back()->setRandomPosition(getWorldSize(), getBordersThickness());
@@ -1129,7 +1128,6 @@ void Ecosystem::printInfoAboutAnimal(const Animal& animal) const
 {
 	std::cout << '\n';
 	std::cout << "Info about a clicked animal:\n";
-	std::cout << "max hp: " << animal.getMaxHp() << '\n';
 	std::cout 
 		<< "position: " 
 		<< animal.getPosition().x << ' ' << animal.getPosition().y 
@@ -1199,6 +1197,7 @@ void Ecosystem::updateWorld(float dt)
 	removeDeadAnimals();
 	feedAnimals(dt);
 	removeEatenFruits();
+	setHpBarsRanges();
 	correctPopulationSize(dt);
 	correctBrainPreviewsPositions();
 }
@@ -1752,6 +1751,35 @@ void Ecosystem::removeFruit(std::unique_ptr<Fruit>& fruit)
 {
 	std::swap(fruit, m_fruits.back());
 	m_fruits.pop_back();
+}
+
+void Ecosystem::setHpBarsRanges()
+{
+	Blueberry::Scalar theBiggestHp = getTheBiggestHp();
+	
+	for (auto& animal : m_animals)
+	{
+		animal->setHpBarRange(
+			{
+				animal->getHpBar()->getValuesRange().first,
+				theBiggestHp
+			}
+		);
+	}
+}
+
+Blueberry::Scalar Ecosystem::getTheBiggestHp() const
+{
+	Blueberry::Scalar theBiggestHp = -INFINITY;
+
+	for (const auto& animal : m_animals)
+	{
+		// avoid a dangling reference:
+		const Blueberry::Scalar temp = animal->getHp();
+		theBiggestHp = std::max(theBiggestHp, temp);
+	}
+
+	return theBiggestHp;
 }
 
 void Ecosystem::transferEnergyFromAnimalsToFruits()

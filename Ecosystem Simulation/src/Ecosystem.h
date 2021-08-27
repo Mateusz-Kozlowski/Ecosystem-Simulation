@@ -202,6 +202,9 @@ private:
 	const Fruit* getTheNearestFruit(const Animal& animal) const;
 	float calcDistance(const Animal& animal, const Fruit& fruit) const;
 
+	void transferEnergyFromAnimalsToFruits();
+	Fruit* getLowestEnergyFruit();
+
 	void avoidTunneling();
 	void avoidTunnelingByVerticalBorders(Animal& animal);
 	void avoidTunnelingByHorizontalBorders(Animal& animal);
@@ -234,8 +237,8 @@ private:
 	void removeEatenFruits();
 	void removeFruit(std::unique_ptr<Fruit>& fruit);
 
-	void transferEnergyFromAnimalsToFruits();
-	Fruit* getLowestEnergyFruit();
+	void setHpBarsRanges();
+	Blueberry::Scalar getTheBiggestHp() const;
 
 	void correctPopulationSize(float dt);
 	void randomShuffleAnimals();

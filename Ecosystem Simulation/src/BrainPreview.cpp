@@ -285,7 +285,7 @@ Blueberry::Scalar gui::BrainPreview::getTheBiggestActVal() const
 			);
 		}
 	}
-
+	
 	return theBiggestActVal;
 }
 

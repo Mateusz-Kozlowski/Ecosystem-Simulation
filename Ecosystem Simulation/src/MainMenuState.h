@@ -43,10 +43,10 @@ private:
 
 	std::unordered_map<std::string, BtnUniquePtr> m_buttons;
 
-	sf::Text m_ecosystemText;
+	sf::Text m_ecosystemName;
 
-	sf::Color m_defaultEcosystemTextColor;
-	sf::Color m_highlightedEcosystemTextColor;
+	sf::Color m_defaultColorOfEcosystemName;
+	sf::Color m_highlightedColorOfEcosystemName;
 	
 	float m_ecosystemTextStopwatch;
 	float m_highlightningTime;

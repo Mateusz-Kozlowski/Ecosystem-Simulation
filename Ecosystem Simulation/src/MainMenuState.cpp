@@ -6,9 +6,9 @@ MainMenuState::MainMenuState(StateData* stateData)
 	, m_backgroundRect()
 	, m_fonts()
 	, m_buttons()
-	, m_ecosystemText()
-	, m_defaultEcosystemTextColor()
-	, m_highlightedEcosystemTextColor()
+	, m_ecosystemName()
+	, m_defaultColorOfEcosystemName()
+	, m_highlightedColorOfEcosystemName()
 	, m_ecosystemTextStopwatch(0.0f)
 	, m_highlightningTime(0.0f)
 {
@@ -39,7 +39,7 @@ void MainMenuState::render(sf::RenderTarget* target)
 
 	renderButtons(*target);
 
-	target->draw(m_ecosystemText);
+	target->draw(m_ecosystemName);
 }
 
 // mutators:
@@ -53,11 +53,11 @@ void MainMenuState::freeze()
 
 void MainMenuState::initVariables()
 {
-	m_defaultEcosystemTextColor = sf::Color(216, 216, 216);
-	m_highlightedEcosystemTextColor = sf::Color::Red;
+	m_defaultColorOfEcosystemName = sf::Color(216, 216, 216);
+	m_highlightedColorOfEcosystemName = sf::Color::Red;
 
 	m_ecosystemTextStopwatch = 0.0f;
-	m_highlightningTime = 0.5f;
+	m_highlightningTime = 0.2f;
 }
 
 void MainMenuState::initKeybinds()
@@ -220,16 +220,16 @@ void MainMenuState::initButtons()
 
 void MainMenuState::initEcosystemText()
 {
-	m_ecosystemText.setFont(m_fonts["CONSOLAB"]);
-	m_ecosystemText.setString("NO STRING HAS BEEN SET FOR THIS TEXT");
-	m_ecosystemText.setPosition(50.0f, 50.0f);
-	m_ecosystemText.setCharacterSize(32U);
-	m_ecosystemText.setFillColor(m_defaultEcosystemTextColor);
+	m_ecosystemName.setFont(m_fonts["CONSOLAB"]);
+	m_ecosystemName.setString("NO STRING HAS BEEN SET FOR THIS TEXT");
+	m_ecosystemName.setPosition(50.0f, 50.0f);
+	m_ecosystemName.setCharacterSize(32U);
+	m_ecosystemName.setFillColor(m_defaultColorOfEcosystemName);
 }
 
 void MainMenuState::highlightEcosystemText()
 {
-	m_ecosystemText.setFillColor(m_highlightedEcosystemTextColor);
+	m_ecosystemName.setFillColor(m_highlightedColorOfEcosystemName);
 	m_ecosystemTextStopwatch = 0.0f;
 }
 
@@ -261,22 +261,16 @@ void MainMenuState::getUpdateFromButtons()
 
 	if (m_buttons["SIMULATE"]->isClicked())
 	{
-		// TODO: What about this?:
-		//if (m_stateData->m_ecosystem->isInitialized())
-		//{
-		//	m_stateData->m_states->push(new SimulationState(m_stateData));
-		//	m_stateData->m_states->top()->freeze();
-		//}
-		//else
-		//{
-		//	highlightEcosystemText();
-		//}
-		if (m_stateData->m_ecosystem)
+		if (!m_stateData->m_ecosystem->getName().empty())
 		{
 			m_stateData->m_states->push(
 				std::make_unique<SimulationState>(m_stateData)
 			);
 			m_stateData->m_states->top()->freeze();
+		}
+		else
+		{
+			highlightEcosystemText();
 		}
 	}
 	else if (m_buttons["NEW ECOSYSTEM"]->isClicked())
@@ -301,18 +295,41 @@ void MainMenuState::getUpdateFromButtons()
 
 void MainMenuState::updateEcosystemText(float dt)
 {
+	if (m_stateData->m_ecosystem->getName() == "")
+	{
+		m_ecosystemName.setString(
+			"CREATE A NEW ECOSYSTEM OR LOAD AN EXISTING ONE"
+		);
+
+		if (m_ecosystemName.getFillColor() == m_highlightedColorOfEcosystemName)
+		{
+			if (m_ecosystemTextStopwatch > m_highlightningTime)
+			{
+				m_ecosystemName.setFillColor(m_defaultColorOfEcosystemName);
+			}
+
+			m_ecosystemTextStopwatch += dt;
+		}
+	}
+	else
+	{
+		m_ecosystemName.setString(
+			"CURRENT ECOSYSTEM NAME: " + m_stateData->m_ecosystem->getName()
+		);
+	}
+
 	// TODO: ecosystem text is not updated at all! Change that!:
 	//if (!m_stateData->m_ecosystem->isInitialized())
 	//{
-	//	m_ecosystemText.setString(
+	//	m_ecosystemName.setString(
 	//		"CREATE A NEW ECOSYSTEM OR LOAD AN EXISTING ONE"
 	//	);
 	//
-	//	if (m_ecosystemText.getFillColor() == m_highlightedEcosystemTextColor)
+	//	if (m_ecosystemName.getFillColor() == m_highlightedColorOfEcosystemName)
 	//	{
 	//		if (m_ecosystemTextStopwatch > m_highlightningTime)
 	//		{
-	//			m_ecosystemText.setFillColor(m_defaultEcosystemTextColor);
+	//			m_ecosystemName.setFillColor(m_defaultColorOfEcosystemName);
 	//		}
 	//
 	//		m_ecosystemTextStopwatch += dt;
@@ -320,7 +337,7 @@ void MainMenuState::updateEcosystemText(float dt)
 	//}
 	//else
 	//{
-	//	m_ecosystemText.setString(
+	//	m_ecosystemName.setString(
 	//		"CURRENT ECOSYSTEM FOLDER: " 
 	//		+ m_stateData->m_ecosystem->getName()
 	//	);

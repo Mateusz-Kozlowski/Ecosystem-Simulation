@@ -17,6 +17,8 @@ public:
 	virtual void freeze() override;
 
 private:
+	// initialization:
+
 	virtual void initKeybinds() override;
 	void initBackground();
 	void initContainer();
@@ -25,6 +27,8 @@ private:
 	void initTextBox();
 	void initButtons();
 	
+	// utils:
+
 	virtual void updateInput() override;
 	void getUpdateFromButtons();
 

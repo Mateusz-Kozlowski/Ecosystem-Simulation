@@ -7,10 +7,8 @@ Animal::Animal(
 	const sf::Color& bodyColor,
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor,
-	const Blueberry::Scalar& defaultHp,
-	const Blueberry::Scalar& maxHp)
+	const Blueberry::Scalar& defaultHp)
 	: m_body()
-	, m_maxHp(maxHp)
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
 	, m_hpBar(nullptr)
@@ -24,7 +22,6 @@ Animal::Animal(
 
 Animal::Animal(const char* folderPath)
 	: m_body()
-	, m_maxHp(0.0)
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
 	, m_hpBar(nullptr)
@@ -36,7 +33,6 @@ Animal::Animal(const char* folderPath)
 
 Animal::Animal(const Animal& rhs)
 	: m_body(rhs.m_body)
-	, m_maxHp(rhs.m_maxHp)
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(rhs.m_alive)
 	, m_hpBar(std::make_unique<gui::ProgressBar>())
@@ -54,7 +50,6 @@ Animal& Animal::operator=(const Animal& rhs)
 	if (this != &rhs)
 	{
 		m_body = rhs.m_body;
-		m_maxHp = rhs.m_maxHp;
 		*m_movementComponent = *rhs.m_movementComponent;
 		m_alive = rhs.m_alive;
 		*m_hpBar = *rhs.m_hpBar;
@@ -123,7 +118,6 @@ void Animal::saveToFolder(const char* folderPath) const
 	ofs << static_cast<int>(m_hpBar->getProgressRectColor().b) << ' ';
 	ofs << static_cast<int>(m_hpBar->getProgressRectColor().a) << '\n';
 
-	ofs << m_maxHp << '\n';
 	ofs << m_alive << '\n';
 	ofs << m_hpBar->getCurrentValue() << '\n';
 	ofs << m_movementComponent->getPreviousVelocityVector().x << '\n';
@@ -171,7 +165,6 @@ void Animal::loadFromFolder(const char* folderPath)
 	ifs >> bodyColorR >> bodyColorG >> bodyColorB >> bodyColorA;
 	ifs >> hpBarBgColorR >> hpBarBgColorG >> hpBarBgColorB >> hpBarBgColorA;
 	ifs >> hpBarColorR >> hpBarColorG >> hpBarColorB >> hpBarColorA;
-	ifs >> m_maxHp;
 	ifs >> m_alive;
 	ifs >> hp;
 	ifs >> prevVelocity.x >> prevVelocity.y;
@@ -273,11 +266,6 @@ const sf::Color& Animal::getColor() const
 	return m_body.getFillColor();
 }
 
-const Blueberry::Scalar& Animal::getMaxHp() const
-{
-	return m_maxHp;
-}
-
 const MovementComponent& Animal::getMovementComponent() const
 {
 	return *m_movementComponent;
@@ -353,6 +341,11 @@ Blueberry::Scalar Animal::getTotalEnergy() const
 	return m_hpBar->getCurrentValue() + getKineticEnergy();
 }
 
+const std::unique_ptr<gui::ProgressBar>& Animal::getHpBar() const
+{
+	return m_hpBar;
+}
+
 const gui::BrainPreview& Animal::getBrainPreview() const
 {
 	return *m_brainPreview;
@@ -421,19 +414,6 @@ void Animal::setColor(const sf::Color& color)
 	m_hpBar->setProgressRectColor(color);
 }
 
-void Animal::setMaxHp(const Blueberry::Scalar& maxHp)
-{
-	if (m_hpBar->getCurrentValue() > maxHp)
-	{
-		std::cerr
-			<< "Error::Animal::setMaxHp(double)::"
-			<< "cannot set max hp smaller than the current hp\n";
-		assert(false);
-	}
-
-	m_maxHp = maxHp;
-}
-
 void Animal::randomMutate(unsigned brainMutationsCount)
 {
 	m_movementComponent->mutateBrain(brainMutationsCount);
@@ -452,14 +432,6 @@ void Animal::setAlive(bool alive)
 
 void Animal::setHp(const Blueberry::Scalar& hp)
 {
-	if (hp > m_maxHp)
-	{
-		std::cerr
-			<< "Error::Animal::setHp(double)::"
-			<< "cannot set hp greater than the max hp\n";
-		assert(false);
-	}
-
 	m_hpBar->setValue(hp);
 
 	m_alive = m_hpBar->getCurrentValue() > 0.0;
@@ -469,14 +441,6 @@ void Animal::setHp(const Blueberry::Scalar& hp)
 
 //void Animal::increaseHp(double hpIncrease)
 //{
-//	if (m_hpBar->getCurrentValue() + hpIncrease > m_maxHp)
-//	{
-//		std::cerr
-//			<< "Error::Animal::increaseHp(double)::"
-//			<< "cannot set hp greater than the max hp\n";
-//		assert(false);
-//	}
-//
 //	m_hpBar->increaseValue(hpIncrease);
 //
 //	m_alive = m_hpBar->getCurrentValue() > 0.0;
@@ -486,20 +450,17 @@ void Animal::setHp(const Blueberry::Scalar& hp)
 
 //void Animal::decreaseHp(double hpDecrease)
 //{
-//	if (m_hpBar->getCurrentValue() - hpDecrease > m_maxHp)
-//	{
-//		std::cerr
-//			<< "Error::Animal::decreaseHp(double)::"
-//			<< "cannot set hp greater than the max hp\n";
-//		assert(false);
-//	}
-//
 //	m_hpBar->decreaseValue(hpDecrease);
 //
 //	m_alive = m_hpBar->getCurrentValue() > 0.0;
 //
 //	m_timeElapsedSinceLastExternalHpChange = 0.0f;
 //}
+
+void Animal::setHpBarRange(const std::pair<double, double>& range)
+{
+	m_hpBar->setValuesRange(range);
+}
 
 void Animal::setBrainPreviewPosition(const sf::Vector2f& position)
 {

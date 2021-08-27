@@ -72,6 +72,8 @@ void LoadingState::freeze()
 
 // private methods:
 
+// initialization:
+
 void LoadingState::initKeybinds()
 {
 	const char* path = "config/ecosystem_creator_keybinds.ini";
@@ -264,6 +266,8 @@ void LoadingState::initButtons()
 	);
 }
 
+// utils:
+
 void LoadingState::updateInput()
 {
 	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["CLOSE"]))
@@ -285,15 +289,8 @@ void LoadingState::getUpdateFromButtons()
 		if (m_textBox->getInput().empty()) return;
 
 		std::string folderPath = "ecosystems/" + m_textBox->getInput();
-
-		if (m_stateData->m_ecosystem)
-		{
-			m_stateData->m_ecosystem->loadFromFolder(folderPath.c_str());
-		}
-		else
-		{
-			m_stateData->m_ecosystem = new Ecosystem(folderPath.c_str());
-		}
+		
+		m_stateData->m_ecosystem->loadFromFolder(folderPath.c_str());
 	}
 	else if (m_buttons["OK"]->isClicked())
 	{
