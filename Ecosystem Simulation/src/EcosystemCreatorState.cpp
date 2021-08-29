@@ -44,6 +44,8 @@ void EcosystemCreatorState::freeze()
 
 // private methods:
 
+// initialization:
+
 void EcosystemCreatorState::initKeybinds()
 {
 	const char* path = "config/ecosystem_creator_keybinds.ini";
@@ -599,6 +601,8 @@ void EcosystemCreatorState::initTexts()
 		)
 	);
 }
+
+// utils:
 
 void EcosystemCreatorState::addText(
 	const std::string& str,

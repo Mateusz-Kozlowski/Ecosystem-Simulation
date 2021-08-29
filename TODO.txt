@@ -24,7 +24,9 @@ app:
 
 simulation state:
 - move that thing controling simulation speed factor from updateEcosystem method to getUpdatesFromGui
-- saving zoom/world camera can be useful
+- saving zoom/world camera? 
+  maybe not in ecosystem but in simulationState 
+  and if the App will be closed u can save that setting in a file
 - avoid drawing things that are outside the window
 - add texture buttons in the top-right corners of all brain previews that will allow to move neurons,
   save that changes and maybe other things
@@ -48,7 +50,7 @@ simulation/ecosystem:
   and add comments that explain why u those methods don't use += operator;
   add do all that things not only in Animal and Fruit but in the entire solution
 - add some to way to mark energy to expel as expeled (or reset)
-- frame by frame simulation;
+- simulating frame by frame God tool?
 - more than one std::vector<std::shared_ptr<Animal>>?;
   it's an amazing idea! (u can simply copy std::shared_ptr while initializing animals);
   this will allow to sort each vector by different parameter
@@ -71,7 +73,7 @@ simulation/ecosystem:
   (directly after a function that marks animals as not alive)
   (that converting dead animals to fruits process can occur a few times in update world method)
 - add a way to change a tracked animal, even add arrows "previous" and "next"
-- spawn more fruits in the center of the world
+- spawn more fruits in the center of the world?
 - don't update a brain if it isn't rendered (order of calling methods in updateWorld might be important)
 - all animals energy to expel from animals should go to only one fruit,
   fruit with the lowest energy

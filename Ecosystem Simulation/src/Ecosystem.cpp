@@ -19,7 +19,7 @@ Ecosystem::Ecosystem()
 	, m_simulationIsPaused(true)
 	, m_godTool(GodTool::NONE)
 	, m_hpBarsVisibility()
-	, m_brainsPreviewsVisibility()
+	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
 {
 
@@ -63,7 +63,7 @@ Ecosystem::Ecosystem(
 	, m_simulationIsPaused(simulationIsPaused)
 	, m_godTool(godTool)
 	, m_hpBarsVisibility()
-	, m_brainsPreviewsVisibility()
+	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
 {
 	initBackgroundAndBorders(
@@ -106,7 +106,7 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_simulationIsPaused(true)
 	, m_godTool(GodTool::NONE)
 	, m_hpBarsVisibility()
-	, m_brainsPreviewsVisibility()
+	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
 {
 	loadFromFolder(folderPath);
@@ -233,7 +233,7 @@ void Ecosystem::render(sf::RenderTarget& target) const
 
 	for (const auto& animal : m_animals)
 	{
-		if (m_brainsPreviewsVisibility.at(animal.get()))
+		if (m_brainsVisibility.at(animal.get()))
 		{
 			animal->renderBrainPreview(target);
 		}
@@ -342,7 +342,7 @@ GodTool Ecosystem::getCurrentGodTool() const
 
 const std::unordered_map<Animal*, bool>& Ecosystem::getBrainsVisibility() const
 {
-	return m_brainsPreviewsVisibility;
+	return m_brainsVisibility;
 }
 
 float Ecosystem::getTotalTimeElapsed() const
@@ -482,7 +482,7 @@ void Ecosystem::setGodTool(GodTool godTool)
 
 void Ecosystem::hideAllBrainsPreviews()
 {
-	for (auto& it : m_brainsPreviewsVisibility)
+	for (auto& it : m_brainsVisibility)
 	{
 		it.second = false;
 	}
@@ -490,7 +490,7 @@ void Ecosystem::hideAllBrainsPreviews()
 
 void Ecosystem::showAllBrainsPreviews()
 {
-	for (auto& it : m_brainsPreviewsVisibility)
+	for (auto& it : m_brainsVisibility)
 	{
 		it.second = true;
 	}
@@ -564,7 +564,7 @@ void Ecosystem::createNewAnimal(
 	m_animals.back()->setRandomPosition(getWorldSize(), getBordersThickness());
 
 	m_hpBarsVisibility[m_animals.back().get()] = renderHpBarByDefault;
-	m_brainsPreviewsVisibility[m_animals.back().get()] = renderBrainByDefault;
+	m_brainsVisibility[m_animals.back().get()] = renderBrainByDefault;
 }
 
 void Ecosystem::createNewFruits(
@@ -751,7 +751,7 @@ void Ecosystem::saveBrainsPreviewsVisibility(const std::string& filePath) const
 		return;
 	}
 
-	for (const auto& it : m_brainsPreviewsVisibility)
+	for (const auto& it : m_brainsVisibility)
 	{
 		ofs << it.second << '\n';
 	}
@@ -932,7 +932,7 @@ void Ecosystem::loadHpBarsVisibility(const std::string& filePath)
 
 void Ecosystem::loadBrainsPreviewsVisibility(const std::string& filePath)
 {
-	m_brainsPreviewsVisibility.clear();
+	m_brainsVisibility.clear();
 
 	std::ifstream ifs(filePath);
 
@@ -953,7 +953,7 @@ void Ecosystem::loadBrainsPreviewsVisibility(const std::string& filePath)
 	for (int i = 0; i < m_animals.size(); i++)
 	{
 		ifs >> brainPreviewVisibility;
-		m_brainsPreviewsVisibility[m_animals[i].get()] = brainPreviewVisibility;
+		m_brainsVisibility[m_animals[i].get()] = brainPreviewVisibility;
 	}
 
 	ifs.close();
@@ -1055,8 +1055,8 @@ void Ecosystem::brainTool(const sf::Vector2f& mousePosView)
 	{
 		if (animal->isCoveredByMouse(mousePosView))
 		{
-			m_brainsPreviewsVisibility[animal.get()]
-				= !m_brainsPreviewsVisibility[animal.get()];
+			m_brainsVisibility[animal.get()]
+				= !m_brainsVisibility[animal.get()];
 			return;
 		}
 	}
@@ -1678,8 +1678,8 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 	m_hpBarsVisibility[m_animals.back().get()]
 		= m_hpBarsVisibility[&animal];
 
-	m_brainsPreviewsVisibility[m_animals.back().get()]
-		= m_brainsPreviewsVisibility[&animal];
+	m_brainsVisibility[m_animals.back().get()]
+		= m_brainsVisibility[&animal];
 
 	fruit.setEnergy(0.0);
 	
@@ -1710,8 +1710,8 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 	//		m_hpBarsVisibility[m_animals.back().get()]
 	//			= m_hpBarsVisibility[&animal];
 	//
-	//		m_brainsPreviewsVisibility[m_animals.back().get()]
-	//			= m_brainsPreviewsVisibility[&animal];
+	//		m_brainsVisibility[m_animals.back().get()]
+	//			= m_brainsVisibility[&animal];
 	//	}
 	//
 	//	m_animals.push_back(std::make_shared<Animal>(animal));
@@ -1731,8 +1731,8 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 	//	m_hpBarsVisibility[m_animals.back().get()] 
 	//		= m_hpBarsVisibility[&animal];
 	//
-	//	m_brainsPreviewsVisibility[m_animals.back().get()] 
-	//		= m_brainsPreviewsVisibility[&animal];
+	//	m_brainsVisibility[m_animals.back().get()] 
+	//		= m_brainsVisibility[&animal];
 	//}
 	//else
 	//{

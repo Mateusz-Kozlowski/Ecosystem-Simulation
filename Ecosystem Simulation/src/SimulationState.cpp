@@ -103,6 +103,8 @@ void SimulationState::freeze()
 
 // private methods:
 
+// initialization:
+
 void SimulationState::initKeybinds()
 {
 	const char* path = "config/simulation_keybinds.ini";
@@ -665,6 +667,8 @@ void SimulationState::initSaveAsPanel()
 		gui::p2pY(0.5f, resolution)
 	);
 }
+
+// utils:
 
 void SimulationState::updateInput()
 {

@@ -18,12 +18,16 @@ public:
 	virtual void freeze() override;
 
 private:	
+	// initialization:
+
 	void initVariables();
 	virtual void initKeybinds() override;
 	void initBackground();
 	void initFonts();
 	void initButtons();
 	void initEcosystemText();
+
+	// utils:
 
 	void highlightEcosystemText();
 	void saveEcosystem(const Ecosystem& ecosystem);

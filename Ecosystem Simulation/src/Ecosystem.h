@@ -302,7 +302,7 @@ private:
 	GodTool m_godTool;
 
 	std::unordered_map<Animal*, bool> m_hpBarsVisibility;
-	std::unordered_map<Animal*, bool> m_brainsPreviewsVisibility;
+	std::unordered_map<Animal*, bool> m_brainsVisibility;
 
 	float m_totalTimeElapsed;
 };

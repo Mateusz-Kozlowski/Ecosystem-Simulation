@@ -38,6 +38,8 @@ void State::freeze()
 
 // protected methods:
 
+// utils:
+
 void State::updateMousePositions(const sf::View* view)
 {
 	m_mousePosScreen = sf::Mouse::getPosition();

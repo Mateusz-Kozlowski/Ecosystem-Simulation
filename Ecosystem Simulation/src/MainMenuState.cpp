@@ -51,6 +51,8 @@ void MainMenuState::freeze()
 
 // private methods:
 
+// initialization:
+
 void MainMenuState::initVariables()
 {
 	m_defaultColorOfEcosystemName = sf::Color(216, 216, 216);
@@ -226,6 +228,8 @@ void MainMenuState::initEcosystemText()
 	m_ecosystemName.setCharacterSize(32U);
 	m_ecosystemName.setFillColor(m_defaultColorOfEcosystemName);
 }
+
+// utils:
 
 void MainMenuState::highlightEcosystemText()
 {

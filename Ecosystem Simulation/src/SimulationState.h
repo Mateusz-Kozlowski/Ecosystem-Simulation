@@ -16,6 +16,8 @@ public:
 	virtual void freeze() override;
 	
 private:
+	// initialization:
+
 	virtual void initKeybinds() override;
 	void initVariables();
 	void initFonts();
@@ -26,6 +28,8 @@ private:
 	void initGodToolsGui();
 	void initSaveAsPanel();
 	
+	// utils:
+
 	virtual void updateInput() override;
 	void updateInputWithPanelRendered();
 

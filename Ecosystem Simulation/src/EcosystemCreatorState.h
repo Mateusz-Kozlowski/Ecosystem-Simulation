@@ -17,6 +17,8 @@ public:
 	virtual void freeze() override;
 
 private:
+	// initialization:
+
 	virtual void initKeybinds() override;
 	void initBackground();
 	void initFont();
@@ -24,6 +26,8 @@ private:
 	void initButtons();
 	void initTextBoxes();
 	void initTexts();
+
+	// utils:
 
 	void addText(
 		const std::string& str,
