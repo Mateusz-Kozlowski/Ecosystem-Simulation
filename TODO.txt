@@ -44,6 +44,14 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- fix an issue with loading ecosystems that contain a tracked animal:
+  animals vector is randomly shuffled every frame so saving a tracked animal
+  as its idx in that vector won't work;
+  how to solve this?
+  maybe when there will be lots of std::vectors of animals "the main vector"
+  won't be sorted or shuffled and the saved idx will be relative to that vector...
+  that also won't work, because when an animal dies the order of ptrs change in every vector;
+  so... maybe each animal should have an information if its tracked or not
 - save fruits and animals count to file in order to know how many of them should be loaded
 - restore increase/decrease methods in Animal and Food classes and in other places
   but don't use += operator with floats and doubles 

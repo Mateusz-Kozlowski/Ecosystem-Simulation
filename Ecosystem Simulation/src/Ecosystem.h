@@ -22,7 +22,7 @@ public:
 		float fruitsRadius,
 		const Blueberry::Scalar& defaultAnimalsHp,
 		const Blueberry::Scalar& defaultFruitsEnergy,
-		float mutationPercentage,
+		unsigned mutationsPerMutation,
 		const sf::Color& animalsColor,
 		const sf::Color& fruitsColor,
 		const sf::Color& trackedAnimalColor,
@@ -61,7 +61,7 @@ public:
 
 	unsigned getFruitsCount() const;
 
-	float getMutationPercentage() const;
+	unsigned getMutationsPerMutation() const;
 
 	const sf::Color& getBackgroundColor() const;
 	const sf::Color& getBordersColor() const;
@@ -92,7 +92,7 @@ public:
 	
 	void setName(const std::string& name);
 
-	void setMutationPercentage(float mutationPercentage);
+	void setMutationsCount(float mutationsCount);
 
 	void setBackgroundColor(const sf::Color& backgroundColor);
 
@@ -302,7 +302,7 @@ private:
 	Blueberry::Scalar m_defaultAnimalsHp;
 	Blueberry::Scalar m_defaultFruitEnergy;
 
-	float m_mutationPercentage;
+	float m_mutationsPerMutation;
 
 	// useful when there are temporarily no m_animals in an ecosystem:
 	sf::Color m_animalsColor;

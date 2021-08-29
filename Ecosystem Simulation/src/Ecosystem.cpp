@@ -10,7 +10,7 @@ Ecosystem::Ecosystem()
 	, m_fruitsRadius(0.0f)
 	, m_defaultAnimalsHp(0.0)
 	, m_defaultFruitEnergy(0.0)
-	, m_mutationPercentage(0.0f)
+	, m_mutationsPerMutation(0.0f)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
 	, m_trackedAnimalColor(sf::Color::Magenta)
@@ -37,7 +37,7 @@ Ecosystem::Ecosystem(
 	float fruitsRadius,
 	const Blueberry::Scalar& defaultAnimalsHp,
 	const Blueberry::Scalar& defaultFruitsEnergy,
-	float mutationPercentage,
+	unsigned mutationsPerMutation,
 	const sf::Color& animalsColor,
 	const sf::Color& fruitsColor,
 	const sf::Color& trackedAnimalColor,
@@ -54,7 +54,7 @@ Ecosystem::Ecosystem(
 	, m_defaultAnimalsHp(defaultAnimalsHp)
 	, m_defaultFruitEnergy(defaultFruitsEnergy)
 	, m_fruitsRadius(fruitsRadius)
-	, m_mutationPercentage(mutationPercentage)
+	, m_mutationsPerMutation(mutationsPerMutation)
 	, m_animalsColor(animalsColor)
 	, m_fruitsColor(fruitsColor)
 	, m_trackedAnimalColor(trackedAnimalColor)
@@ -97,7 +97,7 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_fruitsRadius(0.0f)
 	, m_defaultAnimalsHp(0.0)
 	, m_defaultFruitEnergy(0.0)
-	, m_mutationPercentage(0.0f)
+	, m_mutationsPerMutation(0U)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
 	, m_trackedAnimalColor(sf::Color::Magenta)
@@ -290,9 +290,9 @@ unsigned Ecosystem::getFruitsCount() const
 	return m_fruits.size();
 }
 
-float Ecosystem::getMutationPercentage() const
+unsigned Ecosystem::getMutationsPerMutation() const
 {
-	return m_mutationPercentage;
+	return m_mutationsPerMutation;
 }
 
 const sf::Color& Ecosystem::getBackgroundColor() const
@@ -412,9 +412,9 @@ void Ecosystem::setName(const std::string& name)
 	m_name = name;
 }
 
-void Ecosystem::setMutationPercentage(float mutationRate)
+void Ecosystem::setMutationsCount(float mutationRate)
 {
-	m_mutationPercentage = mutationRate;
+	m_mutationsPerMutation = mutationRate;
 }
 
 void Ecosystem::setBackgroundColor(const sf::Color& backgroundColor)
@@ -671,7 +671,7 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 
 	ofs << m_defaultAnimalsHp << '\n';
 	ofs << m_defaultFruitEnergy << '\n';
-	ofs << m_mutationPercentage << '\n';
+	ofs << m_mutationsPerMutation << '\n';
 
 	ofs << static_cast<int>(m_animalsColor.r) << ' ';
 	ofs << static_cast<int>(m_animalsColor.g) << ' ';
@@ -830,7 +830,7 @@ void Ecosystem::loadEcosystem(const std::string& filePath)
 
 	ifs >> m_defaultAnimalsHp;
 	ifs >> m_defaultFruitEnergy;
-	ifs >> m_mutationPercentage;
+	ifs >> m_mutationsPerMutation;
 
 	ifs >> animalsColorR >> animalsColorG >> animalsColorB >> animalsColorA;
 	ifs >> fruitsColorR >> fruitsColorG >> fruitsColorB >> fruitsColorA;
@@ -973,8 +973,7 @@ void Ecosystem::mutatingTool(const sf::Vector2f& mousePosView)
 	{
 		if (animal->isCoveredByMouse(mousePosView))
 		{
-			// TODO: unhardcode:
-			animal->randomMutate(1U);
+			animal->randomMutate(m_mutationsPerMutation);
 			return;
 		}
 	}
@@ -1186,7 +1185,7 @@ void Ecosystem::printInfoAboutEcosystem() const
 		<< getWorldSize().x << ' ' << getWorldSize().y << '\n';
 	std::cout << "animals count: " << m_animals.size() << '\n';
 	std::cout << "fruits count: " << m_fruits.size() << '\n';
-	std::cout << "mutation rate percentage: " << m_mutationPercentage << '\n';
+	std::cout << "mutation rate percentage: " << m_mutationsPerMutation << '\n';
 	std::cout 
 		<< "simulation speed factor: " 
 		<< m_simulationSpeedFactor << '\n';
@@ -1709,7 +1708,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 		assert(false);
 	}
 	
-	m_animals.back()->randomMutate(1U);  // TODO: "unhardcode" that
+	m_animals.back()->randomMutate(m_mutationsPerMutation);
 
 	if (&animal == m_trackedAnimal)
 	{
@@ -1738,10 +1737,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 	//
 	//		m_animals.back()->setHp(animal.getMaxHp());
 	//		m_animals.back()->setVelocity(sf::Vector2f(0.0f, 0.0f));
-	//		// TODO: unhard code mutations count, 
-			// TODO: use mutation percentage Ecosystem member
-			//m_animals.back()->randomMutate(m_mutationPercentage);
-	//		m_animals.back()->randomMutate(1U);
+	//		m_animals.back()->randomMutate(m_mutationsPerMutation);
 	//
 	//		if (&animal == m_trackedAnimal)
 	//		{
@@ -1759,10 +1755,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 	//
 	//	m_animals.back()->setHp(fruit.getEnergy());
 	//	m_animals.back()->setVelocity(sf::Vector2f(0.0f, 0.0f));
-	//	// TODO: unhard code mutations count, 
-		// TODO: use mutation percentage Ecosystem member
-		//m_animals.back()->randomMutate(m_mutationPercentage);
-	//	m_animals.back()->randomMutate(1U);
+	//	m_animals.back()->randomMutate(m_mutationsPerMutation);
 	//
 	//	if (&animal == m_trackedAnimal)
 	//	{
