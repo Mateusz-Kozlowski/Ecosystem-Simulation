@@ -112,6 +112,8 @@ public:
 	void showAllBrainsPreviews();
 
 private:
+	// initialization:
+
 	void initBackgroundAndBorders(
 		const sf::Vector2f& worldSize,
 		float bordersThickness,
@@ -147,6 +149,8 @@ private:
 		const sf::Color& fruitColor
 	);
 	
+	// utils:
+
 	void saveAnimals(const std::string& folderPath) const;
 	void saveFruits(const std::string& folderPath) const;
 	void saveEcosystem(const std::string& filePath) const;
@@ -168,10 +172,18 @@ private:
 
 	int getTrackedAnimalIndex() const;
 
+	// God tools:
+
+	// mutating tool:
+
 	void mutatingTool(const sf::Vector2f& mousePosView);
+
+	// tracking tool:
 
 	void trackingTool(const sf::Vector2f& mousePosView);
 	void stopTracking();
+
+	// killing tool:
 
 	void killingTool(const sf::Vector2f& mousePosView);
 	void convertAnimalToFruit(
@@ -179,12 +191,20 @@ private:
 		bool randomFruitPosition
 	);
 
+	// replacing tool:
+
 	void replacingTool(const sf::Vector2f& mousePosView);
+
+	// brain tool:
 
 	void brainTool(const sf::Vector2f& mousePosView);
 
+	// stopping tool:
+
 	void stoppingTool(const sf::Vector2f& mousePosView);
 	void convertKineticEnergyToFruit(Animal& animal, bool randomFruitPosition);
+
+	// info tool:
 
 	void infoTool(const sf::Vector2f& mousePosView) const;
 	void printInfoAboutAnimal(const Animal& animal) const;

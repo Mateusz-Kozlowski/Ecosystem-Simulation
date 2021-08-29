@@ -498,6 +498,8 @@ void Ecosystem::showAllBrainsPreviews()
 
 // private methods:
 
+// initialization:
+
 void Ecosystem::initBackgroundAndBorders(
 	const sf::Vector2f& worldSize,
 	float bordersThickness,
@@ -604,6 +606,8 @@ void Ecosystem::createNewFruit(
 		getBordersThickness()
 	);
 }
+
+// utils:
 
 void Ecosystem::saveAnimals(const std::string& folderPath) const
 {
@@ -959,7 +963,7 @@ void Ecosystem::loadBrainsPreviewsVisibility(const std::string& filePath)
 	ifs.close();
 }
 
-// god tools:
+// God tools:
 
 // mutating tool:
 
@@ -969,6 +973,7 @@ void Ecosystem::mutatingTool(const sf::Vector2f& mousePosView)
 	{
 		if (animal->isCoveredByMouse(mousePosView))
 		{
+			// TODO: unhardcode:
 			animal->randomMutate(1U);
 			return;
 		}
@@ -1055,6 +1060,7 @@ void Ecosystem::brainTool(const sf::Vector2f& mousePosView)
 	{
 		if (animal->isCoveredByMouse(mousePosView))
 		{
+			// TODO: it should be also updated if not all brains are updated every frame
 			m_brainsVisibility[animal.get()]
 				= !m_brainsVisibility[animal.get()];
 			return;
@@ -1150,6 +1156,10 @@ void Ecosystem::printInfoAboutAnimal(const Animal& animal) const
 	std::cout << "kinetic energy: " << animal.getKineticEnergy() << '\n';
 	std::cout << "HP: " << animal.getHp() << '\n';
 	std::cout << "total energy: " << animal.getTotalEnergy() << '\n';
+	std::cout
+		<< "time elapsed since last meal: "
+		<< animal.getTimeElapsedSinceLastExternalHpChange()
+		<< '\n';
 }
 
 void Ecosystem::printInfoAboutFruit(const Fruit& fruit) const
@@ -1239,10 +1249,9 @@ const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 	if (animal.getHp() <= 0.0)
 	{
 		std::cout << "Assertion will fail, hp= " << animal.getHp() << '\n';
+		assert(false);
 	}
-
-	assert(animal.getHp() > 0.0);
-
+	
 	inputsForBrain.push_back(log2(animal.getHp()));
 
 	const Fruit* theNearestFruit = getTheNearestFruit(animal);
@@ -1250,12 +1259,12 @@ const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 	if (theNearestFruit)
 	{
 		inputsForBrain.push_back(
-			static_cast<double>(
+			static_cast<Blueberry::Scalar>(
 				theNearestFruit->getPosition().x - animal.getPosition().x
 			)
 		);
 		inputsForBrain.push_back(
-			static_cast<double>(
+			static_cast<Blueberry::Scalar>(
 				theNearestFruit->getPosition().y - animal.getPosition().y
 			)
 		);
@@ -1296,6 +1305,38 @@ float Ecosystem::calcDistance(const Animal& animal, const Fruit& fruit) const
 	float y = animal.getPosition().y - fruit.getPosition().y;
 
 	return sqrt(pow(x, 2) + pow(y, 2));
+}
+
+void Ecosystem::transferEnergyFromAnimalsToFruits()
+{
+	Fruit* lowestEnergyFruit = getLowestEnergyFruit();
+
+	for (const auto& animal : m_animals)
+	{
+		assert(animal->getEnergyToExpel() >= 0.0);
+
+		lowestEnergyFruit->setEnergy(
+			lowestEnergyFruit->getEnergy()
+			+ animal->getEnergyToExpel()
+		);
+	}
+}
+
+Fruit* Ecosystem::getLowestEnergyFruit()
+{
+	if (m_fruits.empty()) return nullptr;
+
+	Fruit* lowestEnergyFruit = m_fruits[0].get();
+
+	for (const auto& fruit : m_fruits)
+	{
+		if (fruit->getEnergy() < lowestEnergyFruit->getEnergy())
+		{
+			lowestEnergyFruit = fruit.get();
+		}
+	}
+
+	return lowestEnergyFruit;
 }
 
 void Ecosystem::avoidTunneling()
@@ -1787,38 +1828,6 @@ Blueberry::Scalar Ecosystem::getTheBiggestHp() const
 	}
 
 	return theBiggestHp;
-}
-
-void Ecosystem::transferEnergyFromAnimalsToFruits()
-{
-	Fruit* lowestEnergyFruit = getLowestEnergyFruit();
-
-	for (const auto& animal : m_animals)
-	{
-		assert(animal->getEnergyToExpel() >= 0.0);
-
-		lowestEnergyFruit->setEnergy(
-			lowestEnergyFruit->getEnergy()
-			+ animal->getEnergyToExpel()
-		);
-	}
-}
-
-Fruit* Ecosystem::getLowestEnergyFruit()
-{
-	if (m_fruits.empty()) return nullptr;
-	
-	Fruit* lowestEnergyFruit = m_fruits[0].get();
-
-	for (const auto& fruit : m_fruits)
-	{
-		if (fruit->getEnergy() < lowestEnergyFruit->getEnergy())
-		{
-			lowestEnergyFruit = fruit.get();
-		}
-	}
-
-	return lowestEnergyFruit;
 }
 
 void Ecosystem::correctPopulationSize(float dt)
