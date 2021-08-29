@@ -1215,7 +1215,8 @@ void Ecosystem::updateAnimals(float dt)
 		animal->update(
 			dt, 
 			m_simulationSpeedFactor, 
-			getInputsForBrain(*animal)
+			getInputsForBrain(*animal),
+			animal.get() == m_trackedAnimal
 		);
 	}
 }

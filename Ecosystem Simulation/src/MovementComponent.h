@@ -18,7 +18,8 @@ public:
 		float dt,
 		const Blueberry::Scalar& availableEnergy,
 		float speedFactor,
-		const std::vector<Blueberry::Scalar>& brainInputs
+		const std::vector<Blueberry::Scalar>& brainInputs,
+		bool allowUserInput
 	);
 
 	// accessors:
@@ -49,7 +50,13 @@ public:
 	void setVelocityY(float vy);
 
 private:
-	bool accelerationIsPossible(
+	void updateAcceleration(
+		const std::vector<Blueberry::Scalar>& brainInputs,
+		bool allowUserInput
+	);
+	void handleUserInput();
+
+	bool accelerationIsImpossible(
 		float dt, 
 		const Blueberry::Scalar& availableEnergy
 	);

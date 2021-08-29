@@ -25,7 +25,8 @@ public:
 	void update(
 		float dt,
 		float simulationSpeedFactor,
-		const std::vector<Blueberry::Scalar>& brainInputs
+		const std::vector<Blueberry::Scalar>& brainInputs,
+		bool isTracked
 	);
 
 	void renderBody(sf::RenderTarget& target) const;

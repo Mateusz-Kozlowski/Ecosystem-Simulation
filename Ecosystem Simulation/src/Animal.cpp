@@ -208,13 +208,15 @@ void Animal::loadFromFolder(const char* folderPath)
 void Animal::update(
 	float dt,
 	float simulationSpeedFactor,
-	const std::vector<Blueberry::Scalar>& brainInputs)
+	const std::vector<Blueberry::Scalar>& brainInputs,
+	bool isTracked)
 {
 	m_movementComponent->update(
 		dt, 
 		m_hpBar->getCurrentValue(),
 		simulationSpeedFactor, 
-		brainInputs
+		brainInputs,
+		isTracked
 	);
 
 	updateBody(dt);

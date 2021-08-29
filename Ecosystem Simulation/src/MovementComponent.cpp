@@ -58,29 +58,21 @@ void MovementComponent::update(
 	float dt,
 	const Blueberry::Scalar& availableEnergy,
 	float speedFactor,
-	const std::vector<Blueberry::Scalar>& brainInputs)
+	const std::vector<Blueberry::Scalar>& brainInputs,
+	bool allowUserInput)
 {
-	// update acceleration:	
-	m_brain->propagateForward(brainInputs);
-
-	auto brainOutput = m_brain->getOutput();
-
 	// TODO: implement slowing down using speed_factor:
+	
+	updateAcceleration(brainInputs, allowUserInput);
 
-	// update acceleration:
-	m_acceleration.x = brainOutput[0];
-	m_acceleration.y = brainOutput[1];
-
-	if (!accelerationIsPossible(dt, availableEnergy))
+	if (accelerationIsImpossible(dt, availableEnergy))
 	{
 		std::cout << "acceleration impossible\n";
 		return;
 	}
 
-	// update previous velocity:
 	m_prevVelocity = m_velocity;
 
-	// update velocity:
 	m_velocity.x += m_acceleration.x * dt;
 	m_velocity.y += m_acceleration.y * dt;
 }
@@ -177,7 +169,59 @@ void MovementComponent::setVelocityY(float vy)
 
 // private methods:
 
-bool MovementComponent::accelerationIsPossible(
+void MovementComponent::updateAcceleration(
+	const std::vector<Blueberry::Scalar>& brainInputs,
+	bool allowUserInput
+)
+{
+	m_brain->propagateForward(brainInputs);
+
+	typedef Blueberry::Scalar Scalar;
+	const std::vector<Scalar>& brainOutput = m_brain->getOutput();
+	
+	m_acceleration.x = brainOutput[0];
+	m_acceleration.y = brainOutput[1];
+
+	if (allowUserInput)
+	{
+		handleUserInput();
+	}
+}
+
+void MovementComponent::handleUserInput()
+{
+	bool left  = sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
+	bool right = sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
+	bool up    = sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
+	bool down  = sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
+
+	if (left || right || down || up)
+	{
+		m_acceleration = sf::Vector2f(0.0f, 0.0f);
+
+		// TODO: unhardcode:
+		float userInputForce = 256.0f;
+
+		if (left)
+		{
+			m_acceleration.x -= userInputForce;
+		}
+		if (right)
+		{
+			m_acceleration.x += userInputForce;
+		}
+		if (up)
+		{
+			m_acceleration.y -= userInputForce;
+		}
+		if (down)
+		{
+			m_acceleration.y += userInputForce;
+		}
+	}
+}
+
+bool MovementComponent::accelerationIsImpossible(
 	float dt, 
 	const Blueberry::Scalar& availableEnergy)
 {
@@ -216,7 +260,7 @@ bool MovementComponent::accelerationIsPossible(
 
 	const Blueberry::Scalar newTotalEnergy = newKinEnergy + newHp;
 
-	return newTotalEnergy >= 0.0;
+	return newTotalEnergy < 0.0;
 }
 
 float MovementComponent::getVectorValue(const sf::Vector2f& vector)
