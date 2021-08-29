@@ -255,6 +255,8 @@ private:
 		const gui::BrainPreview& brainPreview
 	);
 
+	void correctFruitsCount();
+
 private:
 	std::string m_name;
 
@@ -278,6 +280,7 @@ private:
 	float m_fruitsRadius;
 
 	Blueberry::Scalar m_defaultAnimalsHp;
+	Blueberry::Scalar m_defaultFruitEnergy;
 
 	float m_mutationPercentage;
 

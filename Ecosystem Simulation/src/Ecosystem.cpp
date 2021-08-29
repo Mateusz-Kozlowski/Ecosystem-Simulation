@@ -9,6 +9,7 @@ Ecosystem::Ecosystem()
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
 	, m_defaultAnimalsHp(0.0)
+	, m_defaultFruitEnergy(0.0)
 	, m_mutationPercentage(0.0f)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
@@ -51,6 +52,7 @@ Ecosystem::Ecosystem(
 	, m_fruits()
 	, m_animalsRadius(animalsRadius)
 	, m_defaultAnimalsHp(defaultAnimalsHp)
+	, m_defaultFruitEnergy(defaultFruitsEnergy)
 	, m_fruitsRadius(fruitsRadius)
 	, m_mutationPercentage(mutationPercentage)
 	, m_animalsColor(animalsColor)
@@ -94,6 +96,7 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
 	, m_defaultAnimalsHp(0.0)
+	, m_defaultFruitEnergy(0.0)
 	, m_mutationPercentage(0.0f)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
@@ -663,6 +666,7 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 	ofs << static_cast<int>(m_background.getOutlineColor().a) << '\n';
 
 	ofs << m_defaultAnimalsHp << '\n';
+	ofs << m_defaultFruitEnergy << '\n';
 	ofs << m_mutationPercentage << '\n';
 
 	ofs << static_cast<int>(m_animalsColor.r) << ' ';
@@ -821,6 +825,7 @@ void Ecosystem::loadEcosystem(const std::string& filePath)
 	ifs >> bordersColorR >> bordersColorG >> bordersColorB >> bordersColorA;
 
 	ifs >> m_defaultAnimalsHp;
+	ifs >> m_defaultFruitEnergy;
 	ifs >> m_mutationPercentage;
 
 	ifs >> animalsColorR >> animalsColorG >> animalsColorB >> animalsColorA;
@@ -1200,6 +1205,7 @@ void Ecosystem::updateWorld(float dt)
 	setHpBarsRanges();
 	correctPopulationSize(dt);
 	correctBrainPreviewsPositions();
+	correctFruitsCount();
 }
 
 void Ecosystem::updateAnimals(float dt)
@@ -2001,4 +2007,58 @@ bool Ecosystem::brainPreviewProtrudesWorldBottomBorder(
 	bottomBorderPosition += brainPreview.getSize().y;
 
 	return bottomBorderPosition > getWorldSize().y;
+}
+
+void Ecosystem::correctFruitsCount()
+{
+	#if _DEBUG
+	unsigned idx1 = 0U;
+	#endif
+
+	for (int i = 0; i < m_fruits.size(); i++)
+	{
+		#if _DEBUG
+		idx1++;
+		#endif
+
+		Fruit* fruit = m_fruits[i].get();
+
+		if (fruit->getEnergy() >= 2.0 * m_defaultFruitEnergy)
+		{
+			Blueberry::Scalar prevEnergy = fruit->getEnergy();
+
+			m_fruits.emplace_back(
+				std::make_unique<Fruit>(
+					fruit->getEnergy() - m_defaultFruitEnergy,
+					fruit->getPosition(),
+					fruit->getRadius(),
+					fruit->getColor()
+				)
+			);
+			m_fruits.back()->setRandomPosition(
+				getWorldSize(), 
+				getBordersThickness()
+			);
+
+			fruit->setEnergy(m_defaultFruitEnergy);
+
+			assert(
+				prevEnergy
+				== fruit->getEnergy() + m_fruits.back()->getEnergy()
+			);
+		}
+
+		assert(fruit->getEnergy() < 2.0 * m_defaultFruitEnergy);
+	}
+
+	#if _DEBUG
+	assert(idx1 == m_fruits.size());
+	#endif
+
+	#if _DEBUG
+	for (const auto& fruit : m_fruits)
+	{
+		assert(fruit->getEnergy() < 2.0 * m_defaultFruitEnergy);
+	}
+	#endif
 }
