@@ -10,7 +10,7 @@ Ecosystem::Ecosystem()
 	, m_fruitsRadius(0.0f)
 	, m_defaultAnimalsHp(0.0)
 	, m_defaultFruitEnergy(0.0)
-	, m_mutationsPerMutation(0.0f)
+	, m_mutationsPerMutation(0U)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
 	, m_trackedAnimalColor(sf::Color::Magenta)
@@ -1115,7 +1115,7 @@ void Ecosystem::infoTool(const sf::Vector2f& mousePosView) const
 		if (animal->isCoveredByMouse(mousePosView))
 		{
 			noInfoPrinted = false;
-			printInfoAboutAnimal(*animal);
+			std::cout << '\n' << animal->toStr() << '\n';
 		}
 	}		
 
@@ -1124,56 +1124,19 @@ void Ecosystem::infoTool(const sf::Vector2f& mousePosView) const
 		if (fruit->isCoveredByMouse(mousePosView))
 		{
 			noInfoPrinted = false;
-			printInfoAboutFruit(*fruit);
+			std::cout << '\n' << fruit->toStr() << '\n';
 		}
 	}
 
 	if (noInfoPrinted)
 	{
+		std::cout << '\n';
 		printInfoAboutEcosystem();
 	}
 }
 
-void Ecosystem::printInfoAboutAnimal(const Animal& animal) const
-{
-	std::cout << '\n';
-	std::cout << "Info about a clicked animal:\n";
-	std::cout 
-		<< "position: " 
-		<< animal.getPosition().x << ' ' << animal.getPosition().y 
-		<< '\n';
-	std::cout 
-		<< "velocity: " 
-		<< animal.getVelocityVector().x << ' ' << animal.getVelocityVector().y
-		<< '\n';
-	std::cout 
-		<< "acceleration: " 
-		<< animal.getAccelerationVector().x 
-		<< ' ' 
-		<< animal.getAccelerationVector().y 
-		<< '\n';
-	std::cout << "kinetic energy: " << animal.getKineticEnergy() << '\n';
-	std::cout << "HP: " << animal.getHp() << '\n';
-	std::cout << "total energy: " << animal.getTotalEnergy() << '\n';
-	std::cout
-		<< "time elapsed since last meal: "
-		<< animal.getTimeElapsedSinceLastExternalHpChange()
-		<< '\n';
-}
-
-void Ecosystem::printInfoAboutFruit(const Fruit& fruit) const
-{
-	std::cout << '\n';
-	std::cout << "Info about a clicked fruit:\n";
-	std::cout << "energy: " << fruit.getEnergy() << '\n';
-	std::cout 
-		<< "position: " 
-		<< fruit.getPosition().x << ' ' << fruit.getPosition().y << '\n';
-}
-
 void Ecosystem::printInfoAboutEcosystem() const
 {
-	std::cout << '\n';
 	std::cout << "Info about the ecosystem:\n";
 	std::cout << "name: " << m_name << '\n';
 	std::cout << "arena size: "

@@ -96,6 +96,16 @@ bool Fruit::isCoveredByMouse(const sf::Vector2f& mousePosView) const
 	return getRadius() >= distance;
 }
 
+std::string Fruit::toStr() const
+{
+	std::stringstream ss;
+	
+	ss << "energy: " << getEnergy() << '\n';
+	ss << "position: " << getPosition().x << ' ' << getPosition().y;
+
+	return ss.str();
+}
+
 // accessors:
 
 const sf::Vector2f& Fruit::getPosition() const

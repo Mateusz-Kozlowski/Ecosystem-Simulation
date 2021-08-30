@@ -251,6 +251,34 @@ void Animal::renderBrainPreview(sf::RenderTarget& target) const
 	m_brainPreview->render(target);
 }
 
+std::string Animal::toStr() const
+{
+	std::stringstream ss;
+
+	ss << "position: "
+	   << getPosition().x << ' ' << getPosition().y
+	   << '\n';
+
+	ss << "velocity: "
+	   << getVelocityVector().x << ' ' << getVelocityVector().y
+	   << '\n';
+
+	ss << "acceleration: "
+	   << getAccelerationVector().x << ' ' << getAccelerationVector().y
+	   << '\n';
+
+	ss << "kinetic energy: " << getKineticEnergy() << '\n';
+	
+	ss << "HP: " << getHp() << '\n';
+	
+	ss << "total energy: " << getTotalEnergy() << '\n';
+	
+	ss << "time elapsed since last meal: "
+		<< getTimeElapsedSinceLastExternalHpChange();
+
+	return ss.str();
+}
+
 // accessors:
 
 const sf::Vector2f& Animal::getPosition() const

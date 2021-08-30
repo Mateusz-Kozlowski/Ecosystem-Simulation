@@ -18,6 +18,8 @@ public:
 
 	bool isCoveredByMouse(const sf::Vector2f& mousePosView) const;
 
+	std::string toStr() const;
+
 	// accessors:
 
 	const Blueberry::Scalar& getEnergy() const;

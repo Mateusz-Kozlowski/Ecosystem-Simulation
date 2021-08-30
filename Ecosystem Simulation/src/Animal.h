@@ -33,6 +33,8 @@ public:
 	void renderHpBar(sf::RenderTarget& target) const;
 	void renderBrainPreview(sf::RenderTarget& target) const;
 
+	std::string toStr() const;
+
 	// accessors:
 
 	const sf::Vector2f& getPosition() const;

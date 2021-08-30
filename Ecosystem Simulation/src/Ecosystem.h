@@ -207,8 +207,6 @@ private:
 	// info tool:
 
 	void infoTool(const sf::Vector2f& mousePosView) const;
-	void printInfoAboutAnimal(const Animal& animal) const;
-	void printInfoAboutFruit(const Fruit& fruit) const;
 	void printInfoAboutEcosystem() const;
 	
 	void updateWorld(float dt);

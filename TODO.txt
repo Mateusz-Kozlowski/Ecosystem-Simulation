@@ -44,6 +44,9 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- save fruits and animals count to file in order to know how many of them should be loaded
+- don't update a brain if it isn't rendered (order of calling methods in updateWorld might be important)
+
 - fix an issue with loading ecosystems that contain a tracked animal:
   animals vector is randomly shuffled every frame so saving a tracked animal
   as its idx in that vector won't work;
@@ -52,7 +55,6 @@ simulation/ecosystem:
   won't be sorted or shuffled and the saved idx will be relative to that vector...
   that also won't work, because when an animal dies the order of ptrs change in every vector;
   so... maybe each animal should have an information if its tracked or not
-- save fruits and animals count to file in order to know how many of them should be loaded
 - restore increase/decrease methods in Animal and Food classes and in other places
   but don't use += operator with floats and doubles 
   and add comments that explain why u those methods don't use += operator;
@@ -82,7 +84,6 @@ simulation/ecosystem:
   (that converting dead animals to fruits process can occur a few times in update world method)
 - add a way to change a tracked animal, even add arrows "previous" and "next"
 - spawn more fruits in the center of the world?
-- don't update a brain if it isn't rendered (order of calling methods in updateWorld might be important)
 - all animals energy to expel from animals should go to only one fruit,
   fruit with the lowest energy
 - use some STL algo to feed animals
