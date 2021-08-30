@@ -137,8 +137,8 @@ void gui::BrainPreview::initBackground(
 void gui::BrainPreview::initNeurons()
 {
 	m_neurons.resize(
-		m_brain.getNeuronsCount() 
-		+ m_brain.getRemovedNeuronsCount()
+		m_brain.getEnabledNeuronsCount() 
+		+ m_brain.getDisabledNeuronsCount()
 	);
 
 	setNeuronsSizes();
@@ -152,8 +152,8 @@ void gui::BrainPreview::initNeurons()
 
 void gui::BrainPreview::initSynapses()
 {
-	const unsigned totalSynapsesCount = m_brain.getSynapsesCount()
-		+ m_brain.getRemovedSynapsesCount();
+	const unsigned totalSynapsesCount = m_brain.getEnabledSynapsesCount()
+		+ m_brain.getDisabledSynapsesCount();
 
 	m_synapses.resize(
 		totalSynapsesCount, 
@@ -196,7 +196,7 @@ void gui::BrainPreview::setInputNeuronsPos()
 
 	for (int i = 0; i < m_brain.getInputSize(); i++)
 	{
-		assert(!m_brain.getNeurons()[i].removed());
+		assert(!m_brain.getNeurons()[i].disabled());
 
 		m_neurons[i].setPosition(
 			bgPos.x + neuronsRadius,
@@ -235,7 +235,7 @@ void gui::BrainPreview::setOutputNeuronsPos()
 
 	for (int i = inputSize; i < inputSize + outputSize; i++)
 	{
-		assert(!m_brain.getNeurons()[i].removed());
+		assert(!m_brain.getNeurons()[i].disabled());
 
 		m_neurons[i].setPosition(
 			bgBounds.left + bgBounds.width - 3 * neuronsRadius,
@@ -277,7 +277,7 @@ Blueberry::Scalar gui::BrainPreview::getTheBiggestActVal() const
 
 	for (const auto& neuron : m_brain.getNeurons())
 	{
-		if (!neuron.removed())
+		if (!neuron.disabled())
 		{
 			theBiggestActVal = std::max(
 				theBiggestActVal, 
@@ -295,7 +295,7 @@ Blueberry::Scalar gui::BrainPreview::getTheSmallestActVal() const
 
 	for (const auto& neuron : m_brain.getNeurons())
 	{
-		if (!neuron.removed())
+		if (!neuron.disabled())
 		{
 			theSmallestActVal = std::min(
 				theSmallestActVal,
@@ -312,7 +312,7 @@ void gui::BrainPreview::setColor(
 	const Blueberry::Neuron& neuron,
 	const Blueberry::Scalar& theBiggestAbsActVal)
 {
-	if (neuron.removed())
+	if (neuron.disabled())
 	{
 		neuronCircle.setFillColor(sf::Color::Transparent);
 	}
@@ -345,8 +345,8 @@ void gui::BrainPreview::setColor(
 
 void gui::BrainPreview::setSynapsesPos()
 {
-	const unsigned totalSynapsesCount = m_brain.getSynapsesCount()
-		+ m_brain.getRemovedSynapsesCount();
+	const unsigned totalSynapsesCount = m_brain.getEnabledSynapsesCount()
+		+ m_brain.getDisabledSynapsesCount();
 
 	assert(m_synapses.size() == totalSynapsesCount);
 
@@ -360,7 +360,7 @@ void gui::BrainPreview::setPos(
 	std::vector<sf::Vertex>& synapseVertices, 
 	const Blueberry::Synapse& synapse)
 {
-	if (!synapse.removed())
+	if (!synapse.disabled())
 	{
 		const float neuronRadius = calcNeuronsRadius();
 
@@ -378,8 +378,8 @@ void gui::BrainPreview::setPos(
 
 void gui::BrainPreview::setSynapsesColors()
 {
-	const unsigned totalSynapsesCount = m_brain.getSynapsesCount()
-		+ m_brain.getRemovedSynapsesCount();
+	const unsigned totalSynapsesCount = m_brain.getEnabledSynapsesCount()
+		+ m_brain.getDisabledSynapsesCount();
 
 	assert(m_synapses.size() == totalSynapsesCount);
 	
@@ -400,7 +400,7 @@ void gui::BrainPreview::setColor(
 	const Blueberry::Synapse& synapse,
 	const Blueberry::Scalar& theBiggestAbsWeight)
 {
-	if (synapse.removed())
+	if (synapse.disabled())
 	{
 		const sf::Color color = sf::Color::Transparent;
 
@@ -447,7 +447,7 @@ Blueberry::Scalar gui::BrainPreview::getTheBiggestWeight() const
 
 	for (const auto& synapse : m_brain.getSynapses())
 	{
-		if (!synapse.removed())
+		if (!synapse.disabled())
 		{
 			theBiggestWeight = std::max(
 				theBiggestWeight,
@@ -465,7 +465,7 @@ Blueberry::Scalar gui::BrainPreview::getTheSmallestWeight() const
 
 	for (const auto& synapse : m_brain.getSynapses())
 	{
-		if (!synapse.removed())
+		if (!synapse.disabled())
 		{
 			theSmallestWeight = std::min(
 				theSmallestWeight,
@@ -479,8 +479,8 @@ Blueberry::Scalar gui::BrainPreview::getTheSmallestWeight() const
 
 void gui::BrainPreview::handleNewNeurons()
 {
-	const unsigned totalNeuronsCount = m_brain.getNeuronsCount()
-		+ m_brain.getRemovedNeuronsCount();
+	const unsigned totalNeuronsCount = m_brain.getEnabledNeuronsCount()
+		+ m_brain.getDisabledNeuronsCount();
 
 	if (m_neurons.size() == totalNeuronsCount) return;
 
@@ -536,8 +536,8 @@ void gui::BrainPreview::setRandomPos(sf::CircleShape& neuron)
 
 void gui::BrainPreview::handleNewSynapses()
 {
-	const unsigned totalSynapsesCount = m_brain.getSynapsesCount()
-		+ m_brain.getRemovedSynapsesCount();
+	const unsigned totalSynapsesCount = m_brain.getEnabledSynapsesCount()
+		+ m_brain.getDisabledSynapsesCount();
 
 	if (m_synapses.size() == totalSynapsesCount) return;
 

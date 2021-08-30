@@ -2,7 +2,6 @@
 
 #include "Neuron.h"
 #include "Synapse.h"
-#include <vector>
 
 namespace Blueberry
 {
@@ -32,16 +31,16 @@ namespace Blueberry
 		inline unsigned getInputSize() const { return m_inputSize; }
 		inline unsigned getOutputSize() const { return m_outputSize; }
 		
-		unsigned getNeuronsCount() const;
-		unsigned getRemovedNeuronsCount() const;
+		unsigned getEnabledNeuronsCount() const;
+		unsigned getDisabledNeuronsCount() const;
 
 		inline const std::vector<Neuron>& getNeurons() const { return m_neurons; }
 
 		const Scalar& getSpecificOutput(unsigned outputNeuronIndex) const;
 		const std::vector<Scalar>& getOutput();
 		
-		unsigned getSynapsesCount() const;
-		unsigned getRemovedSynapsesCount() const;
+		unsigned getEnabledSynapsesCount() const;
+		unsigned getDisabledSynapsesCount() const;
 
 		inline const std::vector<Synapse>& getSynapses() const { return m_synapses; }
 		
@@ -52,10 +51,10 @@ namespace Blueberry
 		bool addRandomNeuron();
 		void mutateRandomNeuronBias();
 		void mutateRandomNeuronActFunc();
-		bool removeRandomNeuron();
+		bool disbaleRandomNeuron();
 		void addRandomSynapse();
 		bool mutateRandomSynapseWeight();
-		bool removeRandomSynapse();
+		bool disableRandomSynapse();
 
 	private:
 		void resetNeuronsVals();
@@ -73,8 +72,8 @@ namespace Blueberry
 		
 		int getRandomSynapseIndex() const;
 
-		void removeInputs(unsigned neuronIndex);
-		void removeOutputs(unsigned neuronIndex);
+		void disableInputSynapses(unsigned neuronIndex);
+		void disableOutputSynapses(unsigned neuronIndex);
 
 		bool hasZeroInputs(unsigned neuronIndex) const;
 

@@ -9,7 +9,7 @@ namespace Blueberry
 	{
 	public:
 		Neuron(
-			bool removed = false,
+			bool disabled = false,
 			const Scalar& val = 0.0, 
 			const Scalar& bias = 0.0, 
 			const Scalar& actVal = 0.0,
@@ -20,7 +20,7 @@ namespace Blueberry
 
 		// accessors:
 
-		inline bool removed() const { return m_removed; }
+		inline bool disabled() const { return m_disabled; }
 
 		inline const Scalar& getVal() const { return m_val; }
 		inline const Scalar& getBias() const { return m_bias; }
@@ -30,7 +30,7 @@ namespace Blueberry
 
 		// mutators:
 		
-		inline void remove(bool removed = true) { m_removed = removed; }
+		inline void disable(bool disabled = true) { m_disabled = disabled; }
 
 		inline void setVal(const Scalar& val) { m_val = val; }
 		inline void resetVal() { setVal(0.0); }
@@ -46,7 +46,7 @@ namespace Blueberry
 		void setRandomActFunc();
 
 	private:
-		int m_removed{ false };
+		int m_disabled{ false };
 
 		Scalar m_val{ 0.0 };
 		Scalar m_bias{ 0.0 };
