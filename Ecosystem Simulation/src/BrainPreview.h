@@ -47,6 +47,8 @@ namespace gui
 
 		void setBackgroundColor(const sf::Color& color);
 
+		void setNeuronPos(unsigned neuronIndex, const sf::Vector2f& pos);
+
 	private:
 		// initialization:
 

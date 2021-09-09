@@ -132,6 +132,14 @@ void gui::BrainPreview::setBackgroundColor(const sf::Color& color)
 	m_background.setFillColor(color);
 }
 
+void gui::BrainPreview::setNeuronPos(
+	unsigned neuronIndex, 
+	const sf::Vector2f& pos)
+{
+	m_neurons[neuronIndex].setPosition(pos);
+	setSynapsesPos();
+}
+
 // private methods:
 
 // initialization:
