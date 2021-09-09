@@ -15,22 +15,22 @@ gui::SideMenu::SideMenu(
 }
 
 void gui::SideMenu::update(
-	const sf::Vector2i& mousePosWindow, 
+	const sf::Vector2f& mousePos, 
 	const std::vector<sf::Event>& events)
 {
 	for (auto& textureButton : m_textureButtons)
 	{
-		textureButton.second->update(mousePosWindow, events);
+		textureButton.second->update(mousePos, events);
 	}
 
 	for (auto& button : m_buttons)
 	{
-		button.second->update(mousePosWindow);
+		button.second->update(mousePos);
 	}
 
 	for (auto& scaleSlider : m_sliders)
 	{
-		scaleSlider.second->update(mousePosWindow);
+		scaleSlider.second->update(mousePos);
 	}
 }
 

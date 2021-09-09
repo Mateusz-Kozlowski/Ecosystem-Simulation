@@ -22,7 +22,7 @@ namespace gui
 			const std::string& scaleFunction = "linear"
 		);
 		
-		void update(sf::Vector2i mousePosWindow);
+		void update(const sf::Vector2f& mousePos);
 		void render(sf::RenderTarget& target);
 
 		// accessors:

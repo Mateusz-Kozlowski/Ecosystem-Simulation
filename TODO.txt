@@ -32,6 +32,17 @@ simulation state:
   save that changes and maybe other things
 
 UI:
+- mousePosWindow or mousePosView or mousePos (yes, only mousePos without suffix)
+  in Ecosystem;
+- there is no convention for positions of GUI widgets;
+  R they relative to window, screen or to view?
+  Add info to all widgets
+  (especially to methods that take mouse pos as an argument)
+  that u (and other programmers that uses those classes) 
+  have to remeber on your own relatively to what u determine widgets positions;
+  apply that convetion to all widgets because not all of them were updated 
+  after this "discovery";
+
 - Google professional names of GUI widgets
 - use move method in widgets
 - unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
@@ -46,6 +57,7 @@ UI:
 simulation/ecosystem:
 - save fruits and animals count to file in order to know how many of them should be loaded
 - don't update a brain if it isn't rendered (order of calling methods in updateWorld might be important)
+- update imgBtn texture in BrainPreview class
 
 - fix an issue with loading ecosystems that contain a tracked animal:
   animals vector is randomly shuffled every frame so saving a tracked animal

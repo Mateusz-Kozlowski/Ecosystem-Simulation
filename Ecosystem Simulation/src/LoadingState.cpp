@@ -29,7 +29,7 @@ void LoadingState::update(float dt)
 
 	for (auto& button : m_buttons)
 	{
-		button.second->update(m_mousePosWindow);
+		button.second->update(static_cast<sf::Vector2f>(m_mousePosWindow));
 	}
 
 	getUpdateFromButtons();

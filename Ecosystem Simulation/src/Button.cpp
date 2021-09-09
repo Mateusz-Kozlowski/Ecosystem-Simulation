@@ -38,7 +38,7 @@ gui::Button::Button(
 	initText(textIdleColor);
 }
 
-void gui::Button::update(const sf::Vector2i& mousePosWindow)
+void gui::Button::update(const sf::Vector2f& mousePos)
 {
 	m_clicked = false;
 
@@ -51,7 +51,7 @@ void gui::Button::update(const sf::Vector2i& mousePosWindow)
 	{
 		if (!sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
-			const sf::Vector2f v2f = static_cast<sf::Vector2f>(mousePosWindow);
+			const sf::Vector2f v2f = static_cast<sf::Vector2f>(mousePos);
 
 			if (m_rect.getGlobalBounds().contains(v2f))
 			{
@@ -65,7 +65,7 @@ void gui::Button::update(const sf::Vector2i& mousePosWindow)
 	}
 	else if (m_state == ButtonState::BTN_HOVERED)
 	{
-		const sf::Vector2f v2f = static_cast<sf::Vector2f>(mousePosWindow);
+		const sf::Vector2f v2f = static_cast<sf::Vector2f>(mousePos);
 
 		if (!m_rect.getGlobalBounds().contains(v2f))
 		{
@@ -84,7 +84,7 @@ void gui::Button::update(const sf::Vector2i& mousePosWindow)
 	}
 	else if (m_state == ButtonState::BTN_IDLE)
 	{
-		const sf::Vector2f v2f = static_cast<sf::Vector2f>(mousePosWindow);
+		const sf::Vector2f v2f = static_cast<sf::Vector2f>(mousePos);
 
 		if (m_rect.getGlobalBounds().contains(v2f))
 		{

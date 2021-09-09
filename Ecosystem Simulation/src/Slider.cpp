@@ -31,17 +31,15 @@ gui::Slider::Slider(
 	setValue(defaultValue);
 }
 
-void gui::Slider::update(sf::Vector2i mousePosWindow)
+void gui::Slider::update(const sf::Vector2f& mousePos)
 {
 	sf::Sprite currentAxisSprite = m_axisSprites[m_state];
 	sf::Sprite currentHandleSprite = m_handleSprites[m_state];
 
-	auto mousePosWindowF = static_cast<sf::Vector2f>(mousePosWindow);
-
 	if (m_state == "IDLE")
 	{
-		if (currentAxisSprite.getGlobalBounds().contains(mousePosWindowF)
-			|| currentHandleSprite.getGlobalBounds().contains(mousePosWindowF))
+		if (currentAxisSprite.getGlobalBounds().contains(mousePos)
+			|| currentHandleSprite.getGlobalBounds().contains(mousePos))
 		{
 			m_state = "HOVERED";
 			currentAxisSprite.setTexture(m_axisTextures["HOVERED"]);
@@ -51,8 +49,8 @@ void gui::Slider::update(sf::Vector2i mousePosWindow)
 		return;
 	}
 
-	if (!currentAxisSprite.getGlobalBounds().contains(mousePosWindowF)
-		&& !currentHandleSprite.getGlobalBounds().contains(mousePosWindowF))
+	if (!currentAxisSprite.getGlobalBounds().contains(mousePos)
+		&& !currentHandleSprite.getGlobalBounds().contains(mousePos))
 	{
 		m_state = "IDLE";
 		currentAxisSprite.setTexture(m_axisTextures["IDLE"]);
@@ -84,10 +82,10 @@ void gui::Slider::update(sf::Vector2i mousePosWindow)
 			float leftBound = axisBounds.left;
 			float rightBound = axisBounds.left + axisBounds.width;
 
-			if (mousePosWindow.x >= leftBound
-				&& mousePosWindow.x <= rightBound)
+			if (mousePos.x >= leftBound
+				&& mousePos.x <= rightBound)
 			{
-				float xPos = mousePosWindow.x - handleBounds.width / 2.0f;
+				float xPos = mousePos.x - handleBounds.width / 2.0f;
 				float yPos = currentHandleSprite.getPosition().y;
 
 				for (auto& handleSprites : m_handleSprites)

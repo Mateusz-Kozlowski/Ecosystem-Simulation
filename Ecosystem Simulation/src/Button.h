@@ -28,7 +28,7 @@ namespace gui
 			int id = 0
 		);
 
-		void update(const sf::Vector2i& mousePosWindow);
+		void update(const sf::Vector2f& mousePos);
 		void render(sf::RenderTarget& target);
 
 		// accessors:

@@ -20,7 +20,7 @@ gui::ImageButton::ImageButton(
 }
 
 void gui::ImageButton::update(
-	const sf::Vector2i& mousePosWindow, 
+	const sf::Vector2f& mousePos, 
 	const std::vector<sf::Event>& events)
 {
 	m_hasBeenClickedSinceLastFrame = false;
@@ -31,11 +31,17 @@ void gui::ImageButton::update(
 	float posX = m_sprite.getPosition().x;
 	float posY = m_sprite.getPosition().y;
 
-	if (posX < mousePosWindow.x 
-		&& mousePosWindow.x < posX + m_sprite.getGlobalBounds().width)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
-		if (posY < mousePosWindow.y 
-			&& mousePosWindow.y < posY + m_sprite.getGlobalBounds().height)
+		std::cout << mousePos.x << ' ' << mousePos.y << '\n';
+		std::cout << posX << ' ' << posY << '\n';
+	}
+
+	if (posX < mousePos.x 
+		&& mousePos.x < posX + m_sprite.getGlobalBounds().width)
+	{
+		if (posY < mousePos.y 
+			&& mousePos.y < posY + m_sprite.getGlobalBounds().height)
 		{
 			m_hovered = true;
 
@@ -114,6 +120,11 @@ void gui::ImageButton::setPosition(const sf::Vector2f& newPos)
 	m_sprite.setPosition(newPos);
 }
 
+void gui::ImageButton::setSize(const sf::Vector2f& size)
+{
+	setSpriteSize(size);
+}
+
 // private methods:
 
 void gui::ImageButton::initTextures(
@@ -143,7 +154,12 @@ void gui::ImageButton::initSprite(
 	m_sprite.setTexture(m_textures[keyOfDefaultTexture]);
 	m_sprite.setPosition(position.x, position.y);
 
-	m_sprite.setScale(
+	setSpriteSize(size);
+}
+
+void gui::ImageButton::setSpriteSize(const sf::Vector2f& size)
+{
+	m_sprite.scale(
 		size.x / m_sprite.getGlobalBounds().width,
 		size.y / m_sprite.getGlobalBounds().height
 	);

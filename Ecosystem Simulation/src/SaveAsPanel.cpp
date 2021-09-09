@@ -23,7 +23,7 @@ void gui::SaveAsPanel::update(
 
 	for (auto& button : m_buttons)
 	{
-		button.second->update(mousePositionWindow);
+		button.second->update(static_cast<sf::Vector2f>(mousePositionWindow));
 	}
 }
 

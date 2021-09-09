@@ -66,6 +66,8 @@ Ecosystem::Ecosystem(
 	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
 {
+	std::cout << mutationsPerMutation << '\n';
+
 	initBackgroundAndBorders(
 		worldSize, 
 		bordersThickness, 
@@ -147,7 +149,7 @@ void Ecosystem::loadFromFolder(const std::string& folderPath)
 
 void Ecosystem::useGodTools(
 	const std::vector<sf::Event>& events,
-	const sf::Vector2f& mousePosView)
+	const sf::Vector2f& mousePos)
 {
 	bool eventHasOccured = EventsAccessor::hasEventOccured(
 		sf::Event::MouseButtonPressed, 
@@ -163,31 +165,31 @@ void Ecosystem::useGodTools(
 		return;
 
 	case GodTool::MUTATE:
-		mutatingTool(mousePosView);
+		mutatingTool(mousePos, events);
 		return;
 
 	case GodTool::TRACK:
-		trackingTool(mousePosView);
+		trackingTool(mousePos);
 		return;
 
 	case GodTool::KILL:
-		killingTool(mousePosView);
+		killingTool(mousePos);
 		return;
 
 	case GodTool::REPLACE:
-		replacingTool(mousePosView);
+		replacingTool(mousePos);
 		return;
 
 	case GodTool::BRAIN:
-		brainTool(mousePosView);
+		brainTool(mousePos);
 		return;
 
 	case GodTool::STOP:
-		stoppingTool(mousePosView);
+		stoppingTool(mousePos);
 		return;
 
 	case GodTool::INFO:
-		infoTool(mousePosView);
+		infoTool(mousePos);
 		return;
 
 	default:
@@ -200,12 +202,15 @@ void Ecosystem::useGodTools(
 	}
 }
 
-void Ecosystem::update(float dt)
+void Ecosystem::update(
+	float dt,
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events)
 {
 	if (!m_simulationIsPaused)
 	{
 		m_totalTimeElapsed += dt;
-		updateWorld(dt);
+		updateWorld(dt, mousePos, events);
 	}
 }
 
@@ -967,13 +972,15 @@ void Ecosystem::loadBrainsPreviewsVisibility(const std::string& filePath)
 
 // mutating tool:
 
-void Ecosystem::mutatingTool(const sf::Vector2f& mousePosView)
+void Ecosystem::mutatingTool(
+	const sf::Vector2f& mousePos, 
+	const std::vector<sf::Event>& events)
 {
 	for (auto& animal : m_animals)
 	{
-		if (animal->isCoveredByMouse(mousePosView))
+		if (animal->isCoveredByMouse(mousePos))
 		{
-			animal->randomMutate(m_mutationsPerMutation);
+			animal->randomMutate(m_mutationsPerMutation, mousePos, events);
 			return;
 		}
 	}
@@ -981,11 +988,11 @@ void Ecosystem::mutatingTool(const sf::Vector2f& mousePosView)
 
 // tracking tool:
 
-void Ecosystem::trackingTool(const sf::Vector2f& mousePosView)
+void Ecosystem::trackingTool(const sf::Vector2f& mousePos)
 {
 	for (auto& animal : m_animals)
 	{
-		if (animal->isCoveredByMouse(mousePosView))
+		if (animal->isCoveredByMouse(mousePos))
 		{
 			if (animal.get() == m_trackedAnimal)
 			{
@@ -1011,11 +1018,11 @@ void Ecosystem::stopTracking()
 
 // killing tool:
 
-void Ecosystem::killingTool(const sf::Vector2f& mousePosView)
+void Ecosystem::killingTool(const sf::Vector2f& mousePos)
 {
 	for (auto& animal : m_animals)
 	{
-		if (animal->isCoveredByMouse(mousePosView))
+		if (animal->isCoveredByMouse(mousePos))
 		{
 			convertAnimalToFruit(animal, false);
 			return;
@@ -1046,18 +1053,18 @@ void Ecosystem::convertAnimalToFruit(
 
 // replacing tool:
 
-void Ecosystem::replacingTool(const sf::Vector2f& mousePosView)
+void Ecosystem::replacingTool(const sf::Vector2f& mousePos)
 {
 	std::cout << "REPLACING TOOL IS NOT DEFINED YET!\n";
 }
 
 // brain tool:
 
-void Ecosystem::brainTool(const sf::Vector2f& mousePosView)
+void Ecosystem::brainTool(const sf::Vector2f& mousePos)
 {
 	for (auto& animal : m_animals)
 	{
-		if (animal->isCoveredByMouse(mousePosView))
+		if (animal->isCoveredByMouse(mousePos))
 		{
 			// TODO: it should be also updated if not all brains are updated every frame
 			m_brainsVisibility[animal.get()]
@@ -1069,11 +1076,11 @@ void Ecosystem::brainTool(const sf::Vector2f& mousePosView)
 
 // stopping tool:
 
-void Ecosystem::stoppingTool(const sf::Vector2f& mousePosView)
+void Ecosystem::stoppingTool(const sf::Vector2f& mousePos)
 {
 	for (auto& animal : m_animals)
 	{
-		if (animal->isCoveredByMouse(mousePosView))
+		if (animal->isCoveredByMouse(mousePos))
 		{
 			convertKineticEnergyToFruit(*animal, true);
 			return;
@@ -1106,13 +1113,13 @@ void Ecosystem::convertKineticEnergyToFruit(
 
 // info tool:
 
-void Ecosystem::infoTool(const sf::Vector2f& mousePosView) const
+void Ecosystem::infoTool(const sf::Vector2f& mousePos) const
 {
 	bool noInfoPrinted = true;
 
 	for (const auto& animal : m_animals)
 	{
-		if (animal->isCoveredByMouse(mousePosView))
+		if (animal->isCoveredByMouse(mousePos))
 		{
 			noInfoPrinted = false;
 			std::cout << '\n' << animal->toStr() << '\n';
@@ -1121,7 +1128,7 @@ void Ecosystem::infoTool(const sf::Vector2f& mousePosView) const
 
 	for (const auto& fruit : m_fruits)
 	{
-		if (fruit->isCoveredByMouse(mousePosView))
+		if (fruit->isCoveredByMouse(mousePos))
 		{
 			noInfoPrinted = false;
 			std::cout << '\n' << fruit->toStr() << '\n';
@@ -1165,14 +1172,17 @@ void Ecosystem::printInfoAboutEcosystem() const
 	std::cout << "total energy: " << getTotalEnergy() << '\n';
 }
 
-void Ecosystem::updateWorld(float dt)
+void Ecosystem::updateWorld(
+	float dt,
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events)
 {
-	updateAnimals(dt);
+	updateAnimals(dt, mousePos, events);
 	transferEnergyFromAnimalsToFruits();
 	avoidTunneling();
 	//killAnimalsStickingToBorders();
 	removeDeadAnimals();
-	feedAnimals(dt);
+	feedAnimals(dt, mousePos, events);
 	removeEatenFruits();
 	setHpBarsRanges();
 	correctPopulationSize(dt);
@@ -1180,7 +1190,10 @@ void Ecosystem::updateWorld(float dt)
 	correctFruitsCount();
 }
 
-void Ecosystem::updateAnimals(float dt)
+void Ecosystem::updateAnimals(
+	float dt, 
+	const sf::Vector2f& mousePos, 
+	const std::vector<sf::Event>& events)
 {
 	for (const auto& animal : m_animals)
 	{
@@ -1188,7 +1201,9 @@ void Ecosystem::updateAnimals(float dt)
 			dt, 
 			m_simulationSpeedFactor, 
 			getInputsForBrain(*animal),
-			animal.get() == m_trackedAnimal
+			animal.get() == m_trackedAnimal,
+			mousePos,
+			events
 		);
 	}
 }
@@ -1517,7 +1532,10 @@ void Ecosystem::removeAnimal(std::shared_ptr<Animal>& animal)
 	m_animals.pop_back();
 }
 
-void Ecosystem::feedAnimals(float dt)
+void Ecosystem::feedAnimals(
+	float dt,
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events)
 {
 	if (m_animals.empty()) return;
 
@@ -1541,7 +1559,7 @@ void Ecosystem::feedAnimals(float dt)
 			}
 		}
 
-		tryToFindConsumer(*m_fruits[f], left, dt);
+		tryToFindConsumer(*m_fruits[f], left, dt, mousePos, events);
 	}
 }
 
@@ -1567,7 +1585,9 @@ bool Ecosystem::animalIsTooHigh(const Animal& animal, const Fruit& fruit) const
 int Ecosystem::tryToFindConsumer(
 	Fruit& fruit, 
 	unsigned startAnimalIndex, 
-	float dt)
+	float dt,
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events)
 {
 	unsigned animal_index = startAnimalIndex;
 
@@ -1576,7 +1596,7 @@ int Ecosystem::tryToFindConsumer(
 	{
 		if (animalReachesFruit(*m_animals[animal_index], fruit))
 		{
-			eat(*m_animals[animal_index], fruit, dt);
+			eat(*m_animals[animal_index], fruit, dt, mousePos, events);
 			return 1;
 		}
 
@@ -1612,7 +1632,12 @@ bool Ecosystem::animalReachesFruit(
 	return distance <= animal.getRadius() + fruit.getRadius();
 }
 
-void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
+void Ecosystem::eat(
+	Animal& animal, 
+	Fruit& fruit, 
+	float dt,
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events)
 {
 	assert(fruit.getEnergy() >= 0.0);
 	assert(animal.getHp() > 0.0);
@@ -1671,7 +1696,7 @@ void Ecosystem::eat(Animal& animal, Fruit& fruit, float dt)
 		assert(false);
 	}
 	
-	m_animals.back()->randomMutate(m_mutationsPerMutation);
+	m_animals.back()->randomMutate(m_mutationsPerMutation, mousePos, events);
 
 	if (&animal == m_trackedAnimal)
 	{

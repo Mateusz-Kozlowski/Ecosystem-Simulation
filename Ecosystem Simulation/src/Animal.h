@@ -26,7 +26,9 @@ public:
 		float dt,
 		float simulationSpeedFactor,
 		const std::vector<Blueberry::Scalar>& brainInputs,
-		bool isTracked
+		bool isTracked,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
 	);
 
 	void renderBody(sf::RenderTarget& target) const;
@@ -71,7 +73,7 @@ public:
 
 	float getTimeElapsedSinceLastExternalHpChange() const;
 
-	bool isCoveredByMouse(const sf::Vector2f& mousePosView) const;
+	bool isCoveredByMouse(const sf::Vector2f& mousePos) const;
 
 	// mutators:
 
@@ -88,7 +90,11 @@ public:
 
 	void setColor(const sf::Color& color);
 
-	void randomMutate(unsigned brainMutationsCount);
+	void randomMutate(
+		unsigned brainMutationsCount,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
 
 	void setVelocity(const sf::Vector2f& velocity);
 
@@ -119,7 +125,10 @@ private:
 	void updateBody(float dt);
 	void updateHp(float dt);
 	void updateHpBarPosition();
-	void updateBrainPreview();
+	void updateBrainPreview(
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
 
 private:
 	sf::CircleShape m_body;

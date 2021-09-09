@@ -2,26 +2,31 @@
 #include "BrainPreview.h"
 
 gui::BrainPreview::BrainPreview(
-	const Blueberry::Brain& brain, 
-	const sf::Vector2f& position, 
-	const sf::Vector2f& size, 
+	const Blueberry::Brain& brain,
+	const sf::Vector2f& position,
+	const sf::Vector2f& size,
 	const sf::Color& backgroundColor)
 	: m_brain(brain)
 	, m_background(size)
 	, m_neurons()
 	, m_synapses()
+	, m_imgBtn()
 {
 	initBackground(position, backgroundColor);
 	initNeurons();
 	initSynapses();
+	initImgBtn();
 }
 
-void gui::BrainPreview::update()
+void gui::BrainPreview::update(
+	const sf::Vector2f& mousePos, 
+	const std::vector<sf::Event>& events)
 {
 	handleNewNeurons();
 	handleNewSynapses();
 	setNeuronsColors();
 	setSynapsesColors();
+	updateImgBtn(mousePos, events);
 }
 
 void gui::BrainPreview::render(sf::RenderTarget& target) const
@@ -29,6 +34,7 @@ void gui::BrainPreview::render(sf::RenderTarget& target) const
 	target.draw(m_background);
 	renderSynapses(target);
 	renderNeurons(target);
+	m_imgBtn->render(target);
 }
 
 // accessors:
@@ -81,6 +87,7 @@ void gui::BrainPreview::move(float xOffset, float yOffset)
 	m_background.move(xOffset, yOffset);
 	moveNeurons(xOffset, yOffset);
 	setSynapsesPos();
+	setImgBtnPos();
 }
 
 void gui::BrainPreview::setSize(const sf::Vector2f& newSize)
@@ -115,6 +122,9 @@ void gui::BrainPreview::scale(float xScaleFactor, float yScaleFactor)
 	setOutputNeuronsPos();
 
 	setSynapsesPos();
+
+	setImgBtnSize();
+	setImgBtnPos();
 }
 
 void gui::BrainPreview::setBackgroundColor(const sf::Color& color)
@@ -162,6 +172,25 @@ void gui::BrainPreview::initSynapses()
 	
 	setSynapsesPos();
 	setSynapsesColors();
+}
+
+void gui::BrainPreview::initImgBtn()
+{
+	const sf::FloatRect bgBounds = m_background.getGlobalBounds();
+	const float radius = calcNeuronsRadius();
+
+	std::vector<std::pair<std::string, std::string>> texturesKeysAndPaths = {
+		{ "IDLE", "resources/textures/GUI/modification/modification.png" },
+		{ "HOVERED", "resources/textures/GUI/modification/modification light.png" },
+		{ "PRESSED", "resources/textures/GUI/modification/modification dark.png" }
+	};
+
+	m_imgBtn = std::make_unique<gui::ImageButton>(
+		texturesKeysAndPaths,
+		"IDLE",
+		calcImgBtnPos(),
+		calcImgBtnSize()
+	);
 }
 
 // utils:
@@ -376,6 +405,36 @@ void gui::BrainPreview::setPos(
 	}
 }
 
+void gui::BrainPreview::setImgBtnSize()
+{
+	m_imgBtn->setSize(calcImgBtnSize());
+}
+
+sf::Vector2f gui::BrainPreview::calcImgBtnSize() const
+{
+	const float radius = calcNeuronsRadius();
+
+	return sf::Vector2f(
+		4.0f * radius,
+		4.0f * radius
+	);
+}
+
+void gui::BrainPreview::setImgBtnPos()
+{
+	m_imgBtn->setPosition(calcImgBtnPos());
+}
+
+sf::Vector2f gui::BrainPreview::calcImgBtnPos() const
+{
+	const sf::FloatRect bgBounds = m_background.getGlobalBounds();
+	
+	return sf::Vector2f(
+		bgBounds.left + bgBounds.width - calcImgBtnSize().x,
+		m_background.getPosition().y
+	);
+}
+
 void gui::BrainPreview::setSynapsesColors()
 {
 	const unsigned totalSynapsesCount = m_brain.getEnabledSynapsesCount()
@@ -558,6 +617,46 @@ void gui::BrainPreview::handleNewSynapses()
 			theBiggestAbsWeight
 		);
 	}
+}
+
+void gui::BrainPreview::updateImgBtn(
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events)
+{
+	m_imgBtn->update(mousePos, events);
+	updateImgBtnTexture();
+}
+
+void gui::BrainPreview::updateImgBtnTexture()
+{
+	if (m_imgBtn->isPressed())
+	{
+		m_imgBtn->setTexture("PRESSED");
+		return;
+	}
+	if (m_imgBtn->isHovered())
+	{
+		m_imgBtn->setTexture("HOVERED");
+		return;
+	}
+	m_imgBtn->setTexture("IDLE");
+
+	/*
+	if (m_imgBtn->isPressed() && m_imgBtn->getCurrentTextureKey() != "PRESSED")
+	{
+		m_imgBtn->setTexture("PRESSED");
+		return;
+	}
+	if (m_imgBtn->isHovered() && m_imgBtn->getCurrentTextureKey() != "HOVERED")
+	{
+		m_imgBtn->setTexture("HOVERED");
+		return;
+	}
+	if (m_imgBtn->getCurrentTextureKey() != "IDLE")
+	{
+		m_imgBtn->setTexture("IDLE");
+	}
+	*/
 }
 
 void gui::BrainPreview::renderNeurons(sf::RenderTarget& target) const

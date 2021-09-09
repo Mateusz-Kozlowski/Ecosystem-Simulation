@@ -209,7 +209,9 @@ void Animal::update(
 	float dt,
 	float simulationSpeedFactor,
 	const std::vector<Blueberry::Scalar>& brainInputs,
-	bool isTracked)
+	bool isTracked,
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events)
 {
 	m_movementComponent->update(
 		dt, 
@@ -231,7 +233,7 @@ void Animal::update(
 	}
 
 	updateHpBarPosition();
-	updateBrainPreview();
+	updateBrainPreview(mousePos, events);
 
 	m_timeElapsedSinceLastExternalHpChange += dt;
 }
@@ -444,10 +446,16 @@ void Animal::setColor(const sf::Color& color)
 	m_hpBar->setProgressRectColor(color);
 }
 
-void Animal::randomMutate(unsigned brainMutationsCount)
+void Animal::randomMutate(
+	unsigned brainMutationsCount,
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events
+)
 {
+	std::cout << brainMutationsCount << '\n';
+
 	m_movementComponent->mutateBrain(brainMutationsCount);
-	m_brainPreview->update();
+	m_brainPreview->update(mousePos, events);
 }
 
 void Animal::setVelocity(const sf::Vector2f& velocity)
@@ -579,8 +587,10 @@ void Animal::updateHpBarPosition()
 	);
 }
 
-void Animal::updateBrainPreview()
+void Animal::updateBrainPreview(
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events)
 {
 	m_brainPreview->setPosition(m_body.getPosition());
-	m_brainPreview->update();
+	m_brainPreview->update(mousePos, events);
 }

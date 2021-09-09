@@ -26,7 +26,7 @@ namespace gui
 		);
 		
 		void update(
-			const sf::Vector2i& mousePosWindow, 
+			const sf::Vector2f& mousePos, 
 			const std::vector<sf::Event>& events
 		);
 		void render(sf::RenderTarget& target);

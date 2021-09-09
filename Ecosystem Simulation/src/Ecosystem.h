@@ -39,10 +39,14 @@ public:
 
 	void useGodTools(
 		const std::vector<sf::Event>& events,
-		const sf::Vector2f& mousePosView
+		const sf::Vector2f& mousePos
 	);
 
-	void update(float dt);
+	void update(
+		float dt,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
 	void render(sf::RenderTarget& target) const;
 
 	// accessors:
@@ -176,16 +180,19 @@ private:
 
 	// mutating tool:
 
-	void mutatingTool(const sf::Vector2f& mousePosView);
+	void mutatingTool(
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
 
 	// tracking tool:
 
-	void trackingTool(const sf::Vector2f& mousePosView);
+	void trackingTool(const sf::Vector2f& mousePos);
 	void stopTracking();
 
 	// killing tool:
 
-	void killingTool(const sf::Vector2f& mousePosView);
+	void killingTool(const sf::Vector2f& mousePos);
 	void convertAnimalToFruit(
 		std::shared_ptr<Animal>& animal, 
 		bool randomFruitPosition
@@ -193,25 +200,33 @@ private:
 
 	// replacing tool:
 
-	void replacingTool(const sf::Vector2f& mousePosView);
+	void replacingTool(const sf::Vector2f& mousePos);
 
 	// brain tool:
 
-	void brainTool(const sf::Vector2f& mousePosView);
+	void brainTool(const sf::Vector2f& mousePos);
 
 	// stopping tool:
 
-	void stoppingTool(const sf::Vector2f& mousePosView);
+	void stoppingTool(const sf::Vector2f& mousePos);
 	void convertKineticEnergyToFruit(Animal& animal, bool randomFruitPosition);
 
 	// info tool:
 
-	void infoTool(const sf::Vector2f& mousePosView) const;
+	void infoTool(const sf::Vector2f& mousePos) const;
 	void printInfoAboutEcosystem() const;
 	
-	void updateWorld(float dt);
+	void updateWorld(
+		float dt,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
 
-	void updateAnimals(float dt);
+	void updateAnimals(
+		float dt,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
 
 	const std::vector<Blueberry::Scalar> getInputsForBrain(
 		const Animal& animal
@@ -237,7 +252,11 @@ private:
 	void removeDeadAnimals();
 	void removeAnimal(std::shared_ptr<Animal>& animal);
 
-	void feedAnimals(float dt);
+	void feedAnimals(
+		float dt,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
 	static bool compareAnimalsYPositions(
 		std::shared_ptr<Animal> a1, 
 		std::shared_ptr<Animal> a2
@@ -246,11 +265,19 @@ private:
 	int tryToFindConsumer(
 		Fruit& fruit, 
 		unsigned startAnimalindex,
-		float dt
+		float dt,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
 	);
 	bool animalReachesFruitInY(const Animal& animal, const Fruit& fruit) const;
 	bool animalReachesFruit(const Animal& animal, const Fruit& fruit) const;
-	void eat(Animal& animal, Fruit& fruit, float dt);
+	void eat(
+		Animal& animal, 
+		Fruit& fruit, 
+		float dt,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
 	
 	void removeEatenFruits();
 	void removeFruit(std::unique_ptr<Fruit>& fruit);
@@ -300,7 +327,7 @@ private:
 	Blueberry::Scalar m_defaultAnimalsHp;
 	Blueberry::Scalar m_defaultFruitEnergy;
 
-	float m_mutationsPerMutation;
+	unsigned m_mutationsPerMutation;
 
 	// useful when there are temporarily no m_animals in an ecosystem:
 	sf::Color m_animalsColor;

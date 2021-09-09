@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Gui.h"
+#include "ImageButton.h"
 
 namespace gui
 {
@@ -16,7 +16,10 @@ namespace gui
 		BrainPreview(const BrainPreview& rhs) = delete;
 		BrainPreview& operator=(const BrainPreview& rhs) = delete;
 
-		void update();
+		void update(
+			const sf::Vector2f& mousePos,
+			const std::vector<sf::Event>& events
+		);
 		void render(sf::RenderTarget& target) const;
 
 		// accessors:
@@ -53,6 +56,7 @@ namespace gui
 		);
 		void initNeurons();
 		void initSynapses();
+		void initImgBtn();
 
 		// utils:
 
@@ -86,6 +90,12 @@ namespace gui
 			const Blueberry::Synapse& synapse
 		);
 
+		void setImgBtnSize();
+		sf::Vector2f calcImgBtnSize() const;
+
+		void setImgBtnPos();
+		sf::Vector2f calcImgBtnPos() const;
+
 		void setSynapsesColors();
 		void setColor(
 			std::vector<sf::Vertex>& synapseVertices,
@@ -95,13 +105,18 @@ namespace gui
 
 		Blueberry::Scalar getTheBiggestAbsWeight() const;
 		Blueberry::Scalar getTheBiggestWeight() const;
-		Blueberry::Scalar getTheSmallestWeight() const;
+		Blueberry::Scalar getTheSmallestWeight() const;		
 
 		void handleNewNeurons();
-
 		void setRandomPos(sf::CircleShape& neuron);
 
 		void handleNewSynapses();
+
+		void updateImgBtn(
+			const sf::Vector2f& mousePos,
+			const std::vector<sf::Event>& events
+		);
+		void updateImgBtnTexture();
 
 		void renderNeurons(sf::RenderTarget& target) const;
 		void renderSynapses(sf::RenderTarget& target) const;
@@ -120,5 +135,7 @@ namespace gui
 
 		std::vector<sf::CircleShape> m_neurons;
 		std::vector<std::vector<sf::Vertex>> m_synapses;
+
+		std::unique_ptr<gui::ImageButton> m_imgBtn;
 	};
 }

@@ -20,7 +20,7 @@ namespace gui
 		);
 
 		void update(
-			const sf::Vector2i& mousePosWindow, 
+			const sf::Vector2f& mousePos, 
 			const std::vector<sf::Event>& events
 		);
 		void render(sf::RenderTarget& target) const;
@@ -40,6 +40,7 @@ namespace gui
 
 		void setTexture(const std::string& key);
 		void setPosition(const sf::Vector2f& newPos);
+		void setSize(const sf::Vector2f& size);
 
 	private:
 		void initTextures(
@@ -50,6 +51,8 @@ namespace gui
 			const sf::Vector2f& position,
 			const sf::Vector2f& size
 		);
+
+		void setSpriteSize(const sf::Vector2f& size);
 
 	private:
 		std::unordered_map<std::string, sf::Texture> m_textures;

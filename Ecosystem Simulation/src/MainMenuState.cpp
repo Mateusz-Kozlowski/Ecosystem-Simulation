@@ -260,7 +260,7 @@ void MainMenuState::getUpdateFromButtons()
 {
 	for (auto& btn : m_buttons)
 	{
-		btn.second->update(m_mousePosWindow);
+		btn.second->update(static_cast<sf::Vector2f>(m_mousePosWindow));
 	}
 
 	if (m_buttons["SIMULATE"]->isClicked())

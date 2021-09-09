@@ -793,7 +793,10 @@ void SimulationState::updateSideMenuVisibility()
 
 void SimulationState::updateSideMenu()
 {
-	m_sideMenu->update(m_mousePosWindow, *m_stateData->m_events);
+	m_sideMenu->update(
+		static_cast<sf::Vector2f>(m_mousePosWindow), 
+		*m_stateData->m_events
+	);
 
 	updateSideMenuGui();
 }
@@ -1231,7 +1234,11 @@ void SimulationState::updateEcosystem(float dt)
 
 	useEcosystemGodTools();
 
-	m_stateData->m_ecosystem->update(dt);
+	m_stateData->m_ecosystem->update(
+		dt, 
+		m_mousePosView, 
+		*m_stateData->m_events
+	);
 }
 
 void SimulationState::useEcosystemGodTools()
