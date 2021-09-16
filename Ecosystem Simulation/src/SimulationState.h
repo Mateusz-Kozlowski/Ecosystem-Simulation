@@ -2,6 +2,7 @@
 
 #include "State.h"
 #include "SaveAsPanel.h"
+#include "BrainPreviewModifier.h"
 
 class SimulationState : public State
 {
@@ -26,6 +27,7 @@ private:
 	void initDeferredRender();
 	void initSideMenu();
 	void initGodToolsGui();
+	void initBrainPreviewModifier();
 	void initSaveAsPanel();
 	
 	// utils:
@@ -48,8 +50,10 @@ private:
 	void updateView();
 
 	void updateEcosystem(float dt);
-
 	void useEcosystemGodTools();
+
+	void updateBrainPreviewModifier();
+	void getUpdateFromAnimalsBrainsPreviews();
 
 private:
 	std::unordered_map<std::string, sf::Font> m_fonts;
@@ -59,13 +63,13 @@ private:
 	sf::Vector2i m_previousMousePosWindow;
 
 	bool m_sideMenuIsRendered;
-
 	std::unique_ptr<gui::SideMenu> m_sideMenu;
 
 	sf::RenderTexture m_renderTexture;
 	sf::Sprite m_renderSprite;
 
-	bool m_saveAsPanelIsRendered;
+	std::unique_ptr<gui::BrainPreviewModifier> m_brainPreviewModifier;
 
+	bool m_saveAsPanelIsRendered;
 	std::unique_ptr<gui::SaveAsPanel> m_saveAsPanel;
 };

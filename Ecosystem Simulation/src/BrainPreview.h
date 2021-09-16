@@ -20,7 +20,7 @@ namespace gui
 			const sf::Vector2f& mousePos,
 			const std::vector<sf::Event>& events
 		);
-		void render(sf::RenderTarget& target) const;
+		void render(sf::RenderTarget& target, bool renderImgBtn) const;
 
 		// accessors:
 
@@ -30,6 +30,12 @@ namespace gui
 		const sf::Vector2f& getSize() const;
 
 		const sf::Color& getBackgroundColor() const;
+
+		float calcNeuronsRadius() const;
+
+		const std::vector<sf::CircleShape>& getNeurons() const;
+
+		const std::unique_ptr<gui::ImageButton>& getImgBtn() const;
 
 		// mutators:
 
@@ -63,8 +69,6 @@ namespace gui
 		// utils:
 
 		void setNeuronsSizes();
-		
-		float calcNeuronsRadius() const;
 
 		void setInputNeuronsPos();
 		float calcInputLayerTopMargin() const;

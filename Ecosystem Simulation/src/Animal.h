@@ -69,7 +69,7 @@ public:
 	
 	const std::unique_ptr<gui::ProgressBar>& getHpBar() const;
 
-	const gui::BrainPreview& getBrainPreview() const;
+	gui::BrainPreview& getBrainPreview() const;
 
 	float getTimeElapsedSinceLastExternalHpChange() const;
 

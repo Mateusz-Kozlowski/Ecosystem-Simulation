@@ -29,12 +29,19 @@ void gui::BrainPreview::update(
 	updateImgBtn(mousePos, events);
 }
 
-void gui::BrainPreview::render(sf::RenderTarget& target) const
+void gui::BrainPreview::render(
+	sf::RenderTarget& target, 
+	bool renderImgBtn) const
 {
 	target.draw(m_background);
+
 	renderSynapses(target);
 	renderNeurons(target);
-	m_imgBtn->render(target);
+	
+	if (renderImgBtn)
+	{
+		m_imgBtn->render(target);
+	}
 }
 
 // accessors:
@@ -57,6 +64,29 @@ const sf::Vector2f& gui::BrainPreview::getSize() const
 const sf::Color& gui::BrainPreview::getBackgroundColor() const
 {
 	return m_background.getFillColor();
+}
+
+float gui::BrainPreview::calcNeuronsRadius() const
+{
+	// notice that there aren't any hidden layers in Blueberry::Brain
+	// because hidden neurons are organized differently
+
+	const unsigned theBiggestLayersSize = std::max(
+		m_brain.getInputSize(),
+		m_brain.getOutputSize()
+	);
+
+	return m_background.getSize().y / (1U + 3U * theBiggestLayersSize);
+}
+
+const std::vector<sf::CircleShape>& gui::BrainPreview::getNeurons() const
+{
+	return m_neurons;
+}
+
+const std::unique_ptr<gui::ImageButton>& gui::BrainPreview::getImgBtn() const
+{
+	return m_imgBtn;
 }
 
 // mutators:
@@ -113,7 +143,12 @@ void gui::BrainPreview::scale(const sf::Vector2f& scaleFactors)
 
 void gui::BrainPreview::scale(float xScaleFactor, float yScaleFactor) 
 {
-	m_background.scale(xScaleFactor, yScaleFactor);
+	m_background.setSize(
+		sf::Vector2f(
+			m_background.getSize().x * xScaleFactor,
+			m_background.getSize().y * yScaleFactor
+		)
+	);
 
 	setNeuronsSizes();
 	
@@ -211,18 +246,6 @@ void gui::BrainPreview::setNeuronsSizes()
 	{
 		neuron.setRadius(neuronRadius);
 	}
-}
-
-float gui::BrainPreview::calcNeuronsRadius() const
-{
-	// notice that there aren't any hidden layers in Blueberry::Brain:
-
-	const unsigned theBiggestLayersSize = std::max(
-		m_brain.getInputSize(),
-		m_brain.getOutputSize()
-	);
-			
-	return m_background.getSize().y / (1U + 3U * theBiggestLayersSize);
 }
 
 void gui::BrainPreview::setInputNeuronsPos()

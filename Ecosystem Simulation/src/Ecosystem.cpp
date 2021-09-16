@@ -1859,7 +1859,7 @@ void Ecosystem::correctPopulationSize(float dt)
 	//		<< murdersCount << "\n\n";
 	//}
 
-	//unsigned prevAnimalsCount = m_animals.size();
+	//unsigned prevAnimalsCount = m_animals.m_size();
 	//
 	//std::sort(
 	//	m_animals.begin(),
@@ -1877,11 +1877,11 @@ void Ecosystem::correctPopulationSize(float dt)
 	//
 	//if (fps < 10U)
 	//{
-	//	murdersCount = 0.5f * m_animals.size();
+	//	murdersCount = 0.5f * m_animals.m_size();
 	//}
 	//else if (fps < 30 && fps >= 10U)
 	//{
-	//	murdersCount = 0.1f * m_animals.size();
+	//	murdersCount = 0.1f * m_animals.m_size();
 	//}
 	//
 	//while (murdersCount--)
@@ -1896,9 +1896,9 @@ void Ecosystem::correctPopulationSize(float dt)
 	//std::cout << '\n';
 	//
 	//// now kill animals starving for more than 1 minute:
-	//for (int i = 0; i < m_animals.size();)
+	//for (int i = 0; i < m_animals.m_size();)
 	//{
-	//	if (2U * m_animals.size() <= prevAnimalsCount) return;
+	//	if (2U * m_animals.m_size() <= prevAnimalsCount) return;
 	//
 	//	// TODO: "unhardcode" that:
 	//	if (m_animals[i]->getTimeElapsedSinceLastExternalHpChange() > 60.0f)
@@ -1908,7 +1908,7 @@ void Ecosystem::correctPopulationSize(float dt)
 	//	else i++;
 	//}
 	//
-	//assert(2U * (m_animals.size() + 1) > prevAnimalsCount);
+	//assert(2U * (m_animals.m_size() + 1) > prevAnimalsCount);
 }
 
 void Ecosystem::randomShuffleAnimals()

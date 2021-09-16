@@ -181,7 +181,7 @@ void gui::ProgressBar::initProgressRect(
 {
 	m_progressRect.setPosition(position);
 	m_progressRect.setFillColor(progressRectColor);
-	updateProgressRectSize(); // sets size
+	updateProgressRectSize(); // sets m_size
 }
 
 // utils:

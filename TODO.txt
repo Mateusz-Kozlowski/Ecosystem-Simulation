@@ -32,6 +32,14 @@ simulation state:
   save that changes and maybe other things
 
 UI:
+- don't use god tools if brain preview modifier hovers mouse cursor
+  (like in the case with SideMenu)
+- don't move view and modify pos of brain preview modifier neurons in the same time
+- highlight modified neurons in gui::BrainPreviewModifier;
+  how? Maybe there is a better way but u can just use a sf::CircleShape 
+  and put it under modified neuron
+- prevent putting neurons beyond BrainPreviewModifier background
+- change the name of BrainPreviewModifier class so that it doesn't mix up with BrainPreview
 - mousePosWindow or mousePosView or mousePos (yes, only mousePos without suffix)
   in Ecosystem;
 - there is no convention for positions of GUI widgets;
@@ -55,6 +63,8 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- an amazing way to debug the law of energy conservation - calc total energy 
+  after every method in update world
 - save fruits and animals count to file in order to know how many of them should be loaded
 - don't update a brain if it isn't rendered (order of calling methods in updateWorld might be important)
 - update imgBtn texture in BrainPreview class

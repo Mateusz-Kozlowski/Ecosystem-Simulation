@@ -103,7 +103,7 @@ void gui::NeuralNetPreview::initNeurons()
 
 void gui::NeuralNetPreview::initNeuronsVector()
 {
-	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().size();
+	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().m_size();
 	//
 	//m_neurons.resize(hiddenLayersCount + 2U);
 	//
@@ -140,7 +140,7 @@ void gui::NeuralNetPreview::initSynapsesVector()
 {
 	//auto inputLayer = m_brain->inputLayer();
 	//auto hiddenLayers = m_brain->getHiddenLayers();
-	//unsigned hiddenLayersCount = hiddenLayers.size();
+	//unsigned hiddenLayersCount = hiddenLayers.m_size();
 	//auto outputLayer = m_brain->getOutputLayer();
 	//
 	//m_synapses.resize(hiddenLayersCount + 1U);
@@ -183,7 +183,7 @@ void gui::NeuralNetPreview::initSynapsesVector()
 	//{
 	//	for (int i = 0; i < outputLayer->getNeuronsCount(); i++)
 	//	{
-	//		m_synapses.back()[i].resize(inputLayer->output().size());
+	//		m_synapses.back()[i].resize(inputLayer->output().m_size());
 	//	}
 	//}
 	//
@@ -238,7 +238,7 @@ float gui::NeuralNetPreview::calcGapBetweenLayers() const
 	// TODO: after implementing a new version of Blueberry
 	// TODO: uncomment and rewrite this!:
 	
-	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().size();
+	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().m_size();
 	//float diameter = 2.f * calcNeuronsRadius();
 	//
 	//return (m_background.getSize().x - (4U + hiddenLayersCount) * diameter) 
@@ -325,7 +325,7 @@ void gui::NeuralNetPreview::setInputNeuronsColors()
 	//	abs(theSmallestActVal)
 	//);
 	//
-	//for (int i = 0; i < m_neurons[0].size(); i++)
+	//for (int i = 0; i < m_neurons[0].m_size(); i++)
 	//{
 	//	Scalar neuronActVal = m_brain->getInputLayer()->output()[i];
 	//
@@ -360,7 +360,7 @@ void gui::NeuralNetPreview::setHiddenNeuronsColors()
 	//
 	//auto hiddenLayers = m_brain->getHiddenLayers();
 	//
-	//for (int i = 0; i < hiddenLayers.size(); i++)
+	//for (int i = 0; i < hiddenLayers.m_size(); i++)
 	//{
 	//	Scalar theBiggestActVal = getTheBiggestActivatedValue(i + 1);
 	//	Scalar theSmallestActVal = getTheSmallestActivatedValue(i + 1);
@@ -370,7 +370,7 @@ void gui::NeuralNetPreview::setHiddenNeuronsColors()
 	//		abs(theSmallestActVal)
 	//	);
 	//
-	//	for (int j = 0; j < m_neurons[i + 1].size(); j++)
+	//	for (int j = 0; j < m_neurons[i + 1].m_size(); j++)
 	//	{
 	//		Scalar actVal = hiddenLayers[i]->getNeurons()[j]->getActivatedValue();
 	//
@@ -403,10 +403,10 @@ void gui::NeuralNetPreview::setOutputNeuronsColors()
 	//typedef Blueberry::Scalar Scalar;
 	//
 	//Scalar theBiggestActVal = getTheBiggestActivatedValue(
-	//	m_brain->getHiddenLayers().size() + 1
+	//	m_brain->getHiddenLayers().m_size() + 1
 	//);
 	//Scalar theSmallestActVal = getTheSmallestActivatedValue(
-	//	m_brain->getHiddenLayers().size() + 1
+	//	m_brain->getHiddenLayers().m_size() + 1
 	//);
 	//
 	//Scalar theBiggestAbsActVal = std::max(
@@ -416,7 +416,7 @@ void gui::NeuralNetPreview::setOutputNeuronsColors()
 	//
 	//auto outputLayer = m_brain->getOutputLayer();
 	//
-	//for (int i = 0; i < m_neurons.back().size(); i++)
+	//for (int i = 0; i < m_neurons.back().m_size(); i++)
 	//{
 	//	Scalar actVal = outputLayer->getNeurons()[i]->getActivatedValue();
 	//
@@ -464,7 +464,7 @@ Blueberry::Scalar gui::NeuralNetPreview::getTheBiggestActivatedValue(
 	//
 	//// layerIndex == hidden layers count + 1 
 	//// <==> we're dealing with the output layer:
-	//if (layerIndex == m_brain->getHiddenLayers().size() + 1)
+	//if (layerIndex == m_brain->getHiddenLayers().m_size() + 1)
 	//{
 	//	for (const auto& neuron : m_brain->getOutputLayer()->getNeurons())
 	//	{
@@ -513,7 +513,7 @@ Blueberry::Scalar gui::NeuralNetPreview::getTheSmallestActivatedValue(
 	//}
 	//
 	//// layerIndex == hidden layers count + 1 <==> we're dealing with the output layer:
-	//if (layerIndex == m_brain->getHiddenLayers().size() + 1)
+	//if (layerIndex == m_brain->getHiddenLayers().m_size() + 1)
 	//{
 	//	for (const auto& neuron : m_brain->getOutputLayer()->getNeurons())
 	//	{
@@ -545,7 +545,7 @@ Blueberry::Scalar gui::NeuralNetPreview::getTheSmallestActivatedValue(
 void gui::NeuralNetPreview::setSynapsesPos()
 {
 	//// calculate useful variables:
-	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().size();
+	//unsigned hiddenLayersCount = m_brain->getHiddenLayers().m_size();
 	//unsigned biggestLayerSize = getTheBiggestLayerSize();
 	//
 	//float gapBetweenLayers = calcGapBetweenLayers();
@@ -553,15 +553,15 @@ void gui::NeuralNetPreview::setSynapsesPos()
 	//float diameter = 2.f * radius;
 	//
 	//// set positions:
-	//for (int i = 0; i < m_synapses.size(); i++)
+	//for (int i = 0; i < m_synapses.m_size(); i++)
 	//{
 	//	float topMargin2 = calcTopMargin(i);
 	//
-	//	for (int j = 0; j < m_synapses[i].size(); j++)
+	//	for (int j = 0; j < m_synapses[i].m_size(); j++)
 	//	{
 	//		float topMargin1 = calcTopMargin(j);
 	//
-	//		for (int k = 0; k < m_synapses[i][j].size(); k++)
+	//		for (int k = 0; k < m_synapses[i][j].m_size(); k++)
 	//		{
 	//			float y1 = m_neurons[i][k].getPosition().y + radius;
 	//			float y2 = m_neurons[i + 1][j].getPosition().y + radius;
@@ -589,11 +589,11 @@ void gui::NeuralNetPreview::setSynapsesColors()
 	//
 	//auto weights = m_brain->getWeights();
 	//
-	//for (int i = 0; i < m_synapses.size(); i++)
+	//for (int i = 0; i < m_synapses.m_size(); i++)
 	//{
-	//	for (int j = 0; j < m_synapses[i].size(); j++)
+	//	for (int j = 0; j < m_synapses[i].m_size(); j++)
 	//	{
-	//		for (int k = 0; k < m_synapses[i][j].size(); k++)
+	//		for (int k = 0; k < m_synapses[i][j].m_size(); k++)
 	//		{
 	//			Blueberry::Scalar weight = weights[i]->getValues()[j][k];
 	//
@@ -639,11 +639,11 @@ Blueberry::Scalar gui::NeuralNetPreview::getTheBiggestWeight()
 	//
 	//Blueberry::Scalar theBiggestWeight = -INFINITY;
 	//
-	//for (int i = 0; i < m_synapses.size(); i++)
+	//for (int i = 0; i < m_synapses.m_size(); i++)
 	//{
-	//	for (int j = 0; j < m_synapses[i].size(); j++)
+	//	for (int j = 0; j < m_synapses[i].m_size(); j++)
 	//	{
-	//		for (int k = 0; k < m_synapses[i][j].size(); k++)
+	//		for (int k = 0; k < m_synapses[i][j].m_size(); k++)
 	//		{
 	//			theBiggestWeight = std::max(
 	//				theBiggestWeight, 
@@ -665,11 +665,11 @@ Blueberry::Scalar gui::NeuralNetPreview::getTheSmallestWeight()
 	//
 	//Blueberry::Scalar theSmallestWeight = INFINITY;
 	//
-	//for (int i = 0; i < m_synapses.size(); i++)
+	//for (int i = 0; i < m_synapses.m_size(); i++)
 	//{
-	//	for (int j = 0; j < m_synapses[i].size(); j++)
+	//	for (int j = 0; j < m_synapses[i].m_size(); j++)
 	//	{
-	//		for (int k = 0; k < m_synapses[i][j].size(); k++)
+	//		for (int k = 0; k < m_synapses[i][j].m_size(); k++)
 	//		{
 	//			theSmallestWeight = std::min(
 	//				theSmallestWeight, 

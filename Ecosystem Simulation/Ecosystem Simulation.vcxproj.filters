@@ -85,6 +85,9 @@
     <ClCompile Include="src\FPSpreview.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\BrainPreviewModifier.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -246,6 +249,9 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\FPSpreview.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BrainPreviewModifier.h">
       <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>

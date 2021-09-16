@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BrainPreviewModifier.cpp" />
     <ClCompile Include="src\FPSpreview.cpp" />
     <ClCompile Include="src\BrainPreview.cpp" />
     <ClCompile Include="src\SaveAsPanel.cpp" />
@@ -204,6 +205,7 @@
     <ClCompile Include="src\ImageButton.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\BrainPreviewModifier.h" />
     <ClInclude Include="src\FPSpreview.h" />
     <ClInclude Include="src\BrainPreview.h" />
     <ClInclude Include="src\SaveAsPanel.h" />

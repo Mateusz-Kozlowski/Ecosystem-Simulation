@@ -7,11 +7,12 @@ SimulationState::SimulationState(StateData* stateData)
 	, m_view()
 	, m_previousMousePosWindow()
 	, m_sideMenuIsRendered(false)
-	, m_sideMenu()
+	, m_sideMenu(nullptr)
 	, m_renderTexture()
 	, m_renderSprite()
+	, m_brainPreviewModifier(nullptr)
 	, m_saveAsPanelIsRendered(false)
-	, m_saveAsPanel()
+	, m_saveAsPanel(nullptr)
 {
 	initKeybinds();
 	initVariables();
@@ -20,6 +21,7 @@ SimulationState::SimulationState(StateData* stateData)
 	initView();
 	initDeferredRender();
 	initSideMenu();
+	initBrainPreviewModifier();
 	initSaveAsPanel();
 }
 
@@ -59,6 +61,8 @@ void SimulationState::update(float dt)
 	updateView();
 
 	updateEcosystem(dt);
+	
+	updateBrainPreviewModifier();
 }
 
 void SimulationState::render(sf::RenderTarget* target)
@@ -75,12 +79,17 @@ void SimulationState::render(sf::RenderTarget* target)
 
 	m_stateData->m_ecosystem->render(m_renderTexture);
 
-	// render side menu and save as panel:
+	// render side menu, brain preview modifier and save as panel:
 	m_renderTexture.setView(m_renderTexture.getDefaultView());
 
 	if (m_sideMenuIsRendered)
 	{
 		m_sideMenu->render(m_renderTexture);
+	}
+
+	if (m_brainPreviewModifier->getBrainPreview())
+	{
+		m_brainPreviewModifier->render(m_renderTexture);
 	}
 
 	if (m_saveAsPanelIsRendered)
@@ -665,6 +674,25 @@ void SimulationState::initSaveAsPanel()
 		sf::Color(255, 255, 255), 
 		sf::Color(150, 150, 150),
 		gui::p2pY(0.5f, resolution)
+	);
+}
+
+void SimulationState::initBrainPreviewModifier()
+{
+	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
+	
+	const sf::Vector2f size{
+		resolution.height / 2.0f,
+		resolution.height / 2.0f
+	};
+
+	m_brainPreviewModifier = std::make_unique<gui::BrainPreviewModifier>(
+		nullptr,
+		sf::Vector2f(
+			(resolution.width - size.x) / 2.0f,
+			(resolution.height - size.y) / 2.0f
+		),
+		size
 	);
 }
 
@@ -1253,4 +1281,37 @@ void SimulationState::useEcosystemGodTools()
 		*m_stateData->m_events, 
 		m_mousePosView
 	);
+}
+
+void SimulationState::updateBrainPreviewModifier()
+{	
+	m_brainPreviewModifier->update(
+		static_cast<sf::Vector2f>(m_mousePosWindow),
+		*m_stateData->m_events
+	);
+
+	if (m_brainPreviewModifier->getBrainPreview())
+	{
+		if (m_brainPreviewModifier->getCloseBtn()->hasBeenClicked())
+		{
+			m_brainPreviewModifier->setBrainPreview(nullptr);
+			return;
+		}
+	}
+
+	getUpdateFromAnimalsBrainsPreviews();
+}
+
+void SimulationState::getUpdateFromAnimalsBrainsPreviews()
+{
+	for (const auto& animal : m_stateData->m_ecosystem->getAnimals())
+	{
+		if (animal->getBrainPreview().getImgBtn()->hasBeenClicked())
+		{
+			m_brainPreviewModifier->setBrainPreview(
+				&animal->getBrainPreview()
+			);
+			return;
+		}
+	}
 }

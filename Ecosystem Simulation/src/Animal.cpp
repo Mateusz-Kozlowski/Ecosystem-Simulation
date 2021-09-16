@@ -250,7 +250,7 @@ void Animal::renderHpBar(sf::RenderTarget& target) const
 
 void Animal::renderBrainPreview(sf::RenderTarget& target) const
 {
-	m_brainPreview->render(target);
+	m_brainPreview->render(target, true);
 }
 
 std::string Animal::toStr() const
@@ -378,7 +378,7 @@ const std::unique_ptr<gui::ProgressBar>& Animal::getHpBar() const
 	return m_hpBar;
 }
 
-const gui::BrainPreview& Animal::getBrainPreview() const
+gui::BrainPreview& Animal::getBrainPreview() const
 {
 	return *m_brainPreview;
 }
@@ -452,8 +452,7 @@ void Animal::randomMutate(
 	const std::vector<sf::Event>& events
 )
 {
-	std::cout << brainMutationsCount << '\n';
-
+	std::clog << "mutations count: " << brainMutationsCount << '\n';
 	m_movementComponent->mutateBrain(brainMutationsCount);
 	m_brainPreview->update(mousePos, events);
 }
