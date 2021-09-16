@@ -682,8 +682,8 @@ void SimulationState::initBrainPreviewModifier()
 	const sf::VideoMode& resolution = m_stateData->m_gfxSettings->resolution;
 	
 	const sf::Vector2f size{
-		resolution.height / 2.0f,
-		resolution.height / 2.0f
+		0.75f * resolution.height,
+		0.75f * resolution.height
 	};
 
 	m_brainPreviewModifier = std::make_unique<gui::BrainPreviewModifier>(
@@ -1277,6 +1277,9 @@ void SimulationState::useEcosystemGodTools()
 	if (m_sideMenuIsRendered
 		&& sideMenuBg.getGlobalBounds().contains(mousePosWinF)) return;
 
+	if (m_brainPreviewModifier->getBrainPreview()
+		&& m_brainPreviewModifier->getBgBounds().contains(mousePosWinF)) return;
+		
 	m_stateData->m_ecosystem->useGodTools(
 		*m_stateData->m_events, 
 		m_mousePosView

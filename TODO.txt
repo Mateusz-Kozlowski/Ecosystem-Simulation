@@ -32,8 +32,6 @@ simulation state:
   save that changes and maybe other things
 
 UI:
-- don't use god tools if brain preview modifier hovers mouse cursor
-  (like in the case with SideMenu)
 - don't move view and modify pos of brain preview modifier neurons in the same time
 - highlight modified neurons in gui::BrainPreviewModifier;
   how? Maybe there is a better way but u can just use a sf::CircleShape 
