@@ -53,7 +53,6 @@ private:
 	void useEcosystemGodTools();
 
 	void updateBrainPreviewModifier();
-	void getUpdateFromAnimalsBrainsPreviews();
 
 private:
 	std::unordered_map<std::string, sf::Font> m_fonts;

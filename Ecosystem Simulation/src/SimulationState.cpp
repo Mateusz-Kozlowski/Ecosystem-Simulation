@@ -87,9 +87,12 @@ void SimulationState::render(sf::RenderTarget* target)
 		m_sideMenu->render(m_renderTexture);
 	}
 
-	if (m_brainPreviewModifier->getBrainPreview())
+	if (m_stateData->m_ecosystem->getAnimalWithModifiedBrain())
 	{
-		m_brainPreviewModifier->render(m_renderTexture);
+		m_brainPreviewModifier->render(
+			m_stateData->m_ecosystem->getAnimalWithModifiedBrain()->getBrainPreview(),
+			m_renderTexture
+		);
 	}
 
 	if (m_saveAsPanelIsRendered)
@@ -687,7 +690,6 @@ void SimulationState::initBrainPreviewModifier()
 	};
 
 	m_brainPreviewModifier = std::make_unique<gui::BrainPreviewModifier>(
-		nullptr,
 		sf::Vector2f(
 			(resolution.width - size.x) / 2.0f,
 			(resolution.height - size.y) / 2.0f
@@ -1277,7 +1279,7 @@ void SimulationState::useEcosystemGodTools()
 	if (m_sideMenuIsRendered
 		&& sideMenuBg.getGlobalBounds().contains(mousePosWinF)) return;
 
-	if (m_brainPreviewModifier->getBrainPreview()
+	if (m_stateData->m_ecosystem->getAnimalWithModifiedBrain()
 		&& m_brainPreviewModifier->getBgBounds().contains(mousePosWinF)) return;
 		
 	m_stateData->m_ecosystem->useGodTools(
@@ -1288,33 +1290,17 @@ void SimulationState::useEcosystemGodTools()
 
 void SimulationState::updateBrainPreviewModifier()
 {	
+	if (!m_stateData->m_ecosystem->getAnimalWithModifiedBrain()) return;
+	
 	m_brainPreviewModifier->update(
+		m_stateData->m_ecosystem->getAnimalWithModifiedBrain()->getBrainPreview(),
 		static_cast<sf::Vector2f>(m_mousePosWindow),
 		*m_stateData->m_events
 	);
 
-	if (m_brainPreviewModifier->getBrainPreview())
+	if (m_brainPreviewModifier->getCloseBtn()->hasBeenClicked())
 	{
-		if (m_brainPreviewModifier->getCloseBtn()->hasBeenClicked())
-		{
-			m_brainPreviewModifier->setBrainPreview(nullptr);
-			return;
-		}
-	}
-
-	getUpdateFromAnimalsBrainsPreviews();
-}
-
-void SimulationState::getUpdateFromAnimalsBrainsPreviews()
-{
-	for (const auto& animal : m_stateData->m_ecosystem->getAnimals())
-	{
-		if (animal->getBrainPreview().getImgBtn()->hasBeenClicked())
-		{
-			m_brainPreviewModifier->setBrainPreview(
-				&animal->getBrainPreview()
-			);
-			return;
-		}
-	}
+		m_stateData->m_ecosystem->stopModifyingBrainPreview();
+		return;
+	}	
 }

@@ -61,6 +61,8 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- don't allow to change modified brain if other is being modified
+- add saving which animal had brain preview modified
 - an amazing way to debug the law of energy conservation - calc total energy 
   after every method in update world
 - save fruits and animals count to file in order to know how many of them should be loaded
@@ -73,6 +75,12 @@ simulation/ecosystem:
   how to solve this?
   maybe when there will be lots of std::vectors of animals "the main vector"
   won't be sorted or shuffled and the saved idx will be relative to that vector...
+  
+  below I wrote that it won't work but i can work because changing the order
+  bacause of dying during simulation isn't the problem, the only problem is that
+  it uses pointers so after saving/loading there is an issue;
+  so introducing vector with constant order (except dying can work)
+
   that also won't work, because when an animal dies the order of ptrs change in every vector;
   so... maybe each animal should have an information if its tracked or not
 - restore increase/decrease methods in Animal and Food classes and in other places

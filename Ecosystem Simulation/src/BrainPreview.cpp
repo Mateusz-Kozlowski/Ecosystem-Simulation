@@ -149,15 +149,11 @@ void gui::BrainPreview::scale(float xScaleFactor, float yScaleFactor)
 			m_background.getSize().y * yScaleFactor
 		)
 	);
-
 	setNeuronsSizes();
-	
 	setInputNeuronsPos();
 	scaleHiddenNeuronsPos(xScaleFactor, yScaleFactor);
 	setOutputNeuronsPos();
-
 	setSynapsesPos();
-
 	setImgBtnSize();
 	setImgBtnPos();
 }

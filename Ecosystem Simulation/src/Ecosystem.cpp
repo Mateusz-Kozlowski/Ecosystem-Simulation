@@ -15,6 +15,7 @@ Ecosystem::Ecosystem()
 	, m_fruitsColor(sf::Color::Magenta)
 	, m_trackedAnimalColor(sf::Color::Magenta)
 	, m_trackedAnimal(nullptr)
+	, m_animalWithModifiedBrain(nullptr)
 	, m_simulationSpeedFactor(1.0f)
 	, m_simulationIsPaused(true)
 	, m_godTool(GodTool::NONE)
@@ -59,6 +60,7 @@ Ecosystem::Ecosystem(
 	, m_fruitsColor(fruitsColor)
 	, m_trackedAnimalColor(trackedAnimalColor)
 	, m_trackedAnimal(nullptr)
+	, m_animalWithModifiedBrain(nullptr)
 	, m_simulationSpeedFactor(simulationSpeedFactor)
 	, m_simulationIsPaused(simulationIsPaused)
 	, m_godTool(godTool)
@@ -104,6 +106,7 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_fruitsColor(sf::Color::Magenta)
 	, m_trackedAnimalColor(sf::Color::Magenta)
 	, m_trackedAnimal(nullptr)
+	, m_animalWithModifiedBrain(nullptr)
 	, m_simulationSpeedFactor(1.0f)
 	, m_simulationIsPaused(true)
 	, m_godTool(GodTool::NONE)
@@ -212,6 +215,8 @@ void Ecosystem::update(
 		m_totalTimeElapsed += dt;
 		updateWorld(dt, mousePos, events);
 	}
+
+	updateModifyingBrainsPreviews();
 }
 
 void Ecosystem::render(sf::RenderTarget& target) const
@@ -328,6 +333,11 @@ const sf::Color& Ecosystem::getTrackedAnimalColor() const
 const Animal* Ecosystem::getTrackedAnimal() const
 {
 	return m_trackedAnimal;
+}
+
+const Animal* Ecosystem::getAnimalWithModifiedBrain() const
+{
+	return m_animalWithModifiedBrain;
 }
 
 float Ecosystem::getSimulationSpeedFactor() const
@@ -499,6 +509,11 @@ void Ecosystem::showAllBrainsPreviews()
 	{
 		it.second = true;
 	}
+}
+
+void Ecosystem::stopModifyingBrainPreview()
+{
+	m_animalWithModifiedBrain = nullptr;
 }
 
 // private methods:
@@ -1527,6 +1542,11 @@ void Ecosystem::removeAnimal(std::shared_ptr<Animal>& animal)
 	{
 		m_trackedAnimal = nullptr;
 	}
+
+	if (animal.get() == m_animalWithModifiedBrain)
+	{
+		m_animalWithModifiedBrain = nullptr;
+	}
 	
 	std::swap(animal, m_animals.back());
 	m_animals.pop_back();
@@ -2052,4 +2072,16 @@ void Ecosystem::correctFruitsCount()
 		assert(fruit->getEnergy() < 2.0 * m_defaultFruitEnergy);
 	}
 	#endif
+}
+
+void Ecosystem::updateModifyingBrainsPreviews()
+{
+	for (const auto& animal : m_animals)
+	{
+		if (animal->getBrainPreview().getImgBtn()->hasBeenClicked())
+		{
+			m_animalWithModifiedBrain = animal.get();
+			return;
+		}
+	}
 }

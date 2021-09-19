@@ -74,6 +74,7 @@ public:
 	const sf::Color& getTrackedAnimalColor() const;
 
 	const Animal* getTrackedAnimal() const;
+	const Animal* getAnimalWithModifiedBrain() const;
 
 	float getSimulationSpeedFactor() const;
 
@@ -114,6 +115,8 @@ public:
 
 	void hideAllBrainsPreviews();
 	void showAllBrainsPreviews();
+
+	void stopModifyingBrainPreview();
 
 private:
 	// initialization:
@@ -302,6 +305,8 @@ private:
 
 	void correctFruitsCount();
 
+	void updateModifyingBrainsPreviews();
+
 private:
 	std::string m_name;
 
@@ -339,6 +344,7 @@ private:
 	sf::Color m_trackedAnimalColor;
 
 	Animal* m_trackedAnimal;
+	Animal* m_animalWithModifiedBrain;
 
 	float m_simulationSpeedFactor;
 
