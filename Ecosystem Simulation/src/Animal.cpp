@@ -238,6 +238,13 @@ void Animal::update(
 	m_timeElapsedSinceLastExternalHpChange += dt;
 }
 
+void Animal::updateOnlyBrainPreview(
+	const sf::Vector2f& mousePos, 
+	const std::vector<sf::Event>& events)
+{
+	updateBrainPreview(mousePos, events);
+}
+
 void Animal::renderBody(sf::RenderTarget& target) const
 {
 	target.draw(m_body);

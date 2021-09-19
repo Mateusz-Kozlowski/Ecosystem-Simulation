@@ -305,6 +305,11 @@ private:
 
 	void correctFruitsCount();
 
+	void updateOnlyBrainsPreviews(
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
+
 	void updateModifyingBrainsPreviews();
 
 private:

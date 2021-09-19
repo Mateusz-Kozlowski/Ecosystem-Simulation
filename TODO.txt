@@ -61,7 +61,10 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
-- don't allow to change modified brain if other is being modified
+- imgBtns don't work if animals are close to borders
+- fix an issue with position of brains previews after simulation stops
+- don't allow to change modified brain 
+  if other is being modified AND mouse hovers modifier
 - add saving which animal had brain preview modified
 - an amazing way to debug the law of energy conservation - calc total energy 
   after every method in update world

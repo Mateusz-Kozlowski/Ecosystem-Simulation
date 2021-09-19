@@ -30,6 +30,10 @@ public:
 		const sf::Vector2f& mousePos,
 		const std::vector<sf::Event>& events
 	);
+	void updateOnlyBrainPreview(
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
 
 	void renderBody(sf::RenderTarget& target) const;
 	void renderHpBar(sf::RenderTarget& target) const;

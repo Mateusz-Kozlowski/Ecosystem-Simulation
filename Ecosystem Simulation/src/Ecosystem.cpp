@@ -210,7 +210,11 @@ void Ecosystem::update(
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events)
 {
-	if (!m_simulationIsPaused)
+	if (m_simulationIsPaused)
+	{
+		updateOnlyBrainsPreviews(mousePos, events);
+	}
+	else
 	{
 		m_totalTimeElapsed += dt;
 		updateWorld(dt, mousePos, events);
@@ -2072,6 +2076,16 @@ void Ecosystem::correctFruitsCount()
 		assert(fruit->getEnergy() < 2.0 * m_defaultFruitEnergy);
 	}
 	#endif
+}
+
+void Ecosystem::updateOnlyBrainsPreviews(
+	const sf::Vector2f& mousePos, 
+	const std::vector<sf::Event>& events)
+{
+	for (auto& animal : m_animals)
+	{
+		animal->updateOnlyBrainPreview(mousePos, events);
+	}
 }
 
 void Ecosystem::updateModifyingBrainsPreviews()
