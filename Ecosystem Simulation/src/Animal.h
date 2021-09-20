@@ -30,7 +30,7 @@ public:
 		const sf::Vector2f& mousePos,
 		const std::vector<sf::Event>& events
 	);
-	void updateOnlyBrainPreview(
+	void updateOnlyImgBtnOfBrainPreview(
 		const sf::Vector2f& mousePos,
 		const std::vector<sf::Event>& events
 	);

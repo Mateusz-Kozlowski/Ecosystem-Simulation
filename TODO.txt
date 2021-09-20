@@ -61,8 +61,9 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- there is probably a bug with updating brain preview modifier
+  when a brain preview which is mutated isn't rendered
 - imgBtns don't work if animals are close to borders
-- fix an issue with position of brains previews after simulation stops
 - don't allow to change modified brain 
   if other is being modified AND mouse hovers modifier
 - add saving which animal had brain preview modified

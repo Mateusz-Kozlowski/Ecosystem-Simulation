@@ -20,6 +20,11 @@ namespace gui
 			const sf::Vector2f& mousePos,
 			const std::vector<sf::Event>& events
 		);
+		void updateOnlyImgBtn(
+			const sf::Vector2f& mousePos,
+			const std::vector<sf::Event>& events
+		);
+
 		void render(sf::RenderTarget& target, bool renderImgBtn) const;
 
 		// accessors:

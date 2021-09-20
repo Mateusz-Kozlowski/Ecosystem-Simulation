@@ -212,7 +212,7 @@ void Ecosystem::update(
 {
 	if (m_simulationIsPaused)
 	{
-		updateOnlyBrainsPreviews(mousePos, events);
+		updateOnlyImgBtnsOfBrainsPreviews(mousePos, events);
 	}
 	else
 	{
@@ -2078,13 +2078,13 @@ void Ecosystem::correctFruitsCount()
 	#endif
 }
 
-void Ecosystem::updateOnlyBrainsPreviews(
+void Ecosystem::updateOnlyImgBtnsOfBrainsPreviews(
 	const sf::Vector2f& mousePos, 
 	const std::vector<sf::Event>& events)
 {
 	for (auto& animal : m_animals)
 	{
-		animal->updateOnlyBrainPreview(mousePos, events);
+		animal->updateOnlyImgBtnOfBrainPreview(mousePos, events);
 	}
 }
 

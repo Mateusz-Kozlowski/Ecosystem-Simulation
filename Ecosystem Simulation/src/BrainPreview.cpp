@@ -29,6 +29,13 @@ void gui::BrainPreview::update(
 	updateImgBtn(mousePos, events);
 }
 
+void gui::BrainPreview::updateOnlyImgBtn(
+	const sf::Vector2f& mousePos, 
+	const std::vector<sf::Event>& events)
+{
+	updateImgBtn(mousePos, events);
+}
+
 void gui::BrainPreview::render(
 	sf::RenderTarget& target, 
 	bool renderImgBtn) const
