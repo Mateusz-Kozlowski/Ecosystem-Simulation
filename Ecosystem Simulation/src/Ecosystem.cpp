@@ -219,7 +219,7 @@ void Ecosystem::update(
 		m_totalTimeElapsed += dt;
 		updateWorld(dt, mousePos, events);
 	}
-
+	
 	updateModifyingBrainsPreviews();
 }
 
