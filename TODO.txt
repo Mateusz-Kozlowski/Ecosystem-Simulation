@@ -61,6 +61,7 @@ UI:
 - NEAT-RT preview with ability to move neurons and save that changes
 
 simulation/ecosystem:
+- implement id's system in Animals
 - there is probably a bug with updating brain preview modifier
   when a brain preview which is mutated isn't rendered
 - imgBtns don't work if animals are close to borders
