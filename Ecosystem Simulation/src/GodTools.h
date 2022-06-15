@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Libraries.h"
+
 enum class GodTool { NONE, MUTATE, TRACK, KILL, REPLACE, BRAIN, STOP, INFO };
 
 std::string getGodToolStr(GodTool godTool);

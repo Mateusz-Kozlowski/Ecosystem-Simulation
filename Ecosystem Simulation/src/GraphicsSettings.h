@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Libraries.h"
+
 class GraphicsSettings
 {
 public:

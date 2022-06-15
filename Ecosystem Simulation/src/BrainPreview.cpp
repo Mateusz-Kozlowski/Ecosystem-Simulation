@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "BrainPreview.h"
 
 gui::BrainPreview::BrainPreview(

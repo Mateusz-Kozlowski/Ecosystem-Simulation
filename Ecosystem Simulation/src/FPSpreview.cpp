@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "FPSpreview.h"
 
 bool gui::FPSpreview::s_initialized = false;

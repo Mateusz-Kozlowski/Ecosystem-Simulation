@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "LoadingState.h"
 
 LoadingState::LoadingState(StateData* stateData)

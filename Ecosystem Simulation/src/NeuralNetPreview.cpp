@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "NeuralNetPreview.h"
 
 gui::NeuralNetPreview::NeuralNetPreview(

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Slider.h"
 
 gui::Slider::Slider(

@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(SolutionDir)\external\Blueberry\include;$(SolutionDir)\external\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(SolutionDir)\external\Blueberry\include;$(SolutionDir)\external\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -136,7 +136,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(SolutionDir)\external\Blueberry\include;$(SolutionDir)\external\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -156,7 +156,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(SolutionDir)\external\Blueberry\include;$(SolutionDir)\external\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -195,16 +195,11 @@
     <ClCompile Include="src\MainMenuState.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\ImageButton.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Libraries.h" />
     <ClInclude Include="src\BrainPreviewModifier.h" />
     <ClInclude Include="src\FPSpreview.h" />
     <ClInclude Include="src\BrainPreview.h" />
@@ -228,7 +223,6 @@
     <ClInclude Include="src\Gui.h" />
     <ClInclude Include="src\MainMenuState.h" />
     <ClInclude Include="src\App.h" />
-    <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\State.h" />
     <ClInclude Include="src\ImageButton.h" />
   </ItemGroup>
@@ -238,6 +232,12 @@
     <None Include="config\main_menu_keybinds.ini" />
     <None Include="config\simulation_keybinds.ini" />
     <None Include="config\supported_keys.ini" />
+    <None Include="ecosystems\small\brains previews visibility.ini" />
+    <None Include="ecosystems\small\ecosystem.ini" />
+    <None Include="ecosystems\small\hp bars visibility.ini" />
+    <None Include="ecosystems\sth\brains previews visibility.ini" />
+    <None Include="ecosystems\sth\ecosystem.ini" />
+    <None Include="ecosystems\sth\hp bars visibility.ini" />
     <None Include="openal32.dll" />
     <None Include="resources\ecosystems templates\big.ini" />
     <None Include="resources\ecosystems templates\huge.ini" />
@@ -246,13 +246,22 @@
     <None Include="resources\textures\GUI\arrows\right arrow.xcf" />
     <None Include="resources\textures\GUI\God tools\brain\brain.xcf" />
     <None Include="resources\textures\GUI\God tools\clone.xcf" />
+    <None Include="resources\textures\GUI\God tools\clone\clone.xcf" />
     <None Include="resources\textures\GUI\God tools\cursors\cursor.xcf" />
+    <None Include="resources\textures\GUI\God tools\info\info.xcf" />
+    <None Include="resources\textures\GUI\God tools\kill\kill.xcf" />
+    <None Include="resources\textures\GUI\God tools\mutate\mutate.xcf" />
+    <None Include="resources\textures\GUI\God tools\remove previous version\remove.xcf" />
     <None Include="resources\textures\GUI\God tools\remove\remove.xcf" />
     <None Include="resources\textures\GUI\God tools\replace\replace.xcf" />
     <None Include="resources\textures\GUI\God tools\stop\stop.xcf" />
     <None Include="resources\textures\GUI\God tools\tool background.xcf" />
+    <None Include="resources\textures\GUI\God tools\track previous version\track.xcf" />
+    <None Include="resources\textures\GUI\God tools\track\track.xcf" />
+    <None Include="resources\textures\GUI\modification\brain preview modification.xcf" />
     <None Include="resources\textures\GUI\play and stop\play.xcf" />
     <None Include="resources\textures\GUI\play and stop\stop.xcf" />
+    <None Include="resources\textures\GUI\zoom\zoom.xcf" />
     <None Include="sfml-audio-2.dll" />
     <None Include="sfml-audio-d-2.dll" />
     <None Include="sfml-graphics-2.dll" />
@@ -269,42 +278,99 @@
     <Font Include="resources\fonts\Retroica.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resources\textures\GUI\arrows\left arrow dark.png" />
     <Image Include="resources\textures\GUI\arrows\left arrow hovered.png" />
     <Image Include="resources\textures\GUI\arrows\left arrow idle.png" />
+    <Image Include="resources\textures\GUI\arrows\left arrow light.png" />
     <Image Include="resources\textures\GUI\arrows\left arrow pressed.png" />
+    <Image Include="resources\textures\GUI\arrows\left arrow.png" />
+    <Image Include="resources\textures\GUI\arrows\right arrow dark.png" />
     <Image Include="resources\textures\GUI\arrows\right arrow hovered.png" />
     <Image Include="resources\textures\GUI\arrows\right arrow idle.png" />
+    <Image Include="resources\textures\GUI\arrows\right arrow light.png" />
     <Image Include="resources\textures\GUI\arrows\right arrow pressed.png" />
+    <Image Include="resources\textures\GUI\arrows\right arrow.png" />
+    <Image Include="resources\textures\GUI\God tools\brain\brain dark.png" />
     <Image Include="resources\textures\GUI\God tools\brain\brain hovered.png" />
     <Image Include="resources\textures\GUI\God tools\brain\brain idle.png" />
+    <Image Include="resources\textures\GUI\God tools\brain\brain light.png" />
     <Image Include="resources\textures\GUI\God tools\brain\brain pressed.png" />
+    <Image Include="resources\textures\GUI\God tools\brain\brain.png" />
+    <Image Include="resources\textures\GUI\God tools\clone\clone dark.png" />
     <Image Include="resources\textures\GUI\God tools\clone\clone hovered.png" />
     <Image Include="resources\textures\GUI\God tools\clone\clone idle.png" />
+    <Image Include="resources\textures\GUI\God tools\clone\clone light.png" />
     <Image Include="resources\textures\GUI\God tools\clone\clone pressed.png" />
+    <Image Include="resources\textures\GUI\God tools\clone\clone.png" />
     <Image Include="resources\textures\GUI\God tools\cursors\cursor hovered.png" />
     <Image Include="resources\textures\GUI\God tools\cursors\cursor idle.png" />
     <Image Include="resources\textures\GUI\God tools\cursors\cursor pressed.png" />
+    <Image Include="resources\textures\GUI\God tools\info\info dark.png" />
+    <Image Include="resources\textures\GUI\God tools\info\info light.png" />
+    <Image Include="resources\textures\GUI\God tools\info\info.png" />
+    <Image Include="resources\textures\GUI\God tools\kill\kill dark.png" />
+    <Image Include="resources\textures\GUI\God tools\kill\kill light.png" />
+    <Image Include="resources\textures\GUI\God tools\kill\kill.png" />
+    <Image Include="resources\textures\GUI\God tools\mutate\mutate dark.png" />
+    <Image Include="resources\textures\GUI\God tools\mutate\mutate light.png" />
+    <Image Include="resources\textures\GUI\God tools\mutate\mutate.png" />
+    <Image Include="resources\textures\GUI\God tools\remove previous version\remove dark.png" />
+    <Image Include="resources\textures\GUI\God tools\remove previous version\remove light.png" />
+    <Image Include="resources\textures\GUI\God tools\remove previous version\remove.png" />
     <Image Include="resources\textures\GUI\God tools\remove\remove hovered.png" />
     <Image Include="resources\textures\GUI\God tools\remove\remove idle.png" />
     <Image Include="resources\textures\GUI\God tools\remove\remove pressed.png" />
+    <Image Include="resources\textures\GUI\God tools\replace\replace dark.png" />
     <Image Include="resources\textures\GUI\God tools\replace\replace hovered.png" />
     <Image Include="resources\textures\GUI\God tools\replace\replace idle.png" />
+    <Image Include="resources\textures\GUI\God tools\replace\replace light.png" />
     <Image Include="resources\textures\GUI\God tools\replace\replace pressed.png" />
+    <Image Include="resources\textures\GUI\God tools\replace\replace.png" />
+    <Image Include="resources\textures\GUI\God tools\stop\stop dark.png" />
     <Image Include="resources\textures\GUI\God tools\stop\stop hovered.png" />
     <Image Include="resources\textures\GUI\God tools\stop\stop idle.png" />
+    <Image Include="resources\textures\GUI\God tools\stop\stop light.png" />
     <Image Include="resources\textures\GUI\God tools\stop\stop pressed.png" />
+    <Image Include="resources\textures\GUI\God tools\stop\stop.png" />
+    <Image Include="resources\textures\GUI\God tools\track previous version\track dark.png" />
+    <Image Include="resources\textures\GUI\God tools\track previous version\track light.png" />
+    <Image Include="resources\textures\GUI\God tools\track previous version\track.png" />
+    <Image Include="resources\textures\GUI\God tools\track\track dark.png" />
+    <Image Include="resources\textures\GUI\God tools\track\track light.png" />
+    <Image Include="resources\textures\GUI\God tools\track\track.png" />
+    <Image Include="resources\textures\GUI\modification\modification dark.png" />
+    <Image Include="resources\textures\GUI\modification\modification light.png" />
+    <Image Include="resources\textures\GUI\modification\modification.png" />
+    <Image Include="resources\textures\GUI\play and stop\play dark.png" />
     <Image Include="resources\textures\GUI\play and stop\play hovered.png" />
     <Image Include="resources\textures\GUI\play and stop\play idle.png" />
+    <Image Include="resources\textures\GUI\play and stop\play light.png" />
     <Image Include="resources\textures\GUI\play and stop\play pressed.png" />
+    <Image Include="resources\textures\GUI\play and stop\play.png" />
+    <Image Include="resources\textures\GUI\play and stop\stop dark.png" />
     <Image Include="resources\textures\GUI\play and stop\stop hovered.png" />
     <Image Include="resources\textures\GUI\play and stop\stop idle.png" />
+    <Image Include="resources\textures\GUI\play and stop\stop light.png" />
     <Image Include="resources\textures\GUI\play and stop\stop pressed.png" />
+    <Image Include="resources\textures\GUI\play and stop\stop.png" />
+    <Image Include="resources\textures\GUI\scale sliders\axes\axis dark.png" />
     <Image Include="resources\textures\GUI\scale sliders\axes\axis hovered.png" />
     <Image Include="resources\textures\GUI\scale sliders\axes\axis idle.png" />
+    <Image Include="resources\textures\GUI\scale sliders\axes\axis light.png" />
     <Image Include="resources\textures\GUI\scale sliders\axes\axis pressed.png" />
+    <Image Include="resources\textures\GUI\scale sliders\axes\axis.png" />
+    <Image Include="resources\textures\GUI\scale sliders\handles\handle dark.png" />
     <Image Include="resources\textures\GUI\scale sliders\handles\handle hovered.png" />
     <Image Include="resources\textures\GUI\scale sliders\handles\handle idle.png" />
+    <Image Include="resources\textures\GUI\scale sliders\handles\handle light.png" />
     <Image Include="resources\textures\GUI\scale sliders\handles\handle pressed.png" />
+    <Image Include="resources\textures\GUI\scale sliders\handles\handle.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom in dark.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom in light.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom in.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom out dark.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom out light.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom out.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

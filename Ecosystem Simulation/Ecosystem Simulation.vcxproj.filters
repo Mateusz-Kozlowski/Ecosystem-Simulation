@@ -4,9 +4,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\pch.cpp">
-      <Filter>precompiled files</Filter>
-    </ClCompile>
     <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -176,9 +173,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\pch.h">
-      <Filter>precompiled files</Filter>
-    </ClInclude>
     <ClInclude Include="src\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -253,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="src\BrainPreviewModifier.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Libraries.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -346,6 +343,21 @@
     <None Include="resources\ecosystems templates\small.ini">
       <Filter>resources\ecosystem templates</Filter>
     </None>
+    <None Include="resources\textures\GUI\God tools\clone\clone.xcf" />
+    <None Include="resources\textures\GUI\God tools\info\info.xcf" />
+    <None Include="resources\textures\GUI\God tools\kill\kill.xcf" />
+    <None Include="resources\textures\GUI\God tools\mutate\mutate.xcf" />
+    <None Include="resources\textures\GUI\God tools\remove previous version\remove.xcf" />
+    <None Include="resources\textures\GUI\God tools\track\track.xcf" />
+    <None Include="resources\textures\GUI\God tools\track previous version\track.xcf" />
+    <None Include="resources\textures\GUI\modification\brain preview modification.xcf" />
+    <None Include="resources\textures\GUI\zoom\zoom.xcf" />
+    <None Include="ecosystems\sth\brains previews visibility.ini" />
+    <None Include="ecosystems\sth\ecosystem.ini" />
+    <None Include="ecosystems\sth\hp bars visibility.ini" />
+    <None Include="ecosystems\small\ecosystem.ini" />
+    <None Include="ecosystems\small\hp bars visibility.ini" />
+    <None Include="ecosystems\small\brains previews visibility.ini" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\Retroica.ttf">
@@ -464,5 +476,62 @@
     <Image Include="resources\textures\GUI\God tools\stop\stop pressed.png">
       <Filter>resources\textures\GUI\God tools\stop</Filter>
     </Image>
+    <Image Include="resources\textures\GUI\arrows\left arrow dark.png" />
+    <Image Include="resources\textures\GUI\arrows\left arrow light.png" />
+    <Image Include="resources\textures\GUI\arrows\left arrow.png" />
+    <Image Include="resources\textures\GUI\arrows\right arrow dark.png" />
+    <Image Include="resources\textures\GUI\arrows\right arrow light.png" />
+    <Image Include="resources\textures\GUI\arrows\right arrow.png" />
+    <Image Include="resources\textures\GUI\God tools\brain\brain dark.png" />
+    <Image Include="resources\textures\GUI\God tools\brain\brain.png" />
+    <Image Include="resources\textures\GUI\God tools\brain\brain light.png" />
+    <Image Include="resources\textures\GUI\God tools\clone\clone dark.png" />
+    <Image Include="resources\textures\GUI\God tools\clone\clone light.png" />
+    <Image Include="resources\textures\GUI\God tools\clone\clone.png" />
+    <Image Include="resources\textures\GUI\God tools\info\info dark.png" />
+    <Image Include="resources\textures\GUI\God tools\info\info light.png" />
+    <Image Include="resources\textures\GUI\God tools\info\info.png" />
+    <Image Include="resources\textures\GUI\God tools\kill\kill dark.png" />
+    <Image Include="resources\textures\GUI\God tools\kill\kill light.png" />
+    <Image Include="resources\textures\GUI\God tools\kill\kill.png" />
+    <Image Include="resources\textures\GUI\God tools\mutate\mutate light.png" />
+    <Image Include="resources\textures\GUI\God tools\mutate\mutate dark.png" />
+    <Image Include="resources\textures\GUI\God tools\mutate\mutate.png" />
+    <Image Include="resources\textures\GUI\God tools\remove previous version\remove dark.png" />
+    <Image Include="resources\textures\GUI\God tools\remove previous version\remove light.png" />
+    <Image Include="resources\textures\GUI\God tools\remove previous version\remove.png" />
+    <Image Include="resources\textures\GUI\God tools\replace\replace dark.png" />
+    <Image Include="resources\textures\GUI\God tools\replace\replace light.png" />
+    <Image Include="resources\textures\GUI\God tools\replace\replace.png" />
+    <Image Include="resources\textures\GUI\God tools\stop\stop dark.png" />
+    <Image Include="resources\textures\GUI\God tools\stop\stop light.png" />
+    <Image Include="resources\textures\GUI\God tools\stop\stop.png" />
+    <Image Include="resources\textures\GUI\God tools\track\track dark.png" />
+    <Image Include="resources\textures\GUI\God tools\track\track light.png" />
+    <Image Include="resources\textures\GUI\God tools\track\track.png" />
+    <Image Include="resources\textures\GUI\God tools\track previous version\track dark.png" />
+    <Image Include="resources\textures\GUI\God tools\track previous version\track light.png" />
+    <Image Include="resources\textures\GUI\God tools\track previous version\track.png" />
+    <Image Include="resources\textures\GUI\modification\modification dark.png" />
+    <Image Include="resources\textures\GUI\modification\modification light.png" />
+    <Image Include="resources\textures\GUI\modification\modification.png" />
+    <Image Include="resources\textures\GUI\play and stop\play dark.png" />
+    <Image Include="resources\textures\GUI\play and stop\play light.png" />
+    <Image Include="resources\textures\GUI\play and stop\play.png" />
+    <Image Include="resources\textures\GUI\play and stop\stop dark.png" />
+    <Image Include="resources\textures\GUI\play and stop\stop light.png" />
+    <Image Include="resources\textures\GUI\play and stop\stop.png" />
+    <Image Include="resources\textures\GUI\scale sliders\axes\axis dark.png" />
+    <Image Include="resources\textures\GUI\scale sliders\axes\axis light.png" />
+    <Image Include="resources\textures\GUI\scale sliders\axes\axis.png" />
+    <Image Include="resources\textures\GUI\scale sliders\handles\handle dark.png" />
+    <Image Include="resources\textures\GUI\scale sliders\handles\handle light.png" />
+    <Image Include="resources\textures\GUI\scale sliders\handles\handle.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom in dark.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom in.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom in light.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom out dark.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom out light.png" />
+    <Image Include="resources\textures\GUI\zoom\zoom out.png" />
   </ItemGroup>
 </Project>

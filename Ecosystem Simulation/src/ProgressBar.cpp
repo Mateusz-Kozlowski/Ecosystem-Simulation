@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "ProgressBar.h"
 
 gui::ProgressBar::ProgressBar()

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "MainMenuState.h"
 
 MainMenuState::MainMenuState(StateData* stateData)

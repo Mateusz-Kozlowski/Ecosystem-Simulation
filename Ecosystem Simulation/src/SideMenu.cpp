@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "SideMenu.h"
 
 gui::SideMenu::SideMenu(

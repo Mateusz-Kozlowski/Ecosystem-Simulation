@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "EventsAccessor.h"
 
 bool EventsAccessor::hasEventOccured(

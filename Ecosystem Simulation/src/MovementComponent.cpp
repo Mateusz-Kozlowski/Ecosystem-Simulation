@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "MovementComponent.h"
 
 MovementComponent::MovementComponent()

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "TextBox.h"
 
 gui::TextBox::TextBox(

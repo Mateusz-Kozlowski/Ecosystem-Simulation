@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Libraries.h"
+
 static class EventsAccessor
 {
 public:
