@@ -6,7 +6,7 @@ class Fruit
 {
 public:
 	Fruit(
-		const Blueberry::Scalar& energy,
+		unsigned energy,
 		const sf::Vector2f& position,
 		float radius,
 		const sf::Color& color
@@ -24,7 +24,7 @@ public:
 
 	// accessors:
 
-	const Blueberry::Scalar& getEnergy() const;
+	unsigned getEnergy() const;
 
 	const sf::Vector2f& getPosition() const;
 
@@ -34,7 +34,7 @@ public:
 
 	// mutators:
 
-	void setEnergy(const Blueberry::Scalar& energy);
+	void setEnergy(unsigned energy);
 	
 	void setPosition(float x, float y);
 	void setPosition(const sf::Vector2f& newPosition);
@@ -56,7 +56,7 @@ private:
 	);
 	
 private:
-	Blueberry::Scalar m_energy;
+	unsigned m_energy;
 
 	sf::CircleShape m_shape;
 };

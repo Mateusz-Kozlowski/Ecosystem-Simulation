@@ -4,14 +4,13 @@
 
 namespace gui
 {
-	class ProgressBar
+	class IntProgressBar
 	{
 	public:
-		ProgressBar();
-		ProgressBar(
-			const std::pair<double, double>& valuesRange,
-			bool correctOverRangeValues,
-			double defaultValue,
+		IntProgressBar();
+		IntProgressBar(
+			const sf::Vector2i& valuesRange,
+			int defaultValue,
 			const sf::Vector2f& position,
 			const sf::Vector2f& size,
 			const sf::Color& backgroundColor,
@@ -22,11 +21,9 @@ namespace gui
 
 		// accessors:
 
-		const std::pair<double, double>& getValuesRange() const;
+		const sf::Vector2i& getValuesRange() const;
 
-		bool overRangeValuesAreCorrected() const;
-
-		double getCurrentValue() const;
+		int getCurrentValue() const;
 
 		const sf::Vector2f& getPosition() const;
 		const sf::Vector2f& getSize() const;
@@ -36,15 +33,11 @@ namespace gui
 
 		// mutators:
 
-		void setValuesRange(const std::pair<double, double>& valuesRange);
+		void setValuesRange(const sf::Vector2i& valuesRange);
 
-		void setCorrectingOverRangeValues(
-			bool correctOverRangeValues
-		);
-
-		void setValue(double value);
-		void increaseValue(double valueIncrease);
-		void decreaseValue(double valueDecrease);
+		void setValue(int value);
+		void increaseValue(int valueIncrease);
+		void decreaseValue(int valueDecrease);
 
 		void setPosition(const sf::Vector2f& position);
 		void setSize(const sf::Vector2f& size);
@@ -65,19 +58,15 @@ namespace gui
 		);
 		
 		// utils:
-
-		void avoidOverRangeValue();
-
+		
 		void updateProgressRectSize();
 
-		double getRangeLength();
+		int getRangeLength();
 
 	private:
-		std::pair<double, double> m_valuesRange;
+		sf::Vector2i m_valuesRange;
 		
-		bool m_overRangeValuesAreCorrected;
-
-		double m_value;
+		int m_value;
 
 		sf::RectangleShape m_background;
 		sf::RectangleShape m_progressRect;

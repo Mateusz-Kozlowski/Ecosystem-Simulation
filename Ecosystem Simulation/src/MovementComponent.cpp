@@ -2,8 +2,8 @@
 
 MovementComponent::MovementComponent()
 	: m_brain(std::make_unique<Blueberry::Brain>(5U, 2U))
-	, m_prevVelocity(0.0f, 0.0f)
-	, m_velocity(0.0f, 0.0f)
+	, m_prevVelocity(0, 0)
+	, m_velocity(0, 0)
 	, m_acceleration(0.0f, 0.0f)
 {
 	m_brain->mutateRandomNeuronBias();
@@ -14,7 +14,7 @@ MovementComponent::MovementComponent(
 	const sf::Vector2f& defaultVelocity,
 	const char* brainFilePath)
 	: m_brain(std::make_unique<Blueberry::Brain>(0U, 0U))
-	, m_prevVelocity(0.0f, 0.0f)
+	, m_prevVelocity(0, 0)
 	, m_velocity(defaultVelocity)
 	, m_acceleration(0.0f, 0.0f)
 {
@@ -23,7 +23,7 @@ MovementComponent::MovementComponent(
 
 MovementComponent::MovementComponent(const MovementComponent& rhs)
 	: m_brain(std::make_unique<Blueberry::Brain>(0U, 0U))
-	, m_prevVelocity(0.0f, 0.0f)
+	, m_prevVelocity(0, 0)
 	, m_velocity(rhs.m_velocity)
 	, m_acceleration(rhs.m_acceleration)
 {
@@ -55,7 +55,7 @@ void MovementComponent::loadBrainFromFile(const char* filePath)
 
 void MovementComponent::update(
 	float dt,
-	const Blueberry::Scalar& availableEnergy,
+	unsigned availableEnergy,
 	float speedFactor,
 	const std::vector<Blueberry::Scalar>& brainInputs,
 	bool allowUserInput)
@@ -72,8 +72,8 @@ void MovementComponent::update(
 
 	m_prevVelocity = m_velocity;
 
-	m_velocity.x += m_acceleration.x * dt;
-	m_velocity.y += m_acceleration.y * dt;
+	m_velocity.x += static_cast<int>(m_acceleration.x);
+	m_velocity.y += static_cast<int>(m_acceleration.y);
 }
 
 // accessors:
@@ -83,36 +83,45 @@ const Blueberry::Brain& MovementComponent::getBrain() const
 	return *m_brain;
 }
 
-Blueberry::Scalar MovementComponent::getEnergyToExpel() const
+unsigned MovementComponent::getEnergyToExpel() const
 {
-	if (getKineticEnergyDelta() >= 0.0) return 0.0;
+	if (getKineticEnergyDelta() >= 0) return 0;
 
-	return -2.0 * getKineticEnergyDelta();
+	//std::cout << "THERE IS SOME ENERGY TO EXPEL!\n";
+
+	if (getKineticEnergyDelta() > 4'000'000'000)
+	{
+		std::cout << "UNSIGNED BUG FROM getKineticEnergyDelta() const!\n";
+	}
+
+	// hp change = kin E change and both of them are now smaller so the energy has to be expeled
+	// for example as a new food that the can be eaten by an animal to which the MovementComponent belongs
+	return -2 * getKineticEnergyDelta();
 }
 
-Blueberry::Scalar MovementComponent::getKineticEnergyDelta() const
+int MovementComponent::getKineticEnergyDelta() const
 {
-	return getKineticEnergy() - getPreviousKineticEnergy();
+	return static_cast<int>(getKineticEnergy()) - static_cast<int>(getPreviousKineticEnergy());
 }
 
-Blueberry::Scalar MovementComponent::getPreviousKineticEnergy() const
+unsigned MovementComponent::getPreviousKineticEnergy() const
 {
-	return 0.5 * std::pow(getPreviousVelocityVectorValue(), 2.0);
+	return getPreviousVelocityVectorSquaredValue();
 }
 
-Blueberry::Scalar MovementComponent::getKineticEnergy() const
+unsigned MovementComponent::getKineticEnergy() const
 {
-	return 0.5 * std::pow(getVelocityVectorValue(), 2.0);
+	return getVelocityVectorSquaredValue();
 }
 
-float MovementComponent::getPreviousVelocityVectorValue() const
+unsigned MovementComponent::getPreviousVelocityVectorSquaredValue() const
 {
-	return getVectorValue(m_prevVelocity);
+	return getVectorSquaredValue(m_prevVelocity);
 }
 
-float MovementComponent::getVelocityVectorValue() const
+unsigned MovementComponent::getVelocityVectorSquaredValue() const
 {
-	return getVectorValue(m_velocity);
+	return getVectorSquaredValue(m_velocity);
 }
 
 float MovementComponent::getAccelerationVectorValue() const
@@ -120,12 +129,12 @@ float MovementComponent::getAccelerationVectorValue() const
 	return getVectorValue(m_acceleration);
 }
 
-const sf::Vector2f& MovementComponent::getPreviousVelocityVector() const
+const sf::Vector2i& MovementComponent::getPreviousVelocityVector() const
 {
 	return m_prevVelocity;
 }
 
-const sf::Vector2f& MovementComponent::getVelocityVector() const
+const sf::Vector2i& MovementComponent::getVelocityVector() const
 {
 	return m_velocity;
 }
@@ -142,25 +151,25 @@ void MovementComponent::mutateBrain(unsigned brainMutationsCount)
 	m_brain->mutate(brainMutationsCount);
 }
 
-void MovementComponent::setVelocity(const sf::Vector2f& velocity)
+void MovementComponent::setVelocity(const sf::Vector2i& velocity)
 {
 	setVelocity(velocity.x, velocity.y);
 }
 
-void MovementComponent::setVelocity(float x, float y)
+void MovementComponent::setVelocity(unsigned x, unsigned y)
 {
 	m_prevVelocity = m_velocity;
 	m_velocity.x = x;
 	m_velocity.y = y;
 }
 
-void MovementComponent::setVelocityX(float vx)
+void MovementComponent::setVelocityX(unsigned vx)
 {
 	m_prevVelocity = m_velocity;
 	m_velocity.x = vx;
 }
 
-void MovementComponent::setVelocityY(float vy)
+void MovementComponent::setVelocityY(unsigned vy)
 {
 	m_prevVelocity = m_velocity;
 	m_velocity.y = vy;
@@ -175,11 +184,17 @@ void MovementComponent::updateAcceleration(
 {
 	m_brain->propagateForward(brainInputs);
 
-	typedef Blueberry::Scalar Scalar;
-	const std::vector<Scalar>& brainOutput = m_brain->getOutput();
+	const std::vector<Blueberry::Scalar>& brainOutput = m_brain->getOutput();
 	
-	m_acceleration.x = brainOutput[0];
-	m_acceleration.y = brainOutput[1];
+	//std::cout << "LOL?\n";
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+	{
+		std::cout << brainOutput[0] << ' ';
+		std::cout << brainOutput[1] << '\n';
+	}
+
+	m_acceleration.x = 10.0 * brainOutput[0];
+	m_acceleration.y = 10.0 * brainOutput[1];
 
 	if (allowUserInput)
 	{
@@ -199,7 +214,7 @@ void MovementComponent::handleUserInput()
 		m_acceleration = sf::Vector2f(0.0f, 0.0f);
 
 		// TODO: unhardcode:
-		float userInputForce = 256.0f;
+		float userInputForce = 16.0f;
 
 		if (left)
 		{
@@ -222,7 +237,7 @@ void MovementComponent::handleUserInput()
 
 bool MovementComponent::accelerationIsImpossible(
 	float dt, 
-	const Blueberry::Scalar& availableEnergy)
+	unsigned availableEnergy)
 {
 	// previous and wrong approach to solve the problem:
 	// check if hp will be greater than 0:
@@ -241,28 +256,37 @@ bool MovementComponent::accelerationIsImpossible(
 
 	// check if total energy will be greater than 0:
 
+	// it used to be like this but I want it to be independable from FPS count:
+	/*
 	const sf::Vector2f velVectDelta{
 		m_acceleration.x * dt,
 		m_acceleration.y * dt
 	};
+	*/
+	const sf::Vector2i velVectDelta{
+		static_cast<int>(m_acceleration.x),
+		static_cast<int>(m_acceleration.y)
+	};
 	
-	const sf::Vector2f newVelVect = m_velocity + velVectDelta;
+	const sf::Vector2i newVelVect = m_velocity + velVectDelta;
 	
-	const Blueberry::Scalar newKinEnergy = 0.5 * std::pow(
-		getVectorValue(newVelVect), 
-		2.0
+	int newKinEnergy = getVectorSquaredValue(newVelVect);
+
+	int newHp = static_cast<int>(availableEnergy) - abs(
+		newKinEnergy - static_cast<int>(getKineticEnergy())
 	);
 
-	const Blueberry::Scalar newHp = availableEnergy - abs(
-		newKinEnergy - getKineticEnergy()
-	);
+	int newTotalEnergy = newKinEnergy + newHp;
 
-	const Blueberry::Scalar newTotalEnergy = newKinEnergy + newHp;
-
-	return newTotalEnergy < 0.0;
+	return newTotalEnergy < 0;
 }
 
 float MovementComponent::getVectorValue(const sf::Vector2f& vector)
 {
 	return sqrt(std::pow(vector.x, 2.0f) + std::pow(vector.y, 2.0f));
+}
+
+float MovementComponent::getVectorSquaredValue(const sf::Vector2i& vector)
+{
+	return vector.x * vector.x + vector.y * vector.y;
 }

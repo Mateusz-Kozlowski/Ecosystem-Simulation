@@ -169,6 +169,8 @@ void SimulationState::initFonts()
 void SimulationState::initEcosystem()
 {
 	m_stateData->m_ecosystem->pauseSimulation();
+	m_stateData->m_ecosystem->printInfo();
+	std::cout << '\n';
 }
 
 void SimulationState::initView()

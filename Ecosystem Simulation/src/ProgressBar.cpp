@@ -1,39 +1,31 @@
 #include "ProgressBar.h"
 
-gui::ProgressBar::ProgressBar()
+gui::IntProgressBar::IntProgressBar()
 	: m_valuesRange()
-	, m_overRangeValuesAreCorrected(false)
-	, m_value(0.0)
+	, m_value(0)
 	, m_background()
 	, m_progressRect()
 {
 	
 }
 
-gui::ProgressBar::ProgressBar(
-	const std::pair<double, double>& valuesRange,
-	bool correctOverRangeValues,
-	double defaultValue,
+gui::IntProgressBar::IntProgressBar(
+	const sf::Vector2i& valuesRange,
+	int defaultValue,
 	const sf::Vector2f& position,
 	const sf::Vector2f& size,
 	const sf::Color& backgroundColor,
 	const sf::Color& progressRectColor)
 	: m_valuesRange(valuesRange)
-	, m_overRangeValuesAreCorrected(correctOverRangeValues)
 	, m_value(defaultValue)
 	, m_background(size)
 	, m_progressRect()
 {
-	if (correctOverRangeValues)
-	{
-		avoidOverRangeValue();
-	}
-
 	initBackground(position, backgroundColor);
 	initProgressRect(position, progressRectColor);
 }
 
-void gui::ProgressBar::render(sf::RenderTarget& target) const
+void gui::IntProgressBar::render(sf::RenderTarget& target) const
 {
 	target.draw(m_background);
 	target.draw(m_progressRect);
@@ -41,122 +33,85 @@ void gui::ProgressBar::render(sf::RenderTarget& target) const
 
 // accessors:
 
-const std::pair<double, double>& gui::ProgressBar::getValuesRange() const
+const sf::Vector2i& gui::IntProgressBar::getValuesRange() const
 {
 	return m_valuesRange;
 }
 
-bool gui::ProgressBar::overRangeValuesAreCorrected() const
-{
-	return m_overRangeValuesAreCorrected;
-}
-
-double gui::ProgressBar::getCurrentValue() const
+int gui::IntProgressBar::getCurrentValue() const
 {
 	return m_value;
 }
 
-const sf::Vector2f& gui::ProgressBar::getPosition() const
+const sf::Vector2f& gui::IntProgressBar::getPosition() const
 {
 	return m_background.getPosition();
 }
 
-const sf::Vector2f& gui::ProgressBar::getSize() const
+const sf::Vector2f& gui::IntProgressBar::getSize() const
 {
 	return m_background.getSize();
 }
 
-const sf::Color& gui::ProgressBar::getBackgroundColor() const
+const sf::Color& gui::IntProgressBar::getBackgroundColor() const
 {
 	return m_background.getFillColor();
 }
 
-const sf::Color& gui::ProgressBar::getProgressRectColor() const
+const sf::Color& gui::IntProgressBar::getProgressRectColor() const
 {
 	return m_progressRect.getFillColor();
 }
 
 // mutators:
 
-void gui::ProgressBar::setValuesRange(
-	const std::pair<double, double>& valuesRange)
+void gui::IntProgressBar::setValuesRange(const sf::Vector2i& valuesRange)
 {
 	m_valuesRange = valuesRange;
 
-	if (m_overRangeValuesAreCorrected)
-	{
-		avoidOverRangeValue();
-	}
-
 	updateProgressRectSize();
 }
 
-void gui::ProgressBar::setCorrectingOverRangeValues(
-	bool correctOverRangeValues)
-{
-	m_overRangeValuesAreCorrected = correctOverRangeValues;
-
-	if (correctOverRangeValues) 
-	{
-		avoidOverRangeValue();
-	}
-}
-
-void gui::ProgressBar::setValue(double value)
+void gui::IntProgressBar::setValue(int value)
 {
 	m_value = value;
 
-	if (m_overRangeValuesAreCorrected)
-	{
-		avoidOverRangeValue();
-	}
-
 	updateProgressRectSize();
 }
 
-void gui::ProgressBar::increaseValue(double valueIncrease)
+void gui::IntProgressBar::increaseValue(int valueIncrease)
 {
 	m_value = m_value + valueIncrease; // += operator can cause a bug
 
-	if (m_overRangeValuesAreCorrected)
-	{
-		avoidOverRangeValue();
-	}
-
 	updateProgressRectSize();
 }
 
-void gui::ProgressBar::decreaseValue(double valueDecrease)
+void gui::IntProgressBar::decreaseValue(int valueDecrease)
 {
 	m_value = m_value - valueDecrease; // -= operator can cause a bug
 
-	if (m_overRangeValuesAreCorrected)
-	{
-		avoidOverRangeValue();
-	}
-
 	updateProgressRectSize();
 }
 
-void gui::ProgressBar::setPosition(const sf::Vector2f& position)
+void gui::IntProgressBar::setPosition(const sf::Vector2f& position)
 {
 	m_background.setPosition(position);
 	m_progressRect.setPosition(position);
 }
 
-void gui::ProgressBar::setSize(const sf::Vector2f& size)
+void gui::IntProgressBar::setSize(const sf::Vector2f& size)
 {
 	m_background.setSize(size);
 
 	updateProgressRectSize();
 }
 
-void gui::ProgressBar::setBackgroundColor(const sf::Color& backgroundColor)
+void gui::IntProgressBar::setBackgroundColor(const sf::Color& backgroundColor)
 {
 	m_background.setFillColor(backgroundColor);
 }
 
-void gui::ProgressBar::setProgressRectColor(
+void gui::IntProgressBar::setProgressRectColor(
 	const sf::Color& progressRectColor)
 {
 	m_progressRect.setFillColor(progressRectColor);
@@ -166,7 +121,7 @@ void gui::ProgressBar::setProgressRectColor(
 
 // initialization:
 
-void gui::ProgressBar::initBackground(
+void gui::IntProgressBar::initBackground(
 	const sf::Vector2f& position,
 	const sf::Color& backgroundColor)
 {
@@ -174,7 +129,7 @@ void gui::ProgressBar::initBackground(
 	m_background.setFillColor(backgroundColor);
 }
 
-void gui::ProgressBar::initProgressRect(
+void gui::IntProgressBar::initProgressRect(
 	const sf::Vector2f& position, 
 	const sf::Color& progressRectColor)
 {
@@ -185,36 +140,23 @@ void gui::ProgressBar::initProgressRect(
 
 // utils:
 
-void gui::ProgressBar::avoidOverRangeValue()
+void gui::IntProgressBar::updateProgressRectSize()
 {
-	if (m_value > m_valuesRange.second)
-	{
-		m_value = m_valuesRange.second;
-	}
+	int correctedValue = m_value;
 
-	else if (m_value < m_valuesRange.first)
-	{
-		m_value = m_valuesRange.first;
-	}
-}
-
-void gui::ProgressBar::updateProgressRectSize()
-{
-	double correctedValue = m_value;
-
-	correctedValue = std::min(correctedValue, m_valuesRange.second);
-	correctedValue = std::max(correctedValue, m_valuesRange.first);
+	correctedValue = std::min(correctedValue, m_valuesRange.y);
+	correctedValue = std::max(correctedValue, m_valuesRange.x);
 
 	m_progressRect.setSize(
 		sf::Vector2f(
-			m_background.getSize().x * (correctedValue - m_valuesRange.first)
+			m_background.getSize().x * (correctedValue - m_valuesRange.x)
 			/ getRangeLength(),
 			m_background.getSize().y
 		)
 	);
 }
 
-double gui::ProgressBar::getRangeLength()
+int gui::IntProgressBar::getRangeLength()
 {
-	return m_valuesRange.second - m_valuesRange.first;
+	return m_valuesRange.y - m_valuesRange.x;
 }

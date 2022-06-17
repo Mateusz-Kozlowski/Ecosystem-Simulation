@@ -18,7 +18,7 @@ public:
 
 	void update(
 		float dt,
-		const Blueberry::Scalar& availableEnergy,
+		unsigned availableEnergy,
 		float speedFactor,
 		const std::vector<Blueberry::Scalar>& brainInputs,
 		bool allowUserInput
@@ -28,28 +28,28 @@ public:
 
 	const Blueberry::Brain& getBrain() const;
 
-	Blueberry::Scalar getEnergyToExpel() const;
-	Blueberry::Scalar getKineticEnergyDelta() const;
-	Blueberry::Scalar getPreviousKineticEnergy() const;
-	Blueberry::Scalar getKineticEnergy() const;
+	unsigned getEnergyToExpel() const;
+	int getKineticEnergyDelta() const;
+	unsigned getPreviousKineticEnergy() const;
+	unsigned getKineticEnergy() const;
 
-	float getPreviousVelocityVectorValue() const;
-	float getVelocityVectorValue() const;
+	unsigned getPreviousVelocityVectorSquaredValue() const;
+	unsigned getVelocityVectorSquaredValue() const;
 	float getAccelerationVectorValue() const;
 
-	const sf::Vector2f& getPreviousVelocityVector() const;
-	const sf::Vector2f& getVelocityVector() const;
+	const sf::Vector2i& getPreviousVelocityVector() const;
+	const sf::Vector2i& getVelocityVector() const;
 	const sf::Vector2f& getAccelerationVector() const;
 
 	// mutators:
 
 	void mutateBrain(unsigned brainMutationsCount);
 
-	void setVelocity(const sf::Vector2f& velocity);
-	void setVelocity(float x, float y);
+	void setVelocity(const sf::Vector2i& velocity);
+	void setVelocity(unsigned x, unsigned y);
 
-	void setVelocityX(float vx);
-	void setVelocityY(float vy);
+	void setVelocityX(unsigned vx);
+	void setVelocityY(unsigned vy);
 
 private:
 	void updateAcceleration(
@@ -60,16 +60,17 @@ private:
 
 	bool accelerationIsImpossible(
 		float dt, 
-		const Blueberry::Scalar& availableEnergy
+		unsigned availableEnergy
 	);
 	static float getVectorValue(const sf::Vector2f& vector);
+	static float getVectorSquaredValue(const sf::Vector2i& vector);
 
 private:
 	std::unique_ptr<Blueberry::Brain> m_brain;
 
 	// kinematics:
 
-	sf::Vector2f m_prevVelocity;
-	sf::Vector2f m_velocity;
+	sf::Vector2i m_prevVelocity;
+	sf::Vector2i m_velocity;
 	sf::Vector2f m_acceleration;
 };

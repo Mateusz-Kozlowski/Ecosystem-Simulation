@@ -7,8 +7,8 @@ Ecosystem::Ecosystem()
 	, m_fruits()
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
-	, m_defaultAnimalsHp(0.0)
-	, m_defaultFruitEnergy(0.0)
+	, m_defaultAnimalsHp(0U)
+	, m_defaultFruitEnergy(0U)
 	, m_mutationsPerMutation(0U)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
@@ -35,8 +35,8 @@ Ecosystem::Ecosystem(
 	unsigned fruitsCount,
 	float animalsRadius,
 	float fruitsRadius,
-	const Blueberry::Scalar& defaultAnimalsHp,
-	const Blueberry::Scalar& defaultFruitsEnergy,
+	unsigned defaultAnimalsHp,
+	unsigned defaultFruitsEnergy,
 	unsigned mutationsPerMutation,
 	const sf::Color& animalsColor,
 	const sf::Color& fruitsColor,
@@ -98,8 +98,8 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_fruits()
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
-	, m_defaultAnimalsHp(0.0)
-	, m_defaultFruitEnergy(0.0)
+	, m_defaultAnimalsHp(0U)
+	, m_defaultFruitEnergy(0U)
 	, m_mutationsPerMutation(0U)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
@@ -368,9 +368,9 @@ float Ecosystem::getTotalTimeElapsed() const
 	return m_totalTimeElapsed;
 }
 
-Blueberry::Scalar Ecosystem::getTotalAnimalsHpEnergy() const
+unsigned Ecosystem::getTotalAnimalsHpEnergy() const
 {
-	Blueberry::Scalar totalHpEnergy = 0.0;
+	unsigned totalHpEnergy = 0.0;
 
 	for (const auto& animal : m_animals)
 	{
@@ -380,9 +380,9 @@ Blueberry::Scalar Ecosystem::getTotalAnimalsHpEnergy() const
 	return totalHpEnergy;
 }
 
-Blueberry::Scalar Ecosystem::getTotalAnimalsKineticEnergy() const
+unsigned Ecosystem::getTotalAnimalsKineticEnergy() const
 {
-	Blueberry::Scalar totalKineticEnergy = 0.0;
+	unsigned totalKineticEnergy = 0U;
 
 	for (const auto& animal : m_animals)
 	{
@@ -392,9 +392,9 @@ Blueberry::Scalar Ecosystem::getTotalAnimalsKineticEnergy() const
 	return totalKineticEnergy;
 }
 
-Blueberry::Scalar Ecosystem::getTotalFruitsEnergy() const
+unsigned Ecosystem::getTotalFruitsEnergy() const
 {
-	Blueberry::Scalar totalFruitsEnergy = 0.0;
+	unsigned totalFruitsEnergy = 0U;
 
 	for (const auto& fruit : m_fruits)
 	{
@@ -404,11 +404,25 @@ Blueberry::Scalar Ecosystem::getTotalFruitsEnergy() const
 	return totalFruitsEnergy;
 }
 
-Blueberry::Scalar Ecosystem::getTotalEnergy() const
+unsigned Ecosystem::getTotalEnergy(bool print) const
 {
+	unsigned hp = getTotalAnimalsHpEnergy();
+	unsigned fE = getTotalFruitsEnergy();
+	unsigned kE = getTotalAnimalsKineticEnergy();
+
+	if (print)
+	{
+		std::cout << "hp: " << hp << '\n';
+		std::cout << "fE: " << fE << '\n';
+		std::cout << "kE: " << kE << '\n';
+	}
+
+	return hp + fE + kE;
+
+	/*
 	return getTotalAnimalsHpEnergy()
 		 + getTotalAnimalsKineticEnergy()
-		 + getTotalFruitsEnergy();
+		 + getTotalFruitsEnergy();*/
 }
 
 void Ecosystem::printAllAnimalsPositions() const
@@ -421,6 +435,11 @@ void Ecosystem::printAllAnimalsPositions() const
 			<< animal->getPosition().y
 			<< '\n';
 	}
+}
+
+void Ecosystem::printInfo() const
+{
+	printInfoAboutEcosystem();
 }
 
 // mutators:
@@ -544,7 +563,7 @@ void Ecosystem::initBackgroundAndBorders(
 
 void Ecosystem::createNewAnimals(
 	unsigned animalsCount,
-	const Blueberry::Scalar& defaultAnimalsHp,
+	unsigned defaultAnimalsHp,
 	float animalsRadius,
 	const sf::Color& animalsColor,
 	bool renderHpBarsByDefault,
@@ -565,14 +584,12 @@ void Ecosystem::createNewAnimals(
 }
 
 void Ecosystem::createNewAnimal(
-	const Blueberry::Scalar& defaultAnimalHp,
+	unsigned defaultAnimalHp,
 	float animalRadius,
 	const sf::Color& animalColor,
 	bool renderHpBarByDefault,
 	bool renderBrainByDefault)
 {
-	assert(defaultAnimalHp >= 0.0);
-
 	m_animals.push_back(
 		std::make_unique<Animal>(
 			sf::Vector2f(
@@ -594,7 +611,7 @@ void Ecosystem::createNewAnimal(
 
 void Ecosystem::createNewFruits(
 	unsigned fruitsCount,
-	const Blueberry::Scalar& defaultFruitsEnergy,
+	unsigned defaultFruitsEnergy,
 	float fruitsRadius,
 	const sf::Color& fruitsColor)
 {
@@ -607,12 +624,10 @@ void Ecosystem::createNewFruits(
 }
 
 void Ecosystem::createNewFruit(
-	const Blueberry::Scalar& energy,
+	unsigned energy,
 	float radius, 
 	const sf::Color& fruitColor)
 {
-	assert(energy >= 0.0);
-
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			energy,
@@ -723,11 +738,17 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 
 int Ecosystem::getTrackedAnimalIndex() const
 {
-	if (!m_trackedAnimal) return -1;
+	if (!m_trackedAnimal)
+	{
+		return -1;
+	}
 
 	for (int i = 0; i < m_animals.size(); i++)
 	{
-		if (m_animals[i].get() == m_trackedAnimal) return i;
+		if (m_animals[i].get() == m_trackedAnimal)
+		{
+			return i;
+		}
 	}
 
 	std::cerr 
@@ -1028,7 +1049,10 @@ void Ecosystem::trackingTool(const sf::Vector2f& mousePos)
 
 void Ecosystem::stopTracking()
 {
-	if (!m_trackedAnimal) return;
+	if (!m_trackedAnimal)
+	{
+		return;
+	}
 
 	m_trackedAnimal->setColor(m_animalsColor);
 	m_trackedAnimal = nullptr;
@@ -1110,7 +1134,7 @@ void Ecosystem::convertKineticEnergyToFruit(
 	Animal& animal, 
 	bool randomFruitPosition)
 {
-	if (animal.getKineticEnergy() <= 0.0) return;
+	if (animal.getKineticEnergy() == 0U) return;
 
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
@@ -1126,7 +1150,7 @@ void Ecosystem::convertKineticEnergyToFruit(
 		m_fruits.back()->setRandomPosition(getWorldSize(), getBordersThickness());
 	}
 
-	animal.setVelocity(sf::Vector2f(0.0f, 0.0f));
+	animal.setVelocity(sf::Vector2i(0, 0));
 }
 
 // info tool:
@@ -1195,6 +1219,10 @@ void Ecosystem::updateWorld(
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events)
 {
+	unsigned totalEnergy = getTotalEnergy();
+
+	std::cout << "|||||-----NEW FRAME-----|||||:\n";
+
 	updateAnimals(dt, mousePos, events);
 	transferEnergyFromAnimalsToFruits();
 	avoidTunneling();
@@ -1203,9 +1231,19 @@ void Ecosystem::updateWorld(
 	feedAnimals(dt, mousePos, events);
 	removeEatenFruits();
 	setHpBarsRanges();
-	correctPopulationSize(dt);
+	correctPopulationSize(dt);	
 	correctBrainPreviewsPositions();
 	correctFruitsCount();
+
+	if (totalEnergy != getTotalEnergy())
+	{
+		std::cout << "BEFORE:\n";
+		std::cout << "totalEnergy=" << totalEnergy << '\n';
+		std::cout << "AFTER:\n";
+		std::cout << "totalEnergy=" << getTotalEnergy() << '\n';
+		sf::sleep(sf::seconds(4.0f));
+		exit(-13);
+	}
 }
 
 void Ecosystem::updateAnimals(
@@ -1226,7 +1264,7 @@ void Ecosystem::updateAnimals(
 	}
 }
 
-const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
+std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 	const Animal& animal) const
 {
 	// TODO: add set BRAIN inputs methods in Animal class
@@ -1241,10 +1279,10 @@ const std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 		animal.getVelocityVector().y)
 	);
 
-	if (animal.getHp() <= 0.0)
+	if (animal.getHp() <= 0)
 	{
-		std::cout << "Assertion will fail, hp= " << animal.getHp() << '\n';
-		assert(false);
+		std::cerr << "Assertion will fail, hp= " << animal.getHp() << '\n';
+		exit(-13);
 	}
 	
 	inputsForBrain.push_back(log2(animal.getHp()));
@@ -1308,8 +1346,6 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 
 	for (const auto& animal : m_animals)
 	{
-		assert(animal->getEnergyToExpel() >= 0.0);
-
 		lowestEnergyFruit->setEnergy(
 			lowestEnergyFruit->getEnergy()
 			+ animal->getEnergyToExpel()
@@ -1358,7 +1394,7 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 	if (animalPos.x - animalRadius < bordersThickness)
 	{
 		animal.setVelocity(
-			sf::Vector2f(
+			sf::Vector2i(
 				abs(animal.getVelocityVector().x),
 				animal.getVelocityVector().y
 			)
@@ -1375,7 +1411,7 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 	else if (animalPos.x + animalRadius > worldSize.x - bordersThickness)
 	{
 		animal.setVelocity(
-			sf::Vector2f(
+			sf::Vector2i(
 				-abs(animal.getVelocityVector().x),
 				animal.getVelocityVector().y
 			)
@@ -1402,7 +1438,7 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 	if (animalPos.y - animalRadius < bordersThickness)
 	{
 		animal.setVelocity(
-			sf::Vector2f(
+			sf::Vector2i(
 				animal.getVelocityVector().x,
 				abs(animal.getVelocityVector().y)
 			)
@@ -1419,7 +1455,7 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 	else if (animalPos.y + animalRadius > worldSize.y - bordersThickness)
 	{
 		animal.setVelocity(
-			sf::Vector2f(
+			sf::Vector2i(
 				animal.getVelocityVector().x,
 				-abs(animal.getVelocityVector().y)
 			)
@@ -1518,8 +1554,6 @@ void Ecosystem::removeDeadAnimals()
 	{
 		if (!m_animals[i]->isAlive())
 		{
-			assert(m_animals[i]->getTotalEnergy() >= 0.0);
-
 			m_fruits.push_back(
 				std::make_unique<Fruit>(
 					m_animals[i]->getTotalEnergy(),
@@ -1662,25 +1696,20 @@ void Ecosystem::eat(
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events)
 {
-	assert(fruit.getEnergy() >= 0.0);
-	assert(animal.getHp() > 0.0);
-
 	unsigned fps = static_cast<unsigned>(1.0f / dt);
 
 	if (fps < 30U)
 	{
 		animal.setHp(animal.getHp() + fruit.getEnergy());
-		fruit.setEnergy(0.0);
+		fruit.setEnergy(0U);
 
 		// TODO: a good candidate for logging:
 		//std::cout << "FPS to low to clone!\n";
 
-		assert(animal.getTotalEnergy() > 0.0);
-
 		return;
 	}
 
-	Blueberry::Scalar prevAnimalHp = animal.getHp();
+	unsigned prevAnimalHp = animal.getHp();
 
 	animal.setHp(
 		std::min(
@@ -1698,25 +1727,29 @@ void Ecosystem::eat(
 	std::cout << "animal hp: " << animal.getHp() << '\n';
 	std::cout << "m_defaultAnimalHp: " << m_defaultAnimalsHp << '\n';
 
-	assert(fruit.getEnergy() >= 0.0);
-	assert(animal.getTotalEnergy() > 0.0);
+	if (animal.getTotalEnergy() == 0)
+	{
+		std::cerr << "Animal total energy = 0\n";
+		exit(-13);
+	}
 
 	// there is no more energy left in the fruit after eating:
-	if (fruit.getEnergy() == 0.0) return;
+	if (fruit.getEnergy() == 0) return;
 
 	// if there is any energy left in the fruit make animal clone!:
 	// TODO: put the following lines of code into a separate method
 	m_animals.push_back(std::make_shared<Animal>(animal));
 	
 	m_animals.back()->setHp(fruit.getEnergy());
-	m_animals.back()->setVelocity(sf::Vector2f(0.0f, 0.0f));
+	m_animals.back()->setVelocity(sf::Vector2i(0, 0));
 	
-	if (m_animals.back()->getTotalEnergy() <= 0.0)
+	if (m_animals.back()->getTotalEnergy() <= 0)
 	{
-		std::cout
+		std::cerr << "m_animals.back()->getTotalEnergy() <= 0\n";
+		std::cerr
 			<< m_animals.back()->getHp() << ' '
 			<< m_animals.back()->getKineticEnergy();
-		assert(false);
+		exit(-13);
 	}
 	
 	m_animals.back()->randomMutate(m_mutationsPerMutation, mousePos, events);
@@ -1732,7 +1765,7 @@ void Ecosystem::eat(
 	m_brainsVisibility[m_animals.back().get()]
 		= m_brainsVisibility[&animal];
 
-	fruit.setEnergy(0.0);
+	fruit.setEnergy(0);
 	
 	//if (fruit.getEnergy() + animal.getHp() > animal.getMaxHp())
 	//{
@@ -1791,7 +1824,7 @@ void Ecosystem::removeEatenFruits()
 {
 	for (int i = 0; i < m_fruits.size();)
 	{
-		if (m_fruits[i]->getEnergy() == 0.0)
+		if (m_fruits[i]->getEnergy() == 0)
 		{
 			removeFruit(m_fruits[i]);
 		}
@@ -1807,27 +1840,27 @@ void Ecosystem::removeFruit(std::unique_ptr<Fruit>& fruit)
 
 void Ecosystem::setHpBarsRanges()
 {
-	Blueberry::Scalar theBiggestHp = getTheBiggestHp();
+	int theBiggestHp = getTheBiggestHp();
 	
 	for (auto& animal : m_animals)
 	{
 		animal->setHpBarRange(
 			{
-				animal->getHpBar()->getValuesRange().first,
+				animal->getHpBar()->getValuesRange().x,
 				theBiggestHp
 			}
 		);
 	}
 }
 
-Blueberry::Scalar Ecosystem::getTheBiggestHp() const
+unsigned Ecosystem::getTheBiggestHp() const
 {
-	Blueberry::Scalar theBiggestHp = -INFINITY;
+	unsigned theBiggestHp = -INFINITY;
 
 	for (const auto& animal : m_animals)
 	{
 		// avoid a dangling reference:
-		const Blueberry::Scalar temp = animal->getHp();
+		const unsigned temp = animal->getHp();
 		theBiggestHp = std::max(theBiggestHp, temp);
 	}
 
@@ -1853,8 +1886,12 @@ void Ecosystem::correctPopulationSize(float dt)
 		correctPopulationSizeComparator
 	);
 
-	assert(m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
-		>= m_animals[1]->getTimeElapsedSinceLastExternalHpChange());
+	if (m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
+		< m_animals[1]->getTimeElapsedSinceLastExternalHpChange())
+	{
+		std::cerr << "wrong time elapsed\n";
+		exit(-13);
+	}
 
 	unsigned murdersCount = 0U;
 
@@ -2037,9 +2074,9 @@ void Ecosystem::correctFruitsCount()
 
 		Fruit* fruit = m_fruits[i].get();
 
-		if (fruit->getEnergy() >= 2.0 * m_defaultFruitEnergy)
+		if (fruit->getEnergy() >= 2 * m_defaultFruitEnergy)
 		{
-			Blueberry::Scalar prevEnergy = fruit->getEnergy();
+			unsigned prevEnergy = fruit->getEnergy();
 
 			m_fruits.emplace_back(
 				std::make_unique<Fruit>(
@@ -2056,13 +2093,19 @@ void Ecosystem::correctFruitsCount()
 
 			fruit->setEnergy(m_defaultFruitEnergy);
 
-			assert(
-				prevEnergy
-				== fruit->getEnergy() + m_fruits.back()->getEnergy()
-			);
+			if (prevEnergy
+				!= fruit->getEnergy() + m_fruits.back()->getEnergy())
+			{
+				std::cerr << "BUG IN: void Ecosystem::correctFruitsCount()\n";
+				exit(-13);
+			}
 		}
 
-		assert(fruit->getEnergy() < 2.0 * m_defaultFruitEnergy);
+		if (fruit->getEnergy() >= 2 * m_defaultFruitEnergy)
+		{
+			std::cerr << "BUG IN: void Ecosystem::correctFruitsCount()\n";
+			exit(-14);
+		}
 	}
 
 	#if _DEBUG
@@ -2072,7 +2115,7 @@ void Ecosystem::correctFruitsCount()
 	#if _DEBUG
 	for (const auto& fruit : m_fruits)
 	{
-		assert(fruit->getEnergy() < 2.0 * m_defaultFruitEnergy);
+		assert(fruit->getEnergy() < 2 * m_defaultFruitEnergy);
 	}
 	#endif
 }

@@ -6,7 +6,7 @@ Animal::Animal(
 	const sf::Color& bodyColor,
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor,
-	const Blueberry::Scalar& defaultHp)
+	int defaultHp)
 	: m_body()
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
@@ -34,7 +34,7 @@ Animal::Animal(const Animal& rhs)
 	: m_body(rhs.m_body)
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(rhs.m_alive)
-	, m_hpBar(std::make_unique<gui::ProgressBar>())
+	, m_hpBar(std::make_unique<gui::IntProgressBar>())
 	, m_brainPreview(nullptr)
 	, m_timeElapsedSinceLastExternalHpChange(rhs.m_timeElapsedSinceLastExternalHpChange)
 {
@@ -155,9 +155,9 @@ void Animal::loadFromFolder(const char* folderPath)
 	unsigned bodyColorR, bodyColorG, bodyColorB, bodyColorA;
 	unsigned hpBarBgColorR, hpBarBgColorG, hpBarBgColorB, hpBarBgColorA;
 	unsigned hpBarColorR, hpBarColorG, hpBarColorB, hpBarColorA;
-	float hp;
-	sf::Vector2f prevVelocity;
-	sf::Vector2f velocity;
+	int hp;
+	sf::Vector2i prevVelocity;
+	sf::Vector2i velocity;
 
 	ifs >> position.x >> position.y;
 	ifs >> radius;
@@ -223,7 +223,7 @@ void Animal::update(
 	updateBody(dt);
 	updateHp(dt);
 
-	m_alive = m_hpBar->getCurrentValue() > 0.0;
+	m_alive = m_hpBar->getCurrentValue() > 0;
 
 	// TODO: rmv later!:
 	if (!m_alive)
@@ -314,34 +314,34 @@ const Blueberry::Brain& Animal::getBrain() const
 	return m_movementComponent->getBrain();
 }
 
-Blueberry::Scalar Animal::getEnergyToExpel() const
+unsigned Animal::getEnergyToExpel() const
 {
 	return m_movementComponent->getEnergyToExpel();
 }
 
-Blueberry::Scalar Animal::getKineticEnergyDelta() const
+int Animal::getKineticEnergyDelta() const
 {
 	return m_movementComponent->getKineticEnergyDelta();
 }
 
-Blueberry::Scalar Animal::getPreviousKineticEnergy() const
+unsigned Animal::getPreviousKineticEnergy() const
 {
 	return m_movementComponent->getPreviousKineticEnergy();
 }
 
-Blueberry::Scalar Animal::getKineticEnergy() const
+unsigned Animal::getKineticEnergy() const
 {
 	return m_movementComponent->getKineticEnergy();
 }
 
-float Animal::getPreviousVelocityVectorValue() const
+unsigned Animal::getPreviousVelocityVectorSquaredValue() const
 {
-	return m_movementComponent->getPreviousVelocityVectorValue();
+	return m_movementComponent->getPreviousVelocityVectorSquaredValue();
 }
 
-float Animal::getVelocityVectorValue() const
+unsigned Animal::getVelocityVectorSquaredValue() const
 {
-	return m_movementComponent->getVelocityVectorValue();
+	return m_movementComponent->getVelocityVectorSquaredValue();
 }
 
 float Animal::getAccelerationVectorValue() const
@@ -349,12 +349,12 @@ float Animal::getAccelerationVectorValue() const
 	return m_movementComponent->getAccelerationVectorValue();
 }
 
-const sf::Vector2f& Animal::getPreviousVelocityVector() const
+const sf::Vector2i& Animal::getPreviousVelocityVector() const
 {
 	return m_movementComponent->getPreviousVelocityVector();
 }
 
-const sf::Vector2f& Animal::getVelocityVector() const
+const sf::Vector2i& Animal::getVelocityVector() const
 {
 	return m_movementComponent->getVelocityVector();
 }
@@ -369,17 +369,17 @@ bool Animal::isAlive() const
 	return m_alive;
 }
 
-const Blueberry::Scalar& Animal::getHp() const
+int Animal::getHp() const
 {
 	return m_hpBar->getCurrentValue();
 }
 
-Blueberry::Scalar Animal::getTotalEnergy() const
+unsigned Animal::getTotalEnergy() const
 {
 	return m_hpBar->getCurrentValue() + getKineticEnergy();
 }
 
-const std::unique_ptr<gui::ProgressBar>& Animal::getHpBar() const
+const std::unique_ptr<gui::IntProgressBar>& Animal::getHpBar() const
 {
 	return m_hpBar;
 }
@@ -463,7 +463,7 @@ void Animal::randomMutate(
 	m_brainPreview->update(mousePos, events);
 }
 
-void Animal::setVelocity(const sf::Vector2f& velocity)
+void Animal::setVelocity(const sf::Vector2i& velocity)
 {
 	m_movementComponent->setVelocity(velocity);
 }
@@ -473,11 +473,11 @@ void Animal::setAlive(bool alive)
 	m_alive = alive;
 }
 
-void Animal::setHp(const Blueberry::Scalar& hp)
+void Animal::setHp(int hp)
 {
 	m_hpBar->setValue(hp);
 
-	m_alive = m_hpBar->getCurrentValue() > 0.0;
+	m_alive = m_hpBar->getCurrentValue() > 0;
 
 	m_timeElapsedSinceLastExternalHpChange = 0.0f;
 }
@@ -500,7 +500,7 @@ void Animal::setHp(const Blueberry::Scalar& hp)
 //	m_timeElapsedSinceLastExternalHpChange = 0.0f;
 //}
 
-void Animal::setHpBarRange(const std::pair<double, double>& range)
+void Animal::setHpBarRange(const sf::Vector2i& range)
 {
 	m_hpBar->setValuesRange(range);
 }
@@ -529,16 +529,15 @@ void Animal::initBody(
 }
 
 void Animal::initHpBar(
-	const Blueberry::Scalar& defaultHp,
+	int defaultHp,
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor)
 {
-	m_hpBar = std::make_unique<gui::ProgressBar>(
-		std::pair<Blueberry::Scalar, Blueberry::Scalar>(
-			0.0,
+	m_hpBar = std::make_unique<gui::IntProgressBar>(
+		sf::Vector2i(
+			0,
 			defaultHp
 		),
-		false,
 		defaultHp,
 		sf::Vector2f(
 			m_body.getPosition().x - 3.0f * m_body.getRadius(),
@@ -569,7 +568,7 @@ void Animal::initBrainPreview()
 
 void Animal::updateBody(float dt)
 {
-	const sf::Vector2f& velVect = m_movementComponent->getVelocityVector();
+	const sf::Vector2f& velVect = static_cast<sf::Vector2f>(m_movementComponent->getVelocityVector());
 
 	m_body.setPosition(
 		m_body.getPosition().x + velVect.x * dt,

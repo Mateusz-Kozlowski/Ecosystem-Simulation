@@ -232,12 +232,6 @@
     <None Include="config\main_menu_keybinds.ini" />
     <None Include="config\simulation_keybinds.ini" />
     <None Include="config\supported_keys.ini" />
-    <None Include="ecosystems\small\brains previews visibility.ini" />
-    <None Include="ecosystems\small\ecosystem.ini" />
-    <None Include="ecosystems\small\hp bars visibility.ini" />
-    <None Include="ecosystems\sth\brains previews visibility.ini" />
-    <None Include="ecosystems\sth\ecosystem.ini" />
-    <None Include="ecosystems\sth\hp bars visibility.ini" />
     <None Include="openal32.dll" />
     <None Include="resources\ecosystems templates\big.ini" />
     <None Include="resources\ecosystems templates\huge.ini" />

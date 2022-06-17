@@ -20,8 +20,8 @@ public:
 		unsigned fruitsCount,
 		float animalsRadius,
 		float fruitsRadius,
-		const Blueberry::Scalar& defaultAnimalsHp,
-		const Blueberry::Scalar& defaultFruitsEnergy,
+		unsigned defaultAnimalsHp,
+		unsigned defaultFruitsEnergy,
 		unsigned mutationsPerMutation,
 		const sf::Color& animalsColor,
 		const sf::Color& fruitsColor,
@@ -86,12 +86,14 @@ public:
 
 	float getTotalTimeElapsed() const;
 
-	Blueberry::Scalar getTotalAnimalsHpEnergy() const;
-	Blueberry::Scalar getTotalAnimalsKineticEnergy() const;
-	Blueberry::Scalar getTotalFruitsEnergy() const;
-	Blueberry::Scalar getTotalEnergy() const;
+	unsigned getTotalAnimalsHpEnergy() const;
+	unsigned getTotalAnimalsKineticEnergy() const;
+	unsigned getTotalFruitsEnergy() const;
+	unsigned getTotalEnergy(bool print = false) const;
 
 	void printAllAnimalsPositions() const;
+
+	void printInfo() const;
 
 	// mutators:
 	
@@ -130,14 +132,14 @@ private:
 
 	void createNewAnimals(
 		unsigned animalsCount,
-		const Blueberry::Scalar& defaultAnimalsHp,
+		unsigned defaultAnimalsHp,
 		float animalsRadius,
 		const sf::Color& animalsColor,
 		bool renderHpBarsByDefault,
 		bool renderBrainsByDefault
 	);
 	void createNewAnimal(
-		const Blueberry::Scalar& defaultAnimalHp,
+		unsigned defaultAnimalHp,
 		float animalRadius,
 		const sf::Color& animalColor,
 		bool renderHpBarByDefault,
@@ -146,12 +148,12 @@ private:
 
 	void createNewFruits(
 		unsigned fruitsCount,
-		const Blueberry::Scalar& defaultFruitsEnergy,
+		unsigned defaultFruitsEnergy,
 		float fruitsRadius,
 		const sf::Color& fruitsColor
 	);
 	void createNewFruit(
-		const Blueberry::Scalar& energy,
+		unsigned energy,
 		float radius, 
 		const sf::Color& fruitColor
 	);
@@ -231,7 +233,7 @@ private:
 		const std::vector<sf::Event>& events
 	);
 
-	const std::vector<Blueberry::Scalar> getInputsForBrain(
+	std::vector<Blueberry::Scalar> getInputsForBrain(
 		const Animal& animal
 	) const;
 	
@@ -286,7 +288,7 @@ private:
 	void removeFruit(std::unique_ptr<Fruit>& fruit);
 
 	void setHpBarsRanges();
-	Blueberry::Scalar getTheBiggestHp() const;
+	unsigned getTheBiggestHp() const;
 
 	void correctPopulationSize(float dt);
 	void randomShuffleAnimals();
@@ -334,8 +336,8 @@ private:
 	// useful when there are temporarily no fruits in an ecosystem:
 	float m_fruitsRadius;
 
-	Blueberry::Scalar m_defaultAnimalsHp;
-	Blueberry::Scalar m_defaultFruitEnergy;
+	unsigned m_defaultAnimalsHp;
+	unsigned m_defaultFruitEnergy;
 
 	unsigned m_mutationsPerMutation;
 
@@ -361,4 +363,6 @@ private:
 	std::unordered_map<Animal*, bool> m_brainsVisibility;
 
 	float m_totalTimeElapsed;
+
+	std::string m_logs;
 };

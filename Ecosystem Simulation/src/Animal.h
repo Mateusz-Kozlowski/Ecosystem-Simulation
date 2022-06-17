@@ -13,7 +13,7 @@ public:
 		const sf::Color& bodyColor,
 		const sf::Color& hpBarBackgroundColor,
 		const sf::Color& hpBarProgressRectColor,
-		const Blueberry::Scalar& defaultHp
+		int defaultHp
 	);
 	Animal(const char* folderPath);
 	Animal(const Animal& rhs);
@@ -53,25 +53,27 @@ public:
 
 	const Blueberry::Brain& getBrain() const;
 	
-	Blueberry::Scalar getEnergyToExpel() const;
-	Blueberry::Scalar getKineticEnergyDelta() const;
-	Blueberry::Scalar getPreviousKineticEnergy() const;
-	Blueberry::Scalar getKineticEnergy() const;
+	unsigned getEnergyToExpel() const; // cannot be negative (fruit with negative energy?)
+	int getKineticEnergyDelta() const; // can be negative
+	unsigned getPreviousKineticEnergy() const; // cannot be negative because it's a square
+	unsigned getKineticEnergy() const; // cannot be negative because it's a square
 
-	float getPreviousVelocityVectorValue() const;
-	float getVelocityVectorValue() const;
+	unsigned getPreviousVelocityVectorSquaredValue() const;
+	unsigned getVelocityVectorSquaredValue() const;
 	float getAccelerationVectorValue() const;
 
-	const sf::Vector2f& getPreviousVelocityVector() const;
-	const sf::Vector2f& getVelocityVector() const;
+	const sf::Vector2i& getPreviousVelocityVector() const;
+	const sf::Vector2i& getVelocityVector() const;
 	const sf::Vector2f& getAccelerationVector() const;
 
 	bool isAlive() const;
 
-	const Blueberry::Scalar& getHp() const;
-	Blueberry::Scalar getTotalEnergy() const;
+	int getHp() const;
+	// an animal cannot have total energy < 0, 
+	// because what would we do after its death? create a fruit with negative energy?
+	unsigned getTotalEnergy() const;
 	
-	const std::unique_ptr<gui::ProgressBar>& getHpBar() const;
+	const std::unique_ptr<gui::IntProgressBar>& getHpBar() const;
 
 	gui::BrainPreview& getBrainPreview() const;
 
@@ -100,15 +102,15 @@ public:
 		const std::vector<sf::Event>& events
 	);
 
-	void setVelocity(const sf::Vector2f& velocity);
+	void setVelocity(const sf::Vector2i& velocity);
 
 	void setAlive(bool alive);
 
-	void setHp(const Blueberry::Scalar& hp);
+	void setHp(int hp);
 	//void increaseHp(const Blueberry::Scalar& hpIncrease);
 	//void decreaseHp(const Blueberry::Scalar& hpDecrease);
 
-	void setHpBarRange(const std::pair<double, double>& range);
+	void setHpBarRange(const sf::Vector2i& range);
 
 	void setBrainPreviewPosition(const sf::Vector2f& position);
 	void setBrainPreviewPosition(float x, float y);
@@ -120,7 +122,7 @@ private:
 		const sf::Color& color
 	);
 	void initHpBar(
-		const Blueberry::Scalar& defaultHp,
+		int defaultHp,
 		const sf::Color& hpBarBackgroundColor,
 		const sf::Color& hpBarProgressRectColor
 	);
@@ -141,7 +143,7 @@ private:
 	
 	bool m_alive;
 
-	std::unique_ptr<gui::ProgressBar> m_hpBar;
+	std::unique_ptr<gui::IntProgressBar> m_hpBar;
 	std::unique_ptr<gui::BrainPreview> m_brainPreview;
 
 	float m_timeElapsedSinceLastExternalHpChange;

@@ -352,12 +352,6 @@
     <None Include="resources\textures\GUI\God tools\track previous version\track.xcf" />
     <None Include="resources\textures\GUI\modification\brain preview modification.xcf" />
     <None Include="resources\textures\GUI\zoom\zoom.xcf" />
-    <None Include="ecosystems\sth\brains previews visibility.ini" />
-    <None Include="ecosystems\sth\ecosystem.ini" />
-    <None Include="ecosystems\sth\hp bars visibility.ini" />
-    <None Include="ecosystems\small\ecosystem.ini" />
-    <None Include="ecosystems\small\hp bars visibility.ini" />
-    <None Include="ecosystems\small\brains previews visibility.ini" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\Retroica.ttf">

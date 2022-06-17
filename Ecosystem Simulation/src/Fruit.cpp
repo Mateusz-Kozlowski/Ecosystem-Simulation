@@ -1,7 +1,7 @@
 #include "Fruit.h"
 
 Fruit::Fruit(
-	const Blueberry::Scalar& energy,
+	unsigned energy,
 	const sf::Vector2f& position,
 	float radius,
 	const sf::Color& color)
@@ -12,7 +12,7 @@ Fruit::Fruit(
 }
 
 Fruit::Fruit(const char* filePath)
-	: m_energy(0.0)
+	: m_energy(0U)
 	, m_shape()
 {
 	loadFromFile(filePath);
@@ -37,6 +37,7 @@ void Fruit::saveToFile(const char* filePath) const
 			<< filePath 
 			<< '\n';
 		assert(false);
+		exit(-13);
 		return;
 	}
 
@@ -63,6 +64,7 @@ void Fruit::loadFromFile(const char* filePath)
 			<< filePath
 			<< '\n';
 		assert(false);
+		exit(-13);
 		return;
 	}
 
@@ -117,7 +119,7 @@ float Fruit::getRadius() const
 	return m_shape.getRadius();
 }
 
-const Blueberry::Scalar& Fruit::getEnergy() const
+unsigned Fruit::getEnergy() const
 {
 	return m_energy;
 }
@@ -169,7 +171,7 @@ void Fruit::setRadius(float radius)
 	m_shape.setRadius(radius);
 }
 
-void Fruit::setEnergy(const Blueberry::Scalar& energy)
+void Fruit::setEnergy(unsigned energy)
 {
 	m_energy = energy;
 }
