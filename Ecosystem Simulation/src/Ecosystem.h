@@ -247,7 +247,7 @@ private:
 	void avoidTunnelingByVerticalBorders(Animal& animal);
 	void avoidTunnelingByHorizontalBorders(Animal& animal);
 
-	void killAnimalsStickingToBorders();
+	void kickInAssAnimalsStuckedNextToBorders();
 	bool sticksToBorder(const Animal& animal);
 	bool sticksToLeftBorder(const Animal& animal);
 	bool sticksToRightBorder(const Animal& animal);

@@ -41,7 +41,8 @@ public:
 
 	void setRandomPosition(
 		const sf::Vector2f& worldSize, 
-		float bordersThickness
+		float bordersThickness,
+		float marginsSize
 	);
 
 	void setRadius(float radius);

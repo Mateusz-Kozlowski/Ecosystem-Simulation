@@ -641,7 +641,8 @@ void Ecosystem::createNewFruit(
 	);
 	m_fruits.back()->setRandomPosition(
 		getWorldSize(), 
-		getBordersThickness()
+		getBordersThickness(),
+		0.1f // unhardcode margins
 	);
 }
 
@@ -1087,7 +1088,11 @@ void Ecosystem::convertAnimalToFruit(
 
 	if (randomFruitPosition)
 	{
-		m_fruits.back()->setRandomPosition(getWorldSize(), getBordersThickness());
+		m_fruits.back()->setRandomPosition(
+			getWorldSize(), 
+			getBordersThickness(),
+			0.1f // unhardcode margins
+		);
 	}
 
 	removeAnimal(animal);
@@ -1147,7 +1152,11 @@ void Ecosystem::convertKineticEnergyToFruit(
 
 	if (randomFruitPosition)
 	{
-		m_fruits.back()->setRandomPosition(getWorldSize(), getBordersThickness());
+		m_fruits.back()->setRandomPosition(
+			getWorldSize(), 
+			getBordersThickness(),
+			0.1f // unhardcode margins
+		);
 	}
 
 	animal.setVelocity(sf::Vector2i(0, 0));
@@ -1226,7 +1235,7 @@ void Ecosystem::updateWorld(
 	updateAnimals(dt, mousePos, events);
 	transferEnergyFromAnimalsToFruits();
 	avoidTunneling();
-	//killAnimalsStickingToBorders();
+	//kickInAssAnimalsStuckedNextToBorders();
 	removeDeadAnimals();
 	feedAnimals(dt, mousePos, events);
 	removeEatenFruits();
@@ -1469,7 +1478,7 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 	}
 }
 
-void Ecosystem::killAnimalsStickingToBorders()
+void Ecosystem::kickInAssAnimalsStuckedNextToBorders()
 {
 	for (int i = 0; i < m_animals.size();)
 	{
@@ -2088,7 +2097,8 @@ void Ecosystem::correctFruitsCount()
 			);
 			m_fruits.back()->setRandomPosition(
 				getWorldSize(), 
-				getBordersThickness()
+				getBordersThickness(),
+				0.1f // unhardcode margins
 			);
 
 			fruit->setEnergy(m_defaultFruitEnergy);

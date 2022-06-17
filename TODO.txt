@@ -1,3 +1,6 @@
+ecosystem rules:
+- kill animals stucked in corners in some way and convert them into fruits with randoms positions
+
 brain inputs:
 - better nearest food searching algo (with complexity better than the current one (O(f*a)))
   (that algo will likely be applicable to looking for food-animal collisions)

@@ -143,7 +143,8 @@ void Fruit::setPosition(const sf::Vector2f& newPosition)
 
 void Fruit::setRandomPosition(
 	const sf::Vector2f& worldSize, 
-	float bordersThickness)
+	float bordersThickness,
+	float marginsSize)
 {
 	std::pair<unsigned, unsigned> rangeX = {
 		bordersThickness + m_shape.getRadius(),
@@ -153,6 +154,12 @@ void Fruit::setRandomPosition(
 		bordersThickness + m_shape.getRadius(),
 		worldSize.y - bordersThickness - m_shape.getRadius()
 	};
+
+	rangeX.first += marginsSize * (rangeX.second - rangeX.first);
+	rangeX.second -= marginsSize * (rangeX.second - rangeX.first);
+
+	rangeY.first += marginsSize * (rangeY.second - rangeY.first);
+	rangeY.second -= marginsSize * (rangeY.second - rangeY.first);
 
 	float x = Blueberry::RandomEngine::getScalarInRange(
 		rangeX.first, 
