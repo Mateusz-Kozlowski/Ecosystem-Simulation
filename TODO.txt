@@ -1,26 +1,17 @@
-NEW TODO:
-3rd output - do it want to clone
-add other requirement of cloning - fps bigger than 30 or sth like that
-cerr cout clog itp.?
+cloning:
+- 3rd output - do it want to clone
+  add other requirement of cloning - fps bigger than 30 or sth like that
 
-ecosystem rules:
-- kill animals stucked in corners in some way and convert them into fruits with randoms positions
+ecosystems simulation:
+- implement some way of dealing with stubborn vegetating animals
 
 brain inputs:
 - better nearest food searching algo (with complexity better than the current one (O(f*a)))
   (that algo will likely be applicable to looking for food-animal collisions)
-- different inputs for brains?
-- remove log from input with hp?
+- remember - animals should be able to know as much as possible - its optimal for evolving
 
 side menu:
 - after loading ecosystem side menu panel should be updated (e.g., speed scaler)
-
-logging system:
-- write temporary Log class with levels
-- add a logging library
-
-ResourceManager:
-- implement some kind of resource managing framework
 
 app:
 - change the way of dealing with events:
@@ -39,36 +30,9 @@ simulation state:
 - add texture buttons in the top-right corners of all brain previews that will allow to move neurons,
   save that changes and maybe other things
 
-UI:
-- don't move view and modify pos of brain preview modifier neurons in the same time
-- highlight modified neurons in gui::BrainPreviewModifier;
-  how? Maybe there is a better way but u can just use a sf::CircleShape 
-  and put it under modified neuron
-- prevent putting neurons beyond BrainPreviewModifier background
-- change the name of BrainPreviewModifier class so that it doesn't mix up with BrainPreview
-- mousePosWindow or mousePosView or mousePos (yes, only mousePos without suffix)
-  in Ecosystem;
-- there is no convention for positions of GUI widgets;
-  R they relative to window, screen or to view?
-  Add info to all widgets
-  (especially to methods that take mouse pos as an argument)
-  that u (and other programmers that uses those classes) 
-  have to remeber on your own relatively to what u determine widgets positions;
-  apply that convetion to all widgets because not all of them were updated 
-  after this "discovery";
-
-- Google professional names of GUI widgets
-- use move method in widgets
-- unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
-- input field text shouldn't dance up and down
-- use Retroica font wherever possible, consolab where neccessarily
-- rename neural net preview to sequential preview or sth like that
-- one convention for all gui widgets, maybe even polimorphizm
-- some GUI widgets positions are set relative to their centers and some are set relative to their
-  left-top corners; add an ability to control their positions in these two ways
-- NEAT-RT preview with ability to move neurons and save that changes
-
 simulation/ecosystem:
+- identify the bottle neck of the fps count
+- only anabolic mutations if brain has only one synapse
 - implement id's system in Animals
 - there is probably a bug with updating brain preview modifier
   when a brain preview which is mutated isn't rendered
@@ -76,32 +40,28 @@ simulation/ecosystem:
 - don't allow to change modified brain 
   if other is being modified AND mouse hovers modifier
 - add saving which animal had brain preview modified
-- an amazing way to debug the law of energy conservation - calc total energy 
-  after every method in update world
 - save fruits and animals count to file in order to know how many of them should be loaded
 - don't update a brain if it isn't rendered (order of calling methods in updateWorld might be important)
 - update imgBtn texture in BrainPreview class
-
 - fix an issue with loading ecosystems that contain a tracked animal:
   animals vector is randomly shuffled every frame so saving a tracked animal
   as its idx in that vector won't work;
   how to solve this?
   maybe when there will be lots of std::vectors of animals "the main vector"
   won't be sorted or shuffled and the saved idx will be relative to that vector...
-  
   below I wrote that it won't work but i can work because changing the order
   bacause of dying during simulation isn't the problem, the only problem is that
   it uses pointers so after saving/loading there is an issue;
   so introducing vector with constant order (except dying can work)
-
   that also won't work, because when an animal dies the order of ptrs change in every vector;
   so... maybe each animal should have an information if its tracked or not
+  or maybe implement animals id system will solve this problem
 - restore increase/decrease methods in Animal and Food classes and in other places
   but don't use += operator with floats and doubles 
   and add comments that explain why u those methods don't use += operator;
   add do all that things not only in Animal and Fruit but in the entire solution
 - add some to way to mark energy to expel as expeled (or reset)
-- simulating frame by frame God tool?
+- simulating "frame by frame" God tool?
 - more than one std::vector<std::shared_ptr<Animal>>?;
   it's an amazing idea! (u can simply copy std::shared_ptr while initializing animals);
   this will allow to sort each vector by different parameter
@@ -124,7 +84,8 @@ simulation/ecosystem:
   (directly after a function that marks animals as not alive)
   (that converting dead animals to fruits process can occur a few times in update world method)
 - add a way to change a tracked animal, even add arrows "previous" and "next"
-- spawn more fruits in the center of the world?
+- spawn more fruits in the center of the world? we should avoid this kind of hard-evolving ecosystems;
+  it's kind of cheating
 - all animals energy to expel from animals should go to only one fruit,
   fruit with the lowest energy
 - use some STL algo to feed animals
@@ -140,16 +101,8 @@ simulation/ecosystem:
   this line of code will call copy assigment operator of Animal class
 - if killing animals sticking to borders will be needed 
   uncomment it and maybe change the way how it works
-- in every function that loads something from a folder add is_directory function that checks if a folder exists at all;
-  u can change all that functions so that they return bool instead of void
 - every copy constructor and copy assigment operator should use its initializer list to initialize all its members
   like Animal class copy constructor (and the same thing with other constructors!)
-- there is another issue with energy conservation law - animals can have a negative total energy
-  (if they slow down)
-- transfer energy from animals to fruits sometimes need to create a new fruit 
-  if there are no fruits in a ecosystem
-- total energy is not conservate - fix that!
-- there is a BUG with ENERGY CONSERVATION law - ANIMALS can reach NEGATIVE hp
 - update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
 
 shortcuts:
@@ -167,6 +120,9 @@ shortcuts:
 - saving as (Crtl+Shift+S)
 
 code:
+- in every function that loads something from a folder add is_directory function that checks if a folder exists at all;
+  u can change all that functions so that they return bool instead of void
+- cerr cout clog itp.?
 - check all error msgs contain correct number of arguments and correct arguments types
 - change all 0.f to 0.0f (and 17.f to 17.0f and so on and so forth)
 - subtracting operator is overloaded in sf::Vector<T> class!
@@ -176,8 +132,6 @@ code:
   and estimated code cleanliness level
 - and comments that separate private methods into some groups
   e.g., initialization, utils and so on...
-- change arguments of all functions from std::strings to const char* where possible;
-  notice that u can extract a const char* from every string using c_str() function
 - throw exceptions where errors are "expected" and use asserts where errors shouldn't occur
 - add functions arguments to exceptions because of functions overloading
 - learn about inline functions and use them!
@@ -219,3 +173,31 @@ code:
   the second one should include borders
 - add to all methods info about which things do that method check 
   (so before calling user don't need to check them)
+
+UI:
+- don't move view and modify pos of brain preview modifier neurons in the same time
+- highlight modified neurons in gui::BrainPreviewModifier;
+  how? Maybe there is a better way but u can just use a sf::CircleShape 
+  and put it under modified neuron
+- prevent putting neurons beyond BrainPreviewModifier background
+- change the name of BrainPreviewModifier class so that it doesn't mix up with BrainPreview
+- mousePosWindow or mousePosView or mousePos (yes, only mousePos without suffix)
+  in Ecosystem;
+- there is no convention for positions of GUI widgets;
+  R they relative to window, screen or to view?
+  Add info to all widgets
+  (especially to methods that take mouse pos as an argument)
+  that u (and other programmers that uses those classes) 
+  have to remeber on your own relatively to what u determine widgets positions;
+  apply that convetion to all widgets because not all of them were updated 
+  after this "discovery";
+- Google professional names of GUI widgets
+- use move method in widgets
+- unhardcode btns sizes creating some static sf::Vector2fs for different kinds of btns 
+- input field text shouldn't dance up and down
+- use Retroica font wherever possible, consolab where neccessarily
+- rename neural net preview to sequential preview or sth like that
+- one convention for all gui widgets, maybe even polimorphizm
+- some GUI widgets positions are set relative to their centers and some are set relative to their
+  left-top corners; add an ability to control their positions in these two ways
+- NEAT-RT preview with ability to move neurons and save that changes

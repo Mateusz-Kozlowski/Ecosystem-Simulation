@@ -670,7 +670,7 @@ void Ecosystem::createNewFruit(
 		)
 	);
 	m_fruits.back()->setRandomPosition(
-		getWorldSize(), 
+		getWorldSize(),
 		getBordersThickness(),
 		0.1f // unhardcode margins
 	);
@@ -1473,15 +1473,7 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 
 	if (!lowestEnergyFruit)
 	{
-		m_fruits.emplace_back(
-			std::make_unique<Fruit>(
-				0U,
-				sf::Vector2f(0.0f, 0.0f),
-				m_bg.getOutlineThickness(),
-				sf::Color::Green
-			)
-		);
-
+		createNewFruit(0U, m_fruitsRadius, m_fruitsColor);
 		lowestEnergyFruit = m_fruits.back().get();
 	}
 
