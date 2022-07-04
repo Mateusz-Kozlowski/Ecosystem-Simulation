@@ -232,6 +232,7 @@
     <None Include="config\main_menu_keybinds.ini" />
     <None Include="config\simulation_keybinds.ini" />
     <None Include="config\supported_keys.ini" />
+    <None Include="debug.ini" />
     <None Include="openal32.dll" />
     <None Include="resources\ecosystems templates\big.ini" />
     <None Include="resources\ecosystems templates\huge.ini" />

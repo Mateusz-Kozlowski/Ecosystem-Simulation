@@ -352,6 +352,7 @@
     <None Include="resources\textures\GUI\God tools\track previous version\track.xcf" />
     <None Include="resources\textures\GUI\modification\brain preview modification.xcf" />
     <None Include="resources\textures\GUI\zoom\zoom.xcf" />
+    <None Include="debug.ini" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\Retroica.ttf">
