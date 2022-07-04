@@ -82,6 +82,8 @@ private:
 	static float getVectorSquaredValue(const sf::Vector2i& vector, bool simulation);
 
 private:
+	void velocityGuard() const;
+
 	std::unique_ptr<Blueberry::Brain> m_brain;
 
 	// kinematics:

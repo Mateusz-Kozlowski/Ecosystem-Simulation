@@ -233,13 +233,6 @@ void Animal::update(
 
 	m_alive = m_hpBar->getCurrentValue() > 0;
 
-	// TODO: rmv later!:
-	if (!m_alive)
-	{
-		std::cout << "Died 'cause of hp=" << m_hpBar->getCurrentValue() << '\n';
-		std::cout << "Its kin e=" << m_movementComponent->getKineticEnergy() << '\n';
-	}
-
 	updateHpBarPosition();
 	updateBrainPreview(mousePos, events);
 
@@ -468,7 +461,6 @@ void Animal::randomMutate(
 	const std::vector<sf::Event>& events
 )
 {
-	std::clog << "mutations count: " << brainMutationsCount << '\n';
 	m_movementComponent->mutateBrain(brainMutationsCount);
 	m_brainPreview->update(mousePos, events);
 }

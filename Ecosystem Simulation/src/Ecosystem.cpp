@@ -1260,7 +1260,7 @@ void Ecosystem::updateWorld(
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events)
 {
-	int totalEnergy = getTotalEnergy();
+	/*int totalEnergy = getTotalEnergy();
 
 	int hp = getTotalAnimalsHpEnergy();
 	int fruitE = getTotalFruitsEnergy();
@@ -1272,18 +1272,19 @@ void Ecosystem::updateWorld(
 	{
 		prevKins[i] = m_animals[i]->getKineticEnergy();
 		hps[i] = m_animals[i]->getHp();
-	}	
+	}*/	
 
-	std::cout << "--------------------NEW FRAME--------------------:\n";
+	std::clog << "--------------------NEW FRAME--------------------:\n";
 
 	updateAnimals(dt, mousePos, events);
 
-	std::cout << "only after up an: " << static_cast<int>(getTotalEnergy()) - totalEnergy << "\n\n";
+	//std::cout << "only after up an: " << static_cast<int>(getTotalEnergy()) - totalEnergy << "\n\n";
 
-	int prevKin = getTotalAnimalsPreviousKineticEnergy();
+	//int prevKin = getTotalAnimalsPreviousKineticEnergy();
 
 	transferEnergyFromAnimalsToFruits();
 
+	/*
 	if (totalEnergy != getTotalEnergy())
 	{
 		using namespace std;
@@ -1317,6 +1318,7 @@ void Ecosystem::updateWorld(
 		sf::sleep(sf::seconds(4.0f));
 		exit(-13);
 	}
+	*/
 
 	avoidTunneling();
 	//kickInAssAnimalsStuckedNextToBorders();
@@ -1328,6 +1330,8 @@ void Ecosystem::updateWorld(
 	correctBrainPreviewsPositions();
 	correctFruitsCount();
 
+	/*
+	if (totalEnergy != getTotalEnergy())
 	if (totalEnergy != getTotalEnergy())
 	{
 		std::cout << "BEFORE:\n";
@@ -1338,6 +1342,7 @@ void Ecosystem::updateWorld(
 		sf::sleep(sf::seconds(4.0f));
 		exit(-13);
 	}
+	*/
 }
 
 void Ecosystem::updateAnimals(
@@ -1477,8 +1482,6 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 			+ animal->getEnergyToExpel()
 		);
 	}
-
-	std::cout << "\nexpeled: " << expeled << '\n';
 }
 
 Fruit* Ecosystem::getLowestEnergyFruit()
@@ -1521,11 +1524,6 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 	// left border:
 	if (animalPos.x - animalRadius < bordersThickness)
 	{
-		std::cout << "d0:\n";
-		std::cout << animal.getVelocityVector().x << '\n';
-		std::cout << abs(animal.getVelocityVector().x) << '\n';
-		std::cout << animal.getVelocityVector().y << '\n';
-
 		animal.getMovementComponent().elasticReboundInAxisX();
 		animal.setPosition(
 			sf::Vector2f(
@@ -1538,8 +1536,6 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 	// in the same frame so we can use "else if"):
 	else if (animalPos.x + animalRadius > worldSize.x - bordersThickness)
 	{
-		std::cout << "d1\n";
-
 		animal.getMovementComponent().elasticReboundInAxisX();
 		animal.setPosition(
 			sf::Vector2f(
@@ -1562,8 +1558,6 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 	// top border:
 	if (animalPos.y - animalRadius < bordersThickness)
 	{
-		std::cout << "d2\n";
-
 		animal.getMovementComponent().elasticReboundInAxisY();
 		animal.setPosition(
 			sf::Vector2f(
@@ -1576,8 +1570,6 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 	// in the same frame so we can use "else if"):
 	else if (animalPos.y + animalRadius > worldSize.y - bordersThickness)
 	{
-		std::cout << "d3\n";
-
 		animal.getMovementComponent().elasticReboundInAxisY();
 		animal.setPosition(
 			sf::Vector2f(
@@ -1682,9 +1674,7 @@ void Ecosystem::removeDeadAnimals()
 				)
 			);
 
-			std::cout
-				<< "Rmved a dead animal 'cause of its hp="
-				<< m_animals[i]->getHp() << '\n';
+			//std::clog << "An animal removed\n";
 
 			removeAnimal(m_animals[i]);
 		}
@@ -1817,6 +1807,7 @@ void Ecosystem::eat(
 {
 	unsigned fps = static_cast<unsigned>(1.0f / dt);
 
+	// for sure there won't be any coping:
 	if (fps < 30U)
 	{
 		animal.setHp(animal.getHp() + fruit.getEnergy());
@@ -1837,14 +1828,9 @@ void Ecosystem::eat(
 		)
 	);
 
-	std::cout << "prev fruit energy: " << fruit.getEnergy() << '\n';
-
 	fruit.setEnergy(fruit.getEnergy() + prevAnimalHp - animal.getHp());
 
-	std::cout << "prevAnimalHp: " << prevAnimalHp << '\n';
-	std::cout << "fruit energy: " << fruit.getEnergy() << '\n';
-	std::cout << "animal hp: " << animal.getHp() << '\n';
-	std::cout << "m_defaultAnimalHp: " << m_defaultAnimalsHp << '\n';
+	//std::clog << "A fruit has been eaten\n";
 
 	if (animal.getTotalEnergy() == 0)
 	{
@@ -1854,6 +1840,8 @@ void Ecosystem::eat(
 
 	// there is no more energy left in the fruit after eating:
 	if (fruit.getEnergy() == 0) return;
+
+	//std::clog << "An animal will be cloned\n";
 
 	// if there is any energy left in the fruit make animal clone!:
 	// TODO: put the following lines of code into a separate method

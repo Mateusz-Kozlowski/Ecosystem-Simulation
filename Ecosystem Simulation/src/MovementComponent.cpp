@@ -93,20 +93,14 @@ void MovementComponent::update(
 
 	if (accelerationIsImpossible(dt, availableEnergy))
 	{
-		std::cout << "acceleration impossible; fun fact: a=" << m_acceleration.x << ' ' << m_acceleration.y << '\n';
+		std::clog << "acceleration impossible; fun fact: a=" << m_acceleration.x << ' ' << m_acceleration.y << '\n';
 		return;
 	}
 
 	m_velocity.x += static_cast<int>(m_acceleration.x);
 	m_velocity.y += static_cast<int>(m_acceleration.y);
 
-	if (m_velocity.x > 2'000'000'000 || m_velocity.y > 2'000'000'000)
-	{
-		std::cerr << "WEIRD VEL0: (" << m_velocity.x << ", " << m_velocity.y << ")\n";
-		std::cerr << "prev vel: " << m_prevVelocity.x << ' ' << m_prevVelocity.y << '\n';
-		std::cerr << "a: " << m_acceleration.x << ' ' << m_acceleration.y << '\n';
-		exit(-13);
-	}
+	velocityGuard();
 }
 
 // accessors:
@@ -268,29 +262,6 @@ void MovementComponent::updateAcceleration(
 	m_brain->propagateForward(brainInputs);
 
 	const std::vector<Blueberry::Scalar>& brainOutput = m_brain->getOutput();
-	
-	if (brainOutput[0] > 100'000'000 || brainOutput[1] > 100'000'000)
-	{
-		for (int i = 0; i < 7; i++)
-		{
-			debugFile << m_brain->getNeurons()[0].getVal() << ' ';
-			debugFile << m_brain->getNeurons()[1].getVal() << ' ';
-			debugFile << m_brain->getNeurons()[2].getVal() << ' ';
-			debugFile << m_brain->getNeurons()[3].getVal() << ' ';
-			debugFile << m_brain->getNeurons()[4].getVal() << ' ';
-			debugFile << m_brain->getNeurons()[5].getVal() << ' ';
-			debugFile << m_brain->getNeurons()[6].getVal() << ' ';
-			debugFile << m_brain->getNeurons()[7].getVal() << '\n';
-		}
-	}
-
-	//std::cout << "LOL?\n";
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-	{
-		std::cout << "o: ";
-		std::cout << brainOutput[0] << ' ';
-		std::cout << brainOutput[1] << '|';
-	}
 
 	m_acceleration.x = 10.0 * brainOutput[0];
 	m_acceleration.y = 10.0 * brainOutput[1];
@@ -394,4 +365,15 @@ float MovementComponent::getVectorSquaredValue(const sf::Vector2i& vector, bool 
 	}
 
 	return vector.x * vector.x + vector.y * vector.y;
+}
+
+void MovementComponent::velocityGuard() const
+{
+	if (m_velocity.x > 2'000'000'000 || m_velocity.y > 2'000'000'000)
+	{
+		std::cerr << "WEIRD VELOCITY: (" << m_velocity.x << ", " << m_velocity.y << ")\n";
+		std::cerr << "PREVIOUS VELOCITY: (" << m_prevVelocity.x << ' ' << m_prevVelocity.y << ")\n";
+		std::cerr << "ACCELERATION: (" << m_acceleration.x << ' ' << m_acceleration.y << ")\n";
+		exit(-13);
+	}
 }
