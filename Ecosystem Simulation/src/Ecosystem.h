@@ -98,6 +98,8 @@ public:
 
 	void printInfo() const;
 
+	unsigned getTotalFramesElapsed() const;
+
 	// mutators:
 	
 	void setName(const std::string& name);
@@ -369,6 +371,7 @@ private:
 	std::unordered_map<Animal*, bool> m_brainsVisibility;
 
 	float m_totalTimeElapsed;
+	unsigned m_totalFramesElapsed;
 
 	std::string m_logs;
 

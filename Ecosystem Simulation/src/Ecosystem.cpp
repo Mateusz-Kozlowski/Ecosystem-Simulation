@@ -23,6 +23,7 @@ Ecosystem::Ecosystem()
 	, m_hpBarsVisibility()
 	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
+	, m_totalFramesElapsed(0U)
 {
 	std::cerr << "Empty ecosystem constructor\n";
 }
@@ -68,6 +69,7 @@ Ecosystem::Ecosystem(
 	, m_hpBarsVisibility()
 	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
+	, m_totalFramesElapsed(0U)
 {
 	std::cout << mutationsPerMutation << '\n';
 
@@ -115,6 +117,7 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_hpBarsVisibility()
 	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
+	, m_totalFramesElapsed(0U)
 {
 	loadFromFolder(folderPath);
 }
@@ -129,6 +132,7 @@ void Ecosystem::saveToFolder(const std::string& folderPath) const
 	if (folderPath != "")
 	{
 		std::filesystem::create_directories(folderPath);
+		std::filesystem::remove_all(folderPath);
 	}
 	
 	// TODO: add static private (or sth even better) 
@@ -463,6 +467,11 @@ void Ecosystem::printInfo() const
 	printInfoAboutEcosystem();
 }
 
+unsigned Ecosystem::getTotalFramesElapsed() const
+{
+	return m_totalFramesElapsed;
+}
+
 // mutators:
 
 void Ecosystem::setName(const std::string& name)
@@ -764,7 +773,8 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 	ofs << m_simulationSpeedFactor << '\n';
 	ofs << m_simulationIsPaused << '\n';
 	ofs << m_godTool << '\n';
-	ofs << m_totalTimeElapsed;
+	ofs << m_totalTimeElapsed << '\n';
+	ofs << m_totalFramesElapsed;
 
 	ofs.close();
 }
@@ -922,6 +932,7 @@ void Ecosystem::loadEcosystem(const std::string& filePath)
 	ifs >> m_simulationIsPaused;
 	ifs >> m_godTool;
 	ifs >> m_totalTimeElapsed;
+	ifs >> m_totalFramesElapsed;
 
 	ifs.close();
 
@@ -1245,6 +1256,7 @@ void Ecosystem::printInfoAboutEcosystem() const
 	std::cout << "simulation is paused: " << m_simulationIsPaused << '\n';
 	std::cout << "god tool: " << getGodToolStr(m_godTool) << '\n';
 	std::cout << "total time elapsed [sec]: " << m_totalTimeElapsed << '\n';
+	std::cout << "total frames elapsed: " << m_totalFramesElapsed << '\n';
 	std::cout 
 		<< "total animals hp energy: " 
 		<< getTotalAnimalsHpEnergy() << '\n';
@@ -1329,6 +1341,8 @@ void Ecosystem::updateWorld(
 	correctPopulationSize(dt);	
 	correctBrainPreviewsPositions();
 	correctFruitsCount();
+
+	m_totalFramesElapsed++;
 
 	/*
 	if (totalEnergy != getTotalEnergy())
