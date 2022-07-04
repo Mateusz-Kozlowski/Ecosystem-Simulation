@@ -31,7 +31,7 @@ namespace gui
 
 		const Blueberry::Brain& getBrain() const;
 
-		const sf::Vector2f& getPosition() const;
+		const sf::Vector2f& getPos() const;
 		const sf::Vector2f& getSize() const;
 
 		const sf::Color& getBackgroundColor() const;

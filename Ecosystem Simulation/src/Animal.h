@@ -28,7 +28,8 @@ public:
 		const std::vector<Blueberry::Scalar>& brainInputs,
 		bool isTracked,
 		const sf::Vector2f& mousePos,
-		const std::vector<sf::Event>& events
+		const std::vector<sf::Event>& events,
+		std::ofstream& debugFile
 	);
 	void updateOnlyImgBtnOfBrainPreview(
 		const sf::Vector2f& mousePos,
@@ -43,13 +44,13 @@ public:
 
 	// accessors:
 
-	const sf::Vector2f& getPosition() const;
+	const sf::Vector2f& getPos() const;
 
 	float getRadius() const;
 
 	const sf::Color& getColor() const;
 	
-	const MovementComponent& getMovementComponent() const;
+	MovementComponent& getMovementComponent() const;
 
 	const Blueberry::Brain& getBrain() const;
 	
@@ -102,8 +103,6 @@ public:
 		const std::vector<sf::Event>& events
 	);
 
-	void setVelocity(const sf::Vector2i& velocity);
-
 	void setAlive(bool alive);
 
 	void setHp(int hp);
@@ -114,6 +113,10 @@ public:
 
 	void setBrainPreviewPosition(const sf::Vector2f& position);
 	void setBrainPreviewPosition(float x, float y);
+
+	void raport() const;
+
+	float getAge() const;
 
 private:
 	void initBody(
@@ -146,5 +149,6 @@ private:
 	std::unique_ptr<gui::IntProgressBar> m_hpBar;
 	std::unique_ptr<gui::BrainPreview> m_brainPreview;
 
+	float m_age;
 	float m_timeElapsedSinceLastExternalHpChange;
 };

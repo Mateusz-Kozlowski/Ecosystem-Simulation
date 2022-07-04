@@ -102,14 +102,14 @@ std::string Fruit::toStr() const
 	std::stringstream ss;
 	
 	ss << "energy: " << getEnergy() << '\n';
-	ss << "position: " << getPosition().x << ' ' << getPosition().y;
+	ss << "position: " << getPos().x << ' ' << getPos().y;
 
 	return ss.str();
 }
 
 // accessors:
 
-const sf::Vector2f& Fruit::getPosition() const
+const sf::Vector2f& Fruit::getPos() const
 {
 	return m_shape.getPosition();
 }

@@ -1,3 +1,7 @@
+NEW TODO:
+3rd output - do it want to clone
+add other requirement of cloning - fps bigger than 30 or sth like that
+
 ecosystem rules:
 - kill animals stucked in corners in some way and convert them into fruits with randoms positions
 

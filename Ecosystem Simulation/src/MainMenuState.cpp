@@ -298,7 +298,8 @@ void MainMenuState::getUpdateFromButtons()
 
 void MainMenuState::updateEcosystemText(float dt)
 {
-	if (m_stateData->m_ecosystem->getName() == "")
+	//if (m_stateData->m_ecosystem->getName() == "")
+	if (!m_stateData->m_ecosystem)
 	{
 		m_ecosystemName.setString(
 			"CREATE A NEW ECOSYSTEM OR LOAD AN EXISTING ONE"

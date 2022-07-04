@@ -706,8 +706,8 @@ std::string EcosystemCreatorState::removeFloatTrailingZeros(
 
 void EcosystemCreatorState::createEcosystem()
 {
-	// TODO: do sth with that hard-coded thing
-	*m_stateData->m_ecosystem = Ecosystem(
+	// TODO: consider doing sth with that:
+	Ecosystem tempEcosystem(
 		m_textBoxes["NAME"]->getInput(),
 		sf::Vector2f(
 			std::stof(m_textBoxes["WORLD WIDTH"]->getInput()),
@@ -715,13 +715,13 @@ void EcosystemCreatorState::createEcosystem()
 		),
 		std::stof(m_textBoxes["BORDERS THICKNESS"]->getInput()),
 		sf::Color(
-			32, 
-			32, 
+			32,
+			32,
 			32
 		),
 		sf::Color(
-			48, 
-			48, 
+			48,
+			48,
 			48
 		),
 		std::stoi(m_textBoxes["ANIMALS COUNT"]->getInput()),
@@ -734,8 +734,8 @@ void EcosystemCreatorState::createEcosystem()
 		sf::Color::Red,
 		sf::Color::Green,
 		sf::Color(
-			100, 
-			0, 
+			100,
+			0,
 			200
 		),
 		1.0f,
@@ -744,6 +744,12 @@ void EcosystemCreatorState::createEcosystem()
 		true,
 		true
 	);
+
+	std::string folderPath = "helper folder";
+
+	tempEcosystem.saveToFolder(folderPath);
+	
+	m_stateData->m_ecosystem->loadFromFolder(folderPath);
 }
 
 void EcosystemCreatorState::updateInput()

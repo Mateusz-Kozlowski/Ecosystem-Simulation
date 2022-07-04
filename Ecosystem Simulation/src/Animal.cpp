@@ -13,6 +13,7 @@ Animal::Animal(
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
 	, m_timeElapsedSinceLastExternalHpChange(0.0f)
+	, m_age(0.0f)
 {
 	this->initBody(position, radius, bodyColor);
 	this->initHpBar(defaultHp, hpBarBackgroundColor, hpBarProgressRectColor);
@@ -26,6 +27,7 @@ Animal::Animal(const char* folderPath)
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
 	, m_timeElapsedSinceLastExternalHpChange(0.0f)
+	, m_age(0.0f)
 {
 	this->loadFromFolder(folderPath);
 }
@@ -37,6 +39,7 @@ Animal::Animal(const Animal& rhs)
 	, m_hpBar(std::make_unique<gui::IntProgressBar>())
 	, m_brainPreview(nullptr)
 	, m_timeElapsedSinceLastExternalHpChange(rhs.m_timeElapsedSinceLastExternalHpChange)
+	, m_age(0.0f)
 {
 	*m_movementComponent = *rhs.m_movementComponent;
 	*m_hpBar = *rhs.m_hpBar;
@@ -56,6 +59,7 @@ Animal& Animal::operator=(const Animal& rhs)
 		initBrainPreview();
 
 		m_timeElapsedSinceLastExternalHpChange = rhs.m_timeElapsedSinceLastExternalHpChange;
+		m_age = 0.0f;
 	}
 
 	return *this;
@@ -123,7 +127,8 @@ void Animal::saveToFolder(const char* folderPath) const
 	ofs << m_movementComponent->getPreviousVelocityVector().y << '\n';
 	ofs << m_movementComponent->getVelocityVector().x << '\n';
 	ofs << m_movementComponent->getVelocityVector().y << '\n';
-	ofs << m_timeElapsedSinceLastExternalHpChange;
+	ofs << m_timeElapsedSinceLastExternalHpChange << '\n';
+	ofs << m_age;
 
 	ofs.close();
 }
@@ -169,6 +174,7 @@ void Animal::loadFromFolder(const char* folderPath)
 	ifs >> prevVelocity.x >> prevVelocity.y;
 	ifs >> velocity.x >> velocity.y;
 	ifs >> m_timeElapsedSinceLastExternalHpChange;
+	ifs >> m_age;
 
 	ifs.close();
 
@@ -201,7 +207,7 @@ void Animal::loadFromFolder(const char* folderPath)
 
 	initBrainPreview();
 
-	m_movementComponent->setVelocity(velocity);
+	m_movementComponent->setVelocitiesLoadedFromFile(velocity, prevVelocity);
 }
 
 void Animal::update(
@@ -210,14 +216,16 @@ void Animal::update(
 	const std::vector<Blueberry::Scalar>& brainInputs,
 	bool isTracked,
 	const sf::Vector2f& mousePos,
-	const std::vector<sf::Event>& events)
+	const std::vector<sf::Event>& events,
+	std::ofstream& debugFile)
 {
 	m_movementComponent->update(
 		dt, 
 		m_hpBar->getCurrentValue(),
 		simulationSpeedFactor, 
 		brainInputs,
-		isTracked
+		isTracked,
+		debugFile
 	);
 
 	updateBody(dt);
@@ -229,12 +237,14 @@ void Animal::update(
 	if (!m_alive)
 	{
 		std::cout << "Died 'cause of hp=" << m_hpBar->getCurrentValue() << '\n';
+		std::cout << "Its kin e=" << m_movementComponent->getKineticEnergy() << '\n';
 	}
 
 	updateHpBarPosition();
 	updateBrainPreview(mousePos, events);
 
 	m_timeElapsedSinceLastExternalHpChange += dt;
+	m_age += dt;
 }
 
 void Animal::updateOnlyImgBtnOfBrainPreview(
@@ -264,7 +274,7 @@ std::string Animal::toStr() const
 	std::stringstream ss;
 
 	ss << "position: "
-	   << getPosition().x << ' ' << getPosition().y
+	   << getPos().x << ' ' << getPos().y
 	   << '\n';
 
 	ss << "velocity: "
@@ -289,7 +299,7 @@ std::string Animal::toStr() const
 
 // accessors:
 
-const sf::Vector2f& Animal::getPosition() const
+const sf::Vector2f& Animal::getPos() const
 {
 	return m_body.getPosition();
 }
@@ -304,7 +314,7 @@ const sf::Color& Animal::getColor() const
 	return m_body.getFillColor();
 }
 
-const MovementComponent& Animal::getMovementComponent() const
+MovementComponent& Animal::getMovementComponent() const
 {
 	return *m_movementComponent;
 }
@@ -463,11 +473,6 @@ void Animal::randomMutate(
 	m_brainPreview->update(mousePos, events);
 }
 
-void Animal::setVelocity(const sf::Vector2i& velocity)
-{
-	m_movementComponent->setVelocity(velocity);
-}
-
 void Animal::setAlive(bool alive)
 {
 	m_alive = alive;
@@ -513,6 +518,16 @@ void Animal::setBrainPreviewPosition(const sf::Vector2f& position)
 void Animal::setBrainPreviewPosition(float x, float y)
 {
 	m_brainPreview->setPosition(x, y);
+}
+
+void Animal::raport() const
+{
+	//std::cout << ;
+}
+
+float Animal::getAge() const
+{
+	return m_age;
 }
 
 // private methods:

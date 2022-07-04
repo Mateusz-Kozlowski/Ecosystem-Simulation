@@ -1,8 +1,10 @@
 #include "Ecosystem.h"
 
+std::string Ecosystem::s_emptyEcosystemName = "EMPTY ECOSYSTEM\n";
+
 Ecosystem::Ecosystem()
-	: m_name("")
-	, m_background()
+	: m_name(s_emptyEcosystemName)
+	, m_bg()
 	, m_animals()
 	, m_fruits()
 	, m_animalsRadius(0.0f)
@@ -22,7 +24,7 @@ Ecosystem::Ecosystem()
 	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
 {
-
+	std::cerr << "Empty ecosystem constructor\n";
 }
 
 Ecosystem::Ecosystem(
@@ -47,7 +49,7 @@ Ecosystem::Ecosystem(
 	bool renderHpBarsByDefault,
 	bool renderBrainsByDefault)
 	: m_name(name)
-	, m_background()
+	, m_bg()
 	, m_animals()
 	, m_fruits()
 	, m_animalsRadius(animalsRadius)
@@ -89,11 +91,12 @@ Ecosystem::Ecosystem(
 		fruitsRadius, 
 		fruitsColor
 	);
+	initDebugFile();
 }
 
 Ecosystem::Ecosystem(const char* folderPath)
 	: m_name("NO NAME HAS BEEN SET YET")
-	, m_background()
+	, m_bg()
 	, m_animals()
 	, m_fruits()
 	, m_animalsRadius(0.0f)
@@ -114,6 +117,11 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_totalTimeElapsed(0.0f)
 {
 	loadFromFolder(folderPath);
+}
+
+Ecosystem::~Ecosystem()
+{
+	m_debugFile.close();
 }
 
 void Ecosystem::saveToFolder(const std::string& folderPath) const
@@ -147,6 +155,7 @@ void Ecosystem::loadFromFolder(const std::string& folderPath)
 	loadBrainsPreviewsVisibility(
 		folderPath + "/brains previews visibility.ini"
 	);
+	initDebugFile();
 }
 
 void Ecosystem::useGodTools(
@@ -224,7 +233,7 @@ void Ecosystem::update(
 
 void Ecosystem::render(sf::RenderTarget& target) const
 {
-	target.draw(m_background);
+	target.draw(m_bg);
 
 	for (const auto& animal : m_animals)
 	{
@@ -272,20 +281,20 @@ float Ecosystem::calcArenaArea() const
 
 const sf::Vector2f& Ecosystem::getArenaSize() const
 {
-	return m_background.getSize();
+	return m_bg.getSize();
 }
 
 sf::Vector2f Ecosystem::getWorldSize() const
 {
 	return {
-		m_background.getSize().x + 2 * m_background.getOutlineThickness(),
-		m_background.getSize().y + 2 * m_background.getOutlineThickness()
+		m_bg.getSize().x + 2 * m_bg.getOutlineThickness(),
+		m_bg.getSize().y + 2 * m_bg.getOutlineThickness()
 	};
 }
 
 float Ecosystem::getBordersThickness() const
 {
-	return m_background.getOutlineThickness();
+	return m_bg.getOutlineThickness();
 }
 
 unsigned Ecosystem::getAnimalsCount() const
@@ -310,12 +319,12 @@ unsigned Ecosystem::getMutationsPerMutation() const
 
 const sf::Color& Ecosystem::getBackgroundColor() const
 {
-	return m_background.getFillColor();
+	return m_bg.getFillColor();
 }
 
 const sf::Color& Ecosystem::getBordersColor() const
 {
-	return m_background.getOutlineColor();
+	return m_bg.getOutlineColor();
 }
 
 const sf::Color& Ecosystem::getAnimalsColor() const
@@ -370,7 +379,7 @@ float Ecosystem::getTotalTimeElapsed() const
 
 unsigned Ecosystem::getTotalAnimalsHpEnergy() const
 {
-	unsigned totalHpEnergy = 0.0;
+	unsigned totalHpEnergy = 0U;
 
 	for (const auto& animal : m_animals)
 	{
@@ -390,6 +399,18 @@ unsigned Ecosystem::getTotalAnimalsKineticEnergy() const
 	}
 
 	return totalKineticEnergy;
+}
+
+unsigned Ecosystem::getTotalAnimalsPreviousKineticEnergy() const
+{
+	unsigned totalPreviousKineticEnergy = 0U;
+
+	for (const auto& animal : m_animals)
+	{
+		totalPreviousKineticEnergy += animal->getPreviousKineticEnergy();
+	}
+
+	return totalPreviousKineticEnergy;
 }
 
 unsigned Ecosystem::getTotalFruitsEnergy() const
@@ -430,9 +451,9 @@ void Ecosystem::printAllAnimalsPositions() const
 	for (const auto& animal : m_animals)
 	{
 		std::cout
-			<< animal->getPosition().x
+			<< animal->getPos().x
 			<< ' '
-			<< animal->getPosition().y
+			<< animal->getPos().y
 			<< '\n';
 	}
 }
@@ -456,12 +477,12 @@ void Ecosystem::setMutationsCount(float mutationRate)
 
 void Ecosystem::setBackgroundColor(const sf::Color& backgroundColor)
 {
-	m_background.setFillColor(backgroundColor);
+	m_bg.setFillColor(backgroundColor);
 }
 
 void Ecosystem::setBordersColor(const sf::Color& bordersColor)
 {
-	m_background.setOutlineColor(bordersColor);
+	m_bg.setOutlineColor(bordersColor);
 }
 
 void Ecosystem::setAnimalsColor(const sf::Color& animalsColor)
@@ -548,17 +569,17 @@ void Ecosystem::initBackgroundAndBorders(
 	const sf::Color& backgroundColor,
 	const sf::Color& bordersColor)
 {
-	m_background.setSize(
+	m_bg.setSize(
 		sf::Vector2f(
 			worldSize.x - 2.0f * bordersThickness,
 			worldSize.y - 2.0f * bordersThickness
 		)
 	);
-	m_background.setPosition(bordersThickness, bordersThickness);
-	m_background.setFillColor(backgroundColor);
+	m_bg.setPosition(bordersThickness, bordersThickness);
+	m_bg.setFillColor(backgroundColor);
 
-	m_background.setOutlineThickness(bordersThickness);
-	m_background.setOutlineColor(bordersColor);
+	m_bg.setOutlineThickness(bordersThickness);
+	m_bg.setOutlineColor(bordersColor);
 }
 
 void Ecosystem::createNewAnimals(
@@ -646,6 +667,17 @@ void Ecosystem::createNewFruit(
 	);
 }
 
+void Ecosystem::initDebugFile()
+{
+	m_debugFile = std::ofstream("debug.ini");
+
+	if (!m_debugFile.is_open())
+	{
+		std::cerr << "INITIALIZATION OF ECOSYSTEM DEBUG FILE FAILED\n";
+		exit(-13);
+	}
+}
+
 // utils:
 
 void Ecosystem::saveAnimals(const std::string& folderPath) const
@@ -696,17 +728,17 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 
 	ofs << m_name << '\n';
 	ofs << getWorldSize().x << ' ' << getWorldSize().y << '\n';
-	ofs << m_background.getOutlineThickness() << '\n';
+	ofs << m_bg.getOutlineThickness() << '\n';
 
-	ofs << static_cast<int>(m_background.getFillColor().r) << ' ';
-	ofs << static_cast<int>(m_background.getFillColor().g) << ' ';
-	ofs << static_cast<int>(m_background.getFillColor().b) << ' ';
-	ofs << static_cast<int>(m_background.getFillColor().a) << '\n';
+	ofs << static_cast<int>(m_bg.getFillColor().r) << ' ';
+	ofs << static_cast<int>(m_bg.getFillColor().g) << ' ';
+	ofs << static_cast<int>(m_bg.getFillColor().b) << ' ';
+	ofs << static_cast<int>(m_bg.getFillColor().a) << '\n';
 
-	ofs << static_cast<int>(m_background.getOutlineColor().r) << ' ';
-	ofs << static_cast<int>(m_background.getOutlineColor().g) << ' ';
-	ofs << static_cast<int>(m_background.getOutlineColor().b) << ' ';
-	ofs << static_cast<int>(m_background.getOutlineColor().a) << '\n';
+	ofs << static_cast<int>(m_bg.getOutlineColor().r) << ' ';
+	ofs << static_cast<int>(m_bg.getOutlineColor().g) << ' ';
+	ofs << static_cast<int>(m_bg.getOutlineColor().b) << ' ';
+	ofs << static_cast<int>(m_bg.getOutlineColor().a) << '\n';
 
 	ofs << m_defaultAnimalsHp << '\n';
 	ofs << m_defaultFruitEnergy << '\n';
@@ -1080,7 +1112,7 @@ void Ecosystem::convertAnimalToFruit(
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			animal->getTotalEnergy(),
-			animal->getPosition(),
+			animal->getPos(),
 			m_fruitsRadius,
 			m_fruitsColor
 		)
@@ -1144,7 +1176,7 @@ void Ecosystem::convertKineticEnergyToFruit(
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			animal.getKineticEnergy(),
-			animal.getPosition(),
+			animal.getPos(),
 			m_fruitsRadius,
 			m_fruitsColor
 		)
@@ -1159,7 +1191,7 @@ void Ecosystem::convertKineticEnergyToFruit(
 		);
 	}
 
-	animal.setVelocity(sf::Vector2i(0, 0));
+	animal.getMovementComponent().resetVelocity();
 }
 
 // info tool:
@@ -1228,12 +1260,64 @@ void Ecosystem::updateWorld(
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events)
 {
-	unsigned totalEnergy = getTotalEnergy();
+	int totalEnergy = getTotalEnergy();
 
-	std::cout << "|||||-----NEW FRAME-----|||||:\n";
+	int hp = getTotalAnimalsHpEnergy();
+	int fruitE = getTotalFruitsEnergy();
+	int kin = getTotalAnimalsKineticEnergy();
+
+	std::vector<int> prevKins(m_animals.size());
+	std::vector<int> hps(m_animals.size());
+	for (int i = 0; i < m_animals.size(); i++)
+	{
+		prevKins[i] = m_animals[i]->getKineticEnergy();
+		hps[i] = m_animals[i]->getHp();
+	}	
+
+	std::cout << "--------------------NEW FRAME--------------------:\n";
 
 	updateAnimals(dt, mousePos, events);
+
+	std::cout << "only after up an: " << static_cast<int>(getTotalEnergy()) - totalEnergy << "\n\n";
+
+	int prevKin = getTotalAnimalsPreviousKineticEnergy();
+
 	transferEnergyFromAnimalsToFruits();
+
+	if (totalEnergy != getTotalEnergy())
+	{
+		using namespace std;
+		cout << "\n1ST GATE FAILED:\n";
+		cout << "total delta = " << static_cast<int>(getTotalEnergy()) - totalEnergy << "\n\n";
+		
+		cout << "HP DELTA = " << static_cast<int>(getTotalAnimalsHpEnergy()) - hp << '\n';
+		cout << "FRUIT DELTA = " << static_cast<int>(getTotalFruitsEnergy()) - fruitE << "\n\n";
+
+		cout << "those 2 should be equal:\n";
+		cout << "prev kin: " << kin << '\n';
+		cout << "prev kin2: " << prevKin << "\n\n";
+
+		cout << "new kin: " << static_cast<int>(getTotalAnimalsKineticEnergy()) << '\n';
+		cout << "so KIN DELTA = " << static_cast<int>(getTotalAnimalsKineticEnergy()) - kin << '\n';
+		cout << "raports from animals:\n";
+
+		for (int i = 0; i < m_animals.size(); i++)
+		{
+			std::cout
+				<< m_animals[i]->getHp() - hps[i] << ' '
+				<< prevKins[i] << ' '
+				<< m_animals[i]->getPreviousKineticEnergy() << ' '
+				<< m_animals[i]->getKineticEnergy() << ' '
+				<< m_animals[i]->getKineticEnergyDelta() << ' '
+				<< m_animals[i]->getEnergyToExpel() << ' '
+				<< m_animals[i]->getAge() << ' '
+				<< m_animals[i]->getAccelerationVector().x << ' ' << m_animals[i]->getAccelerationVector().y << '\n';
+		}
+
+		sf::sleep(sf::seconds(4.0f));
+		exit(-13);
+	}
+
 	avoidTunneling();
 	//kickInAssAnimalsStuckedNextToBorders();
 	removeDeadAnimals();
@@ -1250,6 +1334,7 @@ void Ecosystem::updateWorld(
 		std::cout << "totalEnergy=" << totalEnergy << '\n';
 		std::cout << "AFTER:\n";
 		std::cout << "totalEnergy=" << getTotalEnergy() << '\n';
+		std::cout << "delta = " << static_cast<int>(getTotalEnergy()) - static_cast<int>(totalEnergy) << '\n';
 		sf::sleep(sf::seconds(4.0f));
 		exit(-13);
 	}
@@ -1268,7 +1353,8 @@ void Ecosystem::updateAnimals(
 			getInputsForBrain(*animal),
 			animal.get() == m_trackedAnimal,
 			mousePos,
-			events
+			events,
+			m_debugFile
 		);
 	}
 }
@@ -1279,7 +1365,7 @@ std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 	// TODO: add set BRAIN inputs methods in Animal class
 	std::vector<Blueberry::Scalar> inputsForBrain;
 
-	inputsForBrain.reserve(5);
+	inputsForBrain.reserve(7);
 
 	inputsForBrain.push_back(static_cast<Blueberry::Scalar>(
 		animal.getVelocityVector().x)
@@ -1297,17 +1383,17 @@ std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 	inputsForBrain.push_back(log2(animal.getHp()));
 
 	const Fruit* theNearestFruit = getTheNearestFruit(animal);
-	
+
 	if (theNearestFruit)
 	{
 		inputsForBrain.push_back(
 			static_cast<Blueberry::Scalar>(
-				theNearestFruit->getPosition().x - animal.getPosition().x
+				theNearestFruit->getPos().x - animal.getPos().x
 			)
 		);
 		inputsForBrain.push_back(
 			static_cast<Blueberry::Scalar>(
-				theNearestFruit->getPosition().y - animal.getPosition().y
+				theNearestFruit->getPos().y - animal.getPos().y
 			)
 		);
 	}
@@ -1315,6 +1401,19 @@ std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
 	{
 		inputsForBrain.push_back(0.0);
 		inputsForBrain.push_back(0.0);
+	}
+
+	inputsForBrain.push_back((animal.getPos().x - m_bg.getOutlineThickness()) / getWorldSize().x);
+	inputsForBrain.push_back((animal.getPos().y - m_bg.getOutlineThickness()) / getWorldSize().y);
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		std::cout << "i: ";
+		for (const auto& it : inputsForBrain)
+		{
+			std::cout << it << ' ';
+		}
+		std::cout << '|';
 	}
 
 	return inputsForBrain;
@@ -1343,8 +1442,8 @@ const Fruit* Ecosystem::getTheNearestFruit(const Animal& animal) const
 
 float Ecosystem::calcDistance(const Animal& animal, const Fruit& fruit) const
 {
-	float x = animal.getPosition().x - fruit.getPosition().x;
-	float y = animal.getPosition().y - fruit.getPosition().y;
+	float x = animal.getPos().x - fruit.getPos().x;
+	float y = animal.getPos().y - fruit.getPos().y;
 
 	return sqrt(pow(x, 2) + pow(y, 2));
 }
@@ -1353,13 +1452,33 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 {
 	Fruit* lowestEnergyFruit = getLowestEnergyFruit();
 
+	if (!lowestEnergyFruit)
+	{
+		m_fruits.emplace_back(
+			std::make_unique<Fruit>(
+				0U,
+				sf::Vector2f(0.0f, 0.0f),
+				m_bg.getOutlineThickness(),
+				sf::Color::Green
+			)
+		);
+
+		lowestEnergyFruit = m_fruits.back().get();
+	}
+
+	unsigned expeled = 0U;
+
 	for (const auto& animal : m_animals)
 	{
+		expeled += animal->getEnergyToExpel();
+
 		lowestEnergyFruit->setEnergy(
 			lowestEnergyFruit->getEnergy()
 			+ animal->getEnergyToExpel()
 		);
 	}
+
+	std::cout << "\nexpeled: " << expeled << '\n';
 }
 
 Fruit* Ecosystem::getLowestEnergyFruit()
@@ -1394,7 +1513,7 @@ void Ecosystem::avoidTunneling()
 void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 {
 	// make the following if statements shorter:
-	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& animalPos = animal.getPos();
 	float animalRadius = animal.getRadius();
 	float bordersThickness = getBordersThickness();
 	const sf::Vector2f worldSize = getWorldSize();
@@ -1402,12 +1521,12 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 	// left border:
 	if (animalPos.x - animalRadius < bordersThickness)
 	{
-		animal.setVelocity(
-			sf::Vector2i(
-				abs(animal.getVelocityVector().x),
-				animal.getVelocityVector().y
-			)
-		);
+		std::cout << "d0:\n";
+		std::cout << animal.getVelocityVector().x << '\n';
+		std::cout << abs(animal.getVelocityVector().x) << '\n';
+		std::cout << animal.getVelocityVector().y << '\n';
+
+		animal.getMovementComponent().elasticReboundInAxisX();
 		animal.setPosition(
 			sf::Vector2f(
 				bordersThickness + animalRadius,
@@ -1419,12 +1538,9 @@ void Ecosystem::avoidTunnelingByVerticalBorders(Animal& animal)
 	// in the same frame so we can use "else if"):
 	else if (animalPos.x + animalRadius > worldSize.x - bordersThickness)
 	{
-		animal.setVelocity(
-			sf::Vector2i(
-				-abs(animal.getVelocityVector().x),
-				animal.getVelocityVector().y
-			)
-		);
+		std::cout << "d1\n";
+
+		animal.getMovementComponent().elasticReboundInAxisX();
 		animal.setPosition(
 			sf::Vector2f(
 				worldSize.x - bordersThickness - animalRadius,
@@ -1438,7 +1554,7 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 {
 	// let's make the following if statements shorter:
 
-	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& animalPos = animal.getPos();
 	float animalRadius = animal.getRadius();
 	float bordersThickness = getBordersThickness();
 	const sf::Vector2f worldSize = getWorldSize();
@@ -1446,12 +1562,9 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 	// top border:
 	if (animalPos.y - animalRadius < bordersThickness)
 	{
-		animal.setVelocity(
-			sf::Vector2i(
-				animal.getVelocityVector().x,
-				abs(animal.getVelocityVector().y)
-			)
-		);
+		std::cout << "d2\n";
+
+		animal.getMovementComponent().elasticReboundInAxisY();
 		animal.setPosition(
 			sf::Vector2f(
 				animalPos.x,
@@ -1463,12 +1576,9 @@ void Ecosystem::avoidTunnelingByHorizontalBorders(Animal& animal)
 	// in the same frame so we can use "else if"):
 	else if (animalPos.y + animalRadius > worldSize.y - bordersThickness)
 	{
-		animal.setVelocity(
-			sf::Vector2i(
-				animal.getVelocityVector().x,
-				-abs(animal.getVelocityVector().y)
-			)
-		);
+		std::cout << "d3\n";
+
+		animal.getMovementComponent().elasticReboundInAxisY();
 		animal.setPosition(
 			sf::Vector2f(
 				animalPos.x,
@@ -1509,7 +1619,7 @@ bool Ecosystem::sticksToLeftBorder(const Animal& animal)
 
 	// let's make the following if statement shorter:
 
-	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& animalPos = animal.getPos();
 	float bordersThickness = getBordersThickness();
 	float animalRadius = animal.getRadius();
 
@@ -1522,7 +1632,7 @@ bool Ecosystem::sticksToRightBorder(const Animal& animal)
 
 	// let's make the following if statement shorter:
 
-	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& animalPos = animal.getPos();
 	const sf::Vector2f& worldSize = getWorldSize();
 	float bordersThickness = getBordersThickness();
 	float animalR = animal.getRadius();
@@ -1536,7 +1646,7 @@ bool Ecosystem::sticksToTopBorder(const Animal& animal)
 
 	// let's make the following if statement shorter:
 
-	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& animalPos = animal.getPos();
 	float bordersThickness = getBordersThickness();
 	float animalRadius = animal.getRadius();
 
@@ -1549,7 +1659,7 @@ bool Ecosystem::sticksToBottomBorder(const Animal& animal)
 
 	// let's make the following if statement shorter:
 
-	const sf::Vector2f& animalPos = animal.getPosition();
+	const sf::Vector2f& animalPos = animal.getPos();
 	const sf::Vector2f& worldSize = getWorldSize();
 	float bordersThickness = getBordersThickness();
 	float animalR = animal.getRadius();
@@ -1566,7 +1676,7 @@ void Ecosystem::removeDeadAnimals()
 			m_fruits.push_back(
 				std::make_unique<Fruit>(
 					m_animals[i]->getTotalEnergy(),
-					m_animals[i]->getPosition(),
+					m_animals[i]->getPos(),
 					m_fruitsRadius,
 					m_fruitsColor
 				)
@@ -1633,15 +1743,15 @@ bool Ecosystem::compareAnimalsYPositions(
 	std::shared_ptr<Animal> a1,
 	std::shared_ptr<Animal> a2)
 {
-	return a1->getPosition().y < a2->getPosition().y;
+	return a1->getPos().y < a2->getPos().y;
 }
 
 bool Ecosystem::animalIsTooHigh(const Animal& animal, const Fruit& fruit) const
 {
 	// let's make the following return statement shorter:
 
-	const sf::Vector2f& animalPos = animal.getPosition();
-	const sf::Vector2f& fruitPos = fruit.getPosition();
+	const sf::Vector2f& animalPos = animal.getPos();
+	const sf::Vector2f& fruitPos = fruit.getPos();
 	float animalRadius = animal.getRadius();
 	float fruitRadius = fruit.getRadius();
 
@@ -1678,8 +1788,8 @@ bool Ecosystem::animalReachesFruitInY(
 {
 	// let's make the following return statement shorter:
 
-	const sf::Vector2f& animalPos = animal.getPosition();
-	const sf::Vector2f& fruitPos = fruit.getPosition();
+	const sf::Vector2f& animalPos = animal.getPos();
+	const sf::Vector2f& fruitPos = fruit.getPos();
 	float animalRadius = animal.getRadius();
 	float fruitRadius = fruit.getRadius();
 
@@ -1690,8 +1800,8 @@ bool Ecosystem::animalReachesFruit(
 	const Animal& animal, 
 	const Fruit& fruit) const
 {
-	float x = animal.getPosition().x - fruit.getPosition().x;
-	float y = animal.getPosition().y - fruit.getPosition().y;
+	float x = animal.getPos().x - fruit.getPos().x;
+	float y = animal.getPos().y - fruit.getPos().y;
 
 	float distance = sqrt(pow(x, 2) + pow(y, 2));
 
@@ -1750,7 +1860,7 @@ void Ecosystem::eat(
 	m_animals.push_back(std::make_shared<Animal>(animal));
 	
 	m_animals.back()->setHp(fruit.getEnergy());
-	m_animals.back()->setVelocity(sf::Vector2i(0, 0));
+	m_animals.back()->getMovementComponent().resetVelocity();
 	
 	if (m_animals.back()->getTotalEnergy() <= 0)
 	{
@@ -2022,30 +2132,30 @@ void Ecosystem::correctBrainPreviewsPositions()
 		if (protrudesRightBorder)
 		{
 			animal->setBrainPreviewPosition(
-				animal->getPosition().x - brainPreview.getSize().x,
-				brainPreview.getPosition().y
+				animal->getPos().x - brainPreview.getSize().x,
+				brainPreview.getPos().y
 			);
 		}
 		else
 		{
 			animal->setBrainPreviewPosition(
-				animal->getPosition().x,
-				brainPreview.getPosition().y
+				animal->getPos().x,
+				brainPreview.getPos().y
 			);
 		}
 
 		if (protrudesBottomBorder)
 		{
 			animal->setBrainPreviewPosition(
-				brainPreview.getPosition().x,
-				animal->getPosition().y - brainPreview.getSize().y
+				brainPreview.getPos().x,
+				animal->getPos().y - brainPreview.getSize().y
 			);
 		}
 		else
 		{
 			animal->setBrainPreviewPosition(
-				brainPreview.getPosition().x,
-				animal->getPosition().y
+				brainPreview.getPos().x,
+				animal->getPos().y
 			);
 		}
 	}
@@ -2054,7 +2164,7 @@ void Ecosystem::correctBrainPreviewsPositions()
 bool Ecosystem::brainPreviewProtrudesWorldRightBorder(
 	const gui::BrainPreview& brainPreview)
 {
-	float rightBorderPosition = brainPreview.getPosition().x;
+	float rightBorderPosition = brainPreview.getPos().x;
 	rightBorderPosition += brainPreview.getSize().x;
 
 	return rightBorderPosition > getWorldSize().x;
@@ -2063,7 +2173,7 @@ bool Ecosystem::brainPreviewProtrudesWorldRightBorder(
 bool Ecosystem::brainPreviewProtrudesWorldBottomBorder(
 	const gui::BrainPreview& brainPreview)
 {
-	float bottomBorderPosition = brainPreview.getPosition().y;
+	float bottomBorderPosition = brainPreview.getPos().y;
 	bottomBorderPosition += brainPreview.getSize().y;
 
 	return bottomBorderPosition > getWorldSize().y;
@@ -2090,7 +2200,7 @@ void Ecosystem::correctFruitsCount()
 			m_fruits.emplace_back(
 				std::make_unique<Fruit>(
 					fruit->getEnergy() - m_defaultFruitEnergy,
-					fruit->getPosition(),
+					fruit->getPos(),
 					fruit->getRadius(),
 					fruit->getColor()
 				)

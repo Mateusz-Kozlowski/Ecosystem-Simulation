@@ -31,7 +31,7 @@ void gui::BrainPreviewModifier::render(
 	gui::BrainPreview& brainPreview,
 	sf::RenderTarget& target)
 {
-	const sf::Vector2f prevPos = brainPreview.getPosition();
+	const sf::Vector2f prevPos = brainPreview.getPos();
 	const sf::Vector2f prevSize = brainPreview.getSize();
 
 	brainPreview.setPosition(m_pos);
@@ -90,7 +90,7 @@ void gui::BrainPreviewModifier::updateNeuronsPos(
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events)
 {
-	const sf::Vector2f prevPos = brainPreview.getPosition();
+	const sf::Vector2f prevPos = brainPreview.getPos();
 	const sf::Vector2f prevSize = brainPreview.getSize();
 
 	brainPreview.setPosition(m_pos);

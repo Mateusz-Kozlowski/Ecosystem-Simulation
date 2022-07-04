@@ -122,7 +122,7 @@ gui::ButtonState gui::Button::getState() const
 	return m_state;
 }
 
-const sf::Vector2f& gui::Button::getPosition() const
+const sf::Vector2f& gui::Button::getPos() const
 {
 	return m_rect.getPosition();
 }

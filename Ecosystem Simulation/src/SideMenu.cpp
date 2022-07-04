@@ -116,8 +116,8 @@ void gui::SideMenu::setPosition(const sf::Vector2f& newPos)
 	for (auto& button : m_buttons)
 		button.second->setPosition(
 			sf::Vector2f(
-				newPos.x - oldPos.x + button.second->getPosition().x,
-				newPos.y - oldPos.y + button.second->getPosition().y
+				newPos.x - oldPos.x + button.second->getPos().x,
+				newPos.y - oldPos.y + button.second->getPos().y
 			)
 		);
 

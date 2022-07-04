@@ -10,6 +10,7 @@ class Ecosystem
 {
 public:
 	Ecosystem();
+	Ecosystem(const Ecosystem& ecosystem);
 	Ecosystem(
 		const std::string& name,
 		const sf::Vector2f& worldSize,
@@ -33,6 +34,7 @@ public:
 		bool renderBrainsByDefault = true
 	);
 	Ecosystem(const char* folderPath);
+	~Ecosystem();
 	
 	void saveToFolder(const std::string& folderPath) const;
 	void loadFromFolder(const std::string& folderPath);
@@ -88,6 +90,7 @@ public:
 
 	unsigned getTotalAnimalsHpEnergy() const;
 	unsigned getTotalAnimalsKineticEnergy() const;
+	unsigned getTotalAnimalsPreviousKineticEnergy() const;
 	unsigned getTotalFruitsEnergy() const;
 	unsigned getTotalEnergy(bool print = false) const;
 
@@ -157,6 +160,7 @@ private:
 		float radius, 
 		const sf::Color& fruitColor
 	);
+	void initDebugFile();
 	
 	// utils:
 
@@ -314,10 +318,12 @@ private:
 
 	void updateModifyingBrainsPreviews();
 
+	static std::string s_emptyEcosystemName;
+
 private:
 	std::string m_name;
 
-	sf::RectangleShape m_background;
+	sf::RectangleShape m_bg;
 
 	// m_animals vector contains shared pointers 
 	// (in contrast to fruits vector which contains unique pointers)
@@ -365,4 +371,6 @@ private:
 	float m_totalTimeElapsed;
 
 	std::string m_logs;
+
+	std::ofstream m_debugFile;
 };

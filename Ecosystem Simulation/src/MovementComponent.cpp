@@ -1,7 +1,7 @@
 #include "MovementComponent.h"
 
 MovementComponent::MovementComponent()
-	: m_brain(std::make_unique<Blueberry::Brain>(5U, 2U))
+	: m_brain(std::make_unique<Blueberry::Brain>(7U, 2U))
 	, m_prevVelocity(0, 0)
 	, m_velocity(0, 0)
 	, m_acceleration(0.0f, 0.0f)
@@ -11,13 +11,21 @@ MovementComponent::MovementComponent()
 }
 
 MovementComponent::MovementComponent(
-	const sf::Vector2f& defaultVelocity,
+	const sf::Vector2i& defaultVelocity,
 	const char* brainFilePath)
 	: m_brain(std::make_unique<Blueberry::Brain>(0U, 0U))
 	, m_prevVelocity(0, 0)
 	, m_velocity(defaultVelocity)
 	, m_acceleration(0.0f, 0.0f)
 {
+	sf::Vector2i velocity = defaultVelocity;
+
+	if (velocity.x > 2'000'000'000 || velocity.y > 2'000'000'000)
+	{
+		std::cerr << "WEIRD VELa: (" << velocity.x << ", " << velocity.y << ")\n";
+		exit(-13);
+	}
+
 	loadBrainFromFile(brainFilePath);
 }
 
@@ -27,11 +35,27 @@ MovementComponent::MovementComponent(const MovementComponent& rhs)
 	, m_velocity(rhs.m_velocity)
 	, m_acceleration(rhs.m_acceleration)
 {
+	sf::Vector2i velocity = rhs.m_velocity;
+
+	if (velocity.x > 2'000'000'000 || velocity.y > 2'000'000'000)
+	{
+		std::cerr << "WEIRD VELb: (" << velocity.x << ", " << velocity.y << ")\n";
+		exit(-13);
+	}
+
 	*m_brain = *rhs.m_brain;
 }
 
 MovementComponent& MovementComponent::operator=(const MovementComponent& rhs)
 {
+	sf::Vector2i velocity = rhs.m_velocity;
+
+	if (velocity.x > 2'000'000'000 || velocity.y > 2'000'000'000)
+	{
+		std::cerr << "WEIRD VELc: (" << velocity.x << ", " << velocity.y << ")\n";
+		exit(-13);
+	}
+
 	if (this != &rhs)
 	{
 		*m_brain = *rhs.m_brain;
@@ -58,22 +82,31 @@ void MovementComponent::update(
 	unsigned availableEnergy,
 	float speedFactor,
 	const std::vector<Blueberry::Scalar>& brainInputs,
-	bool allowUserInput)
+	bool allowUserInput,
+	std::ofstream& debugFile)
 {
 	// TODO: implement slowing down using speed_factor:
 	
-	updateAcceleration(brainInputs, allowUserInput);
-
-	if (accelerationIsImpossible(dt, availableEnergy))
-	{
-		std::cout << "acceleration impossible\n";
-		return;
-	}
+	updateAcceleration(brainInputs, allowUserInput, debugFile);
 
 	m_prevVelocity = m_velocity;
 
+	if (accelerationIsImpossible(dt, availableEnergy))
+	{
+		std::cout << "acceleration impossible; fun fact: a=" << m_acceleration.x << ' ' << m_acceleration.y << '\n';
+		return;
+	}
+
 	m_velocity.x += static_cast<int>(m_acceleration.x);
 	m_velocity.y += static_cast<int>(m_acceleration.y);
+
+	if (m_velocity.x > 2'000'000'000 || m_velocity.y > 2'000'000'000)
+	{
+		std::cerr << "WEIRD VEL0: (" << m_velocity.x << ", " << m_velocity.y << ")\n";
+		std::cerr << "prev vel: " << m_prevVelocity.x << ' ' << m_prevVelocity.y << '\n';
+		std::cerr << "a: " << m_acceleration.x << ' ' << m_acceleration.y << '\n';
+		exit(-13);
+	}
 }
 
 // accessors:
@@ -116,12 +149,12 @@ unsigned MovementComponent::getKineticEnergy() const
 
 unsigned MovementComponent::getPreviousVelocityVectorSquaredValue() const
 {
-	return getVectorSquaredValue(m_prevVelocity);
+	return getVectorSquaredValue(m_prevVelocity, false);
 }
 
 unsigned MovementComponent::getVelocityVectorSquaredValue() const
 {
-	return getVectorSquaredValue(m_velocity);
+	return getVectorSquaredValue(m_velocity, false);
 }
 
 float MovementComponent::getAccelerationVectorValue() const
@@ -151,46 +184,112 @@ void MovementComponent::mutateBrain(unsigned brainMutationsCount)
 	m_brain->mutate(brainMutationsCount);
 }
 
+/*
 void MovementComponent::setVelocity(const sf::Vector2i& velocity)
 {
+	if (velocity.x > 2'000'000'000 || velocity.y > 2'000'000'000)
+	{
+		std::cerr << "WEIRD VEL1: (" << velocity.x << ", " << velocity.y << ")\n";
+		exit(-13);
+	}
+
 	setVelocity(velocity.x, velocity.y);
 }
 
-void MovementComponent::setVelocity(unsigned x, unsigned y)
+void MovementComponent::setVelocity(int x, int y)
 {
-	m_prevVelocity = m_velocity;
+	if (x > 2'000'000'000 || y > 2'000'000'000)
+	{
+		std::cerr << "WEIRD VEL2: (" << x << ", " << y << ")\n";
+		exit(-13);
+	}
+
+	//m_prevVelocity = m_velocity;
 	m_velocity.x = x;
 	m_velocity.y = y;
 }
 
-void MovementComponent::setVelocityX(unsigned vx)
+void MovementComponent::setVelocityX(int vx)
 {
-	m_prevVelocity = m_velocity;
+	if (vx > 2'000'000'000)
+	{
+		std::cerr << "WEIRD VELOCITY X!\n";
+		exit(-13);
+	}
+
+	//m_prevVelocity = m_velocity;
 	m_velocity.x = vx;
 }
 
-void MovementComponent::setVelocityY(unsigned vy)
+void MovementComponent::setVelocityY(int vy)
 {
-	m_prevVelocity = m_velocity;
+	if (vy > 2'000'000'000)
+	{
+		std::cerr << "WEIRD VELOCITY Y!\n";
+		exit(-13);
+	}
+
+	//m_prevVelocity = m_velocity;
 	m_velocity.y = vy;
+}
+*/
+
+void MovementComponent::elasticReboundInAxisX()
+{
+	m_velocity.x *= -1;
+}
+
+void MovementComponent::elasticReboundInAxisY()
+{
+	m_velocity.y *= -1;
+}
+
+void MovementComponent::setVelocitiesLoadedFromFile(
+	const sf::Vector2i& velocity, 
+	const sf::Vector2i& prevVel)
+{
+	m_velocity = velocity;
+	m_prevVelocity = prevVel;
 }
 
 // private methods:
 
+void MovementComponent::resetVelocity()
+{
+	m_velocity = { 0, 0 };
+}
+
 void MovementComponent::updateAcceleration(
 	const std::vector<Blueberry::Scalar>& brainInputs,
-	bool allowUserInput
+	bool allowUserInput,
+	std::ofstream& debugFile
 )
 {
 	m_brain->propagateForward(brainInputs);
 
 	const std::vector<Blueberry::Scalar>& brainOutput = m_brain->getOutput();
 	
+	if (brainOutput[0] > 100'000'000 || brainOutput[1] > 100'000'000)
+	{
+		for (int i = 0; i < 7; i++)
+		{
+			debugFile << m_brain->getNeurons()[0].getVal() << ' ';
+			debugFile << m_brain->getNeurons()[1].getVal() << ' ';
+			debugFile << m_brain->getNeurons()[2].getVal() << ' ';
+			debugFile << m_brain->getNeurons()[3].getVal() << ' ';
+			debugFile << m_brain->getNeurons()[4].getVal() << ' ';
+			debugFile << m_brain->getNeurons()[5].getVal() << ' ';
+			debugFile << m_brain->getNeurons()[6].getVal() << ' ';
+			debugFile << m_brain->getNeurons()[7].getVal() << '\n';
+		}
+	}
+
 	//std::cout << "LOL?\n";
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
 	{
+		std::cout << "o: ";
 		std::cout << brainOutput[0] << ' ';
-		std::cout << brainOutput[1] << '\n';
+		std::cout << brainOutput[1] << '|';
 	}
 
 	m_acceleration.x = 10.0 * brainOutput[0];
@@ -270,7 +369,7 @@ bool MovementComponent::accelerationIsImpossible(
 	
 	const sf::Vector2i newVelVect = m_velocity + velVectDelta;
 	
-	int newKinEnergy = getVectorSquaredValue(newVelVect);
+	int newKinEnergy = getVectorSquaredValue(newVelVect, true);
 
 	int newHp = static_cast<int>(availableEnergy) - abs(
 		newKinEnergy - static_cast<int>(getKineticEnergy())
@@ -286,7 +385,13 @@ float MovementComponent::getVectorValue(const sf::Vector2f& vector)
 	return sqrt(std::pow(vector.x, 2.0f) + std::pow(vector.y, 2.0f));
 }
 
-float MovementComponent::getVectorSquaredValue(const sf::Vector2i& vector)
+float MovementComponent::getVectorSquaredValue(const sf::Vector2i& vector, bool simulation)
 {
+	if (simulation == false && (vector.x > 50'000 || vector.y > 50'000))
+	{
+		std::cerr << "very big velocity!: " << vector.x << ' ' << vector.y << '\n';
+		exit(-12);
+	}
+
 	return vector.x * vector.x + vector.y * vector.y;
 }

@@ -1202,7 +1202,7 @@ void SimulationState::updateView()
 	if (m_stateData->m_ecosystem->getTrackedAnimal())
 	{
 		m_view.setCenter(
-			m_stateData->m_ecosystem->getTrackedAnimal()->getPosition()
+			m_stateData->m_ecosystem->getTrackedAnimal()->getPos()
 		);
 	}
 

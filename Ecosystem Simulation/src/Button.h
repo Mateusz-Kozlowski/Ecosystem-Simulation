@@ -41,7 +41,7 @@ namespace gui
 		
 		ButtonState getState() const;
 
-		const sf::Vector2f& getPosition() const;
+		const sf::Vector2f& getPos() const;
 
 		// mutators:
 

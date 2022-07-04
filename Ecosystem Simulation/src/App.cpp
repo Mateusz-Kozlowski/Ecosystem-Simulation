@@ -215,7 +215,7 @@ void App::updateStates()
 					m_window.close();
 				}
 			}
-
+			
 			if (!m_states.empty())
 			{
 				m_states.top()->update(m_dt);

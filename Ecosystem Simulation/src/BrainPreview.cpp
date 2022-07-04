@@ -57,7 +57,7 @@ const Blueberry::Brain& gui::BrainPreview::getBrain() const
 	return m_brain;
 }
 
-const sf::Vector2f& gui::BrainPreview::getPosition() const
+const sf::Vector2f& gui::BrainPreview::getPos() const
 {
 	return m_background.getPosition();
 }

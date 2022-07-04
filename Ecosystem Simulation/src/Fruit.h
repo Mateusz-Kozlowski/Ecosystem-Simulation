@@ -26,7 +26,7 @@ public:
 
 	unsigned getEnergy() const;
 
-	const sf::Vector2f& getPosition() const;
+	const sf::Vector2f& getPos() const;
 
 	float getRadius() const;
 
