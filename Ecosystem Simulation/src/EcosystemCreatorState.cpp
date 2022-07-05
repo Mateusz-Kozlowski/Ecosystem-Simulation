@@ -327,7 +327,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pY(5.0f, resolution)
 		),
 		m_font, 
-		"4", 
+		"16", 
 		charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
@@ -383,7 +383,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pY(5.0f, resolution)
 		),
 		m_font, 
-		"100000000", 
+		"100000", 
 		charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
@@ -411,7 +411,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pY(5.0f, resolution)
 		),
 		m_font, 
-		"100000000", 
+		"100000", 
 		charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
@@ -439,7 +439,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pY(5.0f, resolution)
 		),
 		m_font,
-		"100", 
+		"1", 
 		charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
