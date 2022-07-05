@@ -45,6 +45,8 @@ public:
 	// mutators:
 
 	void mutateBrain(unsigned brainMutationsCount);
+	void anabolicBrainMutation(unsigned brainMutationsCount);
+	void nonCatabolicBrainMutation(unsigned brainMutationsCount);
 
 	//void setVelocity(const sf::Vector2i& velocity);
 	//void setVelocity(int x, int y);
@@ -81,9 +83,11 @@ private:
 	// simulation = true if it's only checking if acceleration is possible:
 	static float getVectorSquaredValue(const sf::Vector2i& vector, bool simulation);
 
-private:
 	void velocityGuard() const;
 
+	void randomNumbersGeneratingGuard() const;
+
+private:
 	std::unique_ptr<Blueberry::Brain> m_brain;
 
 	// kinematics:

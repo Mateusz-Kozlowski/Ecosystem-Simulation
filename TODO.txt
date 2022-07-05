@@ -33,6 +33,8 @@ simulation state:
 simulation/ecosystem:
 - identify the bottle neck of the fps count
 - only anabolic mutations if brain has only one synapse
+  anabolic and non-catabolic mutations fuctions are implemented 
+  and ready to be used (so use them!)
 - implement id's system in Animals
 - there is probably a bug with updating brain preview modifier
   when a brain preview which is mutated isn't rendered

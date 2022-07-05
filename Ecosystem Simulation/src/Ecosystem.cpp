@@ -1814,7 +1814,7 @@ void Ecosystem::eat(
 	unsigned fps = static_cast<unsigned>(1.0f / dt);
 
 	// for sure there won't be any coping:
-	if (fps < 30U)
+	if (fps < 30U || animal.getBrain().getSpecificOutput(2U) < 0.0)
 	{
 		animal.setHp(animal.getHp() + fruit.getEnergy());
 		fruit.setEnergy(0U);

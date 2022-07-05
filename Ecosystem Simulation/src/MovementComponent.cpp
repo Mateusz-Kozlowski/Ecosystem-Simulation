@@ -1,13 +1,15 @@
 #include "MovementComponent.h"
 
 MovementComponent::MovementComponent()
-	: m_brain(std::make_unique<Blueberry::Brain>(7U, 2U))
+	: m_brain(std::make_unique<Blueberry::Brain>(7U, 3U))
 	, m_prevVelocity(0, 0)
 	, m_velocity(0, 0)
 	, m_acceleration(0.0f, 0.0f)
 {
-	m_brain->mutateRandomNeuronBias();
-	m_brain->mutateRandomNeuronBias();
+	for (int i = 0; i < 3; i++)
+	{
+		m_brain->mutateRandomNeuronBias();
+	}
 }
 
 MovementComponent::MovementComponent(
@@ -176,6 +178,78 @@ const sf::Vector2f& MovementComponent::getAccelerationVector() const
 void MovementComponent::mutateBrain(unsigned brainMutationsCount)
 {
 	m_brain->mutate(brainMutationsCount);
+}
+
+void MovementComponent::anabolicBrainMutation(unsigned brainMutationsCount)
+{ 
+	// I am not sure if ranges for generating random numbers are inclussive or exclussive
+	// so I decided to add a couple of ways to double-check if everything works correctly
+	randomNumbersGeneratingGuard();
+
+	unsigned zero = 0U;
+	unsigned one = 0U;
+
+	for (int i = 0; i < brainMutationsCount; i++)
+	{
+		if (Blueberry::RandomEngine::getIntInRange(0, 1) == 0)
+		{
+			m_brain->addRandomNeuron();
+			zero++;
+		}
+		else
+		{
+			m_brain->addRandomSynapse();
+			one++;
+		}
+	}
+
+	if (zero + one != brainMutationsCount)
+	{
+		std::cerr << "ERROR: MovementComponent::anabolicBrainMutation(unsigned brainMutationsCount)\n";
+		exit(-13);
+	}
+}
+
+void MovementComponent::nonCatabolicBrainMutation(unsigned brainMutationsCount)
+{
+	randomNumbersGeneratingGuard();
+
+	while (brainMutationsCount--)
+	{
+		int randomInt = Blueberry::RandomEngine::getIntInRange(1U, 5U);
+
+		switch (randomInt)
+		{
+		case 1U:
+			std::clog << "non catabolic mutation: added new neuron\n";
+			m_brain->addRandomNeuron();
+			break;
+
+		case 2U:
+			std::clog << "non catabolic mutation: added new synapse\n";
+			m_brain->addRandomSynapse();
+			break;
+
+		case 3U:
+			std::clog << "non catabolic mutation: changed an activation func\n";
+			m_brain->mutateRandomNeuronActFunc();
+			break;
+
+		case 4U:
+			std::clog << "non catabolic mutation: change a neuron bias\n";
+			m_brain->mutateRandomNeuronBias();
+			break;
+
+		case 5U:
+			std::clog << "non catabolic mutation: change a weight of a synapse\n";
+			m_brain->mutateRandomSynapseWeight();
+			break;
+
+		default:
+			std::cerr << "ERROR: MovementComponent::nonCatabolicBrainMutation(unsigned)\n";
+			exit(-13);
+		}
+	}
 }
 
 /*
@@ -374,6 +448,39 @@ void MovementComponent::velocityGuard() const
 		std::cerr << "WEIRD VELOCITY: (" << m_velocity.x << ", " << m_velocity.y << ")\n";
 		std::cerr << "PREVIOUS VELOCITY: (" << m_prevVelocity.x << ' ' << m_prevVelocity.y << ")\n";
 		std::cerr << "ACCELERATION: (" << m_acceleration.x << ' ' << m_acceleration.y << ")\n";
+		exit(-13);
+	}
+}
+
+void MovementComponent::randomNumbersGeneratingGuard() const
+{
+	unsigned zero = 0U;
+	unsigned one = 0U;
+
+	const unsigned ITERATIONS = 1000;
+
+	for (int i = 0; i < ITERATIONS; i++)
+	{
+		int randomNumber = Blueberry::RandomEngine::getIntInRange(0, 1);
+
+		if (randomNumber == 0)
+		{
+			zero++;
+		}
+		else if (randomNumber == 1)
+		{
+			one++;
+		}
+	}
+
+	if (zero + one != ITERATIONS)
+	{
+		std::cerr << "ERROR: MovementComponent::anabolicBrainMutation(unsigned brainMutationsCount)\n";
+		exit(-13);
+	}
+	if (zero < 450 || zero > 550 || one < 450 || one > 550)
+	{
+		std::cerr << "ERROR: MovementComponent::anabolicBrainMutation(unsigned brainMutationsCount)\n";
 		exit(-13);
 	}
 }
