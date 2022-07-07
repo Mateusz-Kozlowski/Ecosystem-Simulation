@@ -71,8 +71,6 @@ Ecosystem::Ecosystem(
 	, m_totalTimeElapsed(0.0f)
 	, m_totalFramesElapsed(0U)
 {
-	std::cout << mutationsPerMutation << '\n';
-
 	initBackgroundAndBorders(
 		worldSize, 
 		bordersThickness, 
