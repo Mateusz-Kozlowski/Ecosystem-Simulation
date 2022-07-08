@@ -42,7 +42,7 @@ public:
 	void setRandomPosition(
 		const sf::Vector2f& worldSize, 
 		float bordersThickness,
-		float marginsSize
+		bool linearDistributionOfPositionProbability
 	);
 
 	void setRadius(float radius);
@@ -54,6 +54,13 @@ private:
 		const sf::Vector2f& position,
 		float radius,
 		const sf::Color& color
+	);
+
+	static bool belongsToArena(
+		double r, 
+		double alfa, 
+		double arenaWidth, 
+		double arenaHeight
 	);
 	
 private:

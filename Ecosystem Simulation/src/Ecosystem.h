@@ -160,7 +160,8 @@ private:
 	void createNewFruit(
 		unsigned energy,
 		float radius, 
-		const sf::Color& fruitColor
+		const sf::Color& fruitColor,
+		bool linearDistributionOfPositionProbability
 	);
 	void initDebugFile();
 	

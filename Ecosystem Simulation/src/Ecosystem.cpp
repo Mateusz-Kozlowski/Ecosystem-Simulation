@@ -647,14 +647,16 @@ void Ecosystem::createNewFruits(
 
 	for (int i = 0; i < fruitsCount; i++)
 	{
-		createNewFruit(defaultFruitsEnergy, fruitsRadius, fruitsColor);
+		std::cout << "i: " << i << '\n';
+		createNewFruit(defaultFruitsEnergy, fruitsRadius, fruitsColor, false);
 	}
 }
 
 void Ecosystem::createNewFruit(
 	unsigned energy,
 	float radius, 
-	const sf::Color& fruitColor)
+	const sf::Color& fruitColor,
+	bool linearDistributionOfPositionProbability)
 {
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
@@ -670,7 +672,7 @@ void Ecosystem::createNewFruit(
 	m_fruits.back()->setRandomPosition(
 		getWorldSize(),
 		getBordersThickness(),
-		0.1f // unhardcode margins
+		linearDistributionOfPositionProbability
 	);
 }
 
@@ -1471,7 +1473,7 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 
 	if (!lowestEnergyFruit)
 	{
-		createNewFruit(0U, m_fruitsRadius, m_fruitsColor);
+		createNewFruit(0U, m_fruitsRadius, m_fruitsColor, false);
 		lowestEnergyFruit = m_fruits.back().get();
 	}
 
@@ -1676,6 +1678,11 @@ void Ecosystem::removeDeadAnimals()
 					m_fruitsRadius,
 					m_fruitsColor
 				)
+			);
+			m_fruits.back()->setRandomPosition(
+				getWorldSize(), 
+				getBordersThickness(), 
+				false
 			);
 
 			//std::clog << "An animal removed\n";

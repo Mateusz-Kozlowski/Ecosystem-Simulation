@@ -1,38 +1,14 @@
 ecosystems simulation:
+- give animals lower starting energy
+- metabolic cost or sth like that; implementing it will require using pointer to a function
+  (getInputsForBrain) and despite that you perhaps won't get away with checking 2 times if animal is alive
+- cloning not when eating but anytime (but fps has to be > 30 and an animal wants to reproduce)
 - implement some way of dealing with stubborn vegetating animals
-- non-linear fruits distribution
-
-brain inputs:
-- better nearest food searching algo (with complexity better than the current one (O(f*a)))
-  (that algo will likely be applicable to looking for food-animal collisions)
-- remember - animals should be able to know as much as possible - its optimal for evolving
-
-side menu:
-- after loading ecosystem side menu panel should be updated (e.g., speed scaler)
-
-app:
-- change the way of dealing with events:
-  call State class handleEvent method from App class updateEvents method;
-  states stack top will be feed with events; that state will do with those events whatever it wants,
-  we can call it blackbox
-- dt can be extremelly big if a window lost the focus
-- define states freezing
-
-simulation state:
-- move that thing controling simulation speed factor from updateEcosystem method to getUpdatesFromGui
-- saving zoom/world camera? 
-  maybe not in ecosystem but in simulationState 
-  and if the App will be closed u can save that setting in a file
-- avoid drawing things that are outside the window
-- add texture buttons in the top-right corners of all brain previews that will allow to move neurons,
-  save that changes and maybe other things
-
-simulation/ecosystem:
 - identify the bottle neck of the fps count
 - only anabolic mutations if brain has only one synapse
   anabolic and non-catabolic mutations fuctions are implemented 
   and ready to be used (so use them!)
-- implement id's system in Animals
+- implement id's system in Animals?
 - there is probably a bug with updating brain preview modifier
   when a brain preview which is mutated isn't rendered
 - imgBtns don't work if animals are close to borders
@@ -103,6 +79,34 @@ simulation/ecosystem:
 - every copy constructor and copy assigment operator should use its initializer list to initialize all its members
   like Animal class copy constructor (and the same thing with other constructors!)
 - update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
+
+README.md:
+- add all features chapter
+
+brain inputs:
+- better nearest food searching algo (with complexity better than the current one (O(f*a)))
+  (that algo will likely be applicable to looking for food-animal collisions)
+- remember - animals should be able to know as much as possible - its optimal for evolving
+
+side menu:
+- after loading ecosystem side menu panel should be updated (e.g., speed scaler)
+
+app:
+- change the way of dealing with events:
+  call State class handleEvent method from App class updateEvents method;
+  states stack top will be feed with events; that state will do with those events whatever it wants,
+  we can call it blackbox
+- dt can be extremelly big if a window lost the focus
+- define states freezing
+
+simulation state:
+- move that thing controling simulation speed factor from updateEcosystem method to getUpdatesFromGui
+- saving zoom/world camera? 
+  maybe not in ecosystem but in simulationState 
+  and if the App will be closed u can save that setting in a file
+- avoid drawing things that are outside the window
+- add texture buttons in the top-right corners of all brain previews that will allow to move neurons,
+  save that changes and maybe other things
 
 shortcuts:
 - speeding up and slowing down
