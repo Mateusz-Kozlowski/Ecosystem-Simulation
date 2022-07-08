@@ -6,6 +6,7 @@
 ecosystems/
 bin/
 bin-int/
+helper folder/
 
 # User-specific files
 *.rsuser
