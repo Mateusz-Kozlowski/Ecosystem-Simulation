@@ -22,11 +22,7 @@ MovementComponent::MovementComponent(
 {
 	sf::Vector2i velocity = defaultVelocity;
 
-	if (velocity.x > 2'000'000'000 || velocity.y > 2'000'000'000)
-	{
-		std::cerr << "WEIRD VELa: (" << velocity.x << ", " << velocity.y << ")\n";
-		exit(-13);
-	}
+	velocityGuard();
 
 	loadBrainFromFile(brainFilePath);
 }
@@ -39,11 +35,7 @@ MovementComponent::MovementComponent(const MovementComponent& rhs)
 {
 	sf::Vector2i velocity = rhs.m_velocity;
 
-	if (velocity.x > 2'000'000'000 || velocity.y > 2'000'000'000)
-	{
-		std::cerr << "WEIRD VELb: (" << velocity.x << ", " << velocity.y << ")\n";
-		exit(-13);
-	}
+	velocityGuard();
 
 	*m_brain = *rhs.m_brain;
 }
@@ -52,11 +44,7 @@ MovementComponent& MovementComponent::operator=(const MovementComponent& rhs)
 {
 	sf::Vector2i velocity = rhs.m_velocity;
 
-	if (velocity.x > 2'000'000'000 || velocity.y > 2'000'000'000)
-	{
-		std::cerr << "WEIRD VELc: (" << velocity.x << ", " << velocity.y << ")\n";
-		exit(-13);
-	}
+	velocityGuard();
 
 	if (this != &rhs)
 	{
@@ -145,12 +133,12 @@ unsigned MovementComponent::getKineticEnergy() const
 
 unsigned MovementComponent::getPreviousVelocityVectorSquaredValue() const
 {
-	return getVectorSquaredValue(m_prevVelocity, false);
+	return getVectorSquaredValue(m_prevVelocity, false, "prev vel", m_acceleration);
 }
 
 unsigned MovementComponent::getVelocityVectorSquaredValue() const
 {
-	return getVectorSquaredValue(m_velocity, false);
+	return getVectorSquaredValue(m_velocity, false, "vel", m_acceleration);
 }
 
 float MovementComponent::getAccelerationVectorValue() const
@@ -340,6 +328,16 @@ void MovementComponent::updateAcceleration(
 	m_acceleration.x = 10.0 * brainOutput[0];
 	m_acceleration.y = 10.0 * brainOutput[1];
 
+	if (m_acceleration.x > 500'000 || m_acceleration.y > 500'000)
+	{
+		std::clog << "a: " << m_acceleration.x << ' ' << m_acceleration.y << '\n';
+		std::clog << "inputs:\n";
+		for (int i = 0; i < m_brain->getInputSize(); i++)
+		{
+			std::clog << m_brain->getNeurons()[i].getVal() << ' ' << m_brain->getNeurons()[i].getActVal() << '\n';
+		}
+	}
+
 	if (allowUserInput)
 	{
 		handleUserInput();
@@ -414,7 +412,7 @@ bool MovementComponent::accelerationIsImpossible(
 	
 	const sf::Vector2i newVelVect = m_velocity + velVectDelta;
 	
-	int newKinEnergy = getVectorSquaredValue(newVelVect, true);
+	int newKinEnergy = getVectorSquaredValue(newVelVect, true, "impossible a", m_acceleration);
 
 	int newHp = static_cast<int>(availableEnergy) - abs(
 		newKinEnergy - static_cast<int>(getKineticEnergy())
@@ -430,12 +428,20 @@ float MovementComponent::getVectorValue(const sf::Vector2f& vector)
 	return sqrt(std::pow(vector.x, 2.0f) + std::pow(vector.y, 2.0f));
 }
 
-float MovementComponent::getVectorSquaredValue(const sf::Vector2i& vector, bool simulation)
+float MovementComponent::getVectorSquaredValue(
+	const sf::Vector2i& vector,
+	bool simulation,
+	std::string origin,
+	const sf::Vector2f& acceleration)
 {
 	if (simulation == false && (vector.x > 50'000 || vector.y > 50'000))
 	{
-		std::cerr << "very big velocity!: " << vector.x << ' ' << vector.y << '\n';
-		exit(-12);
+		std::cerr 
+			<< "origin: " << origin << '\n'
+			<< "a: " << acceleration.x << ' ' << acceleration.y << '\n'
+			<< "ERROR: MovementComponent::getVectorSquaredValue(...): "
+			<< "very big velocity!: " << vector.x << ' ' << vector.y << '\n';
+		exit(-13);
 	}
 
 	return vector.x * vector.x + vector.y * vector.y;

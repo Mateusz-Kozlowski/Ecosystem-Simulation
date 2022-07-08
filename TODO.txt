@@ -1,8 +1,14 @@
 ecosystems simulation:
-- give animals lower starting energy
+- fix:
+  + there are 700 fruits but I don't see any of them (just run from huge)
+  + animals are spawning in the center, I have no clue why
+
+- add guard checking if new total energy of ecosystem is the same 
+  so that u don't have to check it manually
 - metabolic cost or sth like that; implementing it will require using pointer to a function
   (getInputsForBrain) and despite that you perhaps won't get away with checking 2 times if animal is alive
 - cloning not when eating but anytime (but fps has to be > 30 and an animal wants to reproduce)
+
 - implement some way of dealing with stubborn vegetating animals
 - identify the bottle neck of the fps count
 - only anabolic mutations if brain has only one synapse

@@ -13,7 +13,8 @@ public:
 		const sf::Color& bodyColor,
 		const sf::Color& hpBarBackgroundColor,
 		const sf::Color& hpBarProgressRectColor,
-		int defaultHp
+		int defaultHp,
+		unsigned basalMetabolicRatePerFrame
 	);
 	Animal(const char* folderPath);
 	Animal(const Animal& rhs);
@@ -25,7 +26,7 @@ public:
 	void update(
 		float dt,
 		float simulationSpeedFactor,
-		const std::vector<Blueberry::Scalar>& brainInputs,
+		const std::vector<Blueberry::Scalar>& externalInputsForBrain,
 		bool isTracked,
 		const sf::Vector2f& mousePos,
 		const std::vector<sf::Event>& events,
@@ -78,9 +79,13 @@ public:
 
 	gui::BrainPreview& getBrainPreview() const;
 
+	float getAge() const;
+
 	float getTimeElapsedSinceLastExternalHpChange() const;
 
 	bool isCoveredByMouse(const sf::Vector2f& mousePos) const;
+
+	unsigned getBasalMetabolicRatePerFrame() const;
 
 	// mutators:
 
@@ -114,9 +119,7 @@ public:
 	void setBrainPreviewPosition(const sf::Vector2f& position);
 	void setBrainPreviewPosition(float x, float y);
 
-	void raport() const;
-
-	float getAge() const;
+	void setBasalMetabolicRatePerFrame(unsigned basalMetabolicRatePerFrame);
 
 private:
 	void initBody(
@@ -130,7 +133,13 @@ private:
 		const sf::Color& hpBarProgressRectColor
 	);
 	void initBrainPreview();
+	
+	void doBMRrelatedThings();
 
+	std::vector<Blueberry::Scalar> getEnhancedBrainInputs(
+		const std::vector<Blueberry::Scalar>& externalBrainInputs
+	) const;
+	
 	void updateBody(float dt);
 	void updateHp(float dt);
 	void updateHpBarPosition();
@@ -151,4 +160,7 @@ private:
 
 	float m_age;
 	float m_timeElapsedSinceLastExternalHpChange;
+
+	unsigned m_basalMetabolicRatePerFrame;
+	unsigned m_energyToExpelFromBMR;
 };

@@ -484,6 +484,34 @@ void EcosystemCreatorState::initTextBoxes()
 		false, 
 		8
 	);
+
+	m_textBoxes["BMR PER FRAME"] = std::make_unique<gui::TextBox>(
+		sf::Vector2f(
+			gui::p2pX(44.0f, resolution),
+			gui::p2pY(84.0f, resolution)
+		),
+		sf::Vector2f(
+			gui::p2pX(12.0f, resolution),
+			gui::p2pY(5.0f, resolution)
+		),
+		m_font,
+		"50",
+		charSize,
+		sf::Color(100, 100, 100),
+		sf::Color(125, 125, 125),
+		sf::Color(75, 75, 75),
+		sf::Color(64, 64, 64),
+		sf::Color(100, 100, 100),
+		sf::Color(32, 32, 32),
+		sf::Color(225, 225, 225),
+		sf::Color(255, 255, 255),
+		sf::Color(150, 150, 150),
+		gui::p2pY(0.5f, resolution),
+		gui::p2pY(100.0f * 1.0f / 1080.0f, resolution),
+		0.5f,
+		false,
+		8
+		);
 }
 
 void EcosystemCreatorState::initTexts()
@@ -597,6 +625,18 @@ void EcosystemCreatorState::initTexts()
 		sf::Vector2f(
 			gui::p2pX(24.0f, resolution),
 			gui::p2pY(78.1f, resolution)
+		)
+	);
+
+	addText(
+		"BMR PER FRAME",
+		"BMR PER FRAME",
+		m_font,
+		charSize,
+		sf::Color(225, 225, 225),
+		sf::Vector2f(
+			gui::p2pX(24.0f, resolution),
+			gui::p2pY(85.1f, resolution)
 		)
 	);
 }
@@ -731,6 +771,7 @@ void EcosystemCreatorState::createEcosystem()
 		static_cast<unsigned>(std::stoi(m_textBoxes["DEFAULT HP"]->getInput())),
 		static_cast<unsigned>(std::stoi(m_textBoxes["DEFAULT FRUIT ENERGY"]->getInput())),
 		std::stof(m_textBoxes["MUTATION RATE"]->getInput()),
+		std::stof(m_textBoxes["BMR PER FRAME"]->getInput()),
 		sf::Color::Red,
 		sf::Color::Green,
 		sf::Color(

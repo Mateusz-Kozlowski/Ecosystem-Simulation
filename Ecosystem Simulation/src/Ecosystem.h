@@ -24,6 +24,7 @@ public:
 		unsigned defaultAnimalsHp,
 		unsigned defaultFruitsEnergy,
 		unsigned mutationsPerMutation,
+		unsigned basalMetabolicRatePerFrame,
 		const sf::Color& animalsColor,
 		const sf::Color& fruitsColor,
 		const sf::Color& trackedAnimalColor,
@@ -138,6 +139,7 @@ private:
 	void createNewAnimals(
 		unsigned animalsCount,
 		unsigned defaultAnimalsHp,
+		unsigned basalMetabolicRatePerFrame,
 		float animalsRadius,
 		const sf::Color& animalsColor,
 		bool renderHpBarsByDefault,
@@ -145,6 +147,7 @@ private:
 	);
 	void createNewAnimal(
 		unsigned defaultAnimalHp,
+		unsigned basalMetabolicRatePerFrame,
 		float animalRadius,
 		const sf::Color& animalColor,
 		bool renderHpBarByDefault,
@@ -240,7 +243,7 @@ private:
 		const std::vector<sf::Event>& events
 	);
 
-	std::vector<Blueberry::Scalar> getInputsForBrain(
+	std::vector<Blueberry::Scalar> getEcosystemRelatedInputsForBrain(
 		const Animal& animal
 	) const;
 	

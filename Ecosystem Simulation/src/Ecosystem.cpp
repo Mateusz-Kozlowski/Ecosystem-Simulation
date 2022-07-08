@@ -41,6 +41,7 @@ Ecosystem::Ecosystem(
 	unsigned defaultAnimalsHp,
 	unsigned defaultFruitsEnergy,
 	unsigned mutationsPerMutation,
+	unsigned basalMetabolicRatePerFrame,
 	const sf::Color& animalsColor,
 	const sf::Color& fruitsColor,
 	const sf::Color& trackedAnimalColor,
@@ -80,6 +81,7 @@ Ecosystem::Ecosystem(
 	createNewAnimals(
 		animalsCount,
 		defaultAnimalsHp,
+		basalMetabolicRatePerFrame,
 		animalsRadius,
 		animalsColor,
 		renderHpBarsByDefault,
@@ -592,6 +594,7 @@ void Ecosystem::initBackgroundAndBorders(
 void Ecosystem::createNewAnimals(
 	unsigned animalsCount,
 	unsigned defaultAnimalsHp,
+	unsigned basalMetabolicRatePerFrame,
 	float animalsRadius,
 	const sf::Color& animalsColor,
 	bool renderHpBarsByDefault,
@@ -603,6 +606,7 @@ void Ecosystem::createNewAnimals(
 	{
 		createNewAnimal(
 			defaultAnimalsHp,
+			basalMetabolicRatePerFrame,
 			animalsRadius,
 			animalsColor,
 			renderHpBarsByDefault,
@@ -613,6 +617,7 @@ void Ecosystem::createNewAnimals(
 
 void Ecosystem::createNewAnimal(
 	unsigned defaultAnimalHp,
+	unsigned basalMetabolicRatePerFrame,
 	float animalRadius,
 	const sf::Color& animalColor,
 	bool renderHpBarByDefault,
@@ -628,7 +633,8 @@ void Ecosystem::createNewAnimal(
 			animalColor,
 			sf::Color(100, 100, 100),
 			sf::Color::Red,
-			defaultAnimalHp
+			defaultAnimalHp,
+			basalMetabolicRatePerFrame
 		)
 	);
 	m_animals.back()->setRandomPosition(getWorldSize(), getBordersThickness());
@@ -647,7 +653,7 @@ void Ecosystem::createNewFruits(
 
 	for (int i = 0; i < fruitsCount; i++)
 	{
-		std::cout << "i: " << i << '\n';
+		std::clog << "i: " << i << '\n';
 		createNewFruit(defaultFruitsEnergy, fruitsRadius, fruitsColor, false);
 	}
 }
@@ -1368,8 +1374,8 @@ void Ecosystem::updateAnimals(
 	{
 		animal->update(
 			dt, 
-			m_simulationSpeedFactor, 
-			getInputsForBrain(*animal),
+			m_simulationSpeedFactor,
+			getEcosystemRelatedInputsForBrain(*animal),
 			animal.get() == m_trackedAnimal,
 			mousePos,
 			events,
@@ -1378,64 +1384,39 @@ void Ecosystem::updateAnimals(
 	}
 }
 
-std::vector<Blueberry::Scalar> Ecosystem::getInputsForBrain(
+std::vector<Blueberry::Scalar> Ecosystem::getEcosystemRelatedInputsForBrain(
 	const Animal& animal) const
 {
 	// TODO: add set BRAIN inputs methods in Animal class
-	std::vector<Blueberry::Scalar> inputsForBrain;
+	std::vector<Blueberry::Scalar> ecosystemRelatedInputsForBrain;
 
-	inputsForBrain.reserve(7);
-
-	inputsForBrain.push_back(static_cast<Blueberry::Scalar>(
-		animal.getVelocityVector().x)
-	);
-	inputsForBrain.push_back(static_cast<Blueberry::Scalar>(
-		animal.getVelocityVector().y)
-	);
-
-	if (animal.getHp() <= 0)
-	{
-		std::cerr << "Assertion will fail, hp= " << animal.getHp() << '\n';
-		exit(-13);
-	}
-	
-	inputsForBrain.push_back(log2(animal.getHp()));
+	ecosystemRelatedInputsForBrain.reserve(4);
 
 	const Fruit* theNearestFruit = getTheNearestFruit(animal);
 
 	if (theNearestFruit)
 	{
-		inputsForBrain.push_back(
+		ecosystemRelatedInputsForBrain.push_back(
 			static_cast<Blueberry::Scalar>(
-				theNearestFruit->getPos().x - animal.getPos().x
+				(theNearestFruit->getPos().x - animal.getPos().x) / getArenaSize().x
 			)
 		);
-		inputsForBrain.push_back(
+		ecosystemRelatedInputsForBrain.push_back(
 			static_cast<Blueberry::Scalar>(
-				theNearestFruit->getPos().y - animal.getPos().y
+				(theNearestFruit->getPos().y - animal.getPos().y) / getArenaSize().y
 			)
 		);
 	}
 	else
 	{
-		inputsForBrain.push_back(0.0);
-		inputsForBrain.push_back(0.0);
+		ecosystemRelatedInputsForBrain.push_back(0.0);
+		ecosystemRelatedInputsForBrain.push_back(0.0);
 	}
 
-	inputsForBrain.push_back((animal.getPos().x - m_bg.getOutlineThickness()) / getWorldSize().x);
-	inputsForBrain.push_back((animal.getPos().y - m_bg.getOutlineThickness()) / getWorldSize().y);
+	ecosystemRelatedInputsForBrain.push_back((animal.getPos().x - m_bg.getOutlineThickness()) / getArenaSize().x);
+	ecosystemRelatedInputsForBrain.push_back((animal.getPos().y - m_bg.getOutlineThickness()) / getArenaSize().y);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-	{
-		std::cout << "i: ";
-		for (const auto& it : inputsForBrain)
-		{
-			std::cout << it << ' ';
-		}
-		std::cout << '|';
-	}
-
-	return inputsForBrain;
+	return ecosystemRelatedInputsForBrain;
 }
 
 const Fruit* Ecosystem::getTheNearestFruit(const Animal& animal) const

@@ -6,7 +6,8 @@ Animal::Animal(
 	const sf::Color& bodyColor,
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor,
-	int defaultHp)
+	int defaultHp,
+	unsigned basalMetabolicRatePerFrame)
 	: m_body()
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
@@ -14,6 +15,8 @@ Animal::Animal(
 	, m_brainPreview(nullptr)
 	, m_timeElapsedSinceLastExternalHpChange(0.0f)
 	, m_age(0.0f)
+	, m_basalMetabolicRatePerFrame(basalMetabolicRatePerFrame)
+	, m_energyToExpelFromBMR(0U)
 {
 	this->initBody(position, radius, bodyColor);
 	this->initHpBar(defaultHp, hpBarBackgroundColor, hpBarProgressRectColor);
@@ -28,6 +31,8 @@ Animal::Animal(const char* folderPath)
 	, m_brainPreview(nullptr)
 	, m_timeElapsedSinceLastExternalHpChange(0.0f)
 	, m_age(0.0f)
+	, m_basalMetabolicRatePerFrame(0U)
+	, m_energyToExpelFromBMR(0U)
 {
 	this->loadFromFolder(folderPath);
 }
@@ -40,6 +45,8 @@ Animal::Animal(const Animal& rhs)
 	, m_brainPreview(nullptr)
 	, m_timeElapsedSinceLastExternalHpChange(rhs.m_timeElapsedSinceLastExternalHpChange)
 	, m_age(0.0f)
+	, m_basalMetabolicRatePerFrame(rhs.m_basalMetabolicRatePerFrame)
+	, m_energyToExpelFromBMR(rhs.m_energyToExpelFromBMR)
 {
 	*m_movementComponent = *rhs.m_movementComponent;
 	*m_hpBar = *rhs.m_hpBar;
@@ -60,6 +67,8 @@ Animal& Animal::operator=(const Animal& rhs)
 
 		m_timeElapsedSinceLastExternalHpChange = rhs.m_timeElapsedSinceLastExternalHpChange;
 		m_age = 0.0f;
+		m_basalMetabolicRatePerFrame = rhs.m_basalMetabolicRatePerFrame;
+		m_energyToExpelFromBMR = rhs.m_energyToExpelFromBMR;
 	}
 
 	return *this;
@@ -128,7 +137,9 @@ void Animal::saveToFolder(const char* folderPath) const
 	ofs << m_movementComponent->getVelocityVector().x << '\n';
 	ofs << m_movementComponent->getVelocityVector().y << '\n';
 	ofs << m_timeElapsedSinceLastExternalHpChange << '\n';
-	ofs << m_age;
+	ofs << m_age << '\n';
+	ofs << m_basalMetabolicRatePerFrame << '\n';
+	ofs << m_energyToExpelFromBMR;
 
 	ofs.close();
 }
@@ -175,6 +186,8 @@ void Animal::loadFromFolder(const char* folderPath)
 	ifs >> velocity.x >> velocity.y;
 	ifs >> m_timeElapsedSinceLastExternalHpChange;
 	ifs >> m_age;
+	ifs >> m_basalMetabolicRatePerFrame;
+	ifs >> m_energyToExpelFromBMR;
 
 	ifs.close();
 
@@ -213,17 +226,19 @@ void Animal::loadFromFolder(const char* folderPath)
 void Animal::update(
 	float dt,
 	float simulationSpeedFactor,
-	const std::vector<Blueberry::Scalar>& brainInputs,
+	const std::vector<Blueberry::Scalar>& externalInputsForBrain,
 	bool isTracked,
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events,
 	std::ofstream& debugFile)
 {
+	doBMRrelatedThings();
+	
 	m_movementComponent->update(
-		dt, 
+		dt,
 		m_hpBar->getCurrentValue(),
-		simulationSpeedFactor, 
-		brainInputs,
+		simulationSpeedFactor,
+		getEnhancedBrainInputs(externalInputsForBrain),
 		isTracked,
 		debugFile
 	);
@@ -284,8 +299,13 @@ std::string Animal::toStr() const
 	
 	ss << "total energy: " << getTotalEnergy() << '\n';
 	
+	ss << "age: " << m_age << '\n';
+
 	ss << "time elapsed since last meal: "
-		<< getTimeElapsedSinceLastExternalHpChange();
+	   << m_timeElapsedSinceLastExternalHpChange << '\n';
+
+	ss << "Basal Metabolic Rate per frame: "
+	   << m_basalMetabolicRatePerFrame;
 
 	return ss.str();
 }
@@ -319,7 +339,7 @@ const Blueberry::Brain& Animal::getBrain() const
 
 unsigned Animal::getEnergyToExpel() const
 {
-	return m_movementComponent->getEnergyToExpel();
+	return m_movementComponent->getEnergyToExpel() + m_energyToExpelFromBMR;
 }
 
 int Animal::getKineticEnergyDelta() const
@@ -392,6 +412,11 @@ gui::BrainPreview& Animal::getBrainPreview() const
 	return *m_brainPreview;
 }
 
+float Animal::getAge() const
+{
+	return m_age;
+}
+
 float Animal::getTimeElapsedSinceLastExternalHpChange() const
 {
 	return m_timeElapsedSinceLastExternalHpChange;
@@ -403,6 +428,11 @@ bool Animal::isCoveredByMouse(const sf::Vector2f& mousePosView) const
 	float y = m_body.getPosition().y - mousePosView.y;
 
 	return sqrt(pow(x, 2.0f) + pow(y, 2.0f)) <= m_body.getRadius();
+}
+
+unsigned Animal::getBasalMetabolicRatePerFrame() const
+{
+	return m_basalMetabolicRatePerFrame;
 }
 
 // mutators:
@@ -512,14 +542,9 @@ void Animal::setBrainPreviewPosition(float x, float y)
 	m_brainPreview->setPosition(x, y);
 }
 
-void Animal::raport() const
+void Animal::setBasalMetabolicRatePerFrame(unsigned basalMetabolicRatePerFrame)
 {
-	//std::cout << ;
-}
-
-float Animal::getAge() const
-{
-	return m_age;
+	m_basalMetabolicRatePerFrame = basalMetabolicRatePerFrame;
 }
 
 // private methods:
@@ -581,6 +606,46 @@ void Animal::updateBody(float dt)
 		m_body.getPosition().x + velVect.x * dt,
 		m_body.getPosition().y + velVect.y * dt
 	);
+}
+
+void Animal::doBMRrelatedThings()
+{
+	m_energyToExpelFromBMR = std::min(
+		m_hpBar->getCurrentValue(),
+		static_cast<int>(m_basalMetabolicRatePerFrame)
+	);
+
+	m_hpBar->setValue(
+		std::max(
+			0,
+			m_hpBar->getCurrentValue() - static_cast<int>(m_basalMetabolicRatePerFrame)
+		)
+	);
+}
+
+std::vector<Blueberry::Scalar> Animal::getEnhancedBrainInputs(
+	const std::vector<Blueberry::Scalar>& externalBrainInputs) const
+{
+	std::vector<Blueberry::Scalar> enhancedBrainInputs;
+	
+	enhancedBrainInputs.reserve(7);
+
+	for (int i = 0; i < externalBrainInputs.size(); i++)
+	{
+		enhancedBrainInputs.emplace_back(externalBrainInputs[i]);
+	}
+
+	// now it's time to enhance the inputs:
+	// log(0)=-inf, but log(1)=0 :)
+	// but changing (for example) 10'000 to 10'001 is negligibly small :)
+	enhancedBrainInputs.emplace_back(sqrt(abs(m_movementComponent->getVelocityVector().x)));
+	enhancedBrainInputs.emplace_back(sqrt(abs(m_movementComponent->getVelocityVector().y)));
+
+	// log(0)=-inf, but log(1)=0 :)
+	// but changing (for example) 10'000 to 10'001 is negligibly small :)
+	enhancedBrainInputs.emplace_back(log10(m_hpBar->getCurrentValue() + 1));
+
+	return enhancedBrainInputs;
 }
 
 void Animal::updateHp(float dt)

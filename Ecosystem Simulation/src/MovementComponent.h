@@ -81,7 +81,12 @@ private:
 	);
 	static float getVectorValue(const sf::Vector2f& vector);
 	// simulation = true if it's only checking if acceleration is possible:
-	static float getVectorSquaredValue(const sf::Vector2i& vector, bool simulation);
+	static float getVectorSquaredValue(
+		const sf::Vector2i& vector,
+		bool simulation,
+		std::string origin,
+		const sf::Vector2f& acceleration
+	);
 
 	void velocityGuard() const;
 
