@@ -24,6 +24,7 @@ Ecosystem::Ecosystem()
 	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
 	, m_totalFramesElapsed(0U)
+	, m_previousTotalEnergy(0U)
 {
 	std::cerr << "Empty ecosystem constructor\n";
 }
@@ -71,6 +72,7 @@ Ecosystem::Ecosystem(
 	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
 	, m_totalFramesElapsed(0U)
+	, m_previousTotalEnergy(0U)
 {
 	initBackgroundAndBorders(
 		worldSize, 
@@ -94,6 +96,8 @@ Ecosystem::Ecosystem(
 		fruitsColor
 	);
 	initDebugFile();
+
+	m_previousTotalEnergy = getTotalEnergy();
 }
 
 Ecosystem::Ecosystem(const char* folderPath)
@@ -118,6 +122,7 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_brainsVisibility()
 	, m_totalTimeElapsed(0.0f)
 	, m_totalFramesElapsed(0U)
+	, m_previousTotalEnergy(0U)
 {
 	loadFromFolder(folderPath);
 }
@@ -780,7 +785,8 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 	ofs << m_simulationIsPaused << '\n';
 	ofs << m_godTool << '\n';
 	ofs << m_totalTimeElapsed << '\n';
-	ofs << m_totalFramesElapsed;
+	ofs << m_totalFramesElapsed << '\n';
+	ofs << m_previousTotalEnergy;
 
 	ofs.close();
 }
@@ -939,6 +945,7 @@ void Ecosystem::loadEcosystem(const std::string& filePath)
 	ifs >> m_godTool;
 	ifs >> m_totalTimeElapsed;
 	ifs >> m_totalFramesElapsed;
+	ifs >> m_previousTotalEnergy;
 
 	ifs.close();
 
@@ -1347,6 +1354,7 @@ void Ecosystem::updateWorld(
 	correctPopulationSize(dt);	
 	correctBrainPreviewsPositions();
 	correctFruitsCount();
+	updatePreviousTotalEnergy();
 
 	m_totalFramesElapsed++;
 
@@ -2218,6 +2226,21 @@ void Ecosystem::correctFruitsCount()
 		assert(fruit->getEnergy() < 2 * m_defaultFruitEnergy);
 	}
 	#endif
+}
+
+void Ecosystem::updatePreviousTotalEnergy()
+{
+	unsigned totalEnergy = getTotalEnergy();
+
+	if (totalEnergy != m_previousTotalEnergy)
+	{
+		std::cerr << "ERROR: Ecosystem::updatePreviousTotalEnergy(): ENERGY IS NOT CONSERVED\n";
+		std::cerr << "total energy: " << totalEnergy << '\n';
+		std::cerr << "previous total energy: " << m_previousTotalEnergy << '\n';
+		exit(-13);
+	}
+
+	m_previousTotalEnergy = totalEnergy;
 }
 
 void Ecosystem::updateOnlyImgBtnsOfBrainsPreviews(

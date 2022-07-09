@@ -316,6 +316,7 @@ private:
 	);
 
 	void correctFruitsCount();
+	void updatePreviousTotalEnergy();
 
 	void updateOnlyImgBtnsOfBrainsPreviews(
 		const sf::Vector2f& mousePos,
@@ -380,4 +381,6 @@ private:
 	std::string m_logs;
 
 	std::ofstream m_debugFile;
+
+	unsigned m_previousTotalEnergy;
 };
