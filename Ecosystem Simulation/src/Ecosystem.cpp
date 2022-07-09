@@ -654,11 +654,13 @@ void Ecosystem::createNewFruits(
 	float fruitsRadius,
 	const sf::Color& fruitsColor)
 {
+	std::clog << "create new fruits:\n";
+
 	m_fruits.clear();
 
 	for (int i = 0; i < fruitsCount; i++)
 	{
-		std::clog << "i: " << i << '\n';
+		std::clog << "i: " << i << ' ';
 		createNewFruit(defaultFruitsEnergy, fruitsRadius, fruitsColor, false);
 	}
 }
@@ -1285,66 +1287,11 @@ void Ecosystem::updateWorld(
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events)
 {
-	/*int totalEnergy = getTotalEnergy();
-
-	int hp = getTotalAnimalsHpEnergy();
-	int fruitE = getTotalFruitsEnergy();
-	int kin = getTotalAnimalsKineticEnergy();
-
-	std::vector<int> prevKins(m_animals.size());
-	std::vector<int> hps(m_animals.size());
-	for (int i = 0; i < m_animals.size(); i++)
-	{
-		prevKins[i] = m_animals[i]->getKineticEnergy();
-		hps[i] = m_animals[i]->getHp();
-	}*/	
-
 	std::clog << "--------------------NEW FRAME--------------------:\n";
 
 	updateAnimals(dt, mousePos, events);
-
-	//std::cout << "only after up an: " << static_cast<int>(getTotalEnergy()) - totalEnergy << "\n\n";
-
-	//int prevKin = getTotalAnimalsPreviousKineticEnergy();
-
 	transferEnergyFromAnimalsToFruits();
-
-	/*
-	if (totalEnergy != getTotalEnergy())
-	{
-		using namespace std;
-		cout << "\n1ST GATE FAILED:\n";
-		cout << "total delta = " << static_cast<int>(getTotalEnergy()) - totalEnergy << "\n\n";
-		
-		cout << "HP DELTA = " << static_cast<int>(getTotalAnimalsHpEnergy()) - hp << '\n';
-		cout << "FRUIT DELTA = " << static_cast<int>(getTotalFruitsEnergy()) - fruitE << "\n\n";
-
-		cout << "those 2 should be equal:\n";
-		cout << "prev kin: " << kin << '\n';
-		cout << "prev kin2: " << prevKin << "\n\n";
-
-		cout << "new kin: " << static_cast<int>(getTotalAnimalsKineticEnergy()) << '\n';
-		cout << "so KIN DELTA = " << static_cast<int>(getTotalAnimalsKineticEnergy()) - kin << '\n';
-		cout << "raports from animals:\n";
-
-		for (int i = 0; i < m_animals.size(); i++)
-		{
-			std::cout
-				<< m_animals[i]->getHp() - hps[i] << ' '
-				<< prevKins[i] << ' '
-				<< m_animals[i]->getPreviousKineticEnergy() << ' '
-				<< m_animals[i]->getKineticEnergy() << ' '
-				<< m_animals[i]->getKineticEnergyDelta() << ' '
-				<< m_animals[i]->getEnergyToExpel() << ' '
-				<< m_animals[i]->getAge() << ' '
-				<< m_animals[i]->getAccelerationVector().x << ' ' << m_animals[i]->getAccelerationVector().y << '\n';
-		}
-
-		sf::sleep(sf::seconds(4.0f));
-		exit(-13);
-	}
-	*/
-
+	cloneAnimals(dt, mousePos, events);
 	avoidTunneling();
 	//kickInAssAnimalsStuckedNextToBorders();
 	removeDeadAnimals();
@@ -1357,20 +1304,6 @@ void Ecosystem::updateWorld(
 	updatePreviousTotalEnergy();
 
 	m_totalFramesElapsed++;
-
-	/*
-	if (totalEnergy != getTotalEnergy())
-	if (totalEnergy != getTotalEnergy())
-	{
-		std::cout << "BEFORE:\n";
-		std::cout << "totalEnergy=" << totalEnergy << '\n';
-		std::cout << "AFTER:\n";
-		std::cout << "totalEnergy=" << getTotalEnergy() << '\n';
-		std::cout << "delta = " << static_cast<int>(getTotalEnergy()) - static_cast<int>(totalEnergy) << '\n';
-		sf::sleep(sf::seconds(4.0f));
-		exit(-13);
-	}
-	*/
 }
 
 void Ecosystem::updateAnimals(
@@ -1467,7 +1400,7 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 	}
 
 	unsigned expeled = 0U;
-
+	
 	for (const auto& animal : m_animals)
 	{
 		expeled += animal->getEnergyToExpel();
@@ -1494,6 +1427,75 @@ Fruit* Ecosystem::getLowestEnergyFruit()
 	}
 
 	return lowestEnergyFruit;
+}
+
+void Ecosystem::cloneAnimals(
+	float dt, 
+	const sf::Vector2f& mousePos,
+	const std::vector<sf::Event>& events)
+{
+	unsigned fps = static_cast<unsigned>(1.0f / dt);
+
+	// for sure there won't be any coping:
+	// outputs are indexed from 0 (inclusive)
+	if (fps < 30U)
+	{
+		return;
+	}
+
+	for (int i = 0; i < m_animals.size(); i++)
+	{
+		auto animal = m_animals[i];
+		
+		if (animal->getTimeElapsedSinceLastCloning() > 5.0f // TODO: unhardcode that
+			&& animal->getBrain().getSpecificOutput(2U) < 0.0
+			&& animal->getHp() > 1U)
+		{
+			cloneAnimal(*animal, i, dt, mousePos, events);
+		}
+	}
+}
+
+void Ecosystem::cloneAnimal(
+	Animal& clonedAnimal,
+	int idxOfClonedAnimal,
+	float dt, 
+	const sf::Vector2f& mousePos, 
+	const std::vector<sf::Event>& events)
+{
+	clonedAnimal.resetTimeElapsedSinceLastCloning();
+
+	m_animals.push_back(std::make_shared<Animal>(clonedAnimal));
+
+	auto clone = m_animals.back();
+
+	clone->setHp(clonedAnimal.getHp() / 2U);
+	clonedAnimal.setHp(clonedAnimal.getHp() - clone->getHp());
+
+	clone->getMovementComponent().resetVelocity();
+
+	if (clone->getTotalEnergy() <= 0)
+	{
+		std::cerr
+			<< "ERROR: Ecosystem::cloneAnimal(...):\n"
+			<< "clone->getTotalEnergy() <= 0\n"
+			<< "clone->getHp(): " << clone->getHp() << '\n'
+			<< "clone->getKineticEnergy(): " << clone->getKineticEnergy() << '\n';
+		exit(-13);
+	}
+
+	clone->randomMutate(m_mutationsPerMutation, mousePos, events);
+
+	if (&clonedAnimal == m_trackedAnimal)
+	{
+		clone->setColor(m_animalsColor);
+	}
+
+	m_hpBarsVisibility[clone.get()]
+		= m_hpBarsVisibility[&clonedAnimal];
+
+	m_brainsVisibility[clone.get()]
+		= m_brainsVisibility[&clonedAnimal];
 }
 
 void Ecosystem::avoidTunneling()
@@ -1762,7 +1764,7 @@ int Ecosystem::tryToFindConsumer(
 	{
 		if (animalReachesFruit(*m_animals[animal_index], fruit))
 		{
-			eat(*m_animals[animal_index], fruit, dt, mousePos, events);
+			eat(*m_animals[animal_index], fruit);
 			return 1;
 		}
 
@@ -1800,131 +1802,10 @@ bool Ecosystem::animalReachesFruit(
 
 void Ecosystem::eat(
 	Animal& animal, 
-	Fruit& fruit, 
-	float dt,
-	const sf::Vector2f& mousePos,
-	const std::vector<sf::Event>& events)
+	Fruit& fruit)
 {
-	unsigned fps = static_cast<unsigned>(1.0f / dt);
-
-	// for sure there won't be any coping:
-	if (fps < 30U || animal.getBrain().getSpecificOutput(2U) < 0.0)
-	{
-		animal.setHp(animal.getHp() + fruit.getEnergy());
-		fruit.setEnergy(0U);
-
-		// TODO: a good candidate for logging:
-		//std::cout << "FPS to low to clone!\n";
-
-		return;
-	}
-
-	unsigned prevAnimalHp = animal.getHp();
-
-	animal.setHp(
-		std::min(
-			prevAnimalHp + fruit.getEnergy(),
-			m_defaultAnimalsHp
-		)
-	);
-
-	fruit.setEnergy(fruit.getEnergy() + prevAnimalHp - animal.getHp());
-
-	//std::clog << "A fruit has been eaten\n";
-
-	if (animal.getTotalEnergy() == 0)
-	{
-		std::cerr << "Animal total energy = 0\n";
-		exit(-13);
-	}
-
-	// there is no more energy left in the fruit after eating:
-	if (fruit.getEnergy() == 0) return;
-
-	//std::clog << "An animal will be cloned\n";
-
-	// if there is any energy left in the fruit make animal clone!:
-	// TODO: put the following lines of code into a separate method
-	m_animals.push_back(std::make_shared<Animal>(animal));
-	
-	m_animals.back()->setHp(fruit.getEnergy());
-	m_animals.back()->getMovementComponent().resetVelocity();
-	
-	if (m_animals.back()->getTotalEnergy() <= 0)
-	{
-		std::cerr << "m_animals.back()->getTotalEnergy() <= 0\n";
-		std::cerr
-			<< m_animals.back()->getHp() << ' '
-			<< m_animals.back()->getKineticEnergy();
-		exit(-13);
-	}
-	
-	m_animals.back()->randomMutate(m_mutationsPerMutation, mousePos, events);
-
-	if (&animal == m_trackedAnimal)
-	{
-		m_animals.back()->setColor(m_animalsColor);
-	}
-
-	m_hpBarsVisibility[m_animals.back().get()]
-		= m_hpBarsVisibility[&animal];
-
-	m_brainsVisibility[m_animals.back().get()]
-		= m_brainsVisibility[&animal];
-
-	fruit.setEnergy(0);
-	
-	//if (fruit.getEnergy() + animal.getHp() > animal.getMaxHp())
-	//{
-	//	fruit.setEnergy(fruit.getEnergy() + animal.getHp() - animal.getMaxHp());
-	//	animal.setHp(animal.getMaxHp());
-	//
-	//	// clone using energy surplus!:
-	//	while (fruit.getEnergy() > animal.getMaxHp())
-	//	{
-	//		fruit.setEnergy(fruit.getEnergy() - animal.getMaxHp());
-	//
-	//		m_animals.push_back(std::make_shared<Animal>(animal));
-	//
-	//		m_animals.back()->setHp(animal.getMaxHp());
-	//		m_animals.back()->setVelocity(sf::Vector2f(0.0f, 0.0f));
-	//		m_animals.back()->randomMutate(m_mutationsPerMutation);
-	//
-	//		if (&animal == m_trackedAnimal)
-	//		{
-	//			m_animals.back()->setColor(m_animalsColor);
-	//		}
-	//
-	//		m_hpBarsVisibility[m_animals.back().get()]
-	//			= m_hpBarsVisibility[&animal];
-	//
-	//		m_brainsVisibility[m_animals.back().get()]
-	//			= m_brainsVisibility[&animal];
-	//	}
-	//
-	//	m_animals.push_back(std::make_shared<Animal>(animal));
-	//
-	//	m_animals.back()->setHp(fruit.getEnergy());
-	//	m_animals.back()->setVelocity(sf::Vector2f(0.0f, 0.0f));
-	//	m_animals.back()->randomMutate(m_mutationsPerMutation);
-	//
-	//	if (&animal == m_trackedAnimal)
-	//	{
-	//		m_animals.back()->setColor(m_animalsColor);
-	//	}
-	//
-	//	m_hpBarsVisibility[m_animals.back().get()] 
-	//		= m_hpBarsVisibility[&animal];
-	//
-	//	m_brainsVisibility[m_animals.back().get()] 
-	//		= m_brainsVisibility[&animal];
-	//}
-	//else
-	//{
-	//	animal.increaseHp(fruit.getEnergy());
-	//}
-	//
-	//fruit.setEnergy(0.0);
+	animal.setHp(animal.getHp() + fruit.getEnergy());
+	fruit.setEnergy(0U);
 }
 
 void Ecosystem::removeEatenFruits()

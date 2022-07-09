@@ -253,6 +253,19 @@ private:
 	void transferEnergyFromAnimalsToFruits();
 	Fruit* getLowestEnergyFruit();
 
+	void cloneAnimals(
+		float dt,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
+	void cloneAnimal(
+		Animal& clonedAnimal,
+		int idxOfClonedAnimal,
+		float dt,
+		const sf::Vector2f& mousePos,
+		const std::vector<sf::Event>& events
+	);
+
 	void avoidTunneling();
 	void avoidTunnelingByVerticalBorders(Animal& animal);
 	void avoidTunnelingByHorizontalBorders(Animal& animal);
@@ -288,10 +301,7 @@ private:
 	bool animalReachesFruit(const Animal& animal, const Fruit& fruit) const;
 	void eat(
 		Animal& animal, 
-		Fruit& fruit, 
-		float dt,
-		const sf::Vector2f& mousePos,
-		const std::vector<sf::Event>& events
+		Fruit& fruit
 	);
 	
 	void removeEatenFruits();

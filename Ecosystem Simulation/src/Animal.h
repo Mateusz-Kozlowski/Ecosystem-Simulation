@@ -69,6 +69,8 @@ public:
 	const sf::Vector2f& getAccelerationVector() const;
 
 	bool isAlive() const;
+	bool isClone() const;
+	float getParentAgeWhenItWasBorn() const;
 
 	int getHp() const;
 	// an animal cannot have total energy < 0, 
@@ -82,6 +84,7 @@ public:
 	float getAge() const;
 
 	float getTimeElapsedSinceLastExternalHpChange() const;
+	float getTimeElapsedSinceLastCloning() const;
 
 	bool isCoveredByMouse(const sf::Vector2f& mousePos) const;
 
@@ -119,6 +122,8 @@ public:
 	void setBrainPreviewPosition(const sf::Vector2f& position);
 	void setBrainPreviewPosition(float x, float y);
 
+	void resetTimeElapsedSinceLastCloning();
+
 	void setBasalMetabolicRatePerFrame(unsigned basalMetabolicRatePerFrame);
 
 private:
@@ -154,12 +159,15 @@ private:
 	std::unique_ptr<MovementComponent> m_movementComponent;
 	
 	bool m_alive;
+	bool m_isClone;
+	float m_parentAgeWhenItWasBorn;
 
 	std::unique_ptr<gui::IntProgressBar> m_hpBar;
 	std::unique_ptr<gui::BrainPreview> m_brainPreview;
 
 	float m_age;
 	float m_timeElapsedSinceLastExternalHpChange;
+	float m_timeElapsedSinceLastCloning;
 
 	unsigned m_basalMetabolicRatePerFrame;
 	unsigned m_energyToExpelFromBMR;

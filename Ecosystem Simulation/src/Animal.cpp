@@ -11,9 +11,12 @@ Animal::Animal(
 	: m_body()
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
+	, m_isClone(false)
+	, m_parentAgeWhenItWasBorn(-13.12345678987654321f)
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
 	, m_timeElapsedSinceLastExternalHpChange(0.0f)
+	, m_timeElapsedSinceLastCloning(0.0f)
 	, m_age(0.0f)
 	, m_basalMetabolicRatePerFrame(basalMetabolicRatePerFrame)
 	, m_energyToExpelFromBMR(0U)
@@ -27,9 +30,12 @@ Animal::Animal(const char* folderPath)
 	: m_body()
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
+	, m_isClone(false)
+	, m_parentAgeWhenItWasBorn(-13.12345678987654321f)
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
 	, m_timeElapsedSinceLastExternalHpChange(0.0f)
+	, m_timeElapsedSinceLastCloning(0.0f)
 	, m_age(0.0f)
 	, m_basalMetabolicRatePerFrame(0U)
 	, m_energyToExpelFromBMR(0U)
@@ -41,9 +47,12 @@ Animal::Animal(const Animal& rhs)
 	: m_body(rhs.m_body)
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(rhs.m_alive)
+	, m_isClone(true)
+	, m_parentAgeWhenItWasBorn(rhs.m_age)
 	, m_hpBar(std::make_unique<gui::IntProgressBar>())
 	, m_brainPreview(nullptr)
-	, m_timeElapsedSinceLastExternalHpChange(rhs.m_timeElapsedSinceLastExternalHpChange)
+	, m_timeElapsedSinceLastExternalHpChange(0.0f)
+	, m_timeElapsedSinceLastCloning(0.0f)
 	, m_age(0.0f)
 	, m_basalMetabolicRatePerFrame(rhs.m_basalMetabolicRatePerFrame)
 	, m_energyToExpelFromBMR(rhs.m_energyToExpelFromBMR)
@@ -61,11 +70,14 @@ Animal& Animal::operator=(const Animal& rhs)
 		m_body = rhs.m_body;
 		*m_movementComponent = *rhs.m_movementComponent;
 		m_alive = rhs.m_alive;
+		m_isClone = true;
+		m_parentAgeWhenItWasBorn = rhs.m_age;
 		*m_hpBar = *rhs.m_hpBar;
 
 		initBrainPreview();
 
-		m_timeElapsedSinceLastExternalHpChange = rhs.m_timeElapsedSinceLastExternalHpChange;
+		m_timeElapsedSinceLastExternalHpChange = 0.0f;
+		m_timeElapsedSinceLastCloning = 0.0f;
 		m_age = 0.0f;
 		m_basalMetabolicRatePerFrame = rhs.m_basalMetabolicRatePerFrame;
 		m_energyToExpelFromBMR = rhs.m_energyToExpelFromBMR;
@@ -131,12 +143,15 @@ void Animal::saveToFolder(const char* folderPath) const
 	ofs << static_cast<int>(m_hpBar->getProgressRectColor().a) << '\n';
 
 	ofs << m_alive << '\n';
+	ofs << m_isClone << '\n';
+	ofs << m_parentAgeWhenItWasBorn << '\n';
 	ofs << m_hpBar->getCurrentValue() << '\n';
 	ofs << m_movementComponent->getPreviousVelocityVector().x << '\n';
 	ofs << m_movementComponent->getPreviousVelocityVector().y << '\n';
 	ofs << m_movementComponent->getVelocityVector().x << '\n';
 	ofs << m_movementComponent->getVelocityVector().y << '\n';
 	ofs << m_timeElapsedSinceLastExternalHpChange << '\n';
+	ofs << m_timeElapsedSinceLastCloning << '\n';
 	ofs << m_age << '\n';
 	ofs << m_basalMetabolicRatePerFrame << '\n';
 	ofs << m_energyToExpelFromBMR;
@@ -181,10 +196,13 @@ void Animal::loadFromFolder(const char* folderPath)
 	ifs >> hpBarBgColorR >> hpBarBgColorG >> hpBarBgColorB >> hpBarBgColorA;
 	ifs >> hpBarColorR >> hpBarColorG >> hpBarColorB >> hpBarColorA;
 	ifs >> m_alive;
+	ifs >> m_isClone;
+	ifs >> m_parentAgeWhenItWasBorn;
 	ifs >> hp;
 	ifs >> prevVelocity.x >> prevVelocity.y;
 	ifs >> velocity.x >> velocity.y;
 	ifs >> m_timeElapsedSinceLastExternalHpChange;
+	ifs >> m_timeElapsedSinceLastCloning;
 	ifs >> m_age;
 	ifs >> m_basalMetabolicRatePerFrame;
 	ifs >> m_energyToExpelFromBMR;
@@ -252,6 +270,7 @@ void Animal::update(
 	updateBrainPreview(mousePos, events);
 
 	m_timeElapsedSinceLastExternalHpChange += dt;
+	m_timeElapsedSinceLastCloning += dt;
 	m_age += dt;
 }
 
@@ -295,6 +314,10 @@ std::string Animal::toStr() const
 
 	ss << "kinetic energy: " << getKineticEnergy() << '\n';
 	
+	ss << "alive (0 - no, 1 - yes): " << m_alive << '\n';
+	ss << "clone (0 - no, 1 - yes): " << m_isClone << '\n';
+	ss << "parent age when it was born: " << m_parentAgeWhenItWasBorn << '\n';
+
 	ss << "HP: " << getHp() << '\n';
 	
 	ss << "total energy: " << getTotalEnergy() << '\n';
@@ -303,6 +326,9 @@ std::string Animal::toStr() const
 
 	ss << "time elapsed since last meal: "
 	   << m_timeElapsedSinceLastExternalHpChange << '\n';
+
+	ss << "time elapsed since last cloning: "
+	   << m_timeElapsedSinceLastCloning << '\n';
 
 	ss << "Basal Metabolic Rate per frame: "
 	   << m_basalMetabolicRatePerFrame;
@@ -392,9 +418,19 @@ bool Animal::isAlive() const
 	return m_alive;
 }
 
+bool Animal::isClone() const
+{
+	return m_isClone;
+}
+
 int Animal::getHp() const
 {
 	return m_hpBar->getCurrentValue();
+}
+
+float Animal::getParentAgeWhenItWasBorn() const
+{
+	return m_parentAgeWhenItWasBorn;
 }
 
 unsigned Animal::getTotalEnergy() const
@@ -428,6 +464,11 @@ bool Animal::isCoveredByMouse(const sf::Vector2f& mousePosView) const
 	float y = m_body.getPosition().y - mousePosView.y;
 
 	return sqrt(pow(x, 2.0f) + pow(y, 2.0f)) <= m_body.getRadius();
+}
+
+float Animal::getTimeElapsedSinceLastCloning() const
+{
+	return m_timeElapsedSinceLastCloning;
 }
 
 unsigned Animal::getBasalMetabolicRatePerFrame() const
@@ -548,6 +589,11 @@ void Animal::setBasalMetabolicRatePerFrame(unsigned basalMetabolicRatePerFrame)
 }
 
 // private methods:
+
+void Animal::resetTimeElapsedSinceLastCloning()
+{
+	m_timeElapsedSinceLastCloning = 0.0f;
+}
 
 void Animal::initBody(
 	const sf::Vector2f& position,

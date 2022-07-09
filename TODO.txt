@@ -1,12 +1,27 @@
 ecosystems simulation:
 - fix:
+  + 14'000 fruits? WTF why XD
   + there are 700 fruits but I don't see any of them (just run from huge)
-  + animals are spawning in the center, I have no clue why
+  + animals are spawning in the center? If it is true I have no clue why
 
-- add guard checking if new total energy of ecosystem is the same 
-  so that u don't have to check it manually
-- cloning not when eating but anytime (but fps has to be > 30 and an animal wants to reproduce)
+- abstract notes:
+  + if an animal clones while moving to eat there is a probability that the clone will eat the food
+    instead of the cloned animal (if different order of animals will be used to feed them!);
+    Isn't it kinda unfair? And doesn't it lead to some kind of unstability?
+  + does m_timeElapsedSinceLastExternalHpChange and 
+    m_timeElapsedSinceLastCloning really works correctly?
+    I mean... topological order of functions in updateWorld function
+
+- MUST DO: add a limit of how many children a specific animal can have in a certain time
+  for example animal can have one child per 10 seconds or sth like that
+  and then you don't have to add isAdult, just make sure that cloned Animal is older than 0 seconds old;
+  add it even shouldn't be time, it rather should be a specific number of frames and if there are any
+  other variables or things like that which unit is time then change their units into frames count
 - brains need more synapses
+- how does correcting population size work? Is it even necessarily?
+- update printing info:
+  + ecosystem: previous total e
+  + animals: new vars: isClone and maybe there is sth else, basicly check everything
 
 - implement some way of dealing with stubborn vegetating animals
 - identify the bottle neck of the fps count
