@@ -331,6 +331,7 @@ private:
 
 	void correctFruitsCount();
 	void updatePreviousTotalEnergy();
+	void debugLogs();
 
 	void updateOnlyImgBtnsOfBrainsPreviews(
 		const sf::Vector2f& mousePos,

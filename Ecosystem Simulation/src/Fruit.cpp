@@ -146,6 +146,17 @@ void Fruit::setRandomPosition(
 	float bordersThickness,
 	bool linearDistributionOfPositionProbability)
 {
+	// Currently I don't want to use linear distribution at all,
+	// so for the seak of safety I added the following if statement:
+	if (linearDistributionOfPositionProbability)
+	{
+		std::clog
+			<< "ERROR: Fruit::setRandomPosition(...):\n"
+			<< "linear distributon of position probability?\n"
+			<< "You don't want to use it anywhere! At least you said do...\n";
+		exit(-13);
+	}
+
 	std::pair<unsigned, unsigned> rangeX = {
 			bordersThickness + m_shape.getRadius(),
 			worldSize.x - bordersThickness - m_shape.getRadius()

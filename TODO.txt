@@ -2,8 +2,6 @@ ecosystems simulation:
 - fix:
   + 14'000 fruits? WTF why XD even ~41'000, print some of their positions, u know, like %100 == 0 or sth like that
     there are 700 fruits but I don't see any of them (just run from huge);
-    I have a hipothesis why there are so many fruits - it's because eating them makes their energy = 0,
-    but they are still in the vector, and I am not sure if it is a bug or a feature
   + animals are spawning in the center? If it is true I have no clue why
   + it seems like animals don't won't to reproduce; check on a specific animal if and why it
     don't want to reproduce
@@ -16,6 +14,20 @@ ecosystems simulation:
     m_timeElapsedSinceLastCloning really works correctly?
     I mean... topological order of functions in updateWorld function
 
+- FRUITS COUNT CORRECTION: change the name of the initial fruits count to fruits count 
+  (the number of fruits will be ALWAYS approximately equal to that number);
+  FRUITS WILL BE CREATED ONLY IN THAT FUNC 
+  all other ways of transfering animals energy to fruits will be implemented using transfering energy
+  to the fruit with the smallest energy;
+  if the current number of fruits will be smaller than the initial one 
+  then correct fruits count func will call getTotalFruitsEnergy func 
+  and then "clone" the biggest fruits in the way simlar to the way animals are cloned
+- change pos inputs from <0; 1> to <-1; 1>
+- start with not empty brain? already mutated in some way?
+- if there is too little fruits then increase their count and if there is too many then decrese their count,
+  you can use an agressive function for example log or sth like that
+  OR
+  you can prevent creating new fruits like you prevent cloning animals
 - instead of Velocity guard generic vector guard so that acceleration can also benefit
   (and of course remember about using it, not only implementing)
 - MUST DO: add a limit of how many children a specific animal can have in a certain time
@@ -24,6 +36,8 @@ ecosystems simulation:
   add it even shouldn't be time, it rather should be a specific number of frames and if there are any
   other variables or things like that which unit is time then change their units into frames count
 - brains need more synapses
+  and consider using those anabolic and catabolic mutate functions or sth like that;
+  just come up with a heuristic of dealing with this
 - how does correcting population size work? Is it even necessarily?
   especially that there is BMR and if FPS < 30 there is no clonning;
   it would be a lot cleaner if there won't be correcting the population size

@@ -674,6 +674,8 @@ void Ecosystem::createNewFruit(
 	const sf::Color& fruitColor,
 	bool linearDistributionOfPositionProbability)
 {
+	std::clog << "NEW FRUIT: create new fruit";
+
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			energy,
@@ -1138,8 +1140,6 @@ void Ecosystem::convertAnimalToFruit(
 	std::shared_ptr<Animal>& animal, 
 	bool randomFruitPosition)
 {
-	std::clog << "converting an animal to fruit\n";
-
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			animal->getTotalEnergy(),
@@ -1308,6 +1308,7 @@ void Ecosystem::updateWorld(
 	correctBrainPreviewsPositions();
 	correctFruitsCount();
 	updatePreviousTotalEnergy();
+	debugLogs();
 
 	m_totalFramesElapsed++;
 }
@@ -1401,18 +1402,8 @@ void Ecosystem::transferEnergyFromAnimalsToFruits()
 {
 	Fruit* lowestEnergyFruit = getLowestEnergyFruit();
 
-	if (!lowestEnergyFruit)
-	{
-		createNewFruit(0U, m_fruitsRadius, m_fruitsColor, false);
-		lowestEnergyFruit = m_fruits.back().get();
-	}
-
-	unsigned expeled = 0U;
-	
 	for (const auto& animal : m_animals)
 	{
-		expeled += animal->getEnergyToExpel();
-
 		lowestEnergyFruit->setEnergy(
 			lowestEnergyFruit->getEnergy()
 			+ animal->getEnergyToExpel()
@@ -2074,6 +2065,8 @@ void Ecosystem::correctFruitsCount()
 		{
 			unsigned prevEnergy = fruit->getEnergy();
 
+			std::clog << "NEW FRUIT: correctFruitsCount\n";
+
 			m_fruits.emplace_back(
 				std::make_unique<Fruit>(
 					fruit->getEnergy() - m_defaultFruitEnergy,
@@ -2130,6 +2123,24 @@ void Ecosystem::updatePreviousTotalEnergy()
 	}
 
 	m_previousTotalEnergy = totalEnergy;
+}
+
+void Ecosystem::debugLogs()
+{
+	if (m_fruits.size() > 10'000)
+	{
+		for (int i = 0; i < m_fruits.size(); i++)
+		{
+			m_debugFile
+				<< m_fruits[i]->getEnergy() << ' '
+				<< m_fruits[i]->getPos().x << ' '
+				<< m_fruits[i]->getPos().y << '\n';
+		}
+
+		m_debugFile.close();
+
+		exit(7);
+	}
 }
 
 void Ecosystem::updateOnlyImgBtnsOfBrainsPreviews(
