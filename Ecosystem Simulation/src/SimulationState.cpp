@@ -1180,7 +1180,6 @@ void SimulationState::updateView()
 	}
 
 	// move view:
-
 	sf::RectangleShape sideMenuBg = m_sideMenu->getBackground();
 	auto mousePosWindowF = static_cast<sf::Vector2f>(m_mousePosWindow);
 	
@@ -1206,54 +1205,56 @@ void SimulationState::updateView()
 		);
 	}
 
-	// correct zoom:
-
 	float worldWidth = static_cast<float>(
 		m_stateData->m_ecosystem->getWorldSize().x
-	);
+		);
 	float worldHeight = static_cast<float>(
 		m_stateData->m_ecosystem->getWorldSize().y
-	);
+		);
 
-	m_view.setSize(
-		std::min(
-			m_view.getSize().x, 
-			worldWidth
-		),
-		std::min(
-			m_view.getSize().y, 
-			worldHeight
-		)
-	);
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) // TODO: unhardcode that
+	{
+		// correct zoom:
+		m_view.setSize(
+			std::min(
+				m_view.getSize().x,
+				worldWidth
+			),
+			std::min(
+				m_view.getSize().y,
+				worldHeight
+			)
+		);
 
-	// correct view moving:
-	if (m_view.getCenter().x - m_view.getSize().x / 2.f < 0.f)
-	{
-		m_view.setCenter(
-			m_view.getSize().x / 2.f, 
-			m_view.getCenter().y
-		);
-	}
-	if (m_view.getCenter().x + m_view.getSize().x / 2.f > worldWidth)
-	{
-		m_view.setCenter(
-			worldWidth - m_view.getSize().x / 2.f, 
-			m_view.getCenter().y
-		);
-	}
-	if (m_view.getCenter().y - m_view.getSize().y / 2.f < 0.f)
-	{
-		m_view.setCenter(
-			m_view.getCenter().x, 
-			m_view.getSize().y / 2.f
-		);
-	}
-	if (m_view.getCenter().y + m_view.getSize().y / 2.f > worldHeight)
-	{
-		m_view.setCenter(
-			m_view.getCenter().x, 
-			worldHeight - m_view.getSize().y / 2.f
-		);
+		// correct view moving:
+		if (m_view.getCenter().x - m_view.getSize().x / 2.f < 0.f)
+		{
+			m_view.setCenter(
+				m_view.getSize().x / 2.f,
+				m_view.getCenter().y
+			);
+		}
+		if (m_view.getCenter().x + m_view.getSize().x / 2.f > worldWidth)
+		{
+			m_view.setCenter(
+				worldWidth - m_view.getSize().x / 2.f,
+				m_view.getCenter().y
+			);
+		}
+		if (m_view.getCenter().y - m_view.getSize().y / 2.f < 0.f)
+		{
+			m_view.setCenter(
+				m_view.getCenter().x,
+				m_view.getSize().y / 2.f
+			);
+		}
+		if (m_view.getCenter().y + m_view.getSize().y / 2.f > worldHeight)
+		{
+			m_view.setCenter(
+				m_view.getCenter().x,
+				worldHeight - m_view.getSize().y / 2.f
+			);
+		}
 	}
 }
 
