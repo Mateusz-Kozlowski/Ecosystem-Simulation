@@ -654,13 +654,10 @@ void Ecosystem::createNewFruits(
 	float fruitsRadius,
 	const sf::Color& fruitsColor)
 {
-	std::clog << "create new fruits:\n";
-
 	m_fruits.clear();
 
 	for (int i = 0; i < fruitsCount; i++)
 	{
-		std::clog << "i: " << i << ' ';
 		createNewFruit(defaultFruitsEnergy, fruitsRadius, fruitsColor, false);
 	}
 }
@@ -1125,7 +1122,7 @@ void Ecosystem::killingTool(const sf::Vector2f& mousePos)
 	{
 		if (animal->isCoveredByMouse(mousePos))
 		{
-			convertAnimalToFruit(animal, false);
+			convertAnimalToFruit(animal, true);
 			return;
 		}
 	}
@@ -1135,6 +1132,8 @@ void Ecosystem::convertAnimalToFruit(
 	std::shared_ptr<Animal>& animal, 
 	bool randomFruitPosition)
 {
+	std::clog << "converting an animal to fruit\n";
+
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			animal->getTotalEnergy(),
@@ -1149,7 +1148,7 @@ void Ecosystem::convertAnimalToFruit(
 		m_fruits.back()->setRandomPosition(
 			getWorldSize(), 
 			getBordersThickness(),
-			0.1f // unhardcode margins
+			false
 		);
 	}
 
@@ -1213,7 +1212,7 @@ void Ecosystem::convertKineticEnergyToFruit(
 		m_fruits.back()->setRandomPosition(
 			getWorldSize(), 
 			getBordersThickness(),
-			0.1f // unhardcode margins
+			false
 		);
 	}
 
@@ -1672,7 +1671,7 @@ void Ecosystem::removeDeadAnimals()
 			);
 			m_fruits.back()->setRandomPosition(
 				getWorldSize(), 
-				getBordersThickness(), 
+				getBordersThickness(),
 				false
 			);
 
@@ -1877,7 +1876,7 @@ void Ecosystem::correctPopulationSize(float dt)
 	if (m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
 		< m_animals[1]->getTimeElapsedSinceLastExternalHpChange())
 	{
-		std::cerr << "wrong time elapsed\n";
+		std::cerr << "ERROR: Ecosystem::correctPopulationSize(float): wrong time elapsed\n";
 		exit(-13);
 	}
 
@@ -1897,7 +1896,7 @@ void Ecosystem::correctPopulationSize(float dt)
 	for (int i = 0; i < murdersCount; i++)
 	{
 		//std::cout << m_animals[i]->getTimeElapsedSinceLastExternalHpChange() << '\n';
-		convertAnimalToFruit(m_animals[i], false);
+		convertAnimalToFruit(m_animals[i], true);
 	}
 
 	//if (murdersCount != 0U)
@@ -1938,7 +1937,7 @@ void Ecosystem::correctPopulationSize(float dt)
 	//		<< "kill: "
 	//		<< m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
 	//		<< '\n';
-	//	convertAnimalToFruit(m_animals[0], false);
+	//	convertAnimalToFruit(m_animals[0], true);
 	//}
 	//
 	//std::cout << '\n';
@@ -1951,7 +1950,7 @@ void Ecosystem::correctPopulationSize(float dt)
 	//	// TODO: "unhardcode" that:
 	//	if (m_animals[i]->getTimeElapsedSinceLastExternalHpChange() > 60.0f)
 	//	{
-	//		convertAnimalToFruit(m_animals[i], false);
+	//		convertAnimalToFruit(m_animals[i], true);
 	//	}
 	//	else i++;
 	//}
@@ -2077,7 +2076,7 @@ void Ecosystem::correctFruitsCount()
 			m_fruits.back()->setRandomPosition(
 				getWorldSize(), 
 				getBordersThickness(),
-				0.1f // unhardcode margins
+				false
 			);
 
 			fruit->setEnergy(m_defaultFruitEnergy);

@@ -1,6 +1,10 @@
 ecosystems simulation:
+- developer mode:
+  + when a specific key is pressed you can zoom out the camera so that you can see what is
+    outside of the borders
+
 - fix:
-  + 14'000 fruits? WTF why XD
+  + 14'000 fruits? WTF why XD even ~41'000, print some of their positions, u know, like %100 == 0 or sth like that
   + there are 700 fruits but I don't see any of them (just run from huge)
   + animals are spawning in the center? If it is true I have no clue why
 
