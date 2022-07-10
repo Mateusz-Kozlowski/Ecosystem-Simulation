@@ -73,11 +73,12 @@ void MovementComponent::update(
 	float speedFactor,
 	const std::vector<Blueberry::Scalar>& brainInputs,
 	bool allowUserInput,
-	std::ofstream& debugFile)
+	std::ofstream& debugFile,
+	const std::unordered_map<std::string, int>& keybinds)
 {
 	// TODO: implement slowing down using speed_factor:
 	
-	updateAcceleration(brainInputs, allowUserInput, debugFile);
+	updateAcceleration(brainInputs, allowUserInput, debugFile, keybinds);
 
 	m_prevVelocity = m_velocity;
 
@@ -318,7 +319,8 @@ void MovementComponent::resetVelocity()
 void MovementComponent::updateAcceleration(
 	const std::vector<Blueberry::Scalar>& brainInputs,
 	bool allowUserInput,
-	std::ofstream& debugFile
+	std::ofstream& debugFile,
+	const std::unordered_map<std::string, int>& keybinds
 )
 {
 	m_brain->propagateForward(brainInputs);
@@ -340,16 +342,16 @@ void MovementComponent::updateAcceleration(
 
 	if (allowUserInput)
 	{
-		handleUserInput();
+		handleUserInput(keybinds);
 	}
 }
 
-void MovementComponent::handleUserInput()
+void MovementComponent::handleUserInput(const std::unordered_map<std::string, int>& keybinds)
 {
-	bool left  = sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
-	bool right = sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
-	bool up    = sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
-	bool down  = sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
+	bool left  = sf::Keyboard::isKeyPressed(sf::Keyboard::Key(keybinds.at("LEFT")));
+	bool right = sf::Keyboard::isKeyPressed(sf::Keyboard::Key(keybinds.at("RIGHT")));
+	bool up    = sf::Keyboard::isKeyPressed(sf::Keyboard::Key(keybinds.at("UP")));
+	bool down  = sf::Keyboard::isKeyPressed(sf::Keyboard::Key(keybinds.at("DOWN")));
 
 	if (left || right || down || up)
 	{

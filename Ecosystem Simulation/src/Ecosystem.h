@@ -48,7 +48,8 @@ public:
 	void update(
 		float dt,
 		const sf::Vector2f& mousePos,
-		const std::vector<sf::Event>& events
+		const std::vector<sf::Event>& events,
+		const std::unordered_map<std::string, int>& keybinds
 	);
 	void render(sf::RenderTarget& target) const;
 
@@ -65,6 +66,7 @@ public:
 	unsigned getAnimalsCount() const;
 
 	const std::vector<std::shared_ptr<Animal>>& getAnimals() const;
+	const std::vector<std::unique_ptr<Fruit>>& getFruits() const;
 
 	unsigned getFruitsCount() const;
 
@@ -234,13 +236,15 @@ private:
 	void updateWorld(
 		float dt,
 		const sf::Vector2f& mousePos,
-		const std::vector<sf::Event>& events
+		const std::vector<sf::Event>& events,
+		const std::unordered_map<std::string, int>& keybinds
 	);
 
 	void updateAnimals(
 		float dt,
 		const sf::Vector2f& mousePos,
-		const std::vector<sf::Event>& events
+		const std::vector<sf::Event>& events,
+		const std::unordered_map<std::string, int>& keybinds
 	);
 
 	std::vector<Blueberry::Scalar> getEcosystemRelatedInputsForBrain(

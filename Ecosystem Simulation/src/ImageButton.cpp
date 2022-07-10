@@ -30,12 +30,6 @@ void gui::ImageButton::update(
 	float posX = m_sprite.getPosition().x;
 	float posY = m_sprite.getPosition().y;
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
-	{
-		std::cout << mousePos.x << ' ' << mousePos.y << '\n';
-		std::cout << posX << ' ' << posY << '\n';
-	}
-
 	if (posX < mousePos.x 
 		&& mousePos.x < posX + m_sprite.getGlobalBounds().width)
 	{

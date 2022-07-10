@@ -1,12 +1,12 @@
 ecosystems simulation:
-- developer mode:
-  + when a specific key is pressed you can zoom out the camera so that you can see what is
-    outside of the borders
-
 - fix:
   + 14'000 fruits? WTF why XD even ~41'000, print some of their positions, u know, like %100 == 0 or sth like that
-  + there are 700 fruits but I don't see any of them (just run from huge)
+    there are 700 fruits but I don't see any of them (just run from huge);
+    I have a hipothesis why there are so many fruits - it's because eating them makes their energy = 0,
+    but they are still in the vector, and I am not sure if it is a bug or a feature
   + animals are spawning in the center? If it is true I have no clue why
+  + it seems like animals don't won't to reproduce; check on a specific animal if and why it
+    don't want to reproduce
 
 - abstract notes:
   + if an animal clones while moving to eat there is a probability that the clone will eat the food
@@ -16,6 +16,8 @@ ecosystems simulation:
     m_timeElapsedSinceLastCloning really works correctly?
     I mean... topological order of functions in updateWorld function
 
+- instead of Velocity guard generic vector guard so that acceleration can also benefit
+  (and of course remember about using it, not only implementing)
 - MUST DO: add a limit of how many children a specific animal can have in a certain time
   for example animal can have one child per 10 seconds or sth like that
   and then you don't have to add isAdult, just make sure that cloned Animal is older than 0 seconds old;
@@ -23,6 +25,8 @@ ecosystems simulation:
   other variables or things like that which unit is time then change their units into frames count
 - brains need more synapses
 - how does correcting population size work? Is it even necessarily?
+  especially that there is BMR and if FPS < 30 there is no clonning;
+  it would be a lot cleaner if there won't be correcting the population size
 - update printing info:
   + ecosystem: previous total e
   + animals: new vars: isClone and maybe there is sth else, basicly check everything

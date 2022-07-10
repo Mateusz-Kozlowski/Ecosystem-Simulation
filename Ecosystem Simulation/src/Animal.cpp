@@ -248,7 +248,8 @@ void Animal::update(
 	bool isTracked,
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events,
-	std::ofstream& debugFile)
+	std::ofstream& debugFile,
+	const std::unordered_map<std::string, int>& keybinds)
 {
 	doBMRrelatedThings();
 	
@@ -258,7 +259,8 @@ void Animal::update(
 		simulationSpeedFactor,
 		getEnhancedBrainInputs(externalInputsForBrain),
 		isTracked,
-		debugFile
+		debugFile,
+		keybinds
 	);
 
 	updateBody(dt);

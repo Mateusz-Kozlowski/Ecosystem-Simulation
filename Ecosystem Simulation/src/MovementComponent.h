@@ -22,7 +22,8 @@ public:
 		float speedFactor,
 		const std::vector<Blueberry::Scalar>& brainInputs,
 		bool allowUserInput,
-		std::ofstream& debugFile
+		std::ofstream& debugFile,
+		const std::unordered_map<std::string, int>& keybinds
 	);
 
 	// accessors:
@@ -71,9 +72,10 @@ private:
 	void updateAcceleration(
 		const std::vector<Blueberry::Scalar>& brainInputs,
 		bool allowUserInput,
-		std::ofstream& debugFile
+		std::ofstream& debugFile,
+		const std::unordered_map<std::string, int>& keybinds
 	);
-	void handleUserInput();
+	void handleUserInput(const std::unordered_map<std::string, int>& keybinds);
 
 	bool accelerationIsImpossible(
 		float dt, 

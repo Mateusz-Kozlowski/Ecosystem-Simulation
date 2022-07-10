@@ -225,7 +225,8 @@ void Ecosystem::useGodTools(
 void Ecosystem::update(
 	float dt,
 	const sf::Vector2f& mousePos,
-	const std::vector<sf::Event>& events)
+	const std::vector<sf::Event>& events,
+	const std::unordered_map<std::string, int>& keybinds)
 {
 	if (m_simulationIsPaused)
 	{
@@ -234,7 +235,7 @@ void Ecosystem::update(
 	else
 	{
 		m_totalTimeElapsed += dt;
-		updateWorld(dt, mousePos, events);
+		updateWorld(dt, mousePos, events, keybinds);
 	}
 	
 	updateModifyingBrainsPreviews();
@@ -314,6 +315,11 @@ unsigned Ecosystem::getAnimalsCount() const
 const std::vector<std::shared_ptr<Animal>>& Ecosystem::getAnimals() const
 {
 	return m_animals;
+}
+
+const std::vector<std::unique_ptr<Fruit>>& Ecosystem::getFruits() const
+{
+	return m_fruits;
 }
 
 unsigned Ecosystem::getFruitsCount() const
@@ -1284,11 +1290,12 @@ void Ecosystem::printInfoAboutEcosystem() const
 void Ecosystem::updateWorld(
 	float dt,
 	const sf::Vector2f& mousePos,
-	const std::vector<sf::Event>& events)
+	const std::vector<sf::Event>& events,
+	const std::unordered_map<std::string, int>& keybinds)
 {
 	std::clog << "--------------------NEW FRAME--------------------:\n";
 
-	updateAnimals(dt, mousePos, events);
+	updateAnimals(dt, mousePos, events, keybinds);
 	transferEnergyFromAnimalsToFruits();
 	cloneAnimals(dt, mousePos, events);
 	avoidTunneling();
@@ -1308,7 +1315,8 @@ void Ecosystem::updateWorld(
 void Ecosystem::updateAnimals(
 	float dt, 
 	const sf::Vector2f& mousePos, 
-	const std::vector<sf::Event>& events)
+	const std::vector<sf::Event>& events,
+	const std::unordered_map<std::string, int>& keybinds)
 {
 	for (const auto& animal : m_animals)
 	{
@@ -1319,7 +1327,8 @@ void Ecosystem::updateAnimals(
 			animal.get() == m_trackedAnimal,
 			mousePos,
 			events,
-			m_debugFile
+			m_debugFile,
+			keybinds
 		);
 	}
 }

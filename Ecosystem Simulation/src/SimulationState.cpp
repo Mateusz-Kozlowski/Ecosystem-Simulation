@@ -726,7 +726,7 @@ void SimulationState::updateInput()
 				}
 				return;
 			}
-			if (event.key.code == sf::Keyboard::Key::B)
+			if (event.key.code == sf::Keyboard::Key(m_keybinds["BRAINS"]))
 			{
 				auto brainsVisibility = m_stateData->m_ecosystem->getBrainsVisibility();
 
@@ -751,12 +751,12 @@ void SimulationState::updateInputWithPanelRendered()
 	{
 		if (event.type == sf::Event::KeyReleased)
 		{
-			if (event.key.code == sf::Keyboard::Key(m_keybinds.at("CLOSE")))
+			if (event.key.code == sf::Keyboard::Key(m_keybinds["CLOSE"]))
 			{
 				m_sideMenuIsRendered = !m_sideMenuIsRendered;
 				return;
 			}
-			if (event.key.code == sf::Keyboard::Key::B)
+			if (event.key.code == sf::Keyboard::Key(m_keybinds["BRAINS"]))
 			{
 				auto brainsVisibility = m_stateData->m_ecosystem->getBrainsVisibility();
 				
@@ -1170,11 +1170,11 @@ void SimulationState::updateView()
 	// TODO: And put into a separate function?:
 	
 	// zoom view:
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["ZOOM_OUT"])))
 	{
 		m_view.zoom(0.95f); // TODO: "unhardcode" this
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract))
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["ZOOM_IN"])))
 	{
 		m_view.zoom(1.0f / 0.95f); // TODO: "unhardcode" this
 	}
@@ -1212,7 +1212,7 @@ void SimulationState::updateView()
 		m_stateData->m_ecosystem->getWorldSize().y
 		);
 
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) // TODO: unhardcode that
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["DEVELOPER_MODE_ZOOMING_OUT"])))
 	{
 		// correct zoom:
 		m_view.setSize(
@@ -1269,7 +1269,8 @@ void SimulationState::updateEcosystem(float dt)
 	m_stateData->m_ecosystem->update(
 		dt, 
 		m_mousePosView, 
-		*m_stateData->m_events
+		*m_stateData->m_events,
+		m_keybinds
 	);
 }
 
