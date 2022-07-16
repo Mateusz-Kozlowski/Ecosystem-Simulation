@@ -12,48 +12,32 @@ ecosystems simulation:
     m_timeElapsedSinceLastCloning really works correctly?
     I mean... topological order of functions in updateWorld function
 
-- check if position inputs are correct
-- what has happened with cloning god tol?
-- add m_guards add then find all guards and make then depend on this variable and
-  sometimes play with this variable to check how 
-  turning on/off guards slows down the simulation/makes the simulation faster
-- distribution is .zip
-
-- start with not empty brain? already mutated in some way?
-- if there is too little fruits then increase their count and if there is too many then decrese their count,
-  you can use an agressive function for example log or sth like that
-  OR
-  you can prevent creating new fruits like you prevent cloning animals
-- instead of Velocity guard generic vector guard so that acceleration can also benefit
-  (and of course remember about using it, not only implementing)
-- MUST DO: add a limit of how many children a specific animal can have in a certain time
-  for example animal can have one child per 10 seconds or sth like that
-  and then you don't have to add isAdult, just make sure that cloned Animal is older than 0 seconds old;
-  add it even shouldn't be time, it rather should be a specific number of frames and if there are any
-  other variables or things like that which unit is time then change their units into frames count
 - brains need more synapses
   and consider using those anabolic and catabolic mutate functions or sth like that;
   just come up with a heuristic of dealing with this
-- how does correcting population size work? Is it even necessarily?
-  especially that there is BMR and if FPS < 30 there is no clonning;
-  it would be a lot cleaner if there won't be correcting the population size
-- update printing info:
-  + ecosystem: previous total e
+- start with not empty brain? already mutated in some way?
+- distribution in .zip
+- change timeSinceLastCloning from seconds to frames
+- update printing info functions:
+  + ecosystem: previous total energy
   + animals: new vars: isClone and maybe there is sth else, basicly check everything
-
-- implement some way of dealing with stubborn vegetating animals
+  perhaps there are other var that can be added
 - identify the bottle neck of the fps count
-- only anabolic mutations if brain has only one synapse
-  anabolic and non-catabolic mutations fuctions are implemented 
-  and ready to be used (so use them!)
-- implement id's system in Animals?
+- implement id's system in Animals? if it's needed of course
 - there is probably a bug with updating brain preview modifier
   when a brain preview which is mutated isn't rendered
 - imgBtns don't work if animals are close to borders
 - don't allow to change modified brain 
   if other is being modified AND mouse hovers modifier
 - add saving which animal had brain preview modified
-- save fruits and animals count to file in order to know how many of them should be loaded
+- ?save fruits and animals count to file in order to know how many of them should be loaded
+- check if position inputs are correct
+- what has happened with cloning god tol?
+- add m_guards add then find all guards and make then depend on this variable and
+  sometimes play with this variable to check how 
+  turning on/off guards slows down the simulation/makes the simulation faster
+- instead of Velocity guard generic vector guard so that acceleration can also benefit
+  (and of course remember about using it, not only implementing)
 - don't update a brain if it isn't rendered (order of calling methods in updateWorld might be important)
 - update imgBtn texture in BrainPreview class
 - fix an issue with loading ecosystems that contain a tracked animal:
@@ -82,7 +66,6 @@ ecosystems simulation:
   while rendering;
   now I came up with 3 kinds of those vectors:
   - default, will be optimized to sort animals for eating;
-  - vector optimized for correcting population size;
   - vector optimized for rendering brain previews, but u have to add a hierarcy of rendering brain previews
     which will be used in sorting that vector;
   it works because every vector will be always almost sorted, 1 update can't completely destroy
@@ -97,23 +80,18 @@ ecosystems simulation:
   (directly after a function that marks animals as not alive)
   (that converting dead animals to fruits process can occur a few times in update world method)
 - add a way to change a tracked animal, even add arrows "previous" and "next"
-- spawn more fruits in the center of the world? we should avoid this kind of hard-evolving ecosystems;
-  it's kind of cheating
-- all animals energy to expel from animals should go to only one fruit,
-  fruit with the lowest energy
 - use some STL algo to feed animals
-- add a way to set automaticaly execution of some global "God events"
+- ?add a way to set automaticaly execution of some global "God events"
   like killing 1/2 of population every 30 seconds...
-- fix an issue with getWorldSize() and getArenaSize() in Ecosystem class;
+- ?fix an issue with getWorldSize() and getArenaSize() in Ecosystem class;
   use the first one when u need the size with borders included 
   and the second when u need the size without borders included
-- u can use store animals in std::unique_ptrs in Animal class;
+- ? (but what about the idea of more than one vector with pointers to animals?)
+  u can use store animals in std::unique_ptrs in Animal class;
   in order to clone an animal just create an empty brand new animal and then do this:
   *a1 = *a2
   where a1 and a2 are std::unique_ptrs;
   this line of code will call copy assigment operator of Animal class
-- if killing animals sticking to borders will be needed 
-  uncomment it and maybe change the way how it works
 - every copy constructor and copy assigment operator should use its initializer list to initialize all its members
   like Animal class copy constructor (and the same thing with other constructors!)
 - update brain after stopping (and probably also after replacing and maybe others (there are no others... probably))
