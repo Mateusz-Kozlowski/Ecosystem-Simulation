@@ -1,7 +1,5 @@
 ecosystems simulation:
 - fix:
-  + 14'000 fruits? WTF why XD even ~41'000, print some of their positions, u know, like %100 == 0 or sth like that
-    there are 700 fruits but I don't see any of them (just run from huge);
   + animals are spawning in the center? If it is true I have no clue why
   + it seems like animals don't won't to reproduce; check on a specific animal if and why it
     don't want to reproduce
@@ -14,6 +12,12 @@ ecosystems simulation:
     m_timeElapsedSinceLastCloning really works correctly?
     I mean... topological order of functions in updateWorld function
 
+- what has happened with cloning god tol?
+- add m_guards add then find all guards and make then depend on this variable and
+  sometimes play with this variable to check how 
+  turning on/off guards slows down the simulation/makes the simulation faster
+- add fruits count guard
+- distribution is .zip
 - FRUITS COUNT CORRECTION: change the name of the initial fruits count to fruits count 
   (the number of fruits will be ALWAYS approximately equal to that number);
   FRUITS WILL BE CREATED ONLY IN THAT FUNC 

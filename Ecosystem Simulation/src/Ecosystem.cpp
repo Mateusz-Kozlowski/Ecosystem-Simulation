@@ -25,6 +25,7 @@ Ecosystem::Ecosystem()
 	, m_totalTimeElapsed(0.0f)
 	, m_totalFramesElapsed(0U)
 	, m_previousTotalEnergy(0U)
+	, m_fruitsCountGuard(0U)
 {
 	std::cerr << "Empty ecosystem constructor\n";
 }
@@ -73,6 +74,7 @@ Ecosystem::Ecosystem(
 	, m_totalTimeElapsed(0.0f)
 	, m_totalFramesElapsed(0U)
 	, m_previousTotalEnergy(0U)
+	, m_fruitsCountGuard(fruitsCount)
 {
 	initBackgroundAndBorders(
 		worldSize, 
@@ -123,6 +125,7 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_totalTimeElapsed(0.0f)
 	, m_totalFramesElapsed(0U)
 	, m_previousTotalEnergy(0U)
+	, m_fruitsCountGuard(0U)
 {
 	loadFromFolder(folderPath);
 }
@@ -440,25 +443,11 @@ unsigned Ecosystem::getTotalFruitsEnergy() const
 	return totalFruitsEnergy;
 }
 
-unsigned Ecosystem::getTotalEnergy(bool print) const
+unsigned Ecosystem::getTotalEnergy() const
 {
-	unsigned hp = getTotalAnimalsHpEnergy();
-	unsigned fE = getTotalFruitsEnergy();
-	unsigned kE = getTotalAnimalsKineticEnergy();
-
-	if (print)
-	{
-		std::cout << "hp: " << hp << '\n';
-		std::cout << "fE: " << fE << '\n';
-		std::cout << "kE: " << kE << '\n';
-	}
-
-	return hp + fE + kE;
-
-	/*
 	return getTotalAnimalsHpEnergy()
 		 + getTotalAnimalsKineticEnergy()
-		 + getTotalFruitsEnergy();*/
+		 + getTotalFruitsEnergy();
 }
 
 void Ecosystem::printAllAnimalsPositions() const
@@ -674,8 +663,6 @@ void Ecosystem::createNewFruit(
 	const sf::Color& fruitColor,
 	bool linearDistributionOfPositionProbability)
 {
-	std::clog << "NEW FRUIT: create new fruit";
-
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			energy,
@@ -793,7 +780,8 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 	ofs << m_godTool << '\n';
 	ofs << m_totalTimeElapsed << '\n';
 	ofs << m_totalFramesElapsed << '\n';
-	ofs << m_previousTotalEnergy;
+	ofs << m_previousTotalEnergy << '\n';
+	ofs << m_fruitsCountGuard;
 
 	ofs.close();
 }
@@ -953,6 +941,7 @@ void Ecosystem::loadEcosystem(const std::string& filePath)
 	ifs >> m_totalTimeElapsed;
 	ifs >> m_totalFramesElapsed;
 	ifs >> m_previousTotalEnergy;
+	ifs >> m_fruitsCountGuard;
 
 	ifs.close();
 
@@ -1130,16 +1119,34 @@ void Ecosystem::killingTool(const sf::Vector2f& mousePos)
 	{
 		if (animal->isCoveredByMouse(mousePos))
 		{
-			convertAnimalToFruit(animal, true);
+			convertAnimalToFruitsEnergy(animal);
 			return;
 		}
 	}
+}
+
+void Ecosystem::convertAnimalToFruitsEnergy(
+	std::shared_ptr<Animal>& animal)
+{
+	increaseFruitsEnergy(animal->getTotalEnergy());
+	removeAnimal(animal);
+}
+
+void Ecosystem::increaseFruitsEnergy(unsigned energyIncrease)
+{
+	auto lowestEnergyFruit = getLowestEnergyFruit();
+	lowestEnergyFruit->setEnergy(lowestEnergyFruit->getEnergy() + energyIncrease);
 }
 
 void Ecosystem::convertAnimalToFruit(
 	std::shared_ptr<Animal>& animal, 
 	bool randomFruitPosition)
 {
+	std::clog
+		<< "ERROR: Ecosystem::convertAnimalToFruit(...):\n"
+		<< "u said u don't want to use this func...";
+	exit(-13);
+
 	m_fruits.push_back(
 		std::make_unique<Fruit>(
 			animal->getTotalEnergy(),
@@ -1192,16 +1199,27 @@ void Ecosystem::stoppingTool(const sf::Vector2f& mousePos)
 	{
 		if (animal->isCoveredByMouse(mousePos))
 		{
-			convertKineticEnergyToFruit(*animal, true);
+			convertKineticEnergyToFruitsEnergy(*animal);
 			return;
 		}
 	}
+}
+
+void Ecosystem::convertKineticEnergyToFruitsEnergy(Animal& animal)
+{
+	increaseFruitsEnergy(animal.getKineticEnergy());
+	animal.getMovementComponent().resetVelocity();
 }
 
 void Ecosystem::convertKineticEnergyToFruit(
 	Animal& animal, 
 	bool randomFruitPosition)
 {
+	std::clog
+		<< "ERROR::Ecosystem::convertKineticEnergyToFruit(...):\n"
+		<< "You wanted this func not to be used\n";
+	exit(-13);
+
 	if (animal.getKineticEnergy() == 0U) return;
 
 	m_fruits.push_back(
@@ -1295,19 +1313,21 @@ void Ecosystem::updateWorld(
 {
 	std::clog << "--------------------NEW FRAME--------------------:\n";
 
+	// TODO (comments):
 	updateAnimals(dt, mousePos, events, keybinds);
-	transferEnergyFromAnimalsToFruits();
+	expelEnergyFromAnimalsToFruits();
 	cloneAnimals(dt, mousePos, events);
 	avoidTunneling();
-	//kickInAssAnimalsStuckedNextToBorders();
+	//kickInAssAnimalsStuckedNextToBorders(); // probably no longer needed because of metabolic cost (BMR)
 	removeDeadAnimals();
 	feedAnimals(dt, mousePos, events);
-	removeEatenFruits();
+	relocateEatenFruits();
+	redistributeFruitsEnergy(keybinds);
 	setHpBarsRanges();
-	correctPopulationSize(dt);	
+	//correctPopulationSize(dt); // probably no longer needed because of metabolic cost (BMR)
 	correctBrainPreviewsPositions();
-	correctFruitsCount();
-	updatePreviousTotalEnergy();
+	//correctFruitsCount(); // probably no longer needed because of the fact that fruits count is const
+	constValuesGuards();
 	debugLogs();
 
 	m_totalFramesElapsed++;
@@ -1398,7 +1418,7 @@ float Ecosystem::calcDistance(const Animal& animal, const Fruit& fruit) const
 	return sqrt(pow(x, 2) + pow(y, 2));
 }
 
-void Ecosystem::transferEnergyFromAnimalsToFruits()
+void Ecosystem::expelEnergyFromAnimalsToFruits()
 {
 	Fruit* lowestEnergyFruit = getLowestEnergyFruit();
 
@@ -1582,7 +1602,7 @@ void Ecosystem::kickInAssAnimalsStuckedNextToBorders()
 	{
 		if (sticksToBorder(*m_animals[i]))
 		{
-			convertAnimalToFruit(m_animals[i], true);
+			convertAnimalToFruitsEnergy(m_animals[i]);
 		}
 		else i++;
 	}
@@ -1661,23 +1681,7 @@ void Ecosystem::removeDeadAnimals()
 	{
 		if (!m_animals[i]->isAlive())
 		{
-			m_fruits.push_back(
-				std::make_unique<Fruit>(
-					m_animals[i]->getTotalEnergy(),
-					m_animals[i]->getPos(),
-					m_fruitsRadius,
-					m_fruitsColor
-				)
-			);
-			m_fruits.back()->setRandomPosition(
-				getWorldSize(), 
-				getBordersThickness(),
-				false
-			);
-
-			//std::clog << "An animal removed\n";
-
-			removeAnimal(m_animals[i]);
+			convertAnimalToFruitsEnergy(m_animals[i]);
 		}
 		else i++;
 	}
@@ -1807,22 +1811,78 @@ void Ecosystem::eat(
 	fruit.setEnergy(0U);
 }
 
-void Ecosystem::removeEatenFruits()
+void Ecosystem::relocateEatenFruits()
 {
-	for (int i = 0; i < m_fruits.size();)
+	for (auto& fruit : m_fruits)
 	{
-		if (m_fruits[i]->getEnergy() == 0)
+		if (fruit->getEnergy() == 0U)
 		{
-			removeFruit(m_fruits[i]);
+			fruit->setRandomPosition(
+				getWorldSize(), 
+				getBordersThickness(), 
+				false
+			);
 		}
-		else i++;
 	}
 }
 
-void Ecosystem::removeFruit(std::unique_ptr<Fruit>& fruit)
+void Ecosystem::redistributeFruitsEnergy(const std::unordered_map<std::string, int>& keybinds)
 {
-	std::swap(fruit, m_fruits.back());
-	m_fruits.pop_back();
+	// TODO: check if this greedy algo works correctly
+
+	unsigned totalFruitsEnergy = getTotalFruitsEnergy();
+	unsigned alreadyRedistributedEnergy = 0U;
+
+	for (int i = 0; i < m_fruits.size(); i++)
+	{
+		m_fruits[i]->setEnergy((totalFruitsEnergy - alreadyRedistributedEnergy) / (m_fruits.size() - i));
+		alreadyRedistributedEnergy += m_fruits[i]->getEnergy();
+	}
+	
+	// checking if the algo works correctly:
+	// #guard
+	unsigned idxOfSmallestEnergyFruit = 0U;
+	unsigned idxOfBiggestEnergyFruit = 0U;
+
+	for (int i = 0; i < m_fruits.size(); i++)
+	{
+		if (m_fruits[i]->getEnergy() < m_fruits[idxOfSmallestEnergyFruit]->getEnergy())
+		{
+			idxOfSmallestEnergyFruit = i;
+		}
+		if (m_fruits[i]->getEnergy() > m_fruits[idxOfBiggestEnergyFruit]->getEnergy())
+		{
+			idxOfBiggestEnergyFruit = i;
+		}
+	}
+
+	unsigned smallestFruitEnergy = m_fruits[idxOfSmallestEnergyFruit]->getEnergy();
+	unsigned biggestFruitEnergy = m_fruits[idxOfBiggestEnergyFruit]->getEnergy();
+
+	if (biggestFruitEnergy < smallestFruitEnergy)
+	{
+		std::clog
+			<< "ERROR: Ecosystem::redistributeFruitsEnergy(...):\n"
+			<< "guard (bug searching algorithm) doesn't work correctly\n";
+		exit(-13);
+	}
+
+	if (biggestFruitEnergy - smallestFruitEnergy > 1U)
+	{
+		std::clog
+			<< "ERROR: Ecosystem::redistributeFruitsEnergy(...):\n"
+			<< "the difference between these 2 values was supposed not to be > 1:\n"
+			<< "Smallest fruit energy: " << smallestFruitEnergy << '\n'
+			<< "Biggest fruit energy: " << biggestFruitEnergy << '\n';
+		exit(-13);
+	}
+}
+
+bool Ecosystem::compareFruitsEnergy(
+	std::unique_ptr<Fruit> f1, 
+	std::unique_ptr<Fruit> f2)
+{
+	return f1->getEnergy() < f2->getEnergy();
 }
 
 void Ecosystem::setHpBarsRanges()
@@ -1856,6 +1916,11 @@ unsigned Ecosystem::getTheBiggestHp() const
 
 void Ecosystem::correctPopulationSize(float dt)
 {
+	std::clog
+		<< "ERROR: Ecosystem::correctPopulationSize(float)\n"
+		<< "You wanted not to use this func\n";
+	exit(-13);
+
 	if (m_animals.empty()) return;
 
 	float fastingThreshold = 5'000.0f / m_animals.size();
@@ -1896,7 +1961,7 @@ void Ecosystem::correctPopulationSize(float dt)
 	for (int i = 0; i < murdersCount; i++)
 	{
 		//std::cout << m_animals[i]->getTimeElapsedSinceLastExternalHpChange() << '\n';
-		convertAnimalToFruit(m_animals[i], true);
+		convertAnimalToFruitsEnergy(m_animals[i]);
 	}
 
 	//if (murdersCount != 0U)
@@ -2049,6 +2114,11 @@ bool Ecosystem::brainPreviewProtrudesWorldBottomBorder(
 
 void Ecosystem::correctFruitsCount()
 {
+	std::clog
+		<< "ERROR: Ecosystem::correctFruitsCount()\n"
+		<< "You wanted not to use this func\n";
+	exit(-13);
+
 	#if _DEBUG
 	unsigned idx1 = 0U;
 	#endif
@@ -2110,13 +2180,19 @@ void Ecosystem::correctFruitsCount()
 	#endif
 }
 
-void Ecosystem::updatePreviousTotalEnergy()
+void Ecosystem::constValuesGuards()
+{
+	totalEnergyGuard();
+	fruitsCountGuard();
+}
+
+void Ecosystem::totalEnergyGuard()
 {
 	unsigned totalEnergy = getTotalEnergy();
 
 	if (totalEnergy != m_previousTotalEnergy)
 	{
-		std::cerr << "ERROR: Ecosystem::updatePreviousTotalEnergy(): ENERGY IS NOT CONSERVED\n";
+		std::cerr << "ERROR: Ecosystem::constValuesGuards(): ENERGY IS NOT CONSERVED\n";
 		std::cerr << "total energy: " << totalEnergy << '\n';
 		std::cerr << "previous total energy: " << m_previousTotalEnergy << '\n';
 		exit(-13);
@@ -2125,8 +2201,21 @@ void Ecosystem::updatePreviousTotalEnergy()
 	m_previousTotalEnergy = totalEnergy;
 }
 
+void Ecosystem::fruitsCountGuard()
+{
+	if (m_fruits.size() != m_fruitsCountGuard)
+	{
+		std::cerr
+			<< "ERROR: Ecosystem::constValuesGuards():\n"
+			<< "fruits count (" << m_fruits.size() << ") is wrong\n"
+			<< "it supposed to be equal to " << m_fruitsCountGuard << '\n';
+		exit(-13);
+	}
+}
+
 void Ecosystem::debugLogs()
 {
+	// if logging is no longer necessarily then remove it from the func:
 	if (m_fruits.size() > 10'000)
 	{
 		for (int i = 0; i < m_fruits.size(); i++)
