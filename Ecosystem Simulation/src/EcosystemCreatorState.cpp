@@ -495,7 +495,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pY(5.0f, resolution)
 		),
 		m_font,
-		"50",
+		"500",
 		charSize,
 		sf::Color(100, 100, 100),
 		sf::Color(125, 125, 125),
@@ -682,11 +682,13 @@ void EcosystemCreatorState::loadEcosystemTemplate(
 	unsigned initialAnimalsCount, fruitsCount;
 	unsigned defaultHp, defaultFruitEnergy;
 	float mutationRate;
+	unsigned bmr;
 
 	file >> worldSize.x >> worldSize.y;
 	file >> bordersThickness;
 	file >> initialAnimalsCount >> fruitsCount;
 	file >> defaultHp >> defaultFruitEnergy >> mutationRate;
+	file >> bmr;
 
 	std::string strWorldWidth = std::to_string(worldSize.x);
 	std::string strWorldHeight = std::to_string(worldSize.y);
@@ -696,6 +698,7 @@ void EcosystemCreatorState::loadEcosystemTemplate(
 	std::string strDefaultHp = std::to_string(defaultHp);
 	std::string strDefaultFruitEnergy = std::to_string(defaultFruitEnergy);
 	std::string strMutationRate = std::to_string(mutationRate);
+	std::string strBMR = std::to_string(bmr);
 
 	strWorldWidth = removeFloatTrailingZeros(strWorldWidth);
 	strWorldHeight = removeFloatTrailingZeros(strWorldHeight);
@@ -705,6 +708,7 @@ void EcosystemCreatorState::loadEcosystemTemplate(
 	strDefaultHp = removeFloatTrailingZeros(strDefaultHp);
 	strDefaultFruitEnergy = removeFloatTrailingZeros(strDefaultFruitEnergy);
 	strMutationRate = removeFloatTrailingZeros(strMutationRate);
+	strBMR = removeFloatTrailingZeros(strBMR);
 
 	m_textBoxes["WORLD WIDTH"]->setString(strWorldWidth);
 	m_textBoxes["WORLD HEIGHT"]->setString(strWorldHeight);
@@ -714,6 +718,7 @@ void EcosystemCreatorState::loadEcosystemTemplate(
 	m_textBoxes["DEFAULT HP"]->setString(strDefaultHp);
 	m_textBoxes["DEFAULT FRUIT ENERGY"]->setString(strDefaultFruitEnergy);
 	m_textBoxes["MUTATION RATE"]->setString(strMutationRate);
+	m_textBoxes["BMR PER FRAME"]->setString(strBMR);
 	m_textBoxes["NAME"]->setString(ecosystemName);
 
 	file.close();

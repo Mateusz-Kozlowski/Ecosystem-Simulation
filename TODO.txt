@@ -12,6 +12,9 @@ ecosystems simulation:
     m_timeElapsedSinceLastCloning really works correctly?
     I mean... topological order of functions in updateWorld function
 
+- check if all vars are loading from templates and aren't default values
+  (all default hardcoded values should be different from those from templates)
+- add files related to the neural nets to the project without messing up with .lib files
 - brains need more synapses
   and consider using those anabolic and catabolic mutate functions or sth like that;
   just come up with a heuristic of dealing with this
