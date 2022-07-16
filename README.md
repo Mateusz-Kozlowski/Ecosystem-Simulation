@@ -4,5 +4,4 @@ After a couple of months I realised that making the program working properly req
 ## Features
 I'm going to gradually add here the features of the project:
 
-* pressing F key during simulation prints the smallest and the biggest fruit energy
 * by holding Z key you are able to zoom out the camera so that you can see what is beyond the world
