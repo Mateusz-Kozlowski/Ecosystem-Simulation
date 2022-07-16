@@ -1384,8 +1384,32 @@ std::vector<Blueberry::Scalar> Ecosystem::getEcosystemRelatedInputsForBrain(
 		ecosystemRelatedInputsForBrain.push_back(0.0);
 	}
 
-	ecosystemRelatedInputsForBrain.push_back((animal.getPos().x - m_bg.getOutlineThickness()) / getArenaSize().x);
-	ecosystemRelatedInputsForBrain.push_back((animal.getPos().y - m_bg.getOutlineThickness()) / getArenaSize().y);
+	Blueberry::Scalar xPosInput =
+		(animal.getPos().x - m_bg.getOutlineThickness() - getArenaSize().x / 2)
+		/ (getArenaSize().x / 2);
+	
+	Blueberry::Scalar yPosInput =
+		(animal.getPos().y - m_bg.getOutlineThickness() - getArenaSize().y / 2)
+		/ (getArenaSize().y / 2);
+
+	// #guard
+	if (xPosInput < -1.0 || xPosInput > 1.0)
+	{
+		std::clog
+			<< "ERROR: Ecosystem::getEcosystemRelatedInputsForBrain(...) const:\n"
+			<< "xPosInput = " << xPosInput << '\n';
+		exit(-13);
+	}
+	if (yPosInput < -1.0 || yPosInput > 1.0)
+	{
+		std::clog
+			<< "ERROR: Ecosystem::getEcosystemRelatedInputsForBrain(...) const:\n"
+			<< "yPosInput = " << yPosInput << '\n';
+		exit(-13);
+	}
+
+	ecosystemRelatedInputsForBrain.push_back(xPosInput);
+	ecosystemRelatedInputsForBrain.push_back(yPosInput);
 
 	return ecosystemRelatedInputsForBrain;
 }

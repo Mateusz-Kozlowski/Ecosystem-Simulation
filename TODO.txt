@@ -12,13 +12,13 @@ ecosystems simulation:
     m_timeElapsedSinceLastCloning really works correctly?
     I mean... topological order of functions in updateWorld function
 
+- check if position inputs are correct
 - what has happened with cloning god tol?
 - add m_guards add then find all guards and make then depend on this variable and
   sometimes play with this variable to check how 
   turning on/off guards slows down the simulation/makes the simulation faster
 - distribution is .zip
 
-- change pos inputs from <0; 1> to <-1; 1>
 - start with not empty brain? already mutated in some way?
 - if there is too little fruits then increase their count and if there is too many then decrese their count,
   you can use an agressive function for example log or sth like that
