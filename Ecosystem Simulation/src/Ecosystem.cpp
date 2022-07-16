@@ -1493,11 +1493,31 @@ void Ecosystem::cloneAnimals(
 		
 		if (animal->getTimeElapsedSinceLastCloning() > 5.0f // TODO: unhardcode that
 			&& animal->getBrain().getSpecificOutput(2U) < 0.0
-			&& animal->getHp() > 1U)
+			&& animal->getHp() > 1U
+			&& !isCloseToBorders(*animal))
 		{
 			cloneAnimal(*animal, i, dt, mousePos, events);
 		}
 	}
+}
+
+bool Ecosystem::isCloseToBorders(const Animal& animal)
+{
+	sf::Vector2f borders(getBordersThickness(), getBordersThickness());
+	sf::Vector2f animalPosRelativeToArena = animal.getPos() - borders;
+
+	float arenaWidth = getArenaSize().x;
+	float arenaHeight = getArenaSize().y;
+
+	if (animalPosRelativeToArena.x < 0.1f * arenaWidth
+		|| animalPosRelativeToArena.x > 0.9f * arenaWidth
+		|| animalPosRelativeToArena.y < 0.1f * arenaHeight
+		|| animalPosRelativeToArena.y > 0.9f * arenaHeight)
+	{
+		return true;
+	}
+	
+	return false;
 }
 
 void Ecosystem::cloneAnimal(

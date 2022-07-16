@@ -352,6 +352,7 @@ private:
 		const sf::Vector2f& mousePos,
 		const std::vector<sf::Event>& events
 	);
+	bool isCloseToBorders(const Animal& animal);
 
 	/*
 	This func conserves energy
