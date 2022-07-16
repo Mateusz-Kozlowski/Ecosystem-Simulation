@@ -317,7 +317,7 @@ void EcosystemCreatorState::initTextBoxes()
 		2
 	);
 
-	m_textBoxes["ANIMALS COUNT"] = std::make_unique<gui::TextBox>(
+	m_textBoxes["INITIAL ANIMALS COUNT"] = std::make_unique<gui::TextBox>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(42.0f, resolution)
@@ -557,8 +557,8 @@ void EcosystemCreatorState::initTexts()
 	);
 
 	addText(
-		"ANIMALS COUNT",
-		"ANIMALS COUNT",
+		"INITIAL ANIMALS COUNT",
+		"INITIAL ANIMALS COUNT",
 		m_font,
 		charSize,
 		sf::Color(225, 225, 225),
@@ -679,19 +679,19 @@ void EcosystemCreatorState::loadEcosystemTemplate(
 	// read some variables:
 	sf::Vector2f worldSize;
 	float bordersThickness;
-	unsigned animalsCount, fruitsCount;
+	unsigned initialAnimalsCount, fruitsCount;
 	unsigned defaultHp, defaultFruitEnergy;
 	float mutationRate;
 
 	file >> worldSize.x >> worldSize.y;
 	file >> bordersThickness;
-	file >> animalsCount >> fruitsCount;
+	file >> initialAnimalsCount >> fruitsCount;
 	file >> defaultHp >> defaultFruitEnergy >> mutationRate;
 
 	std::string strWorldWidth = std::to_string(worldSize.x);
 	std::string strWorldHeight = std::to_string(worldSize.y);
 	std::string strBordersThickness = std::to_string(bordersThickness);
-	std::string strAnimalsCount = std::to_string(animalsCount);
+	std::string strInitialAnimalsCount = std::to_string(initialAnimalsCount);
 	std::string strFruitsCount = std::to_string(fruitsCount);
 	std::string strDefaultHp = std::to_string(defaultHp);
 	std::string strDefaultFruitEnergy = std::to_string(defaultFruitEnergy);
@@ -700,7 +700,7 @@ void EcosystemCreatorState::loadEcosystemTemplate(
 	strWorldWidth = removeFloatTrailingZeros(strWorldWidth);
 	strWorldHeight = removeFloatTrailingZeros(strWorldHeight);
 	strBordersThickness = removeFloatTrailingZeros(strBordersThickness);
-	strAnimalsCount = removeFloatTrailingZeros(strAnimalsCount);
+	strInitialAnimalsCount = removeFloatTrailingZeros(strInitialAnimalsCount);
 	strFruitsCount = removeFloatTrailingZeros(strFruitsCount);
 	strDefaultHp = removeFloatTrailingZeros(strDefaultHp);
 	strDefaultFruitEnergy = removeFloatTrailingZeros(strDefaultFruitEnergy);
@@ -709,7 +709,7 @@ void EcosystemCreatorState::loadEcosystemTemplate(
 	m_textBoxes["WORLD WIDTH"]->setString(strWorldWidth);
 	m_textBoxes["WORLD HEIGHT"]->setString(strWorldHeight);
 	m_textBoxes["BORDERS THICKNESS"]->setString(strBordersThickness);
-	m_textBoxes["ANIMALS COUNT"]->setString(strAnimalsCount);
+	m_textBoxes["INITIAL ANIMALS COUNT"]->setString(strInitialAnimalsCount);
 	m_textBoxes["FRUITS COUNT"]->setString(strFruitsCount);
 	m_textBoxes["DEFAULT HP"]->setString(strDefaultHp);
 	m_textBoxes["DEFAULT FRUIT ENERGY"]->setString(strDefaultFruitEnergy);
@@ -764,7 +764,7 @@ void EcosystemCreatorState::createEcosystem()
 			48,
 			48
 		),
-		std::stoi(m_textBoxes["ANIMALS COUNT"]->getInput()),
+		std::stoi(m_textBoxes["INITIAL ANIMALS COUNT"]->getInput()),
 		std::stoi(m_textBoxes["FRUITS COUNT"]->getInput()),
 		8.0f,
 		4.0f,

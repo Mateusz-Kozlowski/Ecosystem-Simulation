@@ -36,7 +36,7 @@ Ecosystem::Ecosystem(
 	float bordersThickness,
 	const sf::Color& backgroundColor,
 	const sf::Color& bordersColor,
-	unsigned animalsCount,
+	unsigned initialAnimalsCount,
 	unsigned fruitsCount,
 	float animalsRadius,
 	float fruitsRadius,
@@ -83,7 +83,7 @@ Ecosystem::Ecosystem(
 		bordersColor
 	);
 	createNewAnimals(
-		animalsCount,
+		initialAnimalsCount,
 		defaultAnimalsHp,
 		basalMetabolicRatePerFrame,
 		animalsRadius,
@@ -592,7 +592,7 @@ void Ecosystem::initBackgroundAndBorders(
 }
 
 void Ecosystem::createNewAnimals(
-	unsigned animalsCount,
+	unsigned initialAnimalsCount,
 	unsigned defaultAnimalsHp,
 	unsigned basalMetabolicRatePerFrame,
 	float animalsRadius,
@@ -602,7 +602,7 @@ void Ecosystem::createNewAnimals(
 {
 	m_animals.clear();
 
-	for (int i = 0; i < animalsCount; i++)
+	for (int i = 0; i < initialAnimalsCount; i++)
 	{
 		createNewAnimal(
 			defaultAnimalsHp,
@@ -653,7 +653,12 @@ void Ecosystem::createNewFruits(
 
 	for (int i = 0; i < fruitsCount; i++)
 	{
-		createNewFruit(defaultFruitsEnergy, fruitsRadius, fruitsColor, false);
+		createNewFruit(
+			defaultFruitsEnergy, 
+			fruitsRadius, 
+			fruitsColor, 
+			true // TODO: unhardcode that
+		);
 	}
 }
 
@@ -804,7 +809,7 @@ int Ecosystem::getTrackedAnimalIndex() const
 	std::cerr 
 		<< "Error::Ecosystem::getTrackedAnimalIndex() const::"
 		<< "trackedAnimal ptr points to a nonexistent animal\n";
-	assert(false);
+	exit(-13);
 
 	return -1;
 }
@@ -821,7 +826,7 @@ void Ecosystem::saveHpBarsVisibility(const std::string& filePath) const
 			<< "cannot open: "
 			<< filePath
 			<< '\n';
-		assert(false);
+		exit(-13);
 		return;
 	}
 
@@ -845,8 +850,7 @@ void Ecosystem::saveBrainsPreviewsVisibility(const std::string& filePath) const
 			<< "cannot open: " 
 			<< filePath 
 			<< '\n';
-		assert(false);
-		return;
+		exit(-13);
 	}
 
 	for (const auto& it : m_brainsVisibility)
@@ -898,8 +902,7 @@ void Ecosystem::loadEcosystem(const std::string& filePath)
 			<< "cannot open: "
 			<< filePath
 			<< '\n';
-		assert(false);
-		return;
+		exit(-13);
 	}
 
 	sf::Vector2f worldSize;
@@ -1016,8 +1019,7 @@ void Ecosystem::loadHpBarsVisibility(const std::string& filePath)
 			<< "cannot open: "
 			<< filePath
 			<< '\n';
-		assert(false);
-		return;
+		exit(-13);
 	}
 
 	bool hpBarVisibility;
@@ -1045,8 +1047,7 @@ void Ecosystem::loadBrainsPreviewsVisibility(const std::string& filePath)
 			<< "cannot open: " 
 			<< filePath 
 			<< '\n';
-		assert(false);
-		return;
+		exit(-13);
 	}
 
 	bool brainPreviewVisibility;
@@ -1161,7 +1162,7 @@ void Ecosystem::convertAnimalToFruit(
 		m_fruits.back()->setRandomPosition(
 			getWorldSize(), 
 			getBordersThickness(),
-			false
+			true // TODO: unhardcode that
 		);
 	}
 
@@ -1236,7 +1237,7 @@ void Ecosystem::convertKineticEnergyToFruit(
 		m_fruits.back()->setRandomPosition(
 			getWorldSize(), 
 			getBordersThickness(),
-			false
+			true // TODO: unhardcode that
 		);
 	}
 
@@ -1820,7 +1821,7 @@ void Ecosystem::relocateEatenFruits()
 			fruit->setRandomPosition(
 				getWorldSize(), 
 				getBordersThickness(), 
-				false
+				true // TODO: unhardcode that
 			);
 		}
 	}
@@ -1828,8 +1829,6 @@ void Ecosystem::relocateEatenFruits()
 
 void Ecosystem::redistributeFruitsEnergy(const std::unordered_map<std::string, int>& keybinds)
 {
-	// TODO: check if this greedy algo works correctly
-
 	unsigned totalFruitsEnergy = getTotalFruitsEnergy();
 	unsigned alreadyRedistributedEnergy = 0U;
 
@@ -1859,6 +1858,7 @@ void Ecosystem::redistributeFruitsEnergy(const std::unordered_map<std::string, i
 	unsigned smallestFruitEnergy = m_fruits[idxOfSmallestEnergyFruit]->getEnergy();
 	unsigned biggestFruitEnergy = m_fruits[idxOfBiggestEnergyFruit]->getEnergy();
 
+	// add m_guardsTurnedOn
 	if (biggestFruitEnergy < smallestFruitEnergy)
 	{
 		std::clog
@@ -2148,7 +2148,7 @@ void Ecosystem::correctFruitsCount()
 			m_fruits.back()->setRandomPosition(
 				getWorldSize(), 
 				getBordersThickness(),
-				false
+				true // TODO: unhardcode that
 			);
 
 			fruit->setEnergy(m_defaultFruitEnergy);
@@ -2215,21 +2215,7 @@ void Ecosystem::fruitsCountGuard()
 
 void Ecosystem::debugLogs()
 {
-	// if logging is no longer necessarily then remove it from the func:
-	if (m_fruits.size() > 10'000)
-	{
-		for (int i = 0; i < m_fruits.size(); i++)
-		{
-			m_debugFile
-				<< m_fruits[i]->getEnergy() << ' '
-				<< m_fruits[i]->getPos().x << ' '
-				<< m_fruits[i]->getPos().y << '\n';
-		}
-
-		m_debugFile.close();
-
-		exit(7);
-	}
+	
 }
 
 void Ecosystem::updateOnlyImgBtnsOfBrainsPreviews(

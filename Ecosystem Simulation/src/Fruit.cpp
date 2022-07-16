@@ -31,14 +31,12 @@ void Fruit::saveToFile(const char* filePath) const
 
 	if (!ofs.is_open())
 	{
-		std::cerr 
+		std::cerr
 			<< "Error::Fruit::saveToFile(const char*) const::"
-			<< "cannot open: " 
-			<< filePath 
+			<< "cannot open: "
+			<< filePath
 			<< '\n';
-		assert(false);
 		exit(-13);
-		return;
 	}
 
 	ofs << m_energy << '\n';
@@ -63,7 +61,6 @@ void Fruit::loadFromFile(const char* filePath)
 			<< "cannot open: "
 			<< filePath
 			<< '\n';
-		assert(false);
 		exit(-13);
 		return;
 	}
@@ -146,13 +143,13 @@ void Fruit::setRandomPosition(
 	float bordersThickness,
 	bool linearDistributionOfPositionProbability)
 {
-	// Currently I don't want to use linear distribution at all,
+	// Currently I want to use only linear distribution,
 	// so for the seak of safety I added the following if statement:
-	if (linearDistributionOfPositionProbability)
+	if (!linearDistributionOfPositionProbability)
 	{
 		std::clog
 			<< "ERROR: Fruit::setRandomPosition(...):\n"
-			<< "linear distributon of position probability?\n"
+			<< "Not linear distributon of position probability?\n"
 			<< "You don't want to use it anywhere! At least you said do...\n";
 		exit(-13);
 	}

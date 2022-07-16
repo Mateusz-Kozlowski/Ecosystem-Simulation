@@ -16,16 +16,8 @@ ecosystems simulation:
 - add m_guards add then find all guards and make then depend on this variable and
   sometimes play with this variable to check how 
   turning on/off guards slows down the simulation/makes the simulation faster
-- add fruits count guard
 - distribution is .zip
-- FRUITS COUNT CORRECTION: change the name of the initial fruits count to fruits count 
-  (the number of fruits will be ALWAYS approximately equal to that number);
-  FRUITS WILL BE CREATED ONLY IN THAT FUNC 
-  all other ways of transfering animals energy to fruits will be implemented using transfering energy
-  to the fruit with the smallest energy;
-  if the current number of fruits will be smaller than the initial one 
-  then correct fruits count func will call getTotalFruitsEnergy func 
-  and then "clone" the biggest fruits in the way simlar to the way animals are cloned
+
 - change pos inputs from <0; 1> to <-1; 1>
 - start with not empty brain? already mutated in some way?
 - if there is too little fruits then increase their count and if there is too many then decrese their count,

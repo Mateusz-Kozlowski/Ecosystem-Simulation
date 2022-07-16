@@ -16,7 +16,7 @@ public:
 		float bordersThickness,
 		const sf::Color& backgroundColor,
 		const sf::Color& bordersColor,
-		unsigned animalsCount,
+		unsigned initialAnimalsCount,
 		unsigned fruitsCount,
 		float animalsRadius,
 		float fruitsRadius,
@@ -152,7 +152,7 @@ private:
 	If you want energy to be preserved, the new animals hp has to come from somewhere.
 	*/
 	void createNewAnimals(
-		unsigned animalsCount,
+		unsigned initialAnimalsCount,
 		unsigned defaultAnimalsHp,
 		unsigned basalMetabolicRatePerFrame,
 		float animalsRadius,
