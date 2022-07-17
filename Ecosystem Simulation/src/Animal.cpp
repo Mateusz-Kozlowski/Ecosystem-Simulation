@@ -15,9 +15,10 @@ Animal::Animal(
 	, m_parentAgeWhenItWasBorn(-13.12345678987654321f)
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
+	, m_age(0.0f)
+	, m_timeSinceLastMutation(0.0f)
 	, m_timeElapsedSinceLastExternalHpChange(0.0f)
 	, m_timeElapsedSinceLastCloning(0.0f)
-	, m_age(0.0f)
 	, m_basalMetabolicRatePerFrame(basalMetabolicRatePerFrame)
 	, m_energyToExpelFromBMR(0U)
 {
@@ -37,6 +38,7 @@ Animal::Animal(const char* folderPath)
 	, m_timeElapsedSinceLastExternalHpChange(0.0f)
 	, m_timeElapsedSinceLastCloning(0.0f)
 	, m_age(0.0f)
+	, m_timeSinceLastMutation(0.0f)
 	, m_basalMetabolicRatePerFrame(0U)
 	, m_energyToExpelFromBMR(0U)
 {
@@ -54,6 +56,7 @@ Animal::Animal(const Animal& rhs)
 	, m_timeElapsedSinceLastExternalHpChange(0.0f)
 	, m_timeElapsedSinceLastCloning(0.0f)
 	, m_age(0.0f)
+	, m_timeSinceLastMutation(0.0f)
 	, m_basalMetabolicRatePerFrame(rhs.m_basalMetabolicRatePerFrame)
 	, m_energyToExpelFromBMR(rhs.m_energyToExpelFromBMR)
 {
@@ -79,6 +82,7 @@ Animal& Animal::operator=(const Animal& rhs)
 		m_timeElapsedSinceLastExternalHpChange = 0.0f;
 		m_timeElapsedSinceLastCloning = 0.0f;
 		m_age = 0.0f;
+		m_timeSinceLastMutation = 0.0f;
 		m_basalMetabolicRatePerFrame = rhs.m_basalMetabolicRatePerFrame;
 		m_energyToExpelFromBMR = rhs.m_energyToExpelFromBMR;
 	}
@@ -153,6 +157,7 @@ void Animal::saveToFolder(const char* folderPath) const
 	ofs << m_timeElapsedSinceLastExternalHpChange << '\n';
 	ofs << m_timeElapsedSinceLastCloning << '\n';
 	ofs << m_age << '\n';
+	ofs << m_timeSinceLastMutation << '\n';
 	ofs << m_basalMetabolicRatePerFrame << '\n';
 	ofs << m_energyToExpelFromBMR;
 
@@ -204,6 +209,7 @@ void Animal::loadFromFolder(const char* folderPath)
 	ifs >> m_timeElapsedSinceLastExternalHpChange;
 	ifs >> m_timeElapsedSinceLastCloning;
 	ifs >> m_age;
+	ifs >> m_timeSinceLastMutation;
 	ifs >> m_basalMetabolicRatePerFrame;
 	ifs >> m_energyToExpelFromBMR;
 
@@ -251,6 +257,12 @@ void Animal::update(
 	std::ofstream& debugFile,
 	const std::unordered_map<std::string, int>& keybinds)
 {
+	if (m_timeSinceLastMutation > 30.0f) // TODO: unhardcode and change from seconds to frames
+	{
+		m_movementComponent->mutateBrain(1U);
+		m_timeSinceLastMutation = 0.0f;
+	}
+	
 	doBMRrelatedThings();
 	
 	m_movementComponent->update(
@@ -274,13 +286,13 @@ void Animal::update(
 	m_timeElapsedSinceLastExternalHpChange += dt;
 	m_timeElapsedSinceLastCloning += dt;
 	m_age += dt;
+	m_timeSinceLastMutation += dt;
 
 	if (dt > 1.0)
 	{
-		std::cerr
+		std::cerr 
 			<< "ERROR::Animal::update(...):\n"
-			<< "dt is weirdly big: " << dt << '\n';
-		exit(-13);
+			<< "dt is weirdly big : " << dt << '\n';
 	}
 }
 
@@ -334,6 +346,8 @@ std::string Animal::toStr() const
 	
 	ss << "age: " << m_age << '\n';
 
+	ss << "time since lat mutation: " << m_timeSinceLastMutation << '\n';
+	
 	ss << "time elapsed since last meal: "
 	   << m_timeElapsedSinceLastExternalHpChange << '\n';
 

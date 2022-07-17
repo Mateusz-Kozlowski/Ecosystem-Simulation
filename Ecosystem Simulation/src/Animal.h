@@ -167,6 +167,7 @@ private:
 	std::unique_ptr<gui::BrainPreview> m_brainPreview;
 
 	float m_age;
+	float m_timeSinceLastMutation;
 	float m_timeElapsedSinceLastExternalHpChange;
 	float m_timeElapsedSinceLastCloning;
 

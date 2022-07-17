@@ -180,22 +180,6 @@ void MovementComponent::mutateBrain(unsigned brainMutationsCount)
 	}
 }
 
-void MovementComponent::anabolicBrainMutation(unsigned brainMutationsCount)
-{ 
-	for (int i = 0; i < brainMutationsCount; i++)
-	{
-		// 33% probability for a new neuron and 67% probability for a new synapse:
-		if (Blueberry::RandomEngine::getIntInRange(0, 2) == 0)
-		{
-			m_brain->addRandomNeuron();
-		}
-		else
-		{
-			m_brain->addRandomSynapse();
-		}
-	}
-}
-
 /*
 void MovementComponent::setVelocity(const sf::Vector2i& velocity)
 {
@@ -412,5 +396,21 @@ void MovementComponent::velocityGuard() const
 		std::cerr << "PREVIOUS VELOCITY: (" << m_prevVelocity.x << ' ' << m_prevVelocity.y << ")\n";
 		std::cerr << "ACCELERATION: (" << m_acceleration.x << ' ' << m_acceleration.y << ")\n";
 		exit(-13);
+	}
+}
+
+void MovementComponent::anabolicBrainMutation(unsigned brainMutationsCount)
+{
+	for (int i = 0; i < brainMutationsCount; i++)
+	{
+		// 33% probability for a new neuron and 67% probability for a new synapse:
+		if (Blueberry::RandomEngine::getIntInRange(0, 2) == 0)
+		{
+			m_brain->addRandomNeuron();
+		}
+		else
+		{
+			m_brain->addRandomSynapse();
+		}
 	}
 }

@@ -1,6 +1,12 @@
 ecosystems simulation:
 - TO DEBUG:
-  + parent age while it was born = ~-13 seconds... -13 !!! WTF xd I am sure that there was a "-" sign
+  + that bug with huge dt after occurs even after pausing and it causes unwanted cloning
+  + ecosystem info total time elapsed; and change these things from 0/1 to yes/no or sth like that,
+    make it prettier
+  + timeElapsedSinceLast... can only > 0.0 if a specific event occured, but currently it is always > 0.0f
+    even if a specifc events hasn't occured yet for example timeElapsed since last cloning if a specific
+    animal hasn't created a clone yet
+  + parent age while it was born for animals that have no parents
   + dt is weirdly big when window is repositioning
   + there is probably a bug with updating brain preview modifier
     when a brain preview which is mutated isn't rendered
@@ -16,6 +22,15 @@ ecosystems simulation:
     to implement this as a feature and then check it regurarly
 
 - priority TODO:
+  + mutations should be even more anabolic 
+    (currently after reaching a certain point 
+     its the probabilty of an anabolic mutation is the same as 
+     the probability of a catabolic mutation)
+  + add clones count to printing info about ecosystem and other general info
+    like how much energy there is fruits, hp and kinetic form in % and so forth
+  + remove unnecessarily vars from Animal class etc.
+  + inputs should be maybe not necessarily named directly in always visible way,
+    but there should be a way to see what each input means (and output)
   + add a way to see the value of specific brain inputs/outputs
   + add the following input: the center of the fruits mass
   + identify the bottle neck of the fps count
