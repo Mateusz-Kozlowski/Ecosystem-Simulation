@@ -7,7 +7,7 @@ Animal::Animal(
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor,
 	int defaultHp,
-	unsigned basalMetabolicRatePerFrame)
+	float basalMetabolicRatePerFrame)
 	: m_body()
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
@@ -274,6 +274,14 @@ void Animal::update(
 	m_timeElapsedSinceLastExternalHpChange += dt;
 	m_timeElapsedSinceLastCloning += dt;
 	m_age += dt;
+
+	if (dt > 1.0)
+	{
+		std::cerr
+			<< "ERROR::Animal::update(...):\n"
+			<< "dt is weirdly big: " << dt << '\n';
+		exit(-13);
+	}
 }
 
 void Animal::updateOnlyImgBtnOfBrainPreview(
@@ -473,7 +481,7 @@ float Animal::getTimeElapsedSinceLastCloning() const
 	return m_timeElapsedSinceLastCloning;
 }
 
-unsigned Animal::getBasalMetabolicRatePerFrame() const
+float Animal::getBasalMetabolicRatePerFrame() const
 {
 	return m_basalMetabolicRatePerFrame;
 }
@@ -585,7 +593,7 @@ void Animal::setBrainPreviewPosition(float x, float y)
 	m_brainPreview->setPosition(x, y);
 }
 
-void Animal::setBasalMetabolicRatePerFrame(unsigned basalMetabolicRatePerFrame)
+void Animal::setBasalMetabolicRatePerFrame(float basalMetabolicRatePerFrame)
 {
 	m_basalMetabolicRatePerFrame = basalMetabolicRatePerFrame;
 }
@@ -658,15 +666,22 @@ void Animal::updateBody(float dt)
 
 void Animal::doBMRrelatedThings()
 {
+	float hp = static_cast<float>(m_hpBar->getCurrentValue());
+	unsigned BMR = static_cast<unsigned>(m_basalMetabolicRatePerFrame * hp);
+
+	BMR = std::max(BMR, 1U); // we don't want BMR to be equal to 0
+	
+	// BMR cannot decrease hp so that it's < 0:
 	m_energyToExpelFromBMR = std::min(
 		m_hpBar->getCurrentValue(),
-		static_cast<int>(m_basalMetabolicRatePerFrame)
+		static_cast<int>(BMR)
 	);
 
+	// again: BMR cannot decrease hp so that it's < 0:
 	m_hpBar->setValue(
 		std::max(
 			0,
-			m_hpBar->getCurrentValue() - static_cast<int>(m_basalMetabolicRatePerFrame)
+			m_hpBar->getCurrentValue() - static_cast<int>(BMR)
 		)
 	);
 }

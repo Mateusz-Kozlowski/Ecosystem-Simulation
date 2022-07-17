@@ -45,7 +45,7 @@ Ecosystem::Ecosystem(
 	unsigned defaultAnimalsHp,
 	unsigned defaultFruitsEnergy,
 	unsigned mutationsPerMutation,
-	unsigned basalMetabolicRatePerFrame,
+	float basalMetabolicRatePerFrame,
 	const sf::Color& animalsColor,
 	const sf::Color& fruitsColor,
 	const sf::Color& trackedAnimalColor,
@@ -598,7 +598,7 @@ void Ecosystem::initBackgroundAndBorders(
 void Ecosystem::createNewAnimals(
 	unsigned initialAnimalsCount,
 	unsigned defaultAnimalsHp,
-	unsigned basalMetabolicRatePerFrame,
+	float basalMetabolicRatePerFrame,
 	float animalsRadius,
 	const sf::Color& animalsColor,
 	bool renderHpBarsByDefault,
@@ -621,7 +621,7 @@ void Ecosystem::createNewAnimals(
 
 void Ecosystem::createNewAnimal(
 	unsigned defaultAnimalHp,
-	unsigned basalMetabolicRatePerFrame,
+	float basalMetabolicRatePerFrame,
 	float animalRadius,
 	const sf::Color& animalColor,
 	bool renderHpBarByDefault,

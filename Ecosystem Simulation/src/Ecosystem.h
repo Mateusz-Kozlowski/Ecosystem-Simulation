@@ -24,7 +24,7 @@ public:
 		unsigned defaultAnimalsHp,
 		unsigned defaultFruitsEnergy,
 		unsigned mutationsPerMutation,
-		unsigned basalMetabolicRatePerFrame,
+		float basalMetabolicRatePerFrame,
 		const sf::Color& animalsColor,
 		const sf::Color& fruitsColor,
 		const sf::Color& trackedAnimalColor,
@@ -155,7 +155,7 @@ private:
 	void createNewAnimals(
 		unsigned initialAnimalsCount,
 		unsigned defaultAnimalsHp,
-		unsigned basalMetabolicRatePerFrame,
+		float basalMetabolicRatePerFrame,
 		float animalsRadius,
 		const sf::Color& animalsColor,
 		bool renderHpBarsByDefault,
@@ -168,7 +168,7 @@ private:
 	*/
 	void createNewAnimal(
 		unsigned defaultAnimalHp,
-		unsigned basalMetabolicRatePerFrame,
+		float basalMetabolicRatePerFrame,
 		float animalRadius,
 		const sf::Color& animalColor,
 		bool renderHpBarByDefault,

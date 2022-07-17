@@ -3,6 +3,7 @@ ecosystems simulation:
   + animals are spawning in the center? If it is true I have no clue why
   + it seems like animals don't won't to reproduce; check on a specific animal if and why it
     don't want to reproduce
+  + parent age while it was born = ~-13 seconds... -13 !!! WTF xd I am sure that there where a "-" sign
 
 - abstract notes:
   + if an animal clones while moving to eat there is a probability that the clone will eat the food
@@ -12,6 +13,8 @@ ecosystems simulation:
     m_timeElapsedSinceLastCloning really works correctly?
     I mean... topological order of functions in updateWorld function
 
+- dt is weirdly big when window is repositioning
+- move default window pos to the right
 - add the following input: the center of the fruits mass
 - add visible margins to developer mode
 - BMR has not to be const in time, because after a minute or sth like that
@@ -121,6 +124,7 @@ brain inputs:
 
 side menu:
 - after loading ecosystem side menu panel should be updated (e.g., speed scaler)
+- allow zooming out with Z key pressed (like with zooming out using "-" key with "Z" key)
 
 app:
 - change the way of dealing with events:

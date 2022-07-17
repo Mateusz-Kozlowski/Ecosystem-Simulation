@@ -14,7 +14,7 @@ public:
 		const sf::Color& hpBarBackgroundColor,
 		const sf::Color& hpBarProgressRectColor,
 		int defaultHp,
-		unsigned basalMetabolicRatePerFrame
+		float basalMetabolicRatePerFrame
 	);
 	Animal(const char* folderPath);
 	Animal(const Animal& rhs);
@@ -89,7 +89,7 @@ public:
 
 	bool isCoveredByMouse(const sf::Vector2f& mousePos) const;
 
-	unsigned getBasalMetabolicRatePerFrame() const;
+	float getBasalMetabolicRatePerFrame() const;
 
 	// mutators:
 
@@ -125,7 +125,7 @@ public:
 
 	void resetTimeElapsedSinceLastCloning();
 
-	void setBasalMetabolicRatePerFrame(unsigned basalMetabolicRatePerFrame);
+	void setBasalMetabolicRatePerFrame(float basalMetabolicRatePerFrame);
 
 private:
 	void initBody(
@@ -170,6 +170,6 @@ private:
 	float m_timeElapsedSinceLastExternalHpChange;
 	float m_timeElapsedSinceLastCloning;
 
-	unsigned m_basalMetabolicRatePerFrame;
+	float m_basalMetabolicRatePerFrame;
 	unsigned m_energyToExpelFromBMR;
 };

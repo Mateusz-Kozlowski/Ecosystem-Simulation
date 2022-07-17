@@ -495,7 +495,7 @@ void EcosystemCreatorState::initTextBoxes()
 			gui::p2pY(5.0f, resolution)
 		),
 		m_font,
-		"500",
+		"0.03",
 		charSize,
 		sf::Color(100, 100, 100),
 		sf::Color(125, 125, 125),
@@ -511,7 +511,7 @@ void EcosystemCreatorState::initTextBoxes()
 		0.5f,
 		false,
 		8
-		);
+	);
 }
 
 void EcosystemCreatorState::initTexts()
@@ -682,7 +682,7 @@ void EcosystemCreatorState::loadEcosystemTemplate(
 	unsigned initialAnimalsCount, fruitsCount;
 	unsigned defaultHp, defaultFruitEnergy;
 	float mutationRate;
-	unsigned bmr;
+	float bmr;
 
 	file >> worldSize.x >> worldSize.y;
 	file >> bordersThickness;
@@ -776,7 +776,7 @@ void EcosystemCreatorState::createEcosystem()
 		100.0f, // TODO: unhardcode that
 		static_cast<unsigned>(std::stoi(m_textBoxes["DEFAULT HP"]->getInput())),
 		static_cast<unsigned>(std::stoi(m_textBoxes["DEFAULT FRUIT ENERGY"]->getInput())),
-		std::stof(m_textBoxes["MUTATION RATE"]->getInput()),
+		std::stoi(m_textBoxes["MUTATION RATE"]->getInput()),
 		std::stof(m_textBoxes["BMR PER FRAME"]->getInput()),
 		sf::Color::Red,
 		sf::Color::Green,
