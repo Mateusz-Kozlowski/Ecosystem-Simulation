@@ -14,14 +14,7 @@ ecosystems simulation:
     I mean... topological order of functions in updateWorld function
 
 - dt is weirdly big when window is repositioning
-- move default window pos to the right
 - add the following input: the center of the fruits mass
-- add visible margins to developer mode
-- BMR has not to be const in time, because after a minute or sth like that
-  animals tend to have 10 times higher hp than the initial ones;
-  or you can change BMR to the following var: 
-  how many frames can a specific animal not to eat;
-  -> BMR ~ HP <- !!!
 - replace the file with the information about where the debug came from with a comment
   in movement component, which will also be a warning that will prevent "returning to the bug"
   in the future

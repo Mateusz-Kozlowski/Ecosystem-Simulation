@@ -81,12 +81,15 @@ void MovementComponent::update(
 	
 	updateAcceleration(brainInputs, allowUserInput, debugFile, keybinds);
 
+	// updating previous velocity has to take place 
+	// before returning* the function if acceleration is impossible;
+	// this caused a bug
 	m_prevVelocity = m_velocity;
 
 	if (accelerationIsImpossible(dt, availableEnergy))
 	{
 		std::clog << "acceleration impossible; fun fact: a=" << m_acceleration.x << ' ' << m_acceleration.y << '\n';
-		return;
+		return; // *
 	}
 
 	m_velocity.x += static_cast<int>(m_acceleration.x);
