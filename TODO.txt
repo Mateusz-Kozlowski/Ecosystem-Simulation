@@ -12,8 +12,15 @@ ecosystems simulation:
     m_timeElapsedSinceLastCloning really works correctly?
     I mean... topological order of functions in updateWorld function
 
+- don't spawn fruits next to the borders
+- add visible margins to developer mode
+- plus and minus keys are swapped
 - BMR has not to be const in time, because after a minute or sth like that
-  animals tend to have 10 times higher hp than the initial ones
+  animals tend to have 10 times higher hp than the initial ones;
+  or you can change BMR to the following var: 
+  how many frames can a specific animal not to eat;
+  -> BMR ~ HP <- !!!
+  
 - check if not allowing to clone in the borders works correctly
 - check if all vars are loading from templates and aren't default values
   (all default hardcoded values should be different from those from templates)
