@@ -1170,11 +1170,11 @@ void SimulationState::updateView()
 	// TODO: And put into a separate function?:
 	
 	// zoom view:
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["ZOOM_OUT"])))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["ZOOM_IN"])))
 	{
 		m_view.zoom(0.95f); // TODO: "unhardcode" this
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["ZOOM_IN"])))
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(m_keybinds["ZOOM_OUT"])))
 	{
 		m_view.zoom(1.0f / 0.95f); // TODO: "unhardcode" this
 	}

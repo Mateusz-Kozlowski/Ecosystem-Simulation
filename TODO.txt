@@ -14,12 +14,14 @@ ecosystems simulation:
 
 - add the following input: the center of the fruits mass
 - add visible margins to developer mode
-- plus and minus keys are swapped
 - BMR has not to be const in time, because after a minute or sth like that
   animals tend to have 10 times higher hp than the initial ones;
   or you can change BMR to the following var: 
   how many frames can a specific animal not to eat;
   -> BMR ~ HP <- !!!
+- replace the file with the information about where the debug came from with a comment
+  in movement component, which will also be a warning that will prevent "returning to the bug"
+  in the future
 
 - check if not allowing to clone in the borders works correctly
 - check if all vars are loading from templates and aren't default values
