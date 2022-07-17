@@ -9,6 +9,7 @@ Ecosystem::Ecosystem()
 	, m_fruits()
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
+	, m_fruitsPositionsMarginsThickness(0.0f)
 	, m_defaultAnimalsHp(0U)
 	, m_defaultFruitEnergy(0U)
 	, m_mutationsPerMutation(0U)
@@ -40,6 +41,7 @@ Ecosystem::Ecosystem(
 	unsigned fruitsCount,
 	float animalsRadius,
 	float fruitsRadius,
+	float fruitsPositionsMarginsThickness,
 	unsigned defaultAnimalsHp,
 	unsigned defaultFruitsEnergy,
 	unsigned mutationsPerMutation,
@@ -60,6 +62,7 @@ Ecosystem::Ecosystem(
 	, m_defaultAnimalsHp(defaultAnimalsHp)
 	, m_defaultFruitEnergy(defaultFruitsEnergy)
 	, m_fruitsRadius(fruitsRadius)
+	, m_fruitsPositionsMarginsThickness(fruitsPositionsMarginsThickness)
 	, m_mutationsPerMutation(mutationsPerMutation)
 	, m_animalsColor(animalsColor)
 	, m_fruitsColor(fruitsColor)
@@ -109,6 +112,7 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_fruits()
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
+	, m_fruitsPositionsMarginsThickness(0.0f)
 	, m_defaultAnimalsHp(0U)
 	, m_defaultFruitEnergy(0U)
 	, m_mutationsPerMutation(0U)
@@ -682,6 +686,7 @@ void Ecosystem::createNewFruit(
 	m_fruits.back()->setRandomPosition(
 		getWorldSize(),
 		getBordersThickness(),
+		m_fruitsPositionsMarginsThickness,
 		linearDistributionOfPositionProbability
 	);
 }
@@ -758,6 +763,11 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 	ofs << static_cast<int>(m_bg.getOutlineColor().g) << ' ';
 	ofs << static_cast<int>(m_bg.getOutlineColor().b) << ' ';
 	ofs << static_cast<int>(m_bg.getOutlineColor().a) << '\n';
+
+	ofs << m_animalsRadius << '\n';
+
+	ofs << m_fruitsRadius << '\n';
+	ofs << m_fruitsPositionsMarginsThickness << '\n';
 
 	ofs << m_defaultAnimalsHp << '\n';
 	ofs << m_defaultFruitEnergy << '\n';
@@ -924,6 +934,11 @@ void Ecosystem::loadEcosystem(const std::string& filePath)
 
 	ifs >> bgColorR >> bgColorG >> bgColorB >> bgColorA;
 	ifs >> bordersColorR >> bordersColorG >> bordersColorB >> bordersColorA;
+
+	ifs >> m_animalsRadius;
+
+	ifs >> m_fruitsRadius;
+	ifs >> m_fruitsPositionsMarginsThickness;
 
 	ifs >> m_defaultAnimalsHp;
 	ifs >> m_defaultFruitEnergy;
@@ -1162,6 +1177,7 @@ void Ecosystem::convertAnimalToFruit(
 		m_fruits.back()->setRandomPosition(
 			getWorldSize(), 
 			getBordersThickness(),
+			m_fruitsPositionsMarginsThickness,
 			true // TODO: unhardcode that
 		);
 	}
@@ -1237,6 +1253,7 @@ void Ecosystem::convertKineticEnergyToFruit(
 		m_fruits.back()->setRandomPosition(
 			getWorldSize(), 
 			getBordersThickness(),
+			m_fruitsPositionsMarginsThickness,
 			true // TODO: unhardcode that
 		);
 	}
@@ -1864,7 +1881,8 @@ void Ecosystem::relocateEatenFruits()
 		{
 			fruit->setRandomPosition(
 				getWorldSize(), 
-				getBordersThickness(), 
+				getBordersThickness(),
+				m_fruitsPositionsMarginsThickness,
 				true // TODO: unhardcode that
 			);
 		}
@@ -2192,6 +2210,7 @@ void Ecosystem::correctFruitsCount()
 			m_fruits.back()->setRandomPosition(
 				getWorldSize(), 
 				getBordersThickness(),
+				m_fruitsPositionsMarginsThickness,
 				true // TODO: unhardcode that
 			);
 

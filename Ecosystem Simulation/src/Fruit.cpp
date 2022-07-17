@@ -139,8 +139,9 @@ void Fruit::setPosition(const sf::Vector2f& newPosition)
 }
 
 void Fruit::setRandomPosition(
-	const sf::Vector2f& worldSize, 
+	const sf::Vector2f& arenaSize,
 	float bordersThickness,
+	float marginsThickness,
 	bool linearDistributionOfPositionProbability)
 {
 	// Currently I want to use only linear distribution,
@@ -155,76 +156,21 @@ void Fruit::setRandomPosition(
 	}
 
 	std::pair<unsigned, unsigned> rangeX = {
-			bordersThickness + m_shape.getRadius(),
-			worldSize.x - bordersThickness - m_shape.getRadius()
+			bordersThickness + m_shape.getRadius() + marginsThickness,
+			arenaSize.x - m_shape.getRadius() - marginsThickness
 	};
 	std::pair<unsigned, unsigned> rangeY = {
-		bordersThickness + m_shape.getRadius(),
-		worldSize.y - bordersThickness - m_shape.getRadius()
+		bordersThickness + m_shape.getRadius() + marginsThickness,
+		arenaSize.y - m_shape.getRadius() - marginsThickness
 	};
 
 	if (linearDistributionOfPositionProbability)
 	{
-		float x = Blueberry::RandomEngine::getScalarInRange(
-			rangeX.first,
-			rangeX.second
-		);
-		float y = Blueberry::RandomEngine::getScalarInRange(
-			rangeY.first,
-			rangeY.second
-		);
-
-		m_shape.setPosition(x, y);
-
+		setRandomLinearPositionUtil(rangeX, rangeY);
 		return;
 	}
 
-	const double RANGE_WIDTH = rangeX.second - rangeX.first;
-	const double RANGE_HEIGHT = rangeY.second - rangeY.first;
-
-	const double C = sqrt(std::pow(RANGE_WIDTH, 2) + std::pow(RANGE_HEIGHT, 2));
-	
-	const double MAX_R = C / 2.0; // where r is the distance from the center of the world*
-	const double PI = 3.14;
-
-	// polar coordinates unlike (x; y) coordinates consist of alfa, which is an angle, and r*
-	double r = Blueberry::RandomEngine::getScalarInRange(
-		0.0,
-		sqrt(MAX_R)
-	);
-	r *= r;
-	double alfa = Blueberry::RandomEngine::getScalarInRange(
-		0.0,
-		2 * PI
-	);
-	
-	while (!belongsToArena(r, alfa, RANGE_WIDTH, RANGE_HEIGHT))
-	{
-		r = Blueberry::RandomEngine::getScalarInRange(
-			0.0,
-			sqrt(MAX_R)
-		);
-		r *= r;
-		alfa = Blueberry::RandomEngine::getScalarInRange(
-			0.0,
-			2 * PI
-		);
-	}
-	
-	// convert polar coordinates to (x; y) coordinates:
-	sf::Vector2f position(
-		sin(alfa) * r,
-		cos(alfa) * r
-	);
-	
-	sf::Vector2f centerPosition(
-		(rangeX.first + rangeX.second) / 2.0f,
-		(rangeY.first + rangeY.second) / 2.0f
-	);
-
-	position += centerPosition;
-
-	m_shape.setPosition(position);
+	setRandomNonLinearPositionUtil(rangeX, rangeY);
 }
 
 void Fruit::setRadius(float radius)
@@ -253,6 +199,74 @@ void Fruit::initShape(
 	m_shape.setRadius(radius);
 	m_shape.setOrigin(radius, radius);
 	m_shape.setFillColor(color);
+}
+
+void Fruit::setRandomLinearPositionUtil(
+	const std::pair<float, float>& rangeX, 
+	const std::pair<float, float>& rangeY)
+{
+	float x = Blueberry::RandomEngine::getScalarInRange(
+		rangeX.first,
+		rangeX.second
+	);
+	float y = Blueberry::RandomEngine::getScalarInRange(
+		rangeY.first,
+		rangeY.second
+	);
+
+	m_shape.setPosition(x, y);
+}
+
+void Fruit::setRandomNonLinearPositionUtil(
+	const std::pair<float, float>& rangeX, 
+	const std::pair<float, float>& rangeY)
+{
+	const double RANGE_WIDTH = rangeX.second - rangeX.first;
+	const double RANGE_HEIGHT = rangeY.second - rangeY.first;
+
+	const double C = sqrt(std::pow(RANGE_WIDTH, 2) + std::pow(RANGE_HEIGHT, 2));
+
+	const double MAX_R = C / 2.0; // where r is the distance from the center of the world*
+	const double PI = 3.14;
+
+	// polar coordinates unlike (x; y) coordinates consist of alfa, which is an angle, and r*
+	double r = Blueberry::RandomEngine::getScalarInRange(
+		0.0,
+		sqrt(MAX_R)
+	);
+	r *= r;
+	double alfa = Blueberry::RandomEngine::getScalarInRange(
+		0.0,
+		2 * PI
+	);
+
+	while (!belongsToArena(r, alfa, RANGE_WIDTH, RANGE_HEIGHT))
+	{
+		r = Blueberry::RandomEngine::getScalarInRange(
+			0.0,
+			sqrt(MAX_R)
+		);
+		r *= r;
+		alfa = Blueberry::RandomEngine::getScalarInRange(
+			0.0,
+			2 * PI
+		);
+	}
+
+	// convert polar coordinates to (x; y) coordinates:
+	sf::Vector2f position(
+		sin(alfa) * r,
+		cos(alfa) * r
+	);
+
+	sf::Vector2f centerPosition(
+		(rangeX.first + rangeX.second) / 2.0f,
+		(rangeY.first + rangeY.second) / 2.0f
+	);
+
+	position += centerPosition;
+
+	m_shape.setPosition(position);
 }
 
 bool Fruit::belongsToArena(

@@ -20,6 +20,7 @@ public:
 		unsigned fruitsCount,
 		float animalsRadius,
 		float fruitsRadius,
+		float fruitsPositionsMarginsThickness,
 		unsigned defaultAnimalsHp,
 		unsigned defaultFruitsEnergy,
 		unsigned mutationsPerMutation,
@@ -493,8 +494,10 @@ private:
 	// useful when there are temporarily no m_animals in an ecosystem:
 	float m_animalsRadius;
 
+	// TODO: no longer revelant, because there always will be some fruits:
 	// useful when there are temporarily no fruits in an ecosystem:
 	float m_fruitsRadius;
+	float m_fruitsPositionsMarginsThickness;
 
 	unsigned m_defaultAnimalsHp;
 	unsigned m_defaultFruitEnergy;

@@ -40,8 +40,9 @@ public:
 	void setPosition(const sf::Vector2f& newPosition);
 
 	void setRandomPosition(
-		const sf::Vector2f& worldSize, 
+		const sf::Vector2f& arenaSize, 
 		float bordersThickness,
+		float marginsThickness,
 		bool linearDistributionOfPositionProbability
 	);
 
@@ -54,6 +55,15 @@ private:
 		const sf::Vector2f& position,
 		float radius,
 		const sf::Color& color
+	);
+
+	void setRandomLinearPositionUtil(
+		const std::pair<float, float>& rangeX,
+		const std::pair<float, float>& rangeY
+	);
+	void setRandomNonLinearPositionUtil(
+		const std::pair<float, float>& rangeX,
+		const std::pair<float, float>& rangeY
 	);
 
 	static bool belongsToArena(

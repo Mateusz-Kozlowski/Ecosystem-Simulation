@@ -771,8 +771,9 @@ void EcosystemCreatorState::createEcosystem()
 		),
 		std::stoi(m_textBoxes["INITIAL ANIMALS COUNT"]->getInput()),
 		std::stoi(m_textBoxes["FRUITS COUNT"]->getInput()),
-		8.0f,
-		4.0f,
+		8.0f, // TODO: unhardcode that
+		4.0f, // TODO: unhardcode that
+		100.0f, // TODO: unhardcode that
 		static_cast<unsigned>(std::stoi(m_textBoxes["DEFAULT HP"]->getInput())),
 		static_cast<unsigned>(std::stoi(m_textBoxes["DEFAULT FRUIT ENERGY"]->getInput())),
 		std::stof(m_textBoxes["MUTATION RATE"]->getInput()),
