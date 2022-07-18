@@ -12,13 +12,13 @@ Animal::Animal(
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
 	, m_isClone(false)
-	, m_parentAgeWhenItWasBorn(-13.12345678987654321f)
+	, m_parentAgeWhenItWasBorn({ "no parent", 0.0f })
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
 	, m_age(0.0f)
-	, m_timeSinceLastMutation(0.0f)
-	, m_timeElapsedSinceLastExternalHpChange(0.0f)
-	, m_timeElapsedSinceLastCloning(0.0f)
+	, m_timeElapsedSinceLastCloning({ "there hasn't been any cloning yet", 0.0f })
+	, m_timeElapsedSinceLastExternalHpChange({ "there hasn't been any external hp change yet", 0.0f })
+	, m_timeSinceLastMutation({ "hasn't mutated yet", 0.0f })
 	, m_basalMetabolicRatePerFrame(basalMetabolicRatePerFrame)
 	, m_energyToExpelFromBMR(0U)
 {
@@ -32,13 +32,13 @@ Animal::Animal(const char* folderPath)
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(true)
 	, m_isClone(false)
-	, m_parentAgeWhenItWasBorn(-13.12345678987654321f)
+	, m_parentAgeWhenItWasBorn({ "no parent", 0.0f })
 	, m_hpBar(nullptr)
 	, m_brainPreview(nullptr)
-	, m_timeElapsedSinceLastExternalHpChange(0.0f)
-	, m_timeElapsedSinceLastCloning(0.0f)
 	, m_age(0.0f)
-	, m_timeSinceLastMutation(0.0f)
+	, m_timeElapsedSinceLastCloning({ "there hasn't been any cloning yet", 0.0f })
+	, m_timeElapsedSinceLastExternalHpChange({ "there hasn't been any external hp change yet", 0.0f })
+	, m_timeSinceLastMutation({ "hasn't mutated yet", 0.0f })
 	, m_basalMetabolicRatePerFrame(0U)
 	, m_energyToExpelFromBMR(0U)
 {
@@ -50,13 +50,13 @@ Animal::Animal(const Animal& rhs)
 	, m_movementComponent(std::make_unique<MovementComponent>())
 	, m_alive(rhs.m_alive)
 	, m_isClone(true)
-	, m_parentAgeWhenItWasBorn(rhs.m_age)
+	, m_parentAgeWhenItWasBorn({ "", rhs.m_age })
 	, m_hpBar(std::make_unique<gui::IntProgressBar>())
 	, m_brainPreview(nullptr)
-	, m_timeElapsedSinceLastExternalHpChange(0.0f)
-	, m_timeElapsedSinceLastCloning(0.0f)
 	, m_age(0.0f)
-	, m_timeSinceLastMutation(0.0f)
+	, m_timeElapsedSinceLastCloning({ "there hasn't been any cloning yet", 0.0f })
+	, m_timeElapsedSinceLastExternalHpChange({ "there hasn't been any external hp change yet", 0.0f })
+	, m_timeSinceLastMutation({ "hasn't mutated yet", 0.0f })
 	, m_basalMetabolicRatePerFrame(rhs.m_basalMetabolicRatePerFrame)
 	, m_energyToExpelFromBMR(rhs.m_energyToExpelFromBMR)
 {
@@ -74,15 +74,15 @@ Animal& Animal::operator=(const Animal& rhs)
 		*m_movementComponent = *rhs.m_movementComponent;
 		m_alive = rhs.m_alive;
 		m_isClone = true;
-		m_parentAgeWhenItWasBorn = rhs.m_age;
+		m_parentAgeWhenItWasBorn = { "",rhs.m_age };
 		*m_hpBar = *rhs.m_hpBar;
 
 		initBrainPreview();
 
-		m_timeElapsedSinceLastExternalHpChange = 0.0f;
-		m_timeElapsedSinceLastCloning = 0.0f;
 		m_age = 0.0f;
-		m_timeSinceLastMutation = 0.0f;
+		m_timeElapsedSinceLastCloning = { "there hasn't been any cloning yet", 0.0f };
+		m_timeElapsedSinceLastExternalHpChange = { "there hasn't been any external hp change yet", 0.0f };
+		m_timeSinceLastMutation = { "hasn't mutated yet", 0.0f };
 		m_basalMetabolicRatePerFrame = rhs.m_basalMetabolicRatePerFrame;
 		m_energyToExpelFromBMR = rhs.m_energyToExpelFromBMR;
 	}
@@ -148,16 +148,25 @@ void Animal::saveToFolder(const char* folderPath) const
 
 	ofs << m_alive << '\n';
 	ofs << m_isClone << '\n';
-	ofs << m_parentAgeWhenItWasBorn << '\n';
+	ofs << m_parentAgeWhenItWasBorn.info << '\n';
+	ofs << m_parentAgeWhenItWasBorn.number << '\n';
 	ofs << m_hpBar->getCurrentValue() << '\n';
 	ofs << m_movementComponent->getPreviousVelocityVector().x << '\n';
 	ofs << m_movementComponent->getPreviousVelocityVector().y << '\n';
 	ofs << m_movementComponent->getVelocityVector().x << '\n';
 	ofs << m_movementComponent->getVelocityVector().y << '\n';
-	ofs << m_timeElapsedSinceLastExternalHpChange << '\n';
-	ofs << m_timeElapsedSinceLastCloning << '\n';
+
 	ofs << m_age << '\n';
-	ofs << m_timeSinceLastMutation << '\n';
+	
+	ofs << m_timeElapsedSinceLastCloning.info << '\n';
+	ofs << m_timeElapsedSinceLastCloning.number << '\n';
+	
+	ofs << m_timeElapsedSinceLastExternalHpChange.info << '\n';
+	ofs << m_timeElapsedSinceLastExternalHpChange.number << '\n';
+	
+	ofs << m_timeSinceLastMutation.info << '\n';
+	ofs << m_timeSinceLastMutation.number << '\n';
+	
 	ofs << m_basalMetabolicRatePerFrame << '\n';
 	ofs << m_energyToExpelFromBMR;
 
@@ -191,6 +200,7 @@ void Animal::loadFromFolder(const char* folderPath)
 	unsigned bodyColorR, bodyColorG, bodyColorB, bodyColorA;
 	unsigned hpBarBgColorR, hpBarBgColorG, hpBarBgColorB, hpBarBgColorA;
 	unsigned hpBarColorR, hpBarColorG, hpBarColorB, hpBarColorA;
+	std::string temp;
 	int hp;
 	sf::Vector2i prevVelocity;
 	sf::Vector2i velocity;
@@ -202,14 +212,30 @@ void Animal::loadFromFolder(const char* folderPath)
 	ifs >> hpBarColorR >> hpBarColorG >> hpBarColorB >> hpBarColorA;
 	ifs >> m_alive;
 	ifs >> m_isClone;
-	ifs >> m_parentAgeWhenItWasBorn;
+	
+	std::getline(ifs, m_parentAgeWhenItWasBorn.info);
+	std::getline(ifs, temp);
+	
+	ifs >> m_parentAgeWhenItWasBorn.number;
 	ifs >> hp;
+
 	ifs >> prevVelocity.x >> prevVelocity.y;
 	ifs >> velocity.x >> velocity.y;
-	ifs >> m_timeElapsedSinceLastExternalHpChange;
-	ifs >> m_timeElapsedSinceLastCloning;
+	
 	ifs >> m_age;
-	ifs >> m_timeSinceLastMutation;
+
+	std::getline(ifs, m_timeElapsedSinceLastCloning.info);
+	std::getline(ifs, temp);
+	ifs >> m_timeElapsedSinceLastCloning.number;
+	
+	std::getline(ifs, m_timeElapsedSinceLastExternalHpChange.info);
+	std::getline(ifs, temp);
+	ifs >> m_timeElapsedSinceLastExternalHpChange.number;
+	
+	std::getline(ifs, m_timeSinceLastMutation.info);
+	std::getline(ifs, temp);
+	ifs >> m_timeSinceLastMutation.number;
+
 	ifs >> m_basalMetabolicRatePerFrame;
 	ifs >> m_energyToExpelFromBMR;
 
@@ -257,10 +283,12 @@ void Animal::update(
 	std::ofstream& debugFile,
 	const std::unordered_map<std::string, int>& keybinds)
 {
-	if (m_timeSinceLastMutation > 30.0f) // TODO: unhardcode and change from seconds to frames
+	if (m_timeSinceLastMutation.number > 30.0f) // TODO: unhardcode and change from seconds to frames
 	{
 		m_movementComponent->mutateBrain(1U);
-		m_timeSinceLastMutation = 0.0f;
+		
+		m_timeSinceLastMutation.info = "";
+		m_timeSinceLastMutation.number = 0.0f;
 	}
 	
 	doBMRrelatedThings();
@@ -283,10 +311,10 @@ void Animal::update(
 	updateHpBarPosition();
 	updateBrainPreview(mousePos, events);
 
-	m_timeElapsedSinceLastExternalHpChange += dt;
-	m_timeElapsedSinceLastCloning += dt;
 	m_age += dt;
-	m_timeSinceLastMutation += dt;
+	m_timeElapsedSinceLastCloning.number += dt;
+	m_timeElapsedSinceLastExternalHpChange.number += dt;	
+	m_timeSinceLastMutation.number += dt;
 
 	if (dt > 1.0)
 	{
@@ -338,7 +366,16 @@ std::string Animal::toStr() const
 	
 	ss << "alive (0 - no, 1 - yes): " << m_alive << '\n';
 	ss << "clone (0 - no, 1 - yes): " << m_isClone << '\n';
-	ss << "parent age when it was born: " << m_parentAgeWhenItWasBorn << '\n';
+	
+	ss << "parent age when it was born: ";
+	if (m_parentAgeWhenItWasBorn.info == "")
+	{
+		ss << m_parentAgeWhenItWasBorn.number << '\n';
+	}
+	else
+	{
+		ss << m_parentAgeWhenItWasBorn.info << '\n';
+	}
 
 	ss << "HP: " << getHp() << '\n';
 	
@@ -346,13 +383,35 @@ std::string Animal::toStr() const
 	
 	ss << "age: " << m_age << '\n';
 
-	ss << "time since lat mutation: " << m_timeSinceLastMutation << '\n';
+	ss << "time since last mutation: ";
+	if (m_timeSinceLastMutation.info == "")
+	{
+		ss << m_timeSinceLastMutation.number << '\n';
+	}
+	else
+	{
+		ss << m_timeSinceLastMutation.info << '\n';
+	}
 	
-	ss << "time elapsed since last meal: "
-	   << m_timeElapsedSinceLastExternalHpChange << '\n';
+	ss << "time elapsed since last meal: ";
+	if (m_timeElapsedSinceLastExternalHpChange.info == "")
+	{
+		ss << m_timeElapsedSinceLastExternalHpChange.number << '\n';
+	}
+	else
+	{
+		ss << m_timeElapsedSinceLastExternalHpChange.info << '\n';
+	}
 
-	ss << "time elapsed since last cloning: "
-	   << m_timeElapsedSinceLastCloning << '\n';
+	ss << "time elapsed since last cloning: ";
+	if (m_timeElapsedSinceLastCloning.info == "")
+	{
+		ss << m_timeElapsedSinceLastCloning.number << '\n';
+	}
+	else
+	{
+		ss << m_timeElapsedSinceLastCloning.info << '\n';
+	}
 
 	ss << "Basal Metabolic Rate per frame: "
 	   << m_basalMetabolicRatePerFrame;
@@ -452,7 +511,7 @@ int Animal::getHp() const
 	return m_hpBar->getCurrentValue();
 }
 
-float Animal::getParentAgeWhenItWasBorn() const
+const numberWithInfo<float>& Animal::getParentAgeWhenItWasBorn() const
 {
 	return m_parentAgeWhenItWasBorn;
 }
@@ -477,9 +536,24 @@ float Animal::getAge() const
 	return m_age;
 }
 
-float Animal::getTimeElapsedSinceLastExternalHpChange() const
+const numberWithInfo<float>& Animal::getTimeElapsedSinceLastCloning() const
+{
+	return m_timeElapsedSinceLastCloning;
+}
+
+const numberWithInfo<float>& Animal::getTimeElapsedSinceLastExternalHpChange() const
 {
 	return m_timeElapsedSinceLastExternalHpChange;
+}
+
+const numberWithInfo<float>& Animal::getTimeElapsedSinceLastMutation() const
+{
+	return m_timeSinceLastMutation;
+}
+
+float Animal::getBasalMetabolicRatePerFrame() const
+{
+	return m_basalMetabolicRatePerFrame;
 }
 
 bool Animal::isCoveredByMouse(const sf::Vector2f& mousePosView) const
@@ -488,16 +562,6 @@ bool Animal::isCoveredByMouse(const sf::Vector2f& mousePosView) const
 	float y = m_body.getPosition().y - mousePosView.y;
 
 	return sqrt(pow(x, 2.0f) + pow(y, 2.0f)) <= m_body.getRadius();
-}
-
-float Animal::getTimeElapsedSinceLastCloning() const
-{
-	return m_timeElapsedSinceLastCloning;
-}
-
-float Animal::getBasalMetabolicRatePerFrame() const
-{
-	return m_basalMetabolicRatePerFrame;
 }
 
 // mutators:
@@ -553,11 +617,13 @@ void Animal::setColor(const sf::Color& color)
 void Animal::randomMutate(
 	unsigned brainMutationsCount,
 	const sf::Vector2f& mousePos,
-	const std::vector<sf::Event>& events
-)
+	const std::vector<sf::Event>& events)
 {
 	m_movementComponent->mutateBrain(brainMutationsCount);
 	m_brainPreview->update(mousePos, events);
+
+	m_timeSinceLastMutation.info = "";
+	m_timeSinceLastMutation.number = 0.0f;
 }
 
 void Animal::setAlive(bool alive)
@@ -571,26 +637,29 @@ void Animal::setHp(int hp)
 
 	m_alive = m_hpBar->getCurrentValue() > 0;
 
-	m_timeElapsedSinceLastExternalHpChange = 0.0f;
+	m_timeElapsedSinceLastExternalHpChange.info = "";
+	m_timeElapsedSinceLastExternalHpChange.number = 0.0f;
 }
 
-//void Animal::increaseHp(double hpIncrease)
-//{
-//	m_hpBar->increaseValue(hpIncrease);
-//
-//	m_alive = m_hpBar->getCurrentValue() > 0.0;
-//
-//	m_timeElapsedSinceLastExternalHpChange = 0.0f;
-//}
+void Animal::increaseHp(int hpIncrease)
+{
+	m_hpBar->increaseValue(hpIncrease);
 
-//void Animal::decreaseHp(double hpDecrease)
-//{
-//	m_hpBar->decreaseValue(hpDecrease);
-//
-//	m_alive = m_hpBar->getCurrentValue() > 0.0;
-//
-//	m_timeElapsedSinceLastExternalHpChange = 0.0f;
-//}
+	m_alive = m_hpBar->getCurrentValue() > 0.0;
+
+	m_timeElapsedSinceLastExternalHpChange.info = "";
+	m_timeElapsedSinceLastExternalHpChange.number = 0.0f;
+}
+
+void Animal::decreaseHp(int hpDecrease)
+{
+	m_hpBar->decreaseValue(hpDecrease);
+
+	m_alive = m_hpBar->getCurrentValue() > 0.0;
+
+	m_timeElapsedSinceLastExternalHpChange.info = "";
+	m_timeElapsedSinceLastExternalHpChange.number = 0.0f;
+}
 
 void Animal::setHpBarRange(const sf::Vector2i& range)
 {
@@ -616,7 +685,8 @@ void Animal::setBasalMetabolicRatePerFrame(float basalMetabolicRatePerFrame)
 
 void Animal::resetTimeElapsedSinceLastCloning()
 {
-	m_timeElapsedSinceLastCloning = 0.0f;
+	m_timeElapsedSinceLastCloning.info = "";
+	m_timeElapsedSinceLastCloning.number = 0.0f;
 }
 
 void Animal::initBody(
@@ -715,9 +785,29 @@ std::vector<Blueberry::Scalar> Animal::getEnhancedBrainInputs(
 	// now it's time to enhance the inputs:
 	// log(0)=-inf, but log(1)=0 :)
 	// but changing (for example) 10'000 to 10'001 is negligibly small :)
-	enhancedBrainInputs.emplace_back(sqrt(abs(m_movementComponent->getVelocityVector().x)));
-	enhancedBrainInputs.emplace_back(sqrt(abs(m_movementComponent->getVelocityVector().y)));
+	sf::Vector2i velocity = m_movementComponent->getVelocityVector();
 
+	Blueberry::Scalar xVelocityInput = log10(abs(velocity.x) + 1);
+	Blueberry::Scalar yVelocityInput = log10(abs(velocity.y) + 1);
+
+	if (velocity.x > 0)
+	{
+		enhancedBrainInputs.emplace_back(xVelocityInput);
+	}
+	else
+	{
+		enhancedBrainInputs.emplace_back(-xVelocityInput);
+	}
+
+	if (velocity.y > 0)
+	{
+		enhancedBrainInputs.emplace_back(yVelocityInput);
+	}
+	else
+	{
+		enhancedBrainInputs.emplace_back(-yVelocityInput);
+	}
+	
 	// log(0)=-inf, but log(1)=0 :)
 	// but changing (for example) 10'000 to 10'001 is negligibly small :)
 	enhancedBrainInputs.emplace_back(log10(m_hpBar->getCurrentValue() + 1));

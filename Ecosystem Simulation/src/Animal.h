@@ -4,6 +4,13 @@
 #include "ProgressBar.h"
 #include "BrainPreview.h"
 
+template <typename T>
+struct numberWithInfo
+{
+	std::string info;
+	T number;
+};
+
 class Animal
 {
 public:
@@ -71,7 +78,7 @@ public:
 
 	bool isAlive() const;
 	bool isClone() const;
-	float getParentAgeWhenItWasBorn() const;
+	const numberWithInfo<float>& getParentAgeWhenItWasBorn() const;
 
 	int getHp() const;
 	// an animal cannot have total energy < 0, 
@@ -84,12 +91,13 @@ public:
 
 	float getAge() const;
 
-	float getTimeElapsedSinceLastExternalHpChange() const;
-	float getTimeElapsedSinceLastCloning() const;
-
-	bool isCoveredByMouse(const sf::Vector2f& mousePos) const;
+	const numberWithInfo<float>& getTimeElapsedSinceLastCloning() const;
+	const numberWithInfo<float>& getTimeElapsedSinceLastExternalHpChange() const;
+	const numberWithInfo<float>& getTimeElapsedSinceLastMutation() const;
 
 	float getBasalMetabolicRatePerFrame() const;
+
+	bool isCoveredByMouse(const sf::Vector2f& mousePos) const;
 
 	// mutators:
 
@@ -115,8 +123,8 @@ public:
 	void setAlive(bool alive);
 
 	void setHp(int hp);
-	//void increaseHp(const Blueberry::Scalar& hpIncrease);
-	//void decreaseHp(const Blueberry::Scalar& hpDecrease);
+	void increaseHp(int hpIncrease);
+	void decreaseHp(int hpDecrease);
 
 	void setHpBarRange(const sf::Vector2i& range);
 
@@ -161,15 +169,15 @@ private:
 	
 	bool m_alive;
 	bool m_isClone;
-	float m_parentAgeWhenItWasBorn;
+	numberWithInfo<float> m_parentAgeWhenItWasBorn;
 
 	std::unique_ptr<gui::IntProgressBar> m_hpBar;
 	std::unique_ptr<gui::BrainPreview> m_brainPreview;
 
 	float m_age;
-	float m_timeSinceLastMutation;
-	float m_timeElapsedSinceLastExternalHpChange;
-	float m_timeElapsedSinceLastCloning;
+	numberWithInfo<float> m_timeElapsedSinceLastCloning;
+	numberWithInfo<float> m_timeElapsedSinceLastExternalHpChange;
+	numberWithInfo<float> m_timeSinceLastMutation;
 
 	float m_basalMetabolicRatePerFrame;
 	unsigned m_energyToExpelFromBMR;

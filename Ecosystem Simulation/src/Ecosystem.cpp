@@ -1547,7 +1547,7 @@ void Ecosystem::cloneAnimals(
 	{
 		auto animal = m_animals[i];
 		
-		if (animal->getTimeElapsedSinceLastCloning() > 5.0f // TODO: unhardcode that
+		if (animal->getTimeElapsedSinceLastCloning().number > 5.0f // TODO: unhardcode that
 			&& animal->getBrain().getSpecificOutput(2U) < 0.0
 			&& animal->getHp() > 1U
 			&& !isCloseToBorders(*animal))
@@ -2039,8 +2039,8 @@ void Ecosystem::correctPopulationSize(float dt)
 		correctPopulationSizeComparator
 	);
 
-	if (m_animals[0]->getTimeElapsedSinceLastExternalHpChange()
-		< m_animals[1]->getTimeElapsedSinceLastExternalHpChange())
+	if (m_animals[0]->getTimeElapsedSinceLastExternalHpChange().number
+		< m_animals[1]->getTimeElapsedSinceLastExternalHpChange().number)
 	{
 		std::cerr << "ERROR: Ecosystem::correctPopulationSize(float): wrong time elapsed\n";
 		exit(-13);
@@ -2050,12 +2050,16 @@ void Ecosystem::correctPopulationSize(float dt)
 
 	for (int i = 0; i < m_animals.size() / 2; i++)
 	{
-		if (m_animals[i]->getTimeElapsedSinceLastExternalHpChange()
-			> fastingThreshold)
+		float timeElapsedSinceLastMeal = m_animals[i]->getTimeElapsedSinceLastExternalHpChange().number;
+
+		if (timeElapsedSinceLastMeal > fastingThreshold)
 		{
 			murdersCount++;
 		}
-		else break;
+		else
+		{
+			break;
+		}
 	}
 
 	// convert them into fruits:
@@ -2142,8 +2146,8 @@ bool Ecosystem::correctPopulationSizeComparator(
 	std::shared_ptr<Animal> a1, 
 	std::shared_ptr<Animal> a2)
 {
-	return a1->getTimeElapsedSinceLastExternalHpChange()
-		   > a2->getTimeElapsedSinceLastExternalHpChange();
+	return a1->getTimeElapsedSinceLastExternalHpChange().number
+		   > a2->getTimeElapsedSinceLastExternalHpChange().number;
 }
 
 void Ecosystem::correctBrainPreviewsPositions()

@@ -81,14 +81,14 @@ void gui::IntProgressBar::setValue(int value)
 
 void gui::IntProgressBar::increaseValue(int valueIncrease)
 {
-	m_value = m_value + valueIncrease; // += operator can cause a bug
+	m_value += valueIncrease;
 
 	updateProgressRectSize();
 }
 
 void gui::IntProgressBar::decreaseValue(int valueDecrease)
 {
-	m_value = m_value - valueDecrease; // -= operator can cause a bug
+	m_value -= valueDecrease;
 
 	updateProgressRectSize();
 }
