@@ -1,14 +1,10 @@
 ecosystems simulation:
 - TO DEBUG:
   + dt = ~1.3 when the screen is turned off
-  + that bug with huge dt after occurs even after pausing and it causes unwanted cloning
-  + ecosystem info total time elapsed; and change these things from 0/1 to yes/no or sth like that,
-    make it prettier
-  + timeElapsedSinceLast... can only > 0.0 if a specific event occured, but currently it is always > 0.0f
-    even if a specifc events hasn't occured yet for example timeElapsed since last cloning if a specific
-    animal hasn't created a clone yet
-  + parent age while it was born for animals that have no parents
-  + dt is weirdly big when window is repositioning
+    that bug with huge dt after occurs even after pausing and it causes unwanted cloning;
+    dt is weirdly big when window is repositioning
+  + ecosystem info total time elapsed doesn't work correctly? 
+    and change these things from 0/1 to yes/no or sth like that, make it prettier
   + there is probably a bug with updating brain preview modifier
     when a brain preview which is mutated isn't rendered
   + imgBtns don't work if animals are close to borders
@@ -16,6 +12,7 @@ ecosystems simulation:
     if other is being modified AND mouse hovers modifier
 
 - checking (looking for bugs):
+  + check if numberWithInfo type variables work correctly
   + make simulations still able to go in the background but freeze good tools and UI
   + check if not allowing to clone in the borders works correctly
   + check if all vars are loading from templates and aren't default values
@@ -28,7 +25,6 @@ ecosystems simulation:
     (currently after reaching a certain point 
      its the probabilty of an anabolic mutation is the same as 
      the probability of a catabolic mutation)
-  + remove unnecessarily vars from Animal class etc.
   + inputs should be maybe not necessarily named directly in always visible way,
     but there should be a way to see what each input means (and output)
   + add a way to see the value of specific brain inputs/outputs
