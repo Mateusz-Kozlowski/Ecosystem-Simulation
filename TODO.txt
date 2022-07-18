@@ -37,6 +37,7 @@ ecosystems simulation:
   + there are some crappy, ugly unnecessarily members in Ecosystem class, remove them
  
 - other TODO:
+  + cloning can be done using Animal::clone() const function which will return a new animal
   + change timeSinceLastCloning from seconds to frames
   + implement id's system in Animals? if it's needed of course
   + add saving which animal had brain preview modified
