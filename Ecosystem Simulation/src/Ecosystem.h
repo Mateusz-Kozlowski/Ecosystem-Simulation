@@ -316,6 +316,8 @@ private:
 	void infoTool(const sf::Vector2f& mousePos) const;
 	void printInfoAboutEcosystem() const;
 	
+	unsigned getClonesCount() const;
+
 	void updateWorld(
 		float dt,
 		const sf::Vector2f& mousePos,

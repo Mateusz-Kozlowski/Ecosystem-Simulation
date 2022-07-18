@@ -1296,31 +1296,70 @@ void Ecosystem::printInfoAboutEcosystem() const
 {
 	std::cout << "Info about the ecosystem:\n";
 	std::cout << "name: " << m_name << '\n';
+	
 	std::cout << "arena size: "
 		<< getWorldSize().x - 2U * getBordersThickness() << ' '
 		<< getWorldSize().y - 2U * getBordersThickness() << '\n';
+	
 	std::cout << "borders thickness: " << getBordersThickness() << '\n';
+	
 	std::cout 
 		<< "world size: " 
 		<< getWorldSize().x << ' ' << getWorldSize().y << '\n';
+	
 	std::cout << "animals count: " << m_animals.size() << '\n';
+
+	float clonesCount = static_cast<float>(getClonesCount());
+	std::cout
+		<< "clones count: "
+		<< getClonesCount()
+		<< " (" << 100.0f * clonesCount / static_cast<float>(m_animals.size()) << "%)\n";
+	
 	std::cout << "fruits count: " << m_fruits.size() << '\n';
 	std::cout << "mutation rate percentage: " << m_mutationsPerMutation << '\n';
+	
 	std::cout 
 		<< "simulation speed factor: " 
 		<< m_simulationSpeedFactor << '\n';
+
 	std::cout << "simulation is paused: " << m_simulationIsPaused << '\n';
 	std::cout << "god tool: " << getGodToolStr(m_godTool) << '\n';
 	std::cout << "total time elapsed [sec]: " << m_totalTimeElapsed << '\n';
 	std::cout << "total frames elapsed: " << m_totalFramesElapsed << '\n';
-	std::cout 
-		<< "total animals hp energy: " 
-		<< getTotalAnimalsHpEnergy() << '\n';
+
+	float totalAnimalsHpEnergy = static_cast<float>(getTotalAnimalsHpEnergy());
+	float totalAnimalsKineticEnergy = static_cast<float>(getTotalAnimalsKineticEnergy());
+	float totalFruitsEnergy = static_cast<float>(getTotalFruitsEnergy());
+	float totalEnergy = static_cast<float>(getTotalEnergy());
+	std::cout
+		<< "total animals hp energy: "
+		<< getTotalAnimalsHpEnergy()
+		<< " (" << 100.0f * totalAnimalsHpEnergy / totalEnergy << "%)\n";
 	std::cout 
 		<< "total animals kinetic energy: "
-		<< getTotalAnimalsKineticEnergy() << '\n';
-	std::cout << "total fruits energy: " << getTotalFruitsEnergy() << '\n';
+		<< getTotalAnimalsKineticEnergy() 
+		<< " (" << 100.0f * totalAnimalsKineticEnergy / totalEnergy << "%)\n";
+	std::cout 
+		<< "total fruits energy: " 
+		<< getTotalFruitsEnergy()
+		<< " (" << 100.0f * totalFruitsEnergy / totalEnergy << "%)\n";
+	
 	std::cout << "total energy: " << getTotalEnergy() << '\n';
+}
+
+unsigned Ecosystem::getClonesCount() const
+{
+	unsigned clonesCount = 0U;
+
+	for (const auto& animal : m_animals)
+	{
+		if (animal->isClone())
+		{
+			clonesCount++;
+		}
+	}
+
+	return clonesCount;
 }
 
 void Ecosystem::updateWorld(
@@ -1329,7 +1368,7 @@ void Ecosystem::updateWorld(
 	const std::vector<sf::Event>& events,
 	const std::unordered_map<std::string, int>& keybinds)
 {
-	std::clog << "--------------------NEW FRAME--------------------:\n";
+	std::clog << "--------------------NEW FRAME-------------------- " << m_totalTimeElapsed << '\n';
 
 	// TODO (comments):
 	updateAnimals(dt, mousePos, events, keybinds);

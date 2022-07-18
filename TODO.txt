@@ -1,5 +1,6 @@
 ecosystems simulation:
 - TO DEBUG:
+  + dt = ~1.3 when the screen is turned off
   + that bug with huge dt after occurs even after pausing and it causes unwanted cloning
   + ecosystem info total time elapsed; and change these things from 0/1 to yes/no or sth like that,
     make it prettier
@@ -15,6 +16,7 @@ ecosystems simulation:
     if other is being modified AND mouse hovers modifier
 
 - checking (looking for bugs):
+  + make simulations still able to go in the background but freeze good tools and UI
   + check if not allowing to clone in the borders works correctly
   + check if all vars are loading from templates and aren't default values
     (all default hardcoded values should be different from those from templates)
@@ -26,8 +28,6 @@ ecosystems simulation:
     (currently after reaching a certain point 
      its the probabilty of an anabolic mutation is the same as 
      the probability of a catabolic mutation)
-  + add clones count to printing info about ecosystem and other general info
-    like how much energy there is fruits, hp and kinetic form in % and so forth
   + remove unnecessarily vars from Animal class etc.
   + inputs should be maybe not necessarily named directly in always visible way,
     but there should be a way to see what each input means (and output)
