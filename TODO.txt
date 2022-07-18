@@ -19,8 +19,12 @@ ecosystems simulation:
     (all default hardcoded values should be different from those from templates)
   + check if inputs and outputs are correct; the best way to do that is
     to implement this as a feature and then check it regurarly
+  + check if the following rule is respected:
+    animals should be able to know as much as possible - its optimal for evolving
 
 - priority TODO:
+  + before saving an ecosystem automatically pause the simulating process
+    (and of course unpause after the saving is done)
   + mutations should be even more anabolic 
     (currently after reaching a certain point 
      its the probabilty of an anabolic mutation is the same as 
@@ -30,14 +34,10 @@ ecosystems simulation:
   + add a way to see the value of specific brain inputs/outputs
   + add the following input: the center of the fruits mass
   + identify the bottle neck of the fps count
-  + remember - animals should be able to know as much as possible - its optimal for evolving
-
+  + there are some crappy, ugly unnecessarily members in Ecosystem class, remove them
+ 
 - other TODO:
   + change timeSinceLastCloning from seconds to frames
-  + update printing info functions:
-    * ecosystem: previous total energy
-    * animals: new vars: isClone and maybe there is sth else, basicly check everything
-    perhaps there are other var that can be added
   + implement id's system in Animals? if it's needed of course
   + add saving which animal had brain preview modified
   + what has happened with cloning god tool?

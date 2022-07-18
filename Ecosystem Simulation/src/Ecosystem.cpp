@@ -1318,11 +1318,33 @@ void Ecosystem::printInfoAboutEcosystem() const
 	std::cout << "fruits count: " << m_fruits.size() << '\n';
 	std::cout << "mutation rate percentage: " << m_mutationsPerMutation << '\n';
 	
+	std::cout << "tracking: ";
+	if (m_trackedAnimal == nullptr)
+	{
+		std::cout << "no animal is tracked\n";
+	}
+	else
+	{
+		std::cout
+			<< "an animal is tracked; its position: ("
+			<< m_trackedAnimal->getPos().x << "; "
+			<< m_trackedAnimal->getPos().y << ")\n";
+	}
+
 	std::cout 
 		<< "simulation speed factor: " 
 		<< m_simulationSpeedFactor << '\n';
 
-	std::cout << "simulation is paused: " << m_simulationIsPaused << '\n';
+	std::cout << "simulation is paused: ";
+	if (m_simulationIsPaused)
+	{
+		std::cout << "yes\n";
+	}
+	else
+	{
+		std::cout << "no\n";
+	}
+	
 	std::cout << "god tool: " << getGodToolStr(m_godTool) << '\n';
 	std::cout << "total time elapsed [sec]: " << m_totalTimeElapsed << '\n';
 	std::cout << "total frames elapsed: " << m_totalFramesElapsed << '\n';
@@ -1345,6 +1367,7 @@ void Ecosystem::printInfoAboutEcosystem() const
 		<< " (" << 100.0f * totalFruitsEnergy / totalEnergy << "%)\n";
 	
 	std::cout << "total energy: " << getTotalEnergy() << '\n';
+	std::cout << "previous total energy: " << m_previousTotalEnergy << '\n';
 }
 
 unsigned Ecosystem::getClonesCount() const
