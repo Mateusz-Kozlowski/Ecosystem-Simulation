@@ -1,4 +1,3 @@
-#include "bbpch.h"
 #include "Brain.h"
 
 Blueberry::Brain::Brain(const unsigned inputSize, const unsigned outputSize)

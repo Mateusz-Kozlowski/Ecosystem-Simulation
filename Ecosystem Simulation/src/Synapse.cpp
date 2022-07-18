@@ -1,4 +1,3 @@
-#include "bbpch.h"
 #include "Synapse.h"
 
 Blueberry::Synapse::Synapse(

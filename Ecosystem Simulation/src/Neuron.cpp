@@ -1,4 +1,3 @@
-#include "bbpch.h"
 #include "Neuron.h"
 
 Blueberry::Neuron::Neuron(

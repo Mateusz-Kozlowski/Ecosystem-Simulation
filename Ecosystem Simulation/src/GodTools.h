@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Libraries.h"
+#include "Formatter.h"
 
 enum class GodTool { NONE, MUTATE, TRACK, KILL, REPLACE, BRAIN, STOP, INFO };
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Libraries.h"
+#include "Formatter.h"
 
 namespace gui
 {

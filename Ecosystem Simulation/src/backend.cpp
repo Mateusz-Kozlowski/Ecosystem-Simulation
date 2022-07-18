@@ -1,4 +1,3 @@
-#include "bbpch.h"
 #include "backend.h"
 
 void Blueberry::tanh(const Scalar& x, Scalar& y)

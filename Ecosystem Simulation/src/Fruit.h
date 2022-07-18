@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Libraries.h"
+#include "RandomEngine.h"
 
 class Fruit
 {

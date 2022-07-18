@@ -55,9 +55,6 @@
     <ClCompile Include="src\ProgressBar.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\NeuralNetPreview.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="src\ImageButton.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -85,6 +82,11 @@
     <ClCompile Include="src\BrainPreviewModifier.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\backend.cpp" />
+    <ClCompile Include="src\RandomEngine.cpp" />
+    <ClCompile Include="src\Synapse.cpp" />
+    <ClCompile Include="src\Neuron.cpp" />
+    <ClCompile Include="src\Brain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -218,9 +220,6 @@
     <ClInclude Include="src\ProgressBar.h">
       <Filter>GUI</Filter>
     </ClInclude>
-    <ClInclude Include="src\NeuralNetPreview.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="src\ImageButton.h">
       <Filter>GUI</Filter>
     </ClInclude>
@@ -251,6 +250,13 @@
     <ClInclude Include="src\Libraries.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\backend.h" />
+    <ClInclude Include="src\RandomEngine.h" />
+    <ClInclude Include="src\Synapse.h" />
+    <ClInclude Include="src\Neuron.h" />
+    <ClInclude Include="src\Brain.h" />
+    <ClInclude Include="src\Formatter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-window-d-2.dll">
