@@ -1,5 +1,6 @@
 ecosystems simulation:
 - TO DEBUG:
+  + ss in desktop
   + dt = ~1.3 when the screen is turned off
     that bug with huge dt after occurs even after pausing and it causes unwanted cloning;
     dt is weirdly big when window is repositioning
@@ -23,8 +24,6 @@ ecosystems simulation:
     animals should be able to know as much as possible - its optimal for evolving
 
 - priority TODO:
-  + before saving an ecosystem automatically pause the simulating process
-    (and of course unpause after the saving is done)
   + mutations should be even more anabolic 
     (currently after reaching a certain point 
      its the probabilty of an anabolic mutation is the same as 
@@ -37,6 +36,7 @@ ecosystems simulation:
   + there are some crappy, ugly unnecessarily members in Ecosystem class, remove them
  
 - other TODO:
+  + unhardcode ecosystem templates and ecosystem creator state UI related to them
   + cloning can be done using Animal::clone() const function which will return a new animal
   + change timeSinceLastCloning from seconds to frames
   + implement id's system in Animals? if it's needed of course
@@ -113,7 +113,6 @@ ecosystems simulation:
 
 project setup:
 - distribution in .zip
-- add files related to the neural nets to the project without messing up with .lib files
 
 README.md:
 - develop "all features" chapter

@@ -12,6 +12,7 @@ EcosystemCreatorState::EcosystemCreatorState(StateData* stateData)
 	initBackground();
 	initFont();
 	initGui();
+	loadEcosystemTemplate("TEST");
 }
 
 void EcosystemCreatorState::update(float dt)
@@ -117,7 +118,7 @@ void EcosystemCreatorState::initButtons()
 
 	unsigned charSize = gui::calcCharSize(20.0f, resolution);
 
-	m_buttons["SMALL"] = std::make_unique<gui::Button>(
+	m_buttons["TEST"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(30.0f, resolution),
 			gui::p2pY(7.0f, resolution)
@@ -126,7 +127,7 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_font, "SMALL", charSize,
+		m_font, "TEST", charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
 		sf::Color(75, 75, 75),
@@ -139,7 +140,7 @@ void EcosystemCreatorState::initButtons()
 		gui::p2pY(0.5f, resolution)
 	);
 
-	m_buttons["BIG"] = std::make_unique<gui::Button>(
+	m_buttons["THIN"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(44.0f, resolution),
 			gui::p2pY(7.0f, resolution)
@@ -148,7 +149,7 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_font, "BIG", charSize,
+		m_font, "THIN", charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
 		sf::Color(75, 75, 75),
@@ -161,7 +162,7 @@ void EcosystemCreatorState::initButtons()
 		gui::p2pY(0.5f, resolution)
 	);
 
-	m_buttons["HUGE"] = std::make_unique<gui::Button>(
+	m_buttons["DENSE"] = std::make_unique<gui::Button>(
 		sf::Vector2f(
 			gui::p2pX(58.0f, resolution),
 			gui::p2pY(7.0f, resolution)
@@ -170,7 +171,7 @@ void EcosystemCreatorState::initButtons()
 			gui::p2pX(12.0f, resolution),
 			gui::p2pY(5.0f, resolution)
 		),
-		m_font, "HUGE", charSize,
+		m_font, "DENSE", charSize,
 		sf::Color(100, 100, 100), 
 		sf::Color(125, 125, 125), 
 		sf::Color(75, 75, 75),
@@ -828,17 +829,17 @@ void EcosystemCreatorState::updateGui(float dt)
 
 void EcosystemCreatorState::getUpdatesFromGui()
 {
-	if (m_buttons["SMALL"]->isClicked())
+	if (m_buttons["TEST"]->isClicked())
 	{
-		loadEcosystemTemplate("small");
+		loadEcosystemTemplate("TEST");
 	}
-	else if (m_buttons["BIG"]->isClicked())
+	else if (m_buttons["THIN"]->isClicked())
 	{
-		loadEcosystemTemplate("big");
+		loadEcosystemTemplate("THIN");
 	}
-	else if (m_buttons["HUGE"]->isClicked())
+	else if (m_buttons["DENSE"]->isClicked())
 	{
-		loadEcosystemTemplate("huge");
+		loadEcosystemTemplate("DENSE");
 	}
 	else if (m_buttons["CREATE"]->isClicked())
 	{
