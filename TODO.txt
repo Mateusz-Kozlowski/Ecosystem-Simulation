@@ -33,7 +33,6 @@ ecosystems simulation:
   + add a way to see the value of specific brain inputs/outputs
   + add the following input: the center of the fruits mass
   + identify the bottle neck of the fps count
-  + there are some crappy, ugly unnecessarily members in Ecosystem class, remove them
  
 - other TODO:
   + unhardcode ecosystem templates and ecosystem creator state UI related to them

@@ -10,8 +10,6 @@ Ecosystem::Ecosystem()
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
 	, m_fruitsPositionsMarginsThickness(0.0f)
-	, m_defaultAnimalsHp(0U)
-	, m_defaultFruitEnergy(0U)
 	, m_mutationsPerMutation(0U)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
@@ -59,8 +57,6 @@ Ecosystem::Ecosystem(
 	, m_animals()
 	, m_fruits()
 	, m_animalsRadius(animalsRadius)
-	, m_defaultAnimalsHp(defaultAnimalsHp)
-	, m_defaultFruitEnergy(defaultFruitsEnergy)
 	, m_fruitsRadius(fruitsRadius)
 	, m_fruitsPositionsMarginsThickness(fruitsPositionsMarginsThickness)
 	, m_mutationsPerMutation(mutationsPerMutation)
@@ -113,8 +109,6 @@ Ecosystem::Ecosystem(const char* folderPath)
 	, m_animalsRadius(0.0f)
 	, m_fruitsRadius(0.0f)
 	, m_fruitsPositionsMarginsThickness(0.0f)
-	, m_defaultAnimalsHp(0U)
-	, m_defaultFruitEnergy(0U)
 	, m_mutationsPerMutation(0U)
 	, m_animalsColor(sf::Color::Magenta)
 	, m_fruitsColor(sf::Color::Magenta)
@@ -769,8 +763,6 @@ void Ecosystem::saveEcosystem(const std::string& filePath) const
 	ofs << m_fruitsRadius << '\n';
 	ofs << m_fruitsPositionsMarginsThickness << '\n';
 
-	ofs << m_defaultAnimalsHp << '\n';
-	ofs << m_defaultFruitEnergy << '\n';
 	ofs << m_mutationsPerMutation << '\n';
 
 	ofs << static_cast<int>(m_animalsColor.r) << ' ';
@@ -940,8 +932,6 @@ void Ecosystem::loadEcosystem(const std::string& filePath)
 	ifs >> m_fruitsRadius;
 	ifs >> m_fruitsPositionsMarginsThickness;
 
-	ifs >> m_defaultAnimalsHp;
-	ifs >> m_defaultFruitEnergy;
 	ifs >> m_mutationsPerMutation;
 
 	ifs >> animalsColorR >> animalsColorG >> animalsColorB >> animalsColorA;
@@ -2238,75 +2228,6 @@ bool Ecosystem::brainPreviewProtrudesWorldBottomBorder(
 	bottomBorderPosition += brainPreview.getSize().y;
 
 	return bottomBorderPosition > getWorldSize().y;
-}
-
-void Ecosystem::correctFruitsCount()
-{
-	std::clog
-		<< "ERROR: Ecosystem::correctFruitsCount()\n"
-		<< "You wanted not to use this func\n";
-	exit(-13);
-
-	#if _DEBUG
-	unsigned idx1 = 0U;
-	#endif
-
-	for (int i = 0; i < m_fruits.size(); i++)
-	{
-		#if _DEBUG
-		idx1++;
-		#endif
-
-		Fruit* fruit = m_fruits[i].get();
-
-		if (fruit->getEnergy() >= 2 * m_defaultFruitEnergy)
-		{
-			unsigned prevEnergy = fruit->getEnergy();
-
-			std::clog << "NEW FRUIT: correctFruitsCount\n";
-
-			m_fruits.emplace_back(
-				std::make_unique<Fruit>(
-					fruit->getEnergy() - m_defaultFruitEnergy,
-					fruit->getPos(),
-					fruit->getRadius(),
-					fruit->getColor()
-				)
-			);
-			m_fruits.back()->setRandomPosition(
-				getWorldSize(), 
-				getBordersThickness(),
-				m_fruitsPositionsMarginsThickness,
-				true // TODO: unhardcode that
-			);
-
-			fruit->setEnergy(m_defaultFruitEnergy);
-
-			if (prevEnergy
-				!= fruit->getEnergy() + m_fruits.back()->getEnergy())
-			{
-				std::cerr << "BUG IN: void Ecosystem::correctFruitsCount()\n";
-				exit(-13);
-			}
-		}
-
-		if (fruit->getEnergy() >= 2 * m_defaultFruitEnergy)
-		{
-			std::cerr << "BUG IN: void Ecosystem::correctFruitsCount()\n";
-			exit(-14);
-		}
-	}
-
-	#if _DEBUG
-	assert(idx1 == m_fruits.size());
-	#endif
-
-	#if _DEBUG
-	for (const auto& fruit : m_fruits)
-	{
-		assert(fruit->getEnergy() < 2 * m_defaultFruitEnergy);
-	}
-	#endif
 }
 
 void Ecosystem::constValuesGuards()

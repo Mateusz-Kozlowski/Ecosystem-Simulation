@@ -488,31 +488,15 @@ private:
 	// (cloning occurs by calling a copy constructor of Animal class)
 	std::vector<std::shared_ptr<Animal>> m_animals;
 	std::vector<std::unique_ptr<Fruit>> m_fruits;
-
-	// TODO: add a multiline comment that:
-	// - explains why those variables are useful in those situations
-	// - describes those situation (when they appear and how they disappear)
-
-	// useful when there are temporarily no m_animals in an ecosystem:
+	
 	float m_animalsRadius;
-
-	// TODO: no longer revelant, because there always will be some fruits:
-	// useful when there are temporarily no fruits in an ecosystem:
 	float m_fruitsRadius;
 	float m_fruitsPositionsMarginsThickness;
 
-	unsigned m_defaultAnimalsHp;
-	unsigned m_defaultFruitEnergy;
-
 	unsigned m_mutationsPerMutation;
 
-	// useful when there are temporarily no m_animals in an ecosystem:
 	sf::Color m_animalsColor;
-
-	// useful when there are temporarily no fruits in an ecosystem:
 	sf::Color m_fruitsColor;
-
-	// useful when there is temporarily no tracked animal in an ecosystem
 	sf::Color m_trackedAnimalColor;
 
 	Animal* m_trackedAnimal;
@@ -529,8 +513,6 @@ private:
 
 	float m_totalTimeElapsed;
 	unsigned m_totalFramesElapsed;
-
-	std::string m_logs;
 
 	std::ofstream m_debugFile;
 
