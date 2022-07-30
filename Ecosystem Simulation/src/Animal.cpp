@@ -740,7 +740,7 @@ void Animal::initBrainPreview()
 			16.0f * m_body.getRadius(),
 			16.0f * m_body.getRadius()
 		),
-		sf::Color(128, 128, 128)
+		sf::Color(128, 128, 128, 128)
 	);
 }
 

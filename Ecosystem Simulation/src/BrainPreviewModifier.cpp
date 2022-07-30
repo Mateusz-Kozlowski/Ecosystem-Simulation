@@ -2,13 +2,15 @@
 
 gui::BrainPreviewModifier::BrainPreviewModifier(
 	const sf::Vector2f& pos,
-	const sf::Vector2f& size)
+	const sf::Vector2f& size,
+	const sf::Color& bgColor)
 	: m_previouslyModifiedBrainPreview(nullptr)
 	, m_modifiedNeuronIdx(-1)
 	, m_pos(pos)
 	, m_size(size)
 	, m_closeBtn(nullptr)
 {
+	initBg(pos, size, bgColor);
 	initCloseBtn();
 }
 
@@ -31,6 +33,8 @@ void gui::BrainPreviewModifier::render(
 	gui::BrainPreview& brainPreview,
 	sf::RenderTarget& target)
 {
+	target.draw(m_bg);
+	
 	const sf::Vector2f prevPos = brainPreview.getPos();
 	const sf::Vector2f prevSize = brainPreview.getSize();
 
@@ -45,6 +49,13 @@ void gui::BrainPreviewModifier::render(
 	m_closeBtn->render(target);
 }
 
+// accessors:
+
+const sf::RectangleShape& gui::BrainPreviewModifier::getBg() const
+{
+	return m_bg;
+}
+
 sf::FloatRect gui::BrainPreviewModifier::getBgBounds() const
 {
 	return sf::FloatRect(m_pos, m_size);
@@ -55,9 +66,27 @@ const std::unique_ptr<gui::ImageButton>& gui::BrainPreviewModifier::getCloseBtn(
 	return m_closeBtn;
 }
 
+// mutators:
+
+void gui::BrainPreviewModifier::setBgColor(const sf::Color& bgColor)
+{
+	m_bg.setFillColor(bgColor);
+}
+
 // private methods:
 
 // initialization:
+
+void gui::BrainPreviewModifier::initBg(
+	const sf::Vector2f& pos, 
+	const sf::Vector2f& size, 
+	const sf::Color& bgColor)
+{
+	m_bg.setPosition(pos);
+	m_bg.setSize(size);
+	m_bg.setFillColor(bgColor);
+
+}
 
 void gui::BrainPreviewModifier::initCloseBtn()
 {	

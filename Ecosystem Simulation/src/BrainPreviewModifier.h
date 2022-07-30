@@ -10,7 +10,8 @@ namespace gui
 	public:
 		BrainPreviewModifier(
 			const sf::Vector2f& pos,
-			const sf::Vector2f& size
+			const sf::Vector2f& size,
+			const sf::Color& bgColor
 		);
 
 		void update(
@@ -24,14 +25,25 @@ namespace gui
 		);
 
 		// accessors:
+		
+		const sf::RectangleShape& getBg() const;
 
 		sf::FloatRect getBgBounds() const;
 
 		const std::unique_ptr<gui::ImageButton>& getCloseBtn() const;
 
+		// mutators:
+
+		void setBgColor(const sf::Color& bgColor);
+
 	private:
 		// initialization:
 
+		void initBg(
+			const sf::Vector2f& pos,
+			const sf::Vector2f& size,
+			const sf::Color& bgColor
+		);
 		void initCloseBtn();
 
 		// utils:
@@ -60,6 +72,8 @@ namespace gui
 		void getUpdatesFromImgBtn();
 
 	private:
+		sf::RectangleShape m_bg;
+
 		gui::BrainPreview* m_previouslyModifiedBrainPreview;
 
 		int m_modifiedNeuronIdx;

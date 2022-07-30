@@ -24,6 +24,8 @@ ecosystems simulation:
     animals should be able to know as much as possible - its optimal for evolving
 
 - priority TODO:
+  + make sure that synapses can have values in the following range:
+    <-2; 2>
   + hardcode mutations to some degree for example encourge connecting
     closes food pos x input with x acceleration and discourage connecting the same input
     with y acceleration;

@@ -695,7 +695,8 @@ void SimulationState::initBrainPreviewModifier()
 			(resolution.width - size.x) / 2.0f,
 			(resolution.height - size.y) / 2.0f
 		),
-		size
+		size,
+		sf::Color(128, 128, 128)
 	);
 }
 
