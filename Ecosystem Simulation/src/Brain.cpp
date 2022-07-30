@@ -326,7 +326,9 @@ void Blueberry::Brain::addRandomSynapse()
 		false,
 		randomNeuronIndex1,
 		randomNeuronIndex2,
-		RandomEngine::getScalarInRange(-1.0, 1.0)
+		// TODO: unhardcode this value 
+		// by connecting it with the value of the maximal possible mutation of a weight:
+		RandomEngine::getScalarInRange(-2.0, 2.0)
 	);
 }
 
@@ -342,7 +344,8 @@ bool Blueberry::Brain::mutateRandomSynapseWeight()
 	assert(!m_neurons[m_synapses[randomSynapseIndex].getDst()].disabled());
 
 	// mutate a random synapse weight:
-	m_synapses[randomSynapseIndex].mutateWeight(0.5);
+	// TODO: unhardcode this value by connecting it with the range of default values of synapses:
+	m_synapses[randomSynapseIndex].mutateWeight(2.0);
 
 	return true;
 }
