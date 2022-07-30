@@ -8,7 +8,8 @@ public:
 	MovementComponent();
 	MovementComponent(
 		const sf::Vector2i& defaultVelocity,
-		const char* brainFilePath
+		const char* brainFilePath,
+		float velocityCoeffcient = 10.0f
 	);
 	MovementComponent(const MovementComponent& rhs);
 	MovementComponent& operator=(const MovementComponent& rhs);
@@ -43,6 +44,8 @@ public:
 	const sf::Vector2i& getVelocityVector() const;
 	const sf::Vector2f& getAccelerationVector() const;
 
+	float getVelocityCoefficient() const;
+
 	// mutators:
 
 	void mutateBrain(unsigned brainMutationsCount);
@@ -54,17 +57,21 @@ public:
 	void elasticReboundInAxisY();
 
 	// temporary; MovementComponent can have it's own file so that it can be loaded directly from it
-	// the function doesn't change prevVel
 	// the function doesn't change amount of energy to expel (look: getEnergyToExpel() const)
-	void setVelocitiesLoadedFromFile(
+	void setVelocitiesVectorsLoadedFromFile(
 		const sf::Vector2i& velocity, 
 		const sf::Vector2i& prevVel
 	);
+
+	// temporary; MovementComponent can have it's own file so that it can be loaded directly from it
+	void setAccelerationVectorLoadedFromFile(const sf::Vector2f& acceleration);
 
 	// resets velocity to 0
 	// doesn't change previousVelocity 
 	// (so doesn't impact energy to expel)
 	void resetVelocity();
+
+	void setVelocityCoefficient(float velocityCoeffcient);
 
 private:
 	void updateAcceleration(
@@ -104,4 +111,6 @@ private:
 	
 	sf::Vector2i m_velocity;
 	sf::Vector2f m_acceleration;
+
+	float m_velocityCoefficient;
 };

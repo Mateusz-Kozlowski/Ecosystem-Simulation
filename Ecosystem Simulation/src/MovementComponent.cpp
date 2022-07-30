@@ -6,6 +6,7 @@ MovementComponent::MovementComponent()
 	, m_prevVelocity(0, 0)
 	, m_velocity(0, 0)
 	, m_acceleration(0.0f, 0.0f)
+	, m_velocityCoefficient(10.0f)
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -15,11 +16,13 @@ MovementComponent::MovementComponent()
 
 MovementComponent::MovementComponent(
 	const sf::Vector2i& defaultVelocity,
-	const char* brainFilePath)
+	const char* brainFilePath,
+	float velocityCoeffcient)
 	: m_brain(std::make_unique<Blueberry::Brain>(0U, 0U))
 	, m_prevVelocity(0, 0)
 	, m_velocity(defaultVelocity)
 	, m_acceleration(0.0f, 0.0f)
+	, m_velocityCoefficient(velocityCoeffcient)
 {
 	sf::Vector2i velocity = defaultVelocity;
 
@@ -33,6 +36,7 @@ MovementComponent::MovementComponent(const MovementComponent& rhs)
 	, m_prevVelocity(0, 0)
 	, m_velocity(rhs.m_velocity)
 	, m_acceleration(rhs.m_acceleration)
+	, m_velocityCoefficient(rhs.m_velocityCoefficient)
 {
 	sf::Vector2i velocity = rhs.m_velocity;
 
@@ -53,6 +57,7 @@ MovementComponent& MovementComponent::operator=(const MovementComponent& rhs)
 		m_prevVelocity = rhs.m_prevVelocity;
 		m_velocity = rhs.m_velocity;
 		m_acceleration = rhs.m_acceleration;
+		m_velocityCoefficient = rhs.m_velocityCoefficient;
 	}
 
 	return *this;
@@ -92,8 +97,8 @@ void MovementComponent::update(
 		return; // *
 	}
 
-	m_velocity.x += static_cast<int>(m_acceleration.x);
-	m_velocity.y += static_cast<int>(m_acceleration.y);
+	m_velocity.x += static_cast<int>(m_velocityCoefficient * m_acceleration.x);
+	m_velocity.y += static_cast<int>(m_velocityCoefficient * m_acceleration.y);
 
 	velocityGuard();
 }
@@ -164,6 +169,11 @@ const sf::Vector2i& MovementComponent::getVelocityVector() const
 const sf::Vector2f& MovementComponent::getAccelerationVector() const
 {
 	return m_acceleration;
+}
+
+float MovementComponent::getVelocityCoefficient() const
+{
+	return m_velocityCoefficient;
 }
 
 // mutators:
@@ -240,12 +250,22 @@ void MovementComponent::elasticReboundInAxisY()
 	m_velocity.y *= -1;
 }
 
-void MovementComponent::setVelocitiesLoadedFromFile(
+void MovementComponent::setVelocitiesVectorsLoadedFromFile(
 	const sf::Vector2i& velocity, 
 	const sf::Vector2i& prevVel)
 {
 	m_velocity = velocity;
 	m_prevVelocity = prevVel;
+}
+
+void MovementComponent::setAccelerationVectorLoadedFromFile(const sf::Vector2f& acceleration)
+{
+	m_acceleration = acceleration;
+}
+
+void MovementComponent::setVelocityCoefficient(float velocityCoefficient)
+{
+	m_velocityCoefficient = velocityCoefficient;
 }
 
 // private methods:
@@ -266,8 +286,8 @@ void MovementComponent::updateAcceleration(
 
 	const std::vector<Blueberry::Scalar>& brainOutput = m_brain->getOutput();
 
-	m_acceleration.x = 10.0 * brainOutput[0];
-	m_acceleration.y = 10.0 * brainOutput[1];
+	m_acceleration.x = brainOutput[0];
+	m_acceleration.y = brainOutput[1];
 
 	if (m_acceleration.x > 500'000 || m_acceleration.y > 500'000)
 	{

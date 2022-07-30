@@ -24,10 +24,15 @@ ecosystems simulation:
     animals should be able to know as much as possible - its optimal for evolving
 
 - priority TODO:
+  + hardcode mutations to some degree for example encourge connecting
+    closes food pos x input with x acceleration and discourage connecting the same input
+    with y acceleration;
+    but allow to create hidden neurons in some way and don't underestimate
+    the potential of nature creativity, maybe there are some kinds of connections that you don't know
+    about and they are a great idea
+  + dt during saving ecosystem
   + go to MovementComponent and decrease the value of the coefficient involved in converting
     brains outputs to new pos
-  + implement opening brain modifying not by using texture btns but by clicking on brain previews
-    with the right btn of mouse
   + mutations should be even more anabolic 
     (currently after reaching a certain point 
      its the probabilty of an anabolic mutation is the same as 

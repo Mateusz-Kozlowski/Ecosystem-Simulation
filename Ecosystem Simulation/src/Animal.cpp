@@ -155,6 +155,9 @@ void Animal::saveToFolder(const char* folderPath) const
 	ofs << m_movementComponent->getPreviousVelocityVector().y << '\n';
 	ofs << m_movementComponent->getVelocityVector().x << '\n';
 	ofs << m_movementComponent->getVelocityVector().y << '\n';
+	ofs << m_movementComponent->getAccelerationVector().x << '\n';
+	ofs << m_movementComponent->getAccelerationVector().y << '\n';
+	ofs << m_movementComponent->getVelocityCoefficient() << '\n';
 
 	ofs << m_age << '\n';
 	
@@ -204,6 +207,8 @@ void Animal::loadFromFolder(const char* folderPath)
 	int hp;
 	sf::Vector2i prevVelocity;
 	sf::Vector2i velocity;
+	sf::Vector2f acceleration;
+	float velocityCoeffcient;
 
 	ifs >> position.x >> position.y;
 	ifs >> radius;
@@ -221,6 +226,8 @@ void Animal::loadFromFolder(const char* folderPath)
 
 	ifs >> prevVelocity.x >> prevVelocity.y;
 	ifs >> velocity.x >> velocity.y;
+	ifs >> acceleration.x >> acceleration.y;
+	ifs >> velocityCoeffcient;
 	
 	ifs >> m_age;
 
@@ -270,7 +277,9 @@ void Animal::loadFromFolder(const char* folderPath)
 
 	initBrainPreview();
 
-	m_movementComponent->setVelocitiesLoadedFromFile(velocity, prevVelocity);
+	m_movementComponent->setVelocitiesVectorsLoadedFromFile(velocity, prevVelocity);
+	m_movementComponent->setAccelerationVectorLoadedFromFile(acceleration);
+	m_movementComponent->setVelocityCoefficient(velocityCoeffcient);
 }
 
 void Animal::update(
@@ -303,8 +312,8 @@ void Animal::update(
 		keybinds
 	);
 
-	updateBody(dt);
-	updateHp(dt);
+	updateBody();
+	updateHp();
 
 	m_alive = m_hpBar->getCurrentValue() > 0;
 
@@ -353,6 +362,10 @@ std::string Animal::toStr() const
 
 	ss << "acceleration: "
 	   << getAccelerationVector().x << ' ' << getAccelerationVector().y
+	   << '\n';
+
+	ss << "velocity coefficient: "
+	   << m_movementComponent->getVelocityCoefficient()
 	   << '\n';
 
 	ss << "kinetic energy: " << getKineticEnergy() << '\n';
@@ -731,13 +744,13 @@ void Animal::initBrainPreview()
 	);
 }
 
-void Animal::updateBody(float dt)
+void Animal::updateBody()
 {
 	const sf::Vector2f& velVect = static_cast<sf::Vector2f>(m_movementComponent->getVelocityVector());
 
 	m_body.setPosition(
-		m_body.getPosition().x + velVect.x * dt,
-		m_body.getPosition().y + velVect.y * dt
+		m_body.getPosition().x + velVect.x / m_movementComponent->getVelocityCoefficient(),
+		m_body.getPosition().y + velVect.y / m_movementComponent->getVelocityCoefficient()
 	);
 }
 
@@ -808,7 +821,7 @@ std::vector<Blueberry::Scalar> Animal::getEnhancedBrainInputs(
 	return enhancedBrainInputs;
 }
 
-void Animal::updateHp(float dt)
+void Animal::updateHp()
 {
 	m_hpBar->decreaseValue(abs(getKineticEnergyDelta()));
 }

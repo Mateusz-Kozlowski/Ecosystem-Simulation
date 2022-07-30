@@ -150,8 +150,8 @@ private:
 		const std::vector<Blueberry::Scalar>& externalBrainInputs
 	) const;
 	
-	void updateBody(float dt);
-	void updateHp(float dt);
+	void updateBody();
+	void updateHp();
 	void updateHpBarPosition();
 	void updateBrainPreview(
 		const sf::Vector2f& mousePos,
