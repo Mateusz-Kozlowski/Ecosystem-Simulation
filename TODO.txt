@@ -30,13 +30,11 @@ ecosystems simulation:
     but allow to create hidden neurons in some way and don't underestimate
     the potential of nature creativity, maybe there are some kinds of connections that you don't know
     about and they are a great idea
-  + dt during saving ecosystem
-  + go to MovementComponent and decrease the value of the coefficient involved in converting
-    brains outputs to new pos
-  + mutations should be even more anabolic 
-    (currently after reaching a certain point 
+   + mutations should be even more anabolic 
+     (currently after reaching a certain point 
      its the probabilty of an anabolic mutation is the same as 
      the probability of a catabolic mutation)
+  + dt during saving ecosystem
   + inputs should be maybe not necessarily named directly in always visible way,
     but there should be a way to see what each input means (and output)
   + add a way to see the value of specific brain inputs/outputs

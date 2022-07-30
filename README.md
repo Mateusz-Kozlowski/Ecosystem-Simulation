@@ -1,6 +1,8 @@
 Before I started the project I had thought that it's all about kinematics and I'll finish the project in one day.
 After a couple of months I realised that making the program working properly requires implementing quanta of energy like in modern physics (I didn't know about issues with floating-point numbers in programming)
 
+The following sections aren't completed yet, I'm slowly and gradually developing them:
+
 ## Dictionary:
 HP - hit points; 
 	 the greater the number the more energy a specific animal has,
@@ -32,3 +34,10 @@ I'm going to gradually add here the features of the project:
 
 * by holding +/- you are able to zoom in/out the view of the ecosystem camera
 * by holding Z key you are able to zoom out the camera so that you can see what is beyond the world
+* by moving the mouse cursor to the very left side of the window you are able to open side menu
+* by pressing on a specific god tool icon you are able to activate/disactive a god tool
+* when brain previewing god tool is turned on you are able to open/hide a specific brain preview
+  by clicking on a specific animal with the left mouse button
+* you can show/hide all brain previews by pressing B key
+* by clicking with the right mouse button on a brain preview you are able to open
+  brain preview modifier (or change the modified brain)
