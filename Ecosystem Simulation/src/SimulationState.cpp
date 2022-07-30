@@ -1270,7 +1270,8 @@ void SimulationState::updateEcosystem(float dt)
 		dt, 
 		m_mousePosView, 
 		*m_stateData->m_events,
-		m_keybinds
+		m_keybinds,
+		allowUpdatingModifyingBrainPreviews()
 	);
 }
 
@@ -1289,6 +1290,14 @@ void SimulationState::useEcosystemGodTools()
 		*m_stateData->m_events, 
 		m_mousePosView
 	);
+}
+
+bool SimulationState::allowUpdatingModifyingBrainPreviews() const
+{
+	sf::Vector2f mousePosWindow = static_cast<sf::Vector2f>(m_mousePosWindow);
+
+	return !m_brainPreviewModifier->getBgBounds().contains(mousePosWindow)
+		|| !m_stateData->m_ecosystem->getAnimalWithModifiedBrain();
 }
 
 void SimulationState::updateBrainPreviewModifier()

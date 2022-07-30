@@ -227,19 +227,19 @@ void Ecosystem::update(
 	float dt,
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events,
-	const std::unordered_map<std::string, int>& keybinds)
+	const std::unordered_map<std::string, int>& keybinds,
+	bool allowModifyingBrainsPreviews)
 {
-	if (m_simulationIsPaused)
-	{
-		updateOnlyImgBtnsOfBrainsPreviews(mousePos, events);
-	}
-	else
+	if (!m_simulationIsPaused)
 	{
 		m_totalTimeElapsed += dt;
 		updateWorld(dt, mousePos, events, keybinds);
 	}
 	
-	updateModifyingBrainsPreviews();
+	if (allowModifyingBrainsPreviews)
+	{
+		updateModifyingBrainsPreviews(mousePos);
+	}
 }
 
 void Ecosystem::render(sf::RenderTarget& target) const
@@ -2268,24 +2268,17 @@ void Ecosystem::debugLogs()
 	
 }
 
-void Ecosystem::updateOnlyImgBtnsOfBrainsPreviews(
-	const sf::Vector2f& mousePos, 
-	const std::vector<sf::Event>& events)
-{
-	for (auto& animal : m_animals)
-	{
-		animal->updateOnlyImgBtnOfBrainPreview(mousePos, events);
-	}
-}
-
-void Ecosystem::updateModifyingBrainsPreviews()
+void Ecosystem::updateModifyingBrainsPreviews(const sf::Vector2f& mousePos)
 {
 	for (const auto& animal : m_animals)
 	{
-		if (animal->getBrainPreview().getImgBtn()->hasBeenClicked())
+		if (m_brainsVisibility[animal.get()])
 		{
-			m_animalWithModifiedBrain = animal.get();
-			return;
+			if (animal->getBrainPreview().isPressed(mousePos, sf::Mouse::Right))
+			{
+				m_animalWithModifiedBrain = animal.get();
+				return;
+			}
 		}
 	}
 }

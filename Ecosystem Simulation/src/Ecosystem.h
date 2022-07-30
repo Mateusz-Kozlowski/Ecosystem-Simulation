@@ -49,7 +49,8 @@ public:
 		float dt,
 		const sf::Vector2f& mousePos,
 		const std::vector<sf::Event>& events,
-		const std::unordered_map<std::string, int>& keybinds
+		const std::unordered_map<std::string, int>& keybinds,
+		bool allowModifyingBrainsPreviews
 	);
 	void render(sf::RenderTarget& target) const;
 
@@ -459,8 +460,6 @@ private:
 	bool brainPreviewProtrudesWorldBottomBorder(
 		const gui::BrainPreview& brainPreview
 	);
-
-	void correctFruitsCount();
 	
 	void constValuesGuards();
 	void totalEnergyGuard();
@@ -468,12 +467,7 @@ private:
 
 	void debugLogs();
 
-	void updateOnlyImgBtnsOfBrainsPreviews(
-		const sf::Vector2f& mousePos,
-		const std::vector<sf::Event>& events
-	);
-
-	void updateModifyingBrainsPreviews();
+	void updateModifyingBrainsPreviews(const sf::Vector2f& mousePos);
 
 	static std::string s_emptyEcosystemName;
 

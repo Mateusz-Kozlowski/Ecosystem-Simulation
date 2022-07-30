@@ -324,13 +324,6 @@ void Animal::update(
 	}
 }
 
-void Animal::updateOnlyImgBtnOfBrainPreview(
-	const sf::Vector2f& mousePos, 
-	const std::vector<sf::Event>& events)
-{
-	m_brainPreview->updateOnlyImgBtn(mousePos, events);
-}
-
 void Animal::renderBody(sf::RenderTarget& target) const
 {
 	target.draw(m_body);
@@ -343,7 +336,7 @@ void Animal::renderHpBar(sf::RenderTarget& target) const
 
 void Animal::renderBrainPreview(sf::RenderTarget& target) const
 {
-	m_brainPreview->render(target, true);
+	m_brainPreview->render(target);
 }
 
 std::string Animal::toStr() const

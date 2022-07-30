@@ -170,7 +170,7 @@ const sf::Vector2f& MovementComponent::getAccelerationVector() const
 
 void MovementComponent::mutateBrain(unsigned brainMutationsCount)
 {
-	if (m_brain->getEnabledSynapsesCount() < 8 || m_brain->getEnabledNeuronsCount() < 1U)
+	if (m_brain->getEnabledSynapsesCount() < 8 || m_brain->getEnabledNeuronsCount() < 4U)
 	{
 		anabolicBrainMutation(brainMutationsCount);
 	}

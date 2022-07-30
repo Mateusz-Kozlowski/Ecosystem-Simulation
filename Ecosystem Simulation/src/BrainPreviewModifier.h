@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ImageButton.h"
 #include "BrainPreview.h"
 
 namespace gui

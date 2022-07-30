@@ -40,10 +40,6 @@ public:
 		std::ofstream& debugFile,
 		const std::unordered_map<std::string, int>& keybinds
 	);
-	void updateOnlyImgBtnOfBrainPreview(
-		const sf::Vector2f& mousePos,
-		const std::vector<sf::Event>& events
-	);
 
 	void renderBody(sf::RenderTarget& target) const;
 	void renderHpBar(sf::RenderTarget& target) const;

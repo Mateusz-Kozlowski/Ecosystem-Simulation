@@ -37,7 +37,7 @@ void gui::BrainPreviewModifier::render(
 	brainPreview.setPosition(m_pos);
 	brainPreview.setSize(m_size);
 
-	brainPreview.render(target, false);
+	brainPreview.render(target);
 
 	brainPreview.setSize(prevSize);
 	brainPreview.setPosition(prevPos);

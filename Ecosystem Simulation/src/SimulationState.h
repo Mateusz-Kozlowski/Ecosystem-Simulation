@@ -52,6 +52,8 @@ private:
 	void updateEcosystem(float dt);
 	void useEcosystemGodTools();
 
+	bool allowUpdatingModifyingBrainPreviews() const;
+
 	void updateBrainPreviewModifier();
 
 private:
