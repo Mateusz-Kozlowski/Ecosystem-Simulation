@@ -2,6 +2,7 @@
 
 #include "ImageButton.h"
 #include "BrainPreview.h"
+#include "BrainParameterInfo.h"
 
 namespace gui
 {
@@ -11,13 +12,16 @@ namespace gui
 		BrainPreviewModifier(
 			const sf::Vector2f& pos,
 			const sf::Vector2f& size,
-			const sf::Color& bgColor
+			const sf::Color& bgColor,
+			const sf::Font& font,
+			const sf::VideoMode& resolution
 		);
 
 		void update(
 			gui::BrainPreview& brainPreview,
 			const sf::Vector2f& mousePos,
-			const std::vector<sf::Event>& events
+			const std::vector<sf::Event>& events,
+			const sf::VideoMode& resolution
 		);
 		void render(
 			gui::BrainPreview& brainPreview,
@@ -45,6 +49,10 @@ namespace gui
 			const sf::Color& bgColor
 		);
 		void initCloseBtn();
+		void initBrainParameterInfo(
+			const sf::Font& font,
+			const sf::VideoMode& resolution
+		);
 
 		// utils:
 
@@ -60,16 +68,33 @@ namespace gui
 		);
 		bool aNeuronIsBeingModified() const;
 
-		bool neuronIsHovered(
+		static bool neuronIsHovered(
 			const sf::CircleShape& neuron,
 			const sf::Vector2f& mousePos
-		) const;
+		);
+
+		void updateBrainParameterInfo(
+			gui::BrainPreview& brainPreview,
+			const sf::Vector2f& mousePos,
+			const sf::VideoMode& resolution
+		);
+
+		static bool mouseCoversSynapse(
+			const sf::Vector2f& mousePos,
+			const std::vector<sf::Vertex>& synapse,
+			const sf::VideoMode& resolution
+		);
 
 		void updateCloseBtn(
 			const sf::Vector2f& mousePos,
 			const std::vector<sf::Event>& events
 		);
 		void getUpdatesFromImgBtn();
+
+		void renderResizedBrainPreview(
+			gui::BrainPreview& brainPreview,
+			sf::RenderTarget& target
+		);
 
 	private:
 		sf::RectangleShape m_bg;
@@ -82,5 +107,8 @@ namespace gui
 		const sf::Vector2f m_size;
 
 		std::unique_ptr<gui::ImageButton> m_closeBtn;
+
+		std::unique_ptr<gui::BrainParameterInfo> m_brainParameterInfo;
+		bool m_isBrainParameterInfoRendered;
 	};
 }

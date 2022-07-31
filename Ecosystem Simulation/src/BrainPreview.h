@@ -35,6 +35,7 @@ namespace gui
 		float calcNeuronsRadius() const;
 
 		const std::vector<sf::CircleShape>& getNeurons() const;
+		const std::vector<std::vector<sf::Vertex>>& getSynapses() const;
 
 		bool isPressed(
 			const sf::Vector2f& mousePos, 

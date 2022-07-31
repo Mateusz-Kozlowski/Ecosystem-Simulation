@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BrainParameterInfo.cpp" />
     <ClCompile Include="src\backend.cpp" />
     <ClCompile Include="src\Brain.cpp" />
     <ClCompile Include="src\BrainPreviewModifier.cpp" />
@@ -203,6 +204,7 @@
     <ClCompile Include="src\ImageButton.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\BrainParameterInfo.h" />
     <ClInclude Include="src\backend.h" />
     <ClInclude Include="src\Brain.h" />
     <ClInclude Include="src\config.h" />

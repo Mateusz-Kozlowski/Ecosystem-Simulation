@@ -87,6 +87,7 @@
     <ClCompile Include="src\Synapse.cpp" />
     <ClCompile Include="src\Neuron.cpp" />
     <ClCompile Include="src\Brain.cpp" />
+    <ClCompile Include="src\BrainParameterInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -257,6 +258,7 @@
     <ClInclude Include="src\Neuron.h" />
     <ClInclude Include="src\Brain.h" />
     <ClInclude Include="src\Formatter.h" />
+    <ClInclude Include="src\BrainParameterInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-window-d-2.dll">

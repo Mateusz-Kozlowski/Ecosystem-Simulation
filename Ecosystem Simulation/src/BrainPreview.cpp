@@ -73,6 +73,11 @@ const std::vector<sf::CircleShape>& gui::BrainPreview::getNeurons() const
 	return m_neurons;
 }
 
+const std::vector<std::vector<sf::Vertex>>& gui::BrainPreview::getSynapses() const
+{
+	return m_synapses;
+}
+
 bool gui::BrainPreview::isPressed(
 	const sf::Vector2f& mousePos, 
 	const sf::Mouse::Button& mouseBtn) const

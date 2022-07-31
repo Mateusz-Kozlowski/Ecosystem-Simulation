@@ -696,7 +696,9 @@ void SimulationState::initBrainPreviewModifier()
 			(resolution.height - size.y) / 2.0f
 		),
 		size,
-		sf::Color(128, 128, 128)
+		sf::Color(128, 128, 128),
+		m_fonts["CONSOLAB"],
+		m_stateData->m_gfxSettings->resolution
 	);
 }
 
@@ -1308,7 +1310,8 @@ void SimulationState::updateBrainPreviewModifier()
 	m_brainPreviewModifier->update(
 		m_stateData->m_ecosystem->getAnimalWithModifiedBrain()->getBrainPreview(),
 		static_cast<sf::Vector2f>(m_mousePosWindow),
-		*m_stateData->m_events
+		*m_stateData->m_events,
+		m_stateData->m_gfxSettings->resolution
 	);
 
 	if (m_brainPreviewModifier->getCloseBtn()->hasBeenClicked())
