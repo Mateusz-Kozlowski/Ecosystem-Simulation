@@ -119,10 +119,10 @@ void gui::BrainPreviewModifier::initBrainParameterInfo(
 	const sf::VideoMode& resolution)
 {
 	m_brainParameterInfo = std::make_unique<gui::BrainParameterInfo>(
-		sf::Vector2f(256.0f, 256.0f),
-		sf::Color::Black,
+		sf::Color::White,
 		font,
-		resolution
+		gui::calcCharSize(24.0f, resolution),
+		sf::Color(64, 64, 64)
 	);
 }
 

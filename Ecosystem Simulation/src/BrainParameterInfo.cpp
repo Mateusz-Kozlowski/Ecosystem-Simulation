@@ -1,13 +1,14 @@
 #include "BrainParameterInfo.h"
 
 gui::BrainParameterInfo::BrainParameterInfo(
-	const sf::Vector2f& size, 
-	const sf::Color& bgColor,
+	const sf::Color& textColor,
 	const sf::Font& font,
-	const sf::VideoMode& resolution)
+	unsigned textCharsSize,
+	const sf::Color& bgColor,
+	const sf::Vector2f& pos)
 {
-	initBg(size, bgColor);
-	initText(font, resolution);
+	initText(pos, textColor, font, textCharsSize);
+	initBg(bgColor);
 }
 
 void gui::BrainParameterInfo::setSynapseInfo(const Blueberry::Synapse& synapse)
@@ -18,6 +19,8 @@ void gui::BrainParameterInfo::setSynapseInfo(const Blueberry::Synapse& synapse)
 	string.append(std::to_string(synapse.getWeight()));
 
 	m_text.setString(string);
+
+	adjustBgSize();
 }
 
 void gui::BrainParameterInfo::setNeuronInfo(const Blueberry::Neuron& neuron)
@@ -37,6 +40,8 @@ void gui::BrainParameterInfo::setNeuronInfo(const Blueberry::Neuron& neuron)
 	string.append(neuron.getActFunc());
 
 	m_text.setString(string);
+
+	adjustBgSize();
 }
 
 void gui::BrainParameterInfo::setPos(const sf::Vector2f& pos)
@@ -54,20 +59,31 @@ void gui::BrainParameterInfo::render(sf::RenderTarget& target) const
 // private methods:
 // initialization:
 
-void gui::BrainParameterInfo::initBg(
-	const sf::Vector2f& size, 
-	const sf::Color& bgColor)
+void gui::BrainParameterInfo::initText(
+	const sf::Vector2f& pos,
+	const sf::Color& textColor,
+	const sf::Font& font,
+	unsigned textCharsSize)
 {
-	m_bg.setSize(size);
-	m_bg.setFillColor(bgColor);
+	m_text.setPosition(pos);
+	m_text.setFillColor(textColor);
+	m_text.setFont(font);
+	m_text.setCharacterSize(textCharsSize);
 }
 
-void gui::BrainParameterInfo::initText(
-	const sf::Font& font, 
-	const sf::VideoMode& resolution)
+void gui::BrainParameterInfo::initBg(const sf::Color& bgColor)
 {
-	m_text.setFont(font);
-	m_text.setFillColor(sf::Color::White); // TODO: unhardcode
-	m_text.setCharacterSize(gui::calcCharSize(16.0f, resolution));
-	m_text.setPosition(m_bg.getPosition());
+	m_bg.setPosition(m_text.getPosition());
+	m_bg.setFillColor(bgColor);
+	adjustBgSize();
+}
+
+void gui::BrainParameterInfo::adjustBgSize()
+{
+	m_bg.setSize(
+		sf::Vector2f(
+			m_text.getLocalBounds().width,
+			m_text.getLocalBounds().height + m_text.getCharacterSize() / 2.0f
+		)
+	);
 }

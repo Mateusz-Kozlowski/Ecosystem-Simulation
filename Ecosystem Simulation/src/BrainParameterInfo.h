@@ -10,10 +10,11 @@ namespace gui
 	{
 	public:
 		BrainParameterInfo(
-			const sf::Vector2f& size,
-			const sf::Color& bgColor,
+			const sf::Color& textColor,
 			const sf::Font& font,
-			const sf::VideoMode& resolution
+			unsigned textCharsSize,
+			const sf::Color& bgColor,
+			const sf::Vector2f& pos = sf::Vector2f(0.0f, 0.0f)
 		);
 
 		void setSynapseInfo(const Blueberry::Synapse& synapse);
@@ -26,14 +27,15 @@ namespace gui
 	private:
 		// initialization:
 
-		void initBg(
-			const sf::Vector2f& size,
-			const sf::Color& bgColor
-		);
 		void initText(
+			const sf::Vector2f& pos,
+			const sf::Color& textColor,
 			const sf::Font& font,
-			const sf::VideoMode& resolution
+			unsigned textCharsSize
 		);
+		void initBg(const sf::Color& bgColor);
+
+		void adjustBgSize();
 
 	private:
 		sf::RectangleShape m_bg;

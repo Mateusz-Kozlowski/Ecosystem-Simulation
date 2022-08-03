@@ -1,5 +1,7 @@
 ecosystems simulation:
 - TO DEBUG:
+  + rendering info about synapses works kinds weird 
+    (like it is moved a little bit and the more vertical a synapse is the worse it works)
   + ss in desktop
   + dt = ~1.3 when the screen is turned off
     that bug with huge dt after occurs even after pausing and it causes unwanted cloning;
@@ -24,8 +26,9 @@ ecosystems simulation:
     animals should be able to know as much as possible - its optimal for evolving
 
 - priority TODO:
-  + make sure that synapses can have values in the following range:
-    <-2; 2>
+  + fix bug with UI synapses info
+  + make UI info width adjusted to the longest string
+  + make UI info about nets parameters prettier
   + hardcode mutations to some degree for example encourge connecting
     closes food pos x input with x acceleration and discourage connecting the same input
     with y acceleration;
