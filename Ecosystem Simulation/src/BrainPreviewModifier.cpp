@@ -278,14 +278,21 @@ bool gui::BrainPreviewModifier::mouseCoversSynapse(
 		return false;
 	}
 
-	float a = (rightVertex.position.y - leftVertex.position.y) / (rightVertex.position.x - leftVertex.position.y);
-	float b = leftVertex.position.y - a * leftVertex.position.x; // y = ax+b => b = y-ax
+	float a = (rightVertex.position.y - leftVertex.position.y) / (rightVertex.position.x - leftVertex.position.x);
+	float b = leftVertex.position.y - a * leftVertex.position.x; // y = ax+b => b = y-ax *
 
-	float y = a * mousePos.x + b;
+	// we need this kind of line equation: Ax+By+C=0
+	// y=ax+b => ax-y+b=0 => (in this* case) A=a, B=-1, C=b
 
-	const float EPSILON = gui::p2pY(2.0f, resolution);
+	float A = a;
+	float B = -1.0f;
+	float C = b;
+	float x = mousePos.x;
+	float y = mousePos.y;
 
-	return abs(y - mousePos.y) < EPSILON;
+	float distance = (abs(A * x + B * y + C)) / (sqrt(A * A + B * B));
+	
+	return distance < 10.0f; // TODO: unhardcode
 }
 
 void gui::BrainPreviewModifier::updateCloseBtn(
