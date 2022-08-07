@@ -13,7 +13,8 @@ namespace Blueberry
 			const Scalar& val = 0.0, 
 			const Scalar& bias = 0.0, 
 			const Scalar& actVal = 0.0,
-			const char* actFunc = "linear"
+			const std::string& actFunc = "linear",
+			const std::string& additionalInfo = ""
 		);
 
 		std::string toStr() const;
@@ -27,6 +28,8 @@ namespace Blueberry
 		inline const Scalar& getActVal() const { return m_actVal; }
 
 		inline const std::string& getActFunc() const { return m_actFunc; }
+
+		inline const std::string& getAdditionalInfo() const { return m_additionalInfo; }
 
 		// mutators:
 		
@@ -45,6 +48,8 @@ namespace Blueberry
 
 		void setRandomActFunc();
 
+		void setAdditionalInfo(const std::string& additionalInfo);
+
 	private:
 		int m_disabled{ false };
 
@@ -53,5 +58,7 @@ namespace Blueberry
 		Scalar m_actVal{ 0.0 };
 
 		std::string m_actFunc{ "no act func has been set yet" };
+
+		std::string m_additionalInfo;
 	};
 }

@@ -5,12 +5,14 @@ Blueberry::Neuron::Neuron(
 	const Scalar& val, 
 	const Scalar& bias, 
 	const Scalar& actVal,
-	const char* actFunc)
+	const std::string& actFunc,
+	const std::string& additionalInfo)
 	: m_disabled(disabled)
 	, m_val(val)
 	, m_bias(bias)
 	, m_actVal(actVal)
 	, m_actFunc(actFunc)
+	, m_additionalInfo(additionalInfo)
 {
 
 }
@@ -23,7 +25,8 @@ std::string Blueberry::Neuron::toStr() const
 	ss << m_val << '\n';
 	ss << m_bias << '\n';
 	ss << m_actVal << '\n';
-	ss << m_actFunc;
+	ss << m_actFunc << '\n';
+	ss << m_additionalInfo;
 
 	return ss.str();
 }
@@ -151,4 +154,9 @@ void Blueberry::Neuron::setRandomActFunc()
 			<< "a random number is out of range\n";
 		assert(false);
 	}
+}
+
+void Blueberry::Neuron::setAdditionalInfo(const std::string& additionalInfo)
+{
+	m_additionalInfo = additionalInfo;
 }

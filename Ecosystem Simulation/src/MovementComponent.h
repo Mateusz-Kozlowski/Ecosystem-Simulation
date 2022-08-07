@@ -8,7 +8,15 @@ public:
 	MovementComponent();
 	MovementComponent(
 		const sf::Vector2i& defaultVelocity,
+		unsigned brainInputsCount,
+		unsigned brainOutputsCount,
+		const std::vector<std::string>& additionalInfo,
+		float velocityCoeffcient = 10.0f,
+		bool randomMutateOutputBiases = true
+	);
+	MovementComponent(
 		const char* brainFilePath,
+		const sf::Vector2i& defaultVelocity = sf::Vector2i(0, 0),
 		float velocityCoeffcient = 10.0f
 	);
 	MovementComponent(const MovementComponent& rhs);

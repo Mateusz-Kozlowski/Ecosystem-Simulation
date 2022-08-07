@@ -1,54 +1,62 @@
 #include "MovementComponent.h"
 
-// TODO: unhardcode that
 MovementComponent::MovementComponent()
-	: m_brain(std::make_unique<Blueberry::Brain>(7U, 3U))
+	: m_brain(nullptr)
 	, m_prevVelocity(0, 0)
 	, m_velocity(0, 0)
 	, m_acceleration(0.0f, 0.0f)
 	, m_velocityCoefficient(10.0f)
 {
-	for (int i = 0; i < 3; i++)
-	{
-		m_brain->mutateRandomNeuronBias();
-	}
+	
 }
 
 MovementComponent::MovementComponent(
 	const sf::Vector2i& defaultVelocity,
-	const char* brainFilePath,
-	float velocityCoeffcient)
-	: m_brain(std::make_unique<Blueberry::Brain>(0U, 0U))
-	, m_prevVelocity(0, 0)
+	unsigned brainInputsCount,
+	unsigned brainOutputsCount,
+	const std::vector<std::string>& additionalInfo,
+	float velocityCoeffcient,
+	bool randomMutateOutputBiases)
+	: m_brain(std::make_unique<Blueberry::Brain>(brainInputsCount, brainOutputsCount, additionalInfo))
+	, m_prevVelocity(defaultVelocity)
 	, m_velocity(defaultVelocity)
 	, m_acceleration(0.0f, 0.0f)
 	, m_velocityCoefficient(velocityCoeffcient)
 {
-	sf::Vector2i velocity = defaultVelocity;
+	if (randomMutateOutputBiases)
+	{
+		for (int i = 0; i < brainOutputsCount; i++)
+		{
+			m_brain->mutateRandomNeuronBias();
+		}
+	}
+}
 
+MovementComponent::MovementComponent(
+	const char* brainFilePath,
+	const sf::Vector2i& defaultVelocity,
+	float velocityCoeffcient)
+	: m_brain(std::make_unique<Blueberry::Brain>(brainFilePath))
+	, m_prevVelocity(defaultVelocity)
+	, m_velocity(defaultVelocity)
+	, m_acceleration(0.0f, 0.0f)
+	, m_velocityCoefficient(velocityCoeffcient)
+{
 	velocityGuard();
-
-	loadBrainFromFile(brainFilePath);
 }
 
 MovementComponent::MovementComponent(const MovementComponent& rhs)
-	: m_brain(std::make_unique<Blueberry::Brain>(0U, 0U))
+	: m_brain(std::make_unique<Blueberry::Brain>(*rhs.m_brain))
 	, m_prevVelocity(0, 0)
 	, m_velocity(rhs.m_velocity)
 	, m_acceleration(rhs.m_acceleration)
 	, m_velocityCoefficient(rhs.m_velocityCoefficient)
 {
-	sf::Vector2i velocity = rhs.m_velocity;
-
 	velocityGuard();
-
-	*m_brain = *rhs.m_brain;
 }
 
 MovementComponent& MovementComponent::operator=(const MovementComponent& rhs)
 {
-	sf::Vector2i velocity = rhs.m_velocity;
-
 	velocityGuard();
 
 	if (this != &rhs)
@@ -70,7 +78,7 @@ void MovementComponent::saveBrainToFile(const char* filePath) const
 
 void MovementComponent::loadBrainFromFile(const char* filePath)
 {
-	m_brain->loadFromFile(filePath);
+	m_brain = std::make_unique<Blueberry::Brain>(filePath);
 }
 
 void MovementComponent::update(

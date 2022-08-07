@@ -1,17 +1,20 @@
 #include "Brain.h"
 
-Blueberry::Brain::Brain(const unsigned inputSize, const unsigned outputSize)
+Blueberry::Brain::Brain(
+	const unsigned inputSize,
+	const unsigned outputSize,
+	const std::vector<std::string>& neuronsAdditionalInfo)
 	: m_inputSize(inputSize)
 	, m_outputSize(outputSize)
 	, m_neurons(inputSize + outputSize)
 	, m_output(outputSize)
 {
-	
+	setNeuronsAdditionalInfo(neuronsAdditionalInfo);
 }
 
-Blueberry::Brain::Brain(const char* filePath)
+Blueberry::Brain::Brain(const std::string& filePath)
 {
-	if (!loadFromFile(filePath))
+	if (!loadFromFile(filePath.c_str()))
 	{
 		std::cerr
 			<< "Error::Blueberry::Brain::Brain(const char* filePath):\n"
@@ -101,6 +104,7 @@ bool Blueberry::Brain::loadFromFile(const char* filePath)
 		Scalar bias;
 		Scalar actVal;
 		std::string actFunc;
+		std::string additionalInfo;
 
 		ifs >> disabled;
 		ifs >> val;
@@ -108,8 +112,16 @@ bool Blueberry::Brain::loadFromFile(const char* filePath)
 		ifs >> actVal;
 		std::getline(ifs, actFunc);
 		std::getline(ifs, actFunc);
+		std::getline(ifs, additionalInfo);
 
-		m_neurons.emplace_back(disabled, val, bias, actVal, actFunc.c_str());
+		m_neurons.emplace_back(
+			disabled, 
+			val, 
+			bias, 
+			actVal, 
+			actFunc, 
+			additionalInfo
+		);
 	}
 
 	m_output.resize(m_outputSize);
@@ -376,6 +388,15 @@ bool Blueberry::Brain::disableRandomSynapse()
 }
 
 // private methods:
+
+void Blueberry::Brain::setNeuronsAdditionalInfo(
+	const std::vector<std::string>& neuronsAdditionalInfo)
+{
+	for (int i = 0; i < neuronsAdditionalInfo.size(); i++)
+	{
+		m_neurons[i].setAdditionalInfo(neuronsAdditionalInfo[i]);
+	}
+}
 
 void Blueberry::Brain::resetNeuronsVals()
 {

@@ -26,9 +26,6 @@ ecosystems simulation:
     animals should be able to know as much as possible - its optimal for evolving
 
 - priority TODO:
-  + fix bug with UI synapses info
-  + make UI info width adjusted to the longest string
-  + make UI info about nets parameters prettier
   + hardcode mutations to some degree for example encourge connecting
     closes food pos x input with x acceleration and discourage connecting the same input
     with y acceleration;
@@ -42,7 +39,6 @@ ecosystems simulation:
   + dt during saving ecosystem
   + inputs should be maybe not necessarily named directly in always visible way,
     but there should be a way to see what each input means (and output)
-  + add a way to see the value of specific brain inputs/outputs
   + add the following input: the center of the fruits mass
   + identify the bottle neck of the fps count
  

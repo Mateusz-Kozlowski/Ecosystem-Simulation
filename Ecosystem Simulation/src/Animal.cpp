@@ -9,7 +9,7 @@ Animal::Animal(
 	int defaultHp,
 	float basalMetabolicRatePerFrame)
 	: m_body()
-	, m_movementComponent(std::make_unique<MovementComponent>())
+	, m_movementComponent(nullptr)
 	, m_alive(true)
 	, m_isClone(false)
 	, m_parentAgeWhenItWasBorn({ "no parent", 0.0f })
@@ -22,14 +22,15 @@ Animal::Animal(
 	, m_basalMetabolicRatePerFrame(basalMetabolicRatePerFrame)
 	, m_energyToExpelFromBMR(0U)
 {
-	this->initBody(position, radius, bodyColor);
-	this->initHpBar(defaultHp, hpBarBackgroundColor, hpBarProgressRectColor);
-	this->initBrainPreview();
+	initMovementComponent();
+	initBody(position, radius, bodyColor);
+	initHpBar(defaultHp, hpBarBackgroundColor, hpBarProgressRectColor);
+	initBrainPreview();
 }
 
 Animal::Animal(const char* folderPath)
 	: m_body()
-	, m_movementComponent(std::make_unique<MovementComponent>())
+	, m_movementComponent(nullptr)
 	, m_alive(true)
 	, m_isClone(false)
 	, m_parentAgeWhenItWasBorn({ "no parent", 0.0f })
@@ -47,11 +48,11 @@ Animal::Animal(const char* folderPath)
 
 Animal::Animal(const Animal& rhs)
 	: m_body(rhs.m_body)
-	, m_movementComponent(std::make_unique<MovementComponent>())
+	, m_movementComponent(std::make_unique<MovementComponent>(*rhs.m_movementComponent))
 	, m_alive(rhs.m_alive)
 	, m_isClone(true)
 	, m_parentAgeWhenItWasBorn({ "", rhs.m_age })
-	, m_hpBar(std::make_unique<gui::IntProgressBar>())
+	, m_hpBar(std::make_unique<gui::IntProgressBar>(*rhs.m_hpBar))
 	, m_brainPreview(nullptr)
 	, m_age(0.0f)
 	, m_timeElapsedSinceLastCloning({ "there hasn't been any cloning yet", 0.0f })
@@ -60,9 +61,6 @@ Animal::Animal(const Animal& rhs)
 	, m_basalMetabolicRatePerFrame(rhs.m_basalMetabolicRatePerFrame)
 	, m_energyToExpelFromBMR(rhs.m_energyToExpelFromBMR)
 {
-	*m_movementComponent = *rhs.m_movementComponent;
-	*m_hpBar = *rhs.m_hpBar;
-
 	initBrainPreview();
 }
 
@@ -74,7 +72,7 @@ Animal& Animal::operator=(const Animal& rhs)
 		*m_movementComponent = *rhs.m_movementComponent;
 		m_alive = rhs.m_alive;
 		m_isClone = true;
-		m_parentAgeWhenItWasBorn = { "",rhs.m_age };
+		m_parentAgeWhenItWasBorn = { "", rhs.m_age };
 		*m_hpBar = *rhs.m_hpBar;
 
 		initBrainPreview();
@@ -180,8 +178,8 @@ void Animal::loadFromFolder(const char* folderPath)
 {
 	std::string brainFilePath = folderPath;
 	brainFilePath += "/brain.ini";
-
-	m_movementComponent->loadBrainFromFile(brainFilePath.c_str());
+	
+	m_movementComponent = std::make_unique<MovementComponent>(brainFilePath.c_str());
 
 	std::string path = folderPath;
 	path += "/animal.ini";
@@ -693,6 +691,28 @@ void Animal::resetTimeElapsedSinceLastCloning()
 {
 	m_timeElapsedSinceLastCloning.info = "";
 	m_timeElapsedSinceLastCloning.number = 0.0f;
+}
+
+void Animal::initMovementComponent()
+{
+	m_movementComponent = std::make_unique<MovementComponent>(
+		sf::Vector2i(0, 0),
+		7U,
+		3U,
+		// TODO: unhardcode (or at least move it closer to inputs/connect it with them in some way)
+		std::vector<std::string>{
+			"input related to: direction to the nearest food (x)",
+			"input related to: direction to the nearest food (y)",
+			"input related to: position (x)",
+			"input related to: position (y)",
+			"input related to: velocity (x)",
+			"input related to: velocity (y)",
+			"input related to: hp",
+			"output related to: acceleration (x)",
+			"output related to: acceleration (y)",
+			"output related to: cloning"
+		}
+	);
 }
 
 void Animal::initBody(

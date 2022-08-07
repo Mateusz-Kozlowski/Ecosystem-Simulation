@@ -8,8 +8,12 @@ namespace Blueberry
 	class Brain
 	{
 	public:
-		Brain(const unsigned inputSize, const unsigned outputSize);
-		Brain(const char* filePath);
+		Brain(
+			const unsigned inputSize,
+			const unsigned outputSize,
+			const std::vector<std::string>& neuronsAdditionalInfo = {}
+		);
+		Brain(const std::string& filePath);
 		Brain(const Brain& rhs);
 		Brain& operator=(const Brain& rhs);
 
@@ -57,6 +61,10 @@ namespace Blueberry
 		bool disableRandomSynapse();
 
 	private:
+		void setNeuronsAdditionalInfo(
+			const std::vector<std::string>& neuronsAdditionalInfo
+		);
+
 		void resetNeuronsVals();
 		void propagateForwardActVals();
 		void activateHiddenAndOutputNeurons();

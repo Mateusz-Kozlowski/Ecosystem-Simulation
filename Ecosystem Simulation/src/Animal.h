@@ -132,6 +132,7 @@ public:
 	void setBasalMetabolicRatePerFrame(float basalMetabolicRatePerFrame);
 
 private:
+	void initMovementComponent();
 	void initBody(
 		const sf::Vector2f& position,
 		float radius,

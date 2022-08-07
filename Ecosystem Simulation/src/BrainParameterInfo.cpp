@@ -38,6 +38,12 @@ void gui::BrainParameterInfo::setNeuronInfo(const Blueberry::Neuron& neuron)
 
 	string.append("\nactivation function: ");
 	string.append(neuron.getActFunc());
+	
+	if (neuron.getAdditionalInfo() != "")
+	{
+		string.append("\n");
+		string.append(neuron.getAdditionalInfo());
+	}
 
 	m_text.setString(string);
 
