@@ -36,9 +36,6 @@ ecosystems simulation:
      (currently after reaching a certain point 
      its the probabilty of an anabolic mutation is the same as 
      the probability of a catabolic mutation)
-  + dt during saving ecosystem
-  + inputs should be maybe not necessarily named directly in always visible way,
-    but there should be a way to see what each input means (and output)
   + add the following input: the center of the fruits mass
   + identify the bottle neck of the fps count
  

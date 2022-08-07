@@ -163,7 +163,7 @@ void App::initFPSpreview()
 
 void App::updateDt()
 {
-	m_dt = m_clock.restart().asSeconds();
+	m_dt = std::min(m_clock.restart().asSeconds(), 1.0f); // TODO: unhardcode
 }
 
 void App::update()
