@@ -431,8 +431,8 @@ void MovementComponent::anabolicBrainMutation(unsigned brainMutationsCount)
 {
 	for (int i = 0; i < brainMutationsCount; i++)
 	{
-		// 33% probability for a new neuron and 67% probability for a new synapse:
-		if (Blueberry::RandomEngine::getIntInRange(0, 2) == 0)
+		// 50/50 probability
+		if (Blueberry::RandomEngine::getIntInRange(0, 1) == 0)
 		{
 			m_brain->addRandomNeuron();
 		}
