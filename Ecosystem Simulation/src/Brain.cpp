@@ -103,6 +103,7 @@ bool Blueberry::Brain::loadFromFile(const char* filePath)
 		Scalar val;
 		Scalar bias;
 		Scalar actVal;
+		bool enableLinearActFunc;
 		std::string actFunc;
 		std::string additionalInfo;
 
@@ -110,6 +111,7 @@ bool Blueberry::Brain::loadFromFile(const char* filePath)
 		ifs >> val;
 		ifs >> bias;
 		ifs >> actVal;
+		ifs >> enableLinearActFunc;
 		std::getline(ifs, actFunc);
 		std::getline(ifs, actFunc);
 		std::getline(ifs, additionalInfo);
@@ -119,6 +121,7 @@ bool Blueberry::Brain::loadFromFile(const char* filePath)
 			val, 
 			bias, 
 			actVal, 
+			enableLinearActFunc,
 			actFunc, 
 			additionalInfo
 		);
@@ -297,8 +300,9 @@ bool Blueberry::Brain::addRandomNeuron()
 
 	// add a random neuron:
 	m_neurons.emplace_back();
-	m_neurons.back().mutateBias(1.0);
+	m_neurons.back().enableLinearAsRandomActFunc(false);
 	m_neurons.back().setRandomActFunc();
+	m_neurons.back().mutateBias(1.0);
 
 	// split that synapse:
 	m_synapses[randomSynapseIndex].disable();
@@ -328,7 +332,7 @@ void Blueberry::Brain::mutateRandomNeuronBias()
 
 	// mutate a neuron bias:
 	// TODO: get rid of that hard-coded argument:
-	m_neurons[randomHiddenOrOutputNeuronIndex].mutateBias(0.5);
+	m_neurons[randomHiddenOrOutputNeuronIndex].mutateBias(1.0);
 }
 
 void Blueberry::Brain::mutateRandomNeuronActFunc()

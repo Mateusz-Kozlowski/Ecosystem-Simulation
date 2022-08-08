@@ -26,14 +26,22 @@ ecosystems simulation:
     animals should be able to know as much as possible - its optimal for evolving
 
 - priority TODO:
+  + identify the bottle neck of the fps count
+  + change asserts to exit's in Brain classES
+  
+  + there is a bug - activated values of output neurons not connected to the net 
+    aren't updated when biases changes
+  + after fixing this consider preventing output neurons from not being connected
+    and maybe add other hardcoded restrictions to mutating brain topology etc.
   + hardcode mutations to some degree for example encourge connecting
     closes food pos x input with x acceleration and discourage connecting the same input
     with y acceleration;
     but allow to create hidden neurons in some way and don't underestimate
     the potential of nature creativity, maybe there are some kinds of connections that you don't know
     about and they are a great idea
-  + identify the bottle neck of the fps count
-  + hidden neurons shouldn't be able to have the linear activation function
+  + move things from this section into apropriate sections and create in each section 
+    priority list (and debug list and so on and so forth);
+    part of the project will be the first thing these TODO's will be grouped by
  
 - other TODO:
   + unhardcode ecosystem templates and ecosystem creator state UI related to them

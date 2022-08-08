@@ -5,16 +5,18 @@ Blueberry::Neuron::Neuron(
 	const Scalar& val, 
 	const Scalar& bias, 
 	const Scalar& actVal,
+	bool enableLinearAsRandomActFunc,
 	const std::string& actFunc,
 	const std::string& additionalInfo)
 	: m_disabled(disabled)
 	, m_val(val)
 	, m_bias(bias)
 	, m_actVal(actVal)
+	, m_enableLinearAsRandomActFunc(enableLinearAsRandomActFunc)
 	, m_actFunc(actFunc)
 	, m_additionalInfo(additionalInfo)
 {
-
+	
 }
 
 std::string Blueberry::Neuron::toStr() const
@@ -25,6 +27,7 @@ std::string Blueberry::Neuron::toStr() const
 	ss << m_val << '\n';
 	ss << m_bias << '\n';
 	ss << m_actVal << '\n';
+	ss << m_enableLinearAsRandomActFunc << '\n';
 	ss << m_actFunc << '\n';
 	ss << m_additionalInfo;
 
@@ -114,46 +117,49 @@ void Blueberry::Neuron::activate()
 
 void Blueberry::Neuron::setRandomActFunc()
 {
-	const unsigned randomNumber = Blueberry::RandomEngine::getIntInRange(0, 9);
-
-	switch (randomNumber)
+	do
 	{
-	case 0U:
-		m_actFunc = "abs";
-		return;
-	case 1U:
-		m_actFunc = "fast sigmoid";
-		return;
-	case 2U:
-		m_actFunc = "gaussian";
-		return;
-	case 3U:
-		m_actFunc = "linear";
-		return;
-	case 4U:
-		m_actFunc = "relu";
-		return;
-	case 5U:
-		m_actFunc = "sigmoid";
-		return;
-	case 6U:
-		m_actFunc = "sin";
-		return;
-	case 7U:
-		m_actFunc = "softplus";
-		return;
-	case 8U:
-		m_actFunc = "square";
-		return;
-	case 9U:
-		m_actFunc = "tanh";
-		return;
-	default:
-		std::cerr
-			<< "Error::Blueberry::Neuron::setRandomActFunc():\n"
-			<< "a random number is out of range\n";
-		assert(false);
-	}
+		const unsigned randomNumber = Blueberry::RandomEngine::getIntInRange(0, 9);
+
+		switch (randomNumber)
+		{
+		case 0U:
+			m_actFunc = "abs";
+			break;
+		case 1U:
+			m_actFunc = "fast sigmoid";
+			break;
+		case 2U:
+			m_actFunc = "gaussian";
+			break;
+		case 3U:
+			m_actFunc = "linear";
+			break;
+		case 4U:
+			m_actFunc = "relu";
+			break;
+		case 5U:
+			m_actFunc = "sigmoid";
+			break;
+		case 6U:
+			m_actFunc = "sin";
+			break;
+		case 7U:
+			m_actFunc = "softplus";
+			break;
+		case 8U:
+			m_actFunc = "square";
+			break;
+		case 9U:
+			m_actFunc = "tanh";
+			return;
+		default:
+			std::cerr
+				<< "Error::Blueberry::Neuron::setRandomActFunc():\n"
+				<< "a random number is out of range\n";
+			exit(-13);
+		}
+	} while (m_actFunc == "linear" && !m_enableLinearAsRandomActFunc);
 }
 
 void Blueberry::Neuron::setAdditionalInfo(const std::string& additionalInfo)

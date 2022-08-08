@@ -13,6 +13,7 @@ namespace Blueberry
 			const Scalar& val = 0.0, 
 			const Scalar& bias = 0.0, 
 			const Scalar& actVal = 0.0,
+			bool enableLinearAsRandomActivationFunction = true,
 			const std::string& actFunc = "linear",
 			const std::string& additionalInfo = ""
 		);
@@ -44,7 +45,13 @@ namespace Blueberry
 		void activate();
 		inline void setActVal(const Scalar& actVal) { m_actVal = actVal; }
 
-		inline void setActFunc(const char* actFunc) { m_actFunc = actFunc; }
+		inline void enableLinearAsRandomActFunc(bool enable) { m_enableLinearAsRandomActFunc = enable; }
+
+		inline void setActFunc(const char* actFunc) { 
+			std::cout << "WHY AM I USED?\n";
+			exit(-13);
+			m_actFunc = actFunc; 
+		}
 
 		void setRandomActFunc();
 
@@ -56,6 +63,8 @@ namespace Blueberry
 		Scalar m_val{ 0.0 };
 		Scalar m_bias{ 0.0 };
 		Scalar m_actVal{ 0.0 };
+
+		bool m_enableLinearAsRandomActFunc;
 
 		std::string m_actFunc{ "no act func has been set yet" };
 
