@@ -56,7 +56,7 @@ public:
 
 	// mutators:
 
-	void mutateBrain(unsigned brainMutationsCount);
+	void mutateBrain();
 
 	//void setVelocity(const sf::Vector2i& velocity);
 	//void setVelocity(int x, int y);
@@ -104,8 +104,6 @@ private:
 	);
 
 	void velocityGuard() const;
-
-	void anabolicBrainMutation(unsigned brainMutationsCount);
 
 private:
 	std::unique_ptr<Blueberry::Brain> m_brain;

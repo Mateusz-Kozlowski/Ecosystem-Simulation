@@ -207,41 +207,80 @@ unsigned Blueberry::Brain::getDisabledSynapsesCount() const
 
 // mutators:
 
-void Blueberry::Brain::mutate(unsigned changesCount)
+void Blueberry::Brain::mutate()
 {
-	while (changesCount--)
-	{
-		const unsigned randomNumber = RandomEngine::getIntInRange(0, 6);
+	const unsigned randomNumber = RandomEngine::getIntInRange(0, 6);
 
-		switch (randomNumber)
-		{
-		case 0U:
-			addRandomNeuron();
-			break;
-		case 1U:
-			mutateRandomNeuronBias();
-			break;
-		case 2U:
-			mutateRandomNeuronActFunc();
-			break;
-		case 3U:
-			disbaleRandomNeuron();
-			break;
-		case 4U:
-			addRandomSynapse();
-			break;
-		case 5U:
-			mutateRandomSynapseWeight();
-			break;
-		case 6U:
-			disableRandomSynapse();
-			break;
-		default:
-			std::cerr
-				<< "Error::Blueberry::Brain::mutate(unsigned changesCount):\n"
-				<< "a random number is out of range\n";
-			assert(false);
-		}
+	switch (randomNumber)
+	{
+	case 0U:
+		addRandomNeuron();
+		break;
+	case 1U:
+		mutateRandomNeuronBias();
+		break;
+	case 2U:
+		mutateRandomNeuronActFunc();
+		break;
+	case 3U:
+		disbaleRandomNeuron();
+		break;
+	case 4U:
+		addRandomSynapse();
+		break;
+	case 5U:
+		mutateRandomSynapseWeight();
+		break;
+	case 6U:
+		disableRandomSynapse();
+		break;
+	default:
+		std::cerr
+			<< "Error::Blueberry::Brain::mutate():\n"
+			<< "a random number is out of range\n";
+		exit(-13);
+	}
+}
+
+void Blueberry::Brain::anabolicMutation()
+{
+	// 50/50 probability
+	if (Blueberry::RandomEngine::getIntInRange(0, 1) == 0)
+	{
+		addRandomNeuron();
+	}
+	else
+	{
+		addRandomSynapse();
+	}
+}
+
+void Blueberry::Brain::nonCatabolicMutation()
+{
+	const unsigned randomNumber = RandomEngine::getIntInRange(0, 4);
+
+	switch (randomNumber)
+	{
+	case 0U:
+		addRandomNeuron();
+		break;
+	case 1U:
+		mutateRandomNeuronBias();
+		break;
+	case 2U:
+		mutateRandomNeuronActFunc();
+		break;
+	case 3U:
+		addRandomSynapse();
+		break;
+	case 4U:
+		mutateRandomSynapseWeight();
+		break;
+	default:
+		std::cerr
+			<< "Error::Blueberry::Brain::nonCatabolicMutation():\n"
+			<< "a random number is out of range\n";
+		exit(-13);
 	}
 }
 

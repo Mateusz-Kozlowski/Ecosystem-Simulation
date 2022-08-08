@@ -186,15 +186,15 @@ float MovementComponent::getVelocityCoefficient() const
 
 // mutators:
 
-void MovementComponent::mutateBrain(unsigned brainMutationsCount)
+void MovementComponent::mutateBrain()
 {
-	if (m_brain->getEnabledSynapsesCount() < 8 || m_brain->getEnabledNeuronsCount() < 4U)
+	if (m_brain->getEnabledNeuronsCount() > 1U)
 	{
-		anabolicBrainMutation(brainMutationsCount);
+		m_brain->nonCatabolicMutation();
 	}
 	else
 	{
-		m_brain->mutate(brainMutationsCount);
+		m_brain->anabolicMutation();
 	}
 }
 
@@ -424,21 +424,5 @@ void MovementComponent::velocityGuard() const
 		std::cerr << "PREVIOUS VELOCITY: (" << m_prevVelocity.x << ' ' << m_prevVelocity.y << ")\n";
 		std::cerr << "ACCELERATION: (" << m_acceleration.x << ' ' << m_acceleration.y << ")\n";
 		exit(-13);
-	}
-}
-
-void MovementComponent::anabolicBrainMutation(unsigned brainMutationsCount)
-{
-	for (int i = 0; i < brainMutationsCount; i++)
-	{
-		// 50/50 probability
-		if (Blueberry::RandomEngine::getIntInRange(0, 1) == 0)
-		{
-			m_brain->addRandomNeuron();
-		}
-		else
-		{
-			m_brain->addRandomSynapse();
-		}
 	}
 }

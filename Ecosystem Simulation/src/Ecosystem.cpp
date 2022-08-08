@@ -1421,7 +1421,8 @@ void Ecosystem::updateAnimals(
 			mousePos,
 			events,
 			m_debugFile,
-			keybinds
+			keybinds,
+			m_mutationsPerMutation
 		);
 	}
 }

@@ -32,11 +32,8 @@ ecosystems simulation:
     but allow to create hidden neurons in some way and don't underestimate
     the potential of nature creativity, maybe there are some kinds of connections that you don't know
     about and they are a great idea
-   + mutations should be even more anabolic 
-     (currently after reaching a certain point 
-     its the probabilty of an anabolic mutation is the same as 
-     the probability of a catabolic mutation)
   + identify the bottle neck of the fps count
+  + hidden neurons shouldn't be able to have the linear activation function
  
 - other TODO:
   + unhardcode ecosystem templates and ecosystem creator state UI related to them

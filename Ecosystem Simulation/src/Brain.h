@@ -50,7 +50,9 @@ namespace Blueberry
 		
 		// mutators:
 
-		void mutate(unsigned changesCount);
+		void mutate();
+		void anabolicMutation();
+		void nonCatabolicMutation();
 
 		bool addRandomNeuron();
 		void mutateRandomNeuronBias();

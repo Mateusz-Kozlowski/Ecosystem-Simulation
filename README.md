@@ -21,13 +21,30 @@ I'm going to gradually add here the rules of the ecosystem:
 
   but there are some requirements to make cloning possible 
   even if an animal wants to do it:
-  + a specific animal can clone itself only once every 5 seconds
-  + its HP has to be > 1, because HP is always an integer number; 1 cannot be divided in half;
+  - a specific animal can clone itself only once every 5 seconds
+  - its HP has to be > 1, because HP is always an integer number; 1 cannot be divided in half;
   	but HP is hardly ever = 1, its almost always a greater number;
   	it can reach values like 10'000 or 1'000'000 or even greater numbers
   	(it depends on initial ecosystem settings)
-  + it cannot be close to borders 
+  - it cannot be close to borders 
   	(it can be at most in 90% of the distance from the center of the arena to the borders)
+
+* mutating:
+  Mutations occour after cloning (in the brains of clones) and in every brain every 30 seconds.
+  
+  At the very beginning of every simulation all brain are empty.
+  The only reason animals move is that their output neurons have biases 
+  which aren't equal to 0.
+  If a brain has 0 or 1 neuron there are only 2 possible mutations - 
+  adding a neuron or adding a synapse.
+  If a brain is has a bigger number of neurons then every mutation is possible except
+  removing a neuron or removing a synapse. 
+  The list of possible mutations:
+  - adding a synapse
+  - adding a neuron
+  - changing a synapse weight
+  - changing a neuron bias
+  - changing a neuron activation function.
 
 ## User features:
 I'm going to gradually add here the features of the project:

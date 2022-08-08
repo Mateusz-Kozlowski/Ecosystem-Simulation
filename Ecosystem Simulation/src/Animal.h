@@ -39,7 +39,8 @@ public:
 		const sf::Vector2f& mousePos,
 		const std::vector<sf::Event>& events,
 		std::ofstream& debugFile,
-		const std::unordered_map<std::string, int>& keybinds
+		const std::unordered_map<std::string, int>& keybinds,
+		unsigned mutationsPerMutation
 	);
 
 	void renderBody(sf::RenderTarget& target) const;

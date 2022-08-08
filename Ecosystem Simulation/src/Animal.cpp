@@ -292,11 +292,15 @@ void Animal::update(
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events,
 	std::ofstream& debugFile,
-	const std::unordered_map<std::string, int>& keybinds)
+	const std::unordered_map<std::string, int>& keybinds,
+	unsigned mutationsPerMutation)
 {
 	if (m_timeSinceLastMutation.number > 30.0f) // TODO: unhardcode and change from seconds to frames
 	{
-		m_movementComponent->mutateBrain(1U);
+		for (int i = 0; i < mutationsPerMutation; i++)
+		{
+			m_movementComponent->mutateBrain();
+		}
 		
 		m_timeSinceLastMutation.info = "";
 		m_timeSinceLastMutation.number = 0.0f;
@@ -627,7 +631,11 @@ void Animal::randomMutate(
 	const sf::Vector2f& mousePos,
 	const std::vector<sf::Event>& events)
 {
-	m_movementComponent->mutateBrain(brainMutationsCount);
+	while (brainMutationsCount--)
+	{
+		m_movementComponent->mutateBrain();
+	}
+	
 	m_brainPreview->update(mousePos, events);
 
 	m_timeSinceLastMutation.info = "";
