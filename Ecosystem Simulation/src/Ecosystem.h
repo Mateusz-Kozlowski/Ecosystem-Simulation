@@ -333,14 +333,28 @@ private:
 		const std::unordered_map<std::string, int>& keybinds
 	);
 
-	std::vector<Blueberry::Scalar> getEcosystemRelatedInputsForBrain(
+	std::vector<Blueberry::Scalar> getEcosystemRelatedBrainInputs(
 		const Animal& animal
 	) const;
 	
+	void addCenterOfFruitMassInput(
+		std::vector<Blueberry::Scalar>& ecosystemRelatedBrainInputs,
+		const Animal& animal
+	) const;
 	const sf::Vector2f& getFruitMassCenter() const;
+
+	void addNearestFruitInput(
+		std::vector<Blueberry::Scalar>& ecosystemRelatedBrainInputs,
+		const Animal& animal
+	) const;
 
 	const Fruit* getTheNearestFruit(const Animal& animal) const;
 	float calcDistance(const Animal& animal, const Fruit& fruit) const;
+
+	void addAnimalPosInput(
+		std::vector<Blueberry::Scalar>& ecosystemRelatedBrainInputs,
+		const Animal& animal
+	) const;
 
 	/*
 	Sometimes animals expel energy, which need to be handled in some way,

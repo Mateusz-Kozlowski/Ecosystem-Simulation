@@ -36,7 +36,6 @@ ecosystems simulation:
      (currently after reaching a certain point 
      its the probabilty of an anabolic mutation is the same as 
      the probability of a catabolic mutation)
-  + add the following input: the center of the fruits mass
   + identify the bottle neck of the fps count
  
 - other TODO:
