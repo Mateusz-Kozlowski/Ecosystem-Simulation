@@ -21,7 +21,8 @@ public:
 		const sf::Color& hpBarBackgroundColor,
 		const sf::Color& hpBarProgressRectColor,
 		int defaultHp,
-		float basalMetabolicRatePerFrame
+		float basalMetabolicRatePerFrame,
+		unsigned ecosystemRelatedBrainInputsCount
 	);
 	Animal(const char* folderPath);
 	Animal(const Animal& rhs);
@@ -132,7 +133,7 @@ public:
 	void setBasalMetabolicRatePerFrame(float basalMetabolicRatePerFrame);
 
 private:
-	void initMovementComponent();
+	void initMovementComponent(unsigned ecosystemRelatedBrainInputsCount);
 	void initBody(
 		const sf::Vector2f& position,
 		float radius,
@@ -158,6 +159,10 @@ private:
 		const sf::Vector2f& mousePos,
 		const std::vector<sf::Event>& events
 	);
+
+private:
+	static const unsigned S_ONLY_ANIMAL_RELATED_BRAIN_INPUTS_COUNT;
+	static const unsigned S_BRAIN_OUTPUTS_COUNT;
 
 private:
 	sf::CircleShape m_body;

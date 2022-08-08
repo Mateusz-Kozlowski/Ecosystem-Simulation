@@ -1,5 +1,8 @@
 #include "Animal.h"
 
+const unsigned Animal::S_ONLY_ANIMAL_RELATED_BRAIN_INPUTS_COUNT = 3U;
+const unsigned Animal::S_BRAIN_OUTPUTS_COUNT = 3U;
+
 Animal::Animal(
 	const sf::Vector2f& position,
 	float radius,
@@ -7,7 +10,8 @@ Animal::Animal(
 	const sf::Color& hpBarBackgroundColor,
 	const sf::Color& hpBarProgressRectColor,
 	int defaultHp,
-	float basalMetabolicRatePerFrame)
+	float basalMetabolicRatePerFrame,
+	unsigned ecosystemRelatedBrainInputsCount)
 	: m_body()
 	, m_movementComponent(nullptr)
 	, m_alive(true)
@@ -22,7 +26,7 @@ Animal::Animal(
 	, m_basalMetabolicRatePerFrame(basalMetabolicRatePerFrame)
 	, m_energyToExpelFromBMR(0U)
 {
-	initMovementComponent();
+	initMovementComponent(ecosystemRelatedBrainInputsCount);
 	initBody(position, radius, bodyColor);
 	initHpBar(defaultHp, hpBarBackgroundColor, hpBarProgressRectColor);
 	initBrainPreview();
@@ -693,14 +697,17 @@ void Animal::resetTimeElapsedSinceLastCloning()
 	m_timeElapsedSinceLastCloning.number = 0.0f;
 }
 
-void Animal::initMovementComponent()
+void Animal::initMovementComponent(unsigned ecosystemRelatedBrainInputsCount)
 {
 	m_movementComponent = std::make_unique<MovementComponent>(
 		sf::Vector2i(0, 0),
-		7U,
-		3U,
+		// TODO: unhardcode those guys:
+		ecosystemRelatedBrainInputsCount + S_ONLY_ANIMAL_RELATED_BRAIN_INPUTS_COUNT,
+		S_BRAIN_OUTPUTS_COUNT,
 		// TODO: unhardcode (or at least move it closer to inputs/connect it with them in some way)
 		std::vector<std::string>{
+			"input related to: direction to the fruit mass center (x)",
+			"input related to: direction to the fruit mass center (y)",
 			"input related to: direction to the nearest food (x)",
 			"input related to: direction to the nearest food (y)",
 			"input related to: position (x)",
@@ -801,7 +808,9 @@ std::vector<Blueberry::Scalar> Animal::getEnhancedBrainInputs(
 {
 	std::vector<Blueberry::Scalar> enhancedBrainInputs;
 	
-	enhancedBrainInputs.reserve(7);
+	const unsigned ENHANCING_SIZE = 3U; // TODO: maybe there is a way to unhardcode that
+
+	enhancedBrainInputs.reserve(externalBrainInputs.size() + ENHANCING_SIZE);
 
 	for (int i = 0; i < externalBrainInputs.size(); i++)
 	{

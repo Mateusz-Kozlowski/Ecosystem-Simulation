@@ -337,6 +337,8 @@ private:
 		const Animal& animal
 	) const;
 	
+	const sf::Vector2f& getFruitMassCenter() const;
+
 	const Fruit* getTheNearestFruit(const Animal& animal) const;
 	float calcDistance(const Animal& animal, const Fruit& fruit) const;
 
@@ -469,7 +471,9 @@ private:
 
 	void updateModifyingBrainsPreviews(const sf::Vector2f& mousePos);
 
-	static std::string s_emptyEcosystemName;
+private:
+	static const std::string S_EMPTY_ECOSYSTEM_NAME;
+	static const unsigned S_ECOSYSTEM_RELATED_BRAIN_INPUTS_COUNT;
 
 private:
 	std::string m_name;

@@ -1,9 +1,10 @@
 #include "Ecosystem.h"
 
-std::string Ecosystem::s_emptyEcosystemName = "EMPTY ECOSYSTEM\n";
+const std::string Ecosystem::S_EMPTY_ECOSYSTEM_NAME = "EMPTY ECOSYSTEM\n";
+const unsigned Ecosystem::S_ECOSYSTEM_RELATED_BRAIN_INPUTS_COUNT = 6U;
 
 Ecosystem::Ecosystem()
-	: m_name(s_emptyEcosystemName)
+	: m_name(S_EMPTY_ECOSYSTEM_NAME)
 	, m_bg()
 	, m_animals()
 	, m_fruits()
@@ -632,7 +633,8 @@ void Ecosystem::createNewAnimal(
 			sf::Color(100, 100, 100),
 			sf::Color::Red,
 			defaultAnimalHp,
-			basalMetabolicRatePerFrame
+			basalMetabolicRatePerFrame,
+			S_ECOSYSTEM_RELATED_BRAIN_INPUTS_COUNT
 		)
 	);
 	m_animals.back()->setRandomPosition(getWorldSize(), getBordersThickness());
@@ -1430,8 +1432,24 @@ std::vector<Blueberry::Scalar> Ecosystem::getEcosystemRelatedInputsForBrain(
 	// TODO: add set BRAIN inputs methods in Animal class
 	std::vector<Blueberry::Scalar> ecosystemRelatedInputsForBrain;
 
-	ecosystemRelatedInputsForBrain.reserve(4);
+	ecosystemRelatedInputsForBrain.reserve(S_ECOSYSTEM_RELATED_BRAIN_INPUTS_COUNT);
 
+	// TODO: divide this into sub-functions:
+	// the center of fruit mass:
+	const sf::Vector2f FRUIT_MASS_CENTER = getFruitMassCenter();
+
+	ecosystemRelatedInputsForBrain.push_back(
+		static_cast<Blueberry::Scalar>(
+			(FRUIT_MASS_CENTER.x - animal.getPos().x) / getArenaSize().x
+			)
+	);
+	ecosystemRelatedInputsForBrain.push_back(
+		static_cast<Blueberry::Scalar>(
+			(FRUIT_MASS_CENTER.y - animal.getPos().y) / getArenaSize().y
+			)
+	);
+	
+	// the nearest fruit:
 	const Fruit* theNearestFruit = getTheNearestFruit(animal);
 
 	if (theNearestFruit)
@@ -1453,6 +1471,7 @@ std::vector<Blueberry::Scalar> Ecosystem::getEcosystemRelatedInputsForBrain(
 		ecosystemRelatedInputsForBrain.push_back(0.0);
 	}
 
+	// animal position:
 	Blueberry::Scalar xPosInput =
 		(animal.getPos().x - m_bg.getOutlineThickness() - getArenaSize().x / 2)
 		/ (getArenaSize().x / 2);
@@ -1481,6 +1500,23 @@ std::vector<Blueberry::Scalar> Ecosystem::getEcosystemRelatedInputsForBrain(
 	ecosystemRelatedInputsForBrain.push_back(yPosInput);
 
 	return ecosystemRelatedInputsForBrain;
+}
+
+const sf::Vector2f& Ecosystem::getFruitMassCenter() const
+{
+	float xSum = 0.0f;
+	float ySum = 0.0f;
+
+	for (int i = 0; i < m_fruits.size(); i++)
+	{
+		xSum += m_fruits[i]->getPos().x;
+		ySum += m_fruits[i]->getPos().y;
+	}
+
+	return {
+		xSum / m_fruits.size(),
+		ySum / m_fruits.size()
+	};
 }
 
 const Fruit* Ecosystem::getTheNearestFruit(const Animal& animal) const
