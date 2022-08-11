@@ -88,20 +88,28 @@ private:
 		std::ofstream& debugFile,
 		const std::unordered_map<std::string, int>& keybinds
 	);
+	void handleNanOutputs();
+	void handleInfOutputs();
 	void handleUserInput(const std::unordered_map<std::string, int>& keybinds);
 
-	bool accelerationIsImpossible(
-		float dt, 
+	bool accelerationIsImpossible(unsigned availableEnergy);
+
+	// calculates new velocity vector after 
+	sf::Vector2i calcNewVelocityVector() const;
+
+	bool accelerationIsImpossibleCauseOfUnsignedLimitations();
+	bool accelerationIsImpossibleCauseOfAvailableEnergy(
 		unsigned availableEnergy
 	);
-	static float getVectorValue(const sf::Vector2f& vector);
+	
 	// simulation = true if it's only checking if acceleration is possible:
-	static float getVectorSquaredValue(
+	static unsigned getVectorSquaredValue(
 		const sf::Vector2i& vector,
 		bool simulation,
 		std::string origin,
 		const sf::Vector2f& acceleration
 	);
+	static float getVectorValue(const sf::Vector2f& vector);
 
 	void velocityGuard() const;
 

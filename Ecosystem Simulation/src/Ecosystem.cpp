@@ -1615,13 +1615,33 @@ void Ecosystem::cloneAnimals(
 		auto animal = m_animals[i];
 		
 		if (animal->getTimeElapsedSinceLastCloning().number > 5.0f // TODO: unhardcode that
-			&& animal->getBrain().getSpecificOutput(2U) < 0.0
+			&& handleCloningBrainOutput(*animal) > 0.0
 			&& animal->getHp() > 1U
 			&& !isCloseToBorders(*animal))
 		{
 			cloneAnimal(*animal, i, dt, mousePos, events);
 		}
 	}
+}
+
+Blueberry::Scalar Ecosystem::handleCloningBrainOutput(const Animal& animal)
+{
+	const Blueberry::Scalar& output = animal.getBrain().getSpecificOutput(2U);
+
+	if (isnan(output))
+	{
+		std::cerr
+			<< "ERROR: Ecosystem::handleCloningBrainOutput(const Animal&):\n"
+			<< "cloning brain output is = nan\n";
+		exit(-13);
+	}
+
+	if (isinf(output))
+	{
+		return 0.0;
+	}
+
+	return output;
 }
 
 bool Ecosystem::isCloseToBorders(const Animal& animal)

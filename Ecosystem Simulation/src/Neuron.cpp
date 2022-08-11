@@ -52,67 +52,107 @@ void Blueberry::Neuron::activate()
 	if (m_actFunc == "abs")
 	{
 		m_actVal = Blueberry::abs(m_val + m_bias);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "abs; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 
 	if (m_actFunc == "fast sigmoid")
 	{
 		m_actVal = fastSigmoid(m_val + m_bias);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "fast; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 
 	if (m_actFunc == "gaussian")
 	{
 		m_actVal = gaussian(m_val + m_bias);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "gaus; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 
 	if (m_actFunc == "linear")
 	{
 		m_actVal = linear(m_val + m_bias);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "linear; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 
 	if (m_actFunc == "relu")
 	{
 		m_actVal = relu(m_val + m_bias);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "relu; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 	
 	if (m_actFunc == "sigmoid")
 	{
 		m_actVal = sigmoid(m_val + m_bias);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "sigmoid; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 
 	if (m_actFunc == "sin")
 	{
 		m_actVal = Blueberry::sin(m_val + m_bias);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "sin; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 
 	if (m_actFunc == "softplus")
 	{
 		m_actVal = softplus(m_val + m_bias);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "softplus; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 
 	if (m_actFunc == "square")
 	{
 		m_actVal = square(m_val + m_bias);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "square; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 
 	if (m_actFunc == "tanh")
 	{
 		Blueberry::tanh(m_val + m_bias, m_actVal);
+		if (isnan(m_actVal))
+		{
+			std::cerr << "tanh; val:" << m_val << ", bias:" << m_bias << '\n';
+		}
 		return;
 	}
 
 	std::cerr
 		<< "Error::Blueberry::Neuron::activate():\n"
 		<< "invalid activation function: " << m_actFunc << '\n';
-	assert(false);
+	exit(-13);
 }
 
 void Blueberry::Neuron::setRandomActFunc()

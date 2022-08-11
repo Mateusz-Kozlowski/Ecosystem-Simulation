@@ -1,10 +1,10 @@
-## this file:
-* move things from this section into apropriate sections and create in each section 
-  priority list (and debug list and so on and so forth);
-  part of the project will be the first thing these TODO's will be grouped by
-
 ## ecosystem simulation:
+* add tests for activation functions limits
 * identify the bottle neck of the fps count
+* there are bugs with converting unsigned to int for example in MovementComponent
+  in check if acceleration is impossible
+* coloring neurons shouldn't be linear, because then most of neurons are almost black;
+  change it even to logarithmic scale
 
 * cloning can be done using Animal::clone() const function which will return a new animal
 * change timeSinceLastCloning from seconds to frames

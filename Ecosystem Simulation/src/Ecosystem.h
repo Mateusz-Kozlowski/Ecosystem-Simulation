@@ -372,6 +372,8 @@ private:
 		const sf::Vector2f& mousePos,
 		const std::vector<sf::Event>& events
 	);
+	Blueberry::Scalar handleCloningBrainOutput(const Animal& animal);
+
 	bool isCloseToBorders(const Animal& animal);
 
 	/*

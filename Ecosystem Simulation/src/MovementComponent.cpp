@@ -99,14 +99,12 @@ void MovementComponent::update(
 	// this caused a bug
 	m_prevVelocity = m_velocity;
 
-	if (accelerationIsImpossible(dt, availableEnergy))
+	if (accelerationIsImpossible(availableEnergy))
 	{
-		std::clog << "acceleration impossible; fun fact: a=" << m_acceleration.x << ' ' << m_acceleration.y << '\n';
 		return; // *
 	}
 
-	m_velocity.x += static_cast<int>(m_velocityCoefficient * m_acceleration.x);
-	m_velocity.y += static_cast<int>(m_velocityCoefficient * m_acceleration.y);
+	m_velocity = calcNewVelocityVector();
 
 	velocityGuard();
 }
@@ -297,19 +295,36 @@ void MovementComponent::updateAcceleration(
 	m_acceleration.x = brainOutput[0];
 	m_acceleration.y = brainOutput[1];
 
-	if (m_acceleration.x > 500'000 || m_acceleration.y > 500'000)
-	{
-		std::clog << "a: " << m_acceleration.x << ' ' << m_acceleration.y << '\n';
-		std::clog << "inputs:\n";
-		for (int i = 0; i < m_brain->getInputSize(); i++)
-		{
-			std::clog << m_brain->getNeurons()[i].getVal() << ' ' << m_brain->getNeurons()[i].getActVal() << '\n';
-		}
-	}
+	handleNanOutputs();
+	handleInfOutputs();
 
 	if (allowUserInput)
 	{
 		handleUserInput(keybinds);
+	}
+}
+
+void MovementComponent::handleNanOutputs()
+{
+	if (isnan(m_acceleration.x) || isnan(m_acceleration.y))
+	{
+		m_brain->saveToFile("bad output.ini");
+		std::cerr
+			<< "ERROR: void MovementComponent::updateAcceleration(...):\n"
+			<< "brain which outputs nan has been saved\n";
+		exit(-13);
+	}
+}
+
+void MovementComponent::handleInfOutputs()
+{
+	if (isinf(m_acceleration.x))
+	{
+		m_acceleration.x = 0.0;
+	}
+	if (isinf(m_acceleration.y))
+	{
+		m_acceleration.y = 0.0;
 	}
 }
 
@@ -346,58 +361,68 @@ void MovementComponent::handleUserInput(const std::unordered_map<std::string, in
 	}
 }
 
-bool MovementComponent::accelerationIsImpossible(
-	float dt, 
+bool MovementComponent::accelerationIsImpossible(unsigned availableEnergy)
+{
+	return accelerationIsImpossibleCauseOfUnsignedLimitations()
+		   || accelerationIsImpossibleCauseOfAvailableEnergy(availableEnergy);
+}
+
+sf::Vector2i MovementComponent::calcNewVelocityVector() const
+{
+	return m_velocity + static_cast<sf::Vector2i>(m_acceleration * m_velocityCoefficient);
+}
+
+bool MovementComponent::accelerationIsImpossibleCauseOfUnsignedLimitations()
+{
+	double newVelX = calcNewVelocityVector().x;
+	double newVelY = calcNewVelocityVector().y;
+
+	constexpr double unsignedMax = static_cast<double>(std::numeric_limits<unsigned>::max());
+
+	if (newVelX * newVelX + newVelY * newVelY > unsignedMax)
+	{
+		std::clog
+			<< "LOG: acceleration impossible because of unsigned limitations\n"
+			<< "acceleration = (" << m_acceleration.x << "; " << m_acceleration.y << ")\n"
+			<< "velocity coefficient = " << m_velocityCoefficient << '\n'
+			<< "vel = (" << m_velocity.x << "; " << m_velocity.y << ")\n";
+	}
+
+	return newVelX * newVelX + newVelY * newVelY > unsignedMax;
+}
+
+bool MovementComponent::accelerationIsImpossibleCauseOfAvailableEnergy(
 	unsigned availableEnergy)
 {
-	// previous and wrong approach to solve the problem:
-	// check if hp will be greater than 0:
-	//const sf::Vector2f velVectDelta{
-	//	m_acceleration.x * dt,
-	//	m_acceleration.y * dt
-	//};
-	//const sf::Vector2f newVelVect = m_velocity + velVectDelta;
-	//
-	//const float newVelVectVal = getVectorValue(newVelVect);
-	//const double newKinEnergy = 0.5 * std::pow(newVelVectVal, 2.0);
-	//
-	//std::cout << availableEnergy << " vs " << abs(newKinEnergy - getKineticEnergy()) << '\n';
-	//
-	//return availableEnergy >= abs(newKinEnergy - getKineticEnergy());
+	const sf::Vector2i newVelVect = calcNewVelocityVector();
 
-	// check if total energy will be greater than 0:
-
-	// it used to be like this but I want it to be independable from FPS count:
-	/*
-	const sf::Vector2f velVectDelta{
-		m_acceleration.x * dt,
-		m_acceleration.y * dt
-	};
-	*/
-	const sf::Vector2i velVectDelta{
-		static_cast<int>(m_acceleration.x),
-		static_cast<int>(m_acceleration.y)
-	};
-	
-	const sf::Vector2i newVelVect = m_velocity + velVectDelta;
-	
-	int newKinEnergy = getVectorSquaredValue(newVelVect, true, "impossible a", m_acceleration);
-
-	int newHp = static_cast<int>(availableEnergy) - abs(
-		newKinEnergy - static_cast<int>(getKineticEnergy())
+	unsigned newKinEnergy = getVectorSquaredValue(
+		newVelVect,
+		true,
+		"impossible a",
+		m_acceleration
 	);
+
+	// it seems that there is no abs(unsigned, unsigned) in C++:
+	unsigned absKinEnergyDelta = 0U;
+	if (newKinEnergy > getKineticEnergy())
+	{
+		absKinEnergyDelta = newKinEnergy - getKineticEnergy();
+	}
+	else
+	{
+		absKinEnergyDelta = getKineticEnergy() - newKinEnergy;
+	}
+
+	// TODO: there is a bug, because available energy can be greater than int limit:
+	int newHp = static_cast<int>(availableEnergy) - absKinEnergyDelta;
 
 	int newTotalEnergy = newKinEnergy + newHp;
 
 	return newTotalEnergy < 0;
 }
 
-float MovementComponent::getVectorValue(const sf::Vector2f& vector)
-{
-	return sqrt(std::pow(vector.x, 2.0f) + std::pow(vector.y, 2.0f));
-}
-
-float MovementComponent::getVectorSquaredValue(
+unsigned MovementComponent::getVectorSquaredValue(
 	const sf::Vector2i& vector,
 	bool simulation,
 	std::string origin,
@@ -413,7 +438,17 @@ float MovementComponent::getVectorSquaredValue(
 		exit(-13);
 	}
 
-	return vector.x * vector.x + vector.y * vector.y;
+	sf::Vector2u absVel(
+		abs(vector.x),
+		abs(vector.y)
+	);
+
+	return absVel.x * absVel.x + absVel.y * absVel.y;
+}
+
+float MovementComponent::getVectorValue(const sf::Vector2f& vector)
+{
+	return sqrt(std::pow(vector.x, 2.0f) + std::pow(vector.y, 2.0f));
 }
 
 void MovementComponent::velocityGuard() const
