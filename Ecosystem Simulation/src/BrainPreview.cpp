@@ -354,15 +354,16 @@ void gui::BrainPreview::setColor(
 	}
 	else
 	{
-		const Blueberry::Scalar& actVal = neuron.getActVal();
+		Blueberry::Scalar logActVal = log10(abs(neuron.getActVal()) + 1.0);
+		Blueberry::Scalar logBiggestActVal = log10(abs(theBiggestAbsActVal) + 1.0);
 
-		if (actVal > 0.0)
+		if (neuron.getActVal() > 0.0)
 		{
 			neuronCircle.setFillColor(
 				sf::Color(
 					0,
 					0,
-					255 * actVal / theBiggestAbsActVal
+					255 * logActVal / logBiggestActVal
 				)
 			);
 		}
@@ -370,7 +371,7 @@ void gui::BrainPreview::setColor(
 		{
 			neuronCircle.setFillColor(
 				sf::Color(
-					-255 * actVal / theBiggestAbsActVal,
+					255 * logActVal / logBiggestActVal,
 					0,
 					0
 				)
@@ -446,14 +447,15 @@ void gui::BrainPreview::setColor(
 		return;
 	}
 	
-	const Blueberry::Scalar& weight = synapse.getWeight();
+	Blueberry::Scalar logWeight = log10(abs(synapse.getWeight()) + 1.0);
+	Blueberry::Scalar logBiggestWeight = log10(abs(theBiggestAbsWeight) + 1.0);
 
-	if (weight > 0.0)
+	if (synapse.getWeight() > 0.0)
 	{
 		const sf::Color color = sf::Color(
 			0,
 			0,
-			255 * weight / theBiggestAbsWeight
+			255 * logWeight / logBiggestWeight
 		);
 
 		synapseVertices[0].color = color;
@@ -462,7 +464,7 @@ void gui::BrainPreview::setColor(
 	else
 	{
 		const sf::Color color = sf::Color(
-			-255 * weight / theBiggestAbsWeight,
+			255 * logWeight / logBiggestWeight,
 			0,
 			0
 		);

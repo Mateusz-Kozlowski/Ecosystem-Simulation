@@ -1,10 +1,11 @@
 ## ecosystem simulation:
+* ADD COLOR TO INFO ABOUT PARAMETERS, BECAUSE SYNAPSES ARE BUGGED
+  (those with relatively big |weights| are black)
+* WHY STOPPING ALMOST DOUBLES ANIMALS COUNT?
 * add tests for activation functions limits
 * identify the bottle neck of the fps count
 * there are bugs with converting unsigned to int for example in MovementComponent
   in check if acceleration is impossible
-* coloring neurons shouldn't be linear, because then most of neurons are almost black;
-  change it even to logarithmic scale
 
 * cloning can be done using Animal::clone() const function which will return a new animal
 * change timeSinceLastCloning from seconds to frames
