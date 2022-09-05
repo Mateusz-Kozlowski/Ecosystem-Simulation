@@ -1,4 +1,4 @@
-![ss1](screenshots//ss1.png)
+![1](screenshots//1.png)
 
 Before I started the project I had thought that it's all about kinematics and I'll finish the project in one day.
 After a couple of months I realised that making the program working properly requires implementing quanta of energy like in modern physics (I didn't know about issues with floating-point numbers in programming)
@@ -60,3 +60,17 @@ I'm going to gradually add here the features of the project:
 * you can show/hide all brain previews by pressing B key
 * by clicking with the right mouse button on a brain preview you are able to open
   brain preview modifier (or change the modified brain)
+* by holding your mouse cursor over a brain element in brain preview modifier 
+  while the right button of your mouse is pressed you are able to see more info about that brain element
+
+  ![2](screenshots//2.png)
+  ![3](screenshots//3.png)
+  ![4](screenshots//4.png)
+  ![5](screenshots//5.png)
+  ![6](screenshots//6.png)
+  ![7](screenshots//7.png)
+  ![8](screenshots//8.png)
+  ![9](screenshots//9.png)
+  ![10](screenshots//10.png)
+  ![11](screenshots//11.png)
+  ![12](screenshots//12.png)
