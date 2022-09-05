@@ -14,6 +14,11 @@ BMR - basal metabolic rate;
 	  metabolic cost, how many hit points a specific animal loses for sake of surviving,
 	  no matter its acceleration and velocity
 
+Blueberry - this how I named the namespace of classes related to neural nets in this project;
+            the name can change in the future;
+            the nets aren't organised into layers, their construction is simlar to a graph;
+            each neuron propagates data one neuron further in every frame of the simulation
+
 ## Ecosystem rules:
 I'm going to gradually add here the rules of the ecosystem:
 
@@ -62,6 +67,8 @@ I'm going to gradually add here the features of the project:
   brain preview modifier (or change the modified brain)
 * by holding your mouse cursor over a brain element in brain preview modifier 
   while the right button of your mouse is pressed you are able to see more info about that brain element
+
+The entire UI was made by me.
 
   ![2](screenshots//2.png)
   ![3](screenshots//3.png)
